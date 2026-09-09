@@ -660,11 +660,16 @@ public sealed class VulkanView : Control
         return null;
     }
 
-    /// <summary>Extrudes the selected surface along its normal; negative pushes inward.</summary>
+    /// <summary>Extrudes the selected surface outward; invalid distances are reported before editing.</summary>
     public void ExtrudeSelectedSurface(double sign = 1.0)
     {
         if (RequireSurface("Extrude") is not { } s) return;
         double distance = System.Math.Max(0.05, _moveSpeed * 8) * sign;
+        if (ExtrudeSurfaceCommand.Validate(s, distance) is { } error)
+        {
+            SelectionChanged?.Invoke("Extrude: " + error);
+            return;
+        }
         History.Do(new ExtrudeSurfaceCommand(s, distance));
         _activeSector = s.Sector;
         SelectionChanged?.Invoke($"Extruded surface {s.Num} by {distance:0.###} — Ctrl+Z to undo");

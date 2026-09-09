@@ -266,9 +266,10 @@ public static partial class AgentWorkspace
             try
             {
                 var command = PrepareOperation(doc, operation);
-                int? created = name switch { "addBox" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
+                int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
+                    "registerMaterial" => doc.Materials.Count, "registerColormap" => doc.Level.ColorMaps.Count,
                     "addLight" => doc.Level.Lights.Count, _ => null };
-                object? oldValue = created is null ? OperationEffect(doc, operation, null) : null;
+                object? oldValue = created is null || name == "extrudeSurface" ? OperationEffect(doc, operation, null) : null;
                 history.Do(command);
                 changes.Add((operation, created, command.Name, oldValue, OperationEffect(doc, operation, created)));
             }
@@ -365,6 +366,8 @@ public static partial class AgentWorkspace
 
     private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op)
     {
+        if (TryPrepareMaterialOperation(doc, op, out var materialCommand)) return materialCommand!;
+        if (TryPrepareGeometryOperation(doc, op, out var geometryCommand)) return geometryCommand!;
         var level = doc.Level;
         var name = String(op, "op");
         Thing Thing() => At(level.Things, Integer(op, "thing"), "thing");
@@ -457,6 +460,10 @@ public static partial class AgentWorkspace
         ["setSectorFlags"] = ["sector", "flags"], ["setSectorAmbient"] = ["sector", "value"],
         ["setGravity"] = ["value"], ["addBox"] = ["center", "halfSize"],
         ["addThing"] = ["sector", "template", "name", "position"], ["addLight"] = ["position", "rgb", "intensity", "range"],
+        ["registerMaterial"] = ["name"], ["registerColormap"] = ["name"], ["setSectorColormap"] = ["sector", "colormapIndex"],
+        ["fitSurfaceTexture"] = ["sector", "surface", "width", "height"], ["setSurfaceUv"] = ["sector", "surface", "uv"],
+        ["setSurfaceRenderModes"] = ["sector", "surface", "geometryMode", "lightMode", "textureMode"],
+        ["extrudeSurface"] = ["sector", "surface", "distance"], ["adjoinSurfaces"] = ["sector", "surface", "otherSector", "otherSurface"],
     };
 
     // Reports the editable fields addressed by one operation. The final readback
@@ -466,6 +473,9 @@ public static partial class AgentWorkspace
     {
         string name = String(op, "op");
         var level = doc.Level;
+        if (name is "registerMaterial" or "registerColormap" or "setSectorColormap" or "fitSurfaceTexture" or "setSurfaceUv" or "setSurfaceRenderModes")
+            return MaterialOperationEffect(doc, op, created);
+        if (name is "extrudeSurface" or "adjoinSurfaces") return GeometryOperationEffect(doc, op, created);
         if (name == "setGravity") return new { target = new { kind = "header" }, state = new { gravity = level.Header.Gravity } };
         if (name.StartsWith("setThing", StringComparison.Ordinal) || name is "addThing" or "clearThingArchitecture")
         {

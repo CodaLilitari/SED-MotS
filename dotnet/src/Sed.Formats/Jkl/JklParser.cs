@@ -193,7 +193,7 @@ public static class JklParser
             int nc = LastInt(r.Current);
             for (int i = 0; i < nc; i++)
             {
-                RequireData(r);
+                RequireData(r, upper: false); // Preserve resource filename spelling just as MATERIALS does.
                 var name = JklReader.WordAt(JklReader.StripIndex(r.Current), 0);
                 if (name.Length > 0) level.ColorMaps.Add(name);
             }
@@ -661,9 +661,9 @@ public static class JklParser
         return count is >= 0 and <= 1_000_000 ? count : throw new FormatException("JKL count is negative or exceeds the parser limit.");
     }
 
-    private static void RequireData(JklReader r)
+    private static void RequireData(JklReader r, bool upper = true)
     {
-        if (!r.Next() || r.EndOfSection) throw new FormatException($"Unexpected section end at line {r.LineNumber}.");
+        if (!r.Next(upper) || r.EndOfSection) throw new FormatException($"Unexpected section end at line {r.LineNumber}.");
     }
 
     private static void Unmodeled(JklDocument? doc, string section, string line)

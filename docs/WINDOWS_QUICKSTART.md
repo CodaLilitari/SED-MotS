@@ -2,7 +2,7 @@
 
 Extract the complete `SED-MotS-…-win-x64.zip` into a writable folder and open `Sed.App.exe`. Keep its neighboring runtime files, `data`, `licenses` and `agent` folders together. The distribution includes .NET; Delphi, Ubuntu and WSL are not required.
 
-The 3D viewport needs a Vulkan-capable graphics driver. `agent/sed-agent.exe` works without a graphics device or desktop window. This is an unsigned development build. Exact file hashes are in `SHA256SUMS.txt`, and source provenance is in `PROVENANCE.json`.
+The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works without a graphics device or desktop window; the optional `snapshot` command uses offscreen Vulkan for diagnostic images. This is an unsigned development build. Exact file hashes are in `SHA256SUMS.txt`, and source provenance is in `PROVENANCE.json`.
 
 ## Open or create a level
 
@@ -29,7 +29,11 @@ The validation and launch-contract checks do not constitute a campaign or multip
 
 Point the assistant or script at `agent/sed-agent.exe` and [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md). No AI service, credentials or model is bundled; this is a local executable it can call.
 
+For Codex, the full distribution includes `.agents/skills/sed-mots/SKILL.md` and `AGENTS.md`. Open the distribution/source folder as the project, or copy the skill into your level project's `.agents/skills` folder and give Codex the exact path to your installed agent executable. The skill needs no MCP server or global configuration change. It discovers supported commands from the selected build.
+
 `--help` gives compact command discovery, and `schema <operation>` gives a focused patch schema. `query` reads current values and template candidates in bounded pages. JSON requests can arrive on stdin using `-`. `plan` checks edits without writing; passing its output hash to `apply` binds the new file to those reviewed bytes. Native projects also bind their imported template dependencies. `launch-plan` returns an engine invocation without launching it. See [AGENT_WORKFLOWS.md](AGENT_WORKFLOWS.md) for a complete read, plan, apply and readback example.
+
+The supplied `tools/Test-AgentDesign.ps1` demonstrates a connected room layout, material/UV assignment, readback and offscreen images using the installed executable. It uses fictional resource names to test registration, so its output is a geometry fixture rather than a playable episode. Run it with `-AgentPath` and a new `-OutputDirectory`; use `-SkipSnapshot` on a machine without Vulkan. The normal path never opens the editor or a game.
 
 ## Source and notices
 

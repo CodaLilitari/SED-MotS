@@ -5,7 +5,8 @@ using Sed.Formats.Automation;
 using Sed.Formats.Launching;
 
 // stdout is exclusively a JSON result; stderr is reserved for unexpected host
-// failures. No GUI, graphics device, engine, shell, or network service is started.
+// failures. Only snapshot creates an offscreen graphics device. No GUI, game,
+// shell or network service is started.
 try
 {
     object result;
@@ -35,6 +36,7 @@ try
             result = args[1] switch {
                 "query" => AgentQueries.Schema(), "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
                 "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
+                "snapshot" => AgentSnapshotRequest.Schema(),
                 _ => AgentSchema.Patch(args[1]) };
             break;
         case "schema" when args.Length == 1:
@@ -44,7 +46,7 @@ try
                 queryJsonSchema = AgentQueries.Schema(),
                 commandSchemas = AgentCommandCatalog.Commands(),
                 capabilities = Capabilities(),
-                selectors = "Zero-based indices from inspect, bound to the exact inputSha256.",
+                selectors = "Zero-based indices bound to the exact sourceRevision (inputSha256 for JKL).",
                 vectors = "position, orientation, center, rgb are arrays of three finite numbers; orientation is pitch/yaw/roll in degrees.",
                 limits = new { operations = AgentWorkspace.MaxOperations, requestBytes = AgentWorkspace.MaxRequestBytes, levelBytes = AgentWorkspace.MaxLevelBytes },
                 output = "plan is read-only; apply creates a new output and never overwrites an existing file.",
@@ -55,6 +57,9 @@ try
             break;
         case "query" when args.Length == 3:
             result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
+            break;
+        case "snapshot" when args.Length == 4:
+            result = Sed.Agent.AgentSnapshotRunner.Run(args[1], ReadRequest(args[2]), args[3]);
             break;
         case "validate" when args.Length == 2:
             result = AgentWorkspace.Validate(args[1]);
@@ -113,7 +118,8 @@ static string ReadRequest(string path)
     using var input = File.OpenRead(path);
     return AgentRequestReader.Read(input);
 }
-static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics"];
+static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
+    "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "offscreen-diagnostic-snapshot"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
     Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));

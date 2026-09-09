@@ -1,0 +1,33 @@
+---
+name: sed-mots
+description: Inspect, design, edit, convert and validate Jedi Knight Dark Forces II and Mysteries of the Sith levels with the local SED MotS agent CLI. Use for level work and editor automation; OpenJKDF2 is the primary engine target.
+---
+
+# SED MotS level work
+
+Use the local `sed-agent` executable for supported level operations. It shares the editor's model and Core commands and can work without opening a window. Follow the user's chosen game, project and authorized scope.
+
+## Discover the installed tools
+
+Resolve the intended executable from the user's installation or this repository's verified package. A Windows package places it at `agent/sed-agent.exe`. Run `--version` and `--help`; use `schema commands`, `schema query` or a focused operation schema as needed. Installed capabilities are authoritative: do not infer a command's fields from a different build or the roadmap.
+
+Read [the protocol](../../../docs/AGENT_PROTOCOL.md) for input/output contracts and preservation limits, and [the workflows](../../../docs/AGENT_WORKFLOWS.md) for worked CLI examples. These links resolve from this skill in the source tree or complete distribution. If using a separately copied skill, locate those documents in the chosen editor installation.
+
+Invoke the executable with an argument array. Supply JSON through stdin using `-` or an explicit request file, check the exit code and parse stdout as JSON. No model service, API key or MCP server is required.
+
+## Design and edit a level
+
+1. Inspect or query the explicit input to establish its game, source hash, counts and preservation warnings. For native projects, retain the reported `sourceRevision` with the project hash. Keep original sources and companion templates available.
+2. Query the objects and resource candidates needed for the requested design. Use bounded pages, follow continuation offsets and use returned indices; names need not be unique. Recheck source identity when combining pages. Use geometry and lighting readback to choose targets instead of guessing indices.
+3. Discover the relevant operations before constructing a patch. Depending on the installed build, these may include material/colormap registration, surface UV and render settings, extrusion and adjoins. Registration does not prove resource availability, and adding a box does not connect it to neighboring sectors.
+4. Plan the edit on the isolated model. Inspect each target's before/after state, serialized final values, diagnostics and preservation warnings. New object indices come from the plan's receipts. A later operation can intentionally replace an earlier value.
+5. Apply to a new output using the plan's reviewed output hash. Query and validate that output. If the input, native template revision or intended request changed, produce a fresh plan rather than reusing stale selectors.
+6. When the build offers `snapshot`, discover its request schema and use an explicit camera to examine the requested area. Inspect the returned image artifact and warnings. A rendered image supplements geometric checks; it does not prove engine loading or gameplay.
+
+Use the existing authorization for ordinary in-scope edits. Planning is a machine verification step, not a requirement to ask the user to approve every operation. Continue independent parts of the task when an unsupported operation blocks one part.
+
+## Preserve meaning and report outcomes
+
+MotS stores separate mono/RGB corner lighting and architectural data. Preserved baked lighting is not newly calculated lighting. Unknown sections and COG values can contain references; do not approximate unsupported delete/reorder or topology changes by rewriting raw numbers. Existing malformed levels may remain readable while edits are refused; report the actual diagnostics and supported repair options.
+
+Use `launch-plan` to inspect the intended OpenJKDF2 or retail invocation. Report file edits, structural checks, image inspection and engine/gameplay testing separately. Describe unresolved resource or reference limitations precisely. File-based agent work does not automatically synchronize an open GUI's unsaved document.

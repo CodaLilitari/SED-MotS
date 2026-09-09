@@ -19,8 +19,8 @@ public static class AgentQueries
     public const int MaxLimit = 200;
     public const int MaxResponseBytes = 1024 * 1024;
     private static readonly string[] Collections =
-        ["summary", "sectors", "things", "lights", "templates", "materials", "surfaces", "vertices"];
-    private static readonly string[] NamedCollections = ["things", "templates", "materials"];
+        ["summary", "sectors", "things", "lights", "templates", "materials", "colormaps", "surfaces", "vertices"];
+    private static readonly string[] NamedCollections = ["things", "templates", "materials", "colormaps"];
 
     public static object Schema() => new Dictionary<string, object>
     {
@@ -124,7 +124,7 @@ public static class AgentQueries
         if (root.TryGetProperty("search", out var field))
         {
             if (!NamedCollections.Contains(collection, StringComparer.Ordinal))
-                throw new AgentRequestException("search is only valid for things, templates and materials queries.");
+                throw new AgentRequestException("search is only valid for things, templates, materials and colormaps queries.");
             if (field.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(field.GetString()) || field.GetString()!.Length > 127)
                 throw new AgentRequestException("search must contain between 1 and 127 characters and cannot be blank.");
             search = field.GetString();
@@ -166,6 +166,8 @@ public static class AgentQueries
                         ambient = sector.Ambient.R, extraLight = sector.ExtraLight.R, tint = Rgb(sector.Tint),
                         sector.ColorMap, sector.Sound, sector.SoundVolume, thrust = Position(sector.Thrust),
                         vertices = sector.Vertices.Count, surfaces = sector.Surfaces.Count,
+                        geometryBounds = GeometryBounds(sector.Vertices.Select(v => v.Position)),
+                        neighbors = sector.Surfaces.Where(s => s.Adjoin is not null).Select(s => level.Sectors.IndexOf(s.Adjoin!.Sector)).Distinct().Order().ToArray(),
                         boundBox = Bounds(sector.BoundBox), center = sector.Center is Vec3 center ? Position(center) : null,
                         sector.Radius, sector.HasCollideBox, collideBox = sector.HasCollideBox ? Bounds(sector.CollideBox) : null,
                     };
@@ -200,16 +202,21 @@ public static class AgentQueries
                 }, i => Match(templates[i].Name));
             case "materials":
                 return new Catalog(document.Materials.Count, i => new { index = i, name = document.Materials[i] }, i => Match(document.Materials[i]));
+            case "colormaps":
+                return new Catalog(level.ColorMaps.Count, i => new { index = i, name = level.ColorMaps[i] }, i => Match(level.ColorMaps[i]));
             case "surfaces":
                 var surfaceSector = SelectedSector();
                 return new Catalog(surfaceSector.Surfaces.Count, i =>
                 {
                     var surface = surfaceSector.Surfaces[i];
+                    surface.RecalcNormal();
                     return new
                     {
                         index = i, sector = request.Sector, surface.Num, surface.Material, surface.MaterialIndex,
                         surface.SurfFlags, surface.FaceFlags, surface.Geo, surface.Light, surface.Tex,
                         surface.ExtraLightIntensity, surface.AdjoinFlags,
+                        normal = Position(surface.Normal), geometryBounds = GeometryBounds(surface.Corners.Select(c => c.Vertex.Position)),
+                        centroid = surface.Corners.Count == 0 ? null : Position(surface.Corners.Aggregate(Vec3.Zero, (sum, c) => sum + c.Vertex.Position) * (1.0 / surface.Corners.Count)),
                         adjoinSector = surface.Adjoin is null ? -1 : level.Sectors.IndexOf(surface.Adjoin.Sector),
                         adjoinSurface = surface.Adjoin is null ? -1 : surface.Adjoin.Sector.Surfaces.IndexOf(surface.Adjoin),
                         corners = surface.Corners.Select((corner, index) => new
@@ -249,13 +256,19 @@ public static class AgentQueries
                 sectors = level.Sectors.Count, surfaces = level.Sectors.Sum(s => s.Surfaces.Count),
                 vertices = level.Sectors.Sum(s => s.Vertices.Count), things = level.Things.Count,
                 lights = level.Lights.Count, cogs = level.Cogs.Count, architecturalObjects = level.ArchitecturalLighting.Count,
-                templates = level.Templates.Count, materials = document.Materials.Count,
+                templates = level.Templates.Count, materials = document.Materials.Count, colormaps = level.ColorMaps.Count,
             },
             level.ThingCapacity, preservationWarnings = document.PreservationWarnings,
         };
     }
 
     private static double[] Position(Vec3 value) => [value.X, value.Y, value.Z];
+    private static object? GeometryBounds(IEnumerable<Vec3> vertices)
+    {
+        var box = Box.Empty; bool any = false;
+        foreach (var vertex in vertices) { box.Encapsulate(vertex); any = true; }
+        return any ? Bounds(box) : null;
+    }
     private static float[] Rgb(ColorF value) => [value.R, value.G, value.B];
     private static object? Bounds(Box? value) => value is Box box ? new { min = Position(box.Min), max = Position(box.Max) } : null;
     private static object[] Parameters(IEnumerable<KeyValuePair<string, string>> records) =>

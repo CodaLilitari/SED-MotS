@@ -19,11 +19,15 @@ public static class AgentSchema
             foreach (var field in fields)
                 properties[field] = field switch
                 {
-                    "thing" or "sector" or "surface" or "vertex" or "materialIndex" => Index(),
+                    "thing" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" => Index(),
                     "position" or "center" or "orientation" => Vector(-1_000_000, 1_000_000),
                     "rgb" => Vector(0, 1),
                     "flags" => new { type = "integer", minimum = 0, maximum = (long)uint.MaxValue },
-                    "halfSize" or "range" => Number(0.0001, 100000),
+                    "halfSize" or "range" or "distance" => Number(0.0001, 100000),
+                    "width" or "height" => new { type = "integer", minimum = 1, maximum = 16384 },
+                    "geometryMode" => new { type = "integer", minimum = 0, maximum = 4 },
+                    "lightMode" or "textureMode" => new { type = "integer", minimum = 0, maximum = 3 },
+                    "uv" => new { type = "array", minItems = 3, maxItems = 64, items = new { type = "array", minItems = 2, maxItems = 2, items = Number(-1_000_000, 1_000_000) } },
                     "intensity" => Number(0, 1000),
                     "value" when operation == "setGravity" => Number(0, 10000),
                     "value" when operation == "setSectorAmbient" => Number(0, 1),
@@ -71,6 +75,14 @@ public static class AgentSchema
         "addBox" => "Append an untextured, unconnected box sector; this does not create a portal or corridor connection.",
         "addThing" => "Append a thing using an existing template from query templates and return its new index in the plan.",
         "addLight" => "Append an editor light; this does not bake surface lighting. Colored lights require MotS.",
+        "registerMaterial" => "Append a unique .mat resource basename and return its material index; no asset file is read, verified or copied.",
+        "registerColormap" => "Append a unique .cmp resource basename; index zero is the master palette. No asset availability check.",
+        "setSectorColormap" => "Select a registered colormap for the sector.",
+        "fitSurfaceTexture" => "Fit the surface UVs to the supplied width/height in texels. Query the corners for readback; asset dimensions must be supplied by the caller.",
+        "setSurfaceUv" => "Set explicit texel UV pairs in existing surface-corner order. Preserves geometry and independent lighting channels.",
+        "setSurfaceRenderModes" => "Set geometry, lighting and texture modes explicitly. Geometry mode zero hides the face; this does not change portal flags.",
+        "extrudeSurface" => "Extrude an eligible convex sector face outward by positive distance; append a sector with inward normals and an open paired portal. Refuses occupied portals and overlapping geometry.",
+        "adjoinSurfaces" => "Make two coincident, oppositely wound faces in different sectors into an open paired portal. Refuses existing adjoins and mismatched polygons.",
         _ => operation,
     };
 }

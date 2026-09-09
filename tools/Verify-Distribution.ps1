@@ -123,6 +123,9 @@ try {
         if (!$seen.Contains($prefix + $required)) { throw "The binary ZIP lacks a required distribution member: $required" }
     }
     $provenanceEntry = $archive.GetEntry($prefix + 'PROVENANCE.json')
+    foreach ($required in @('AGENTS.md','.agents/skills/sed-mots/SKILL.md','tools/Test-AgentDesign.ps1','docs/AGENT_DESIGN_ROADMAP.md')) {
+        if (!$seen.Contains($prefix + $required)) { throw "The binary ZIP lacks an agent design workflow member: $required" }
+    }
     if ($null -eq $provenanceEntry) { throw 'The binary ZIP has no source provenance.' }
     $reader = [IO.StreamReader]::new($provenanceEntry.Open())
     try { $provenance = $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Dispose() }

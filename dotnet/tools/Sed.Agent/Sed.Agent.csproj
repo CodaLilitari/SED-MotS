@@ -6,5 +6,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>sed-agent</AssemblyName>
   </PropertyGroup>
-  <ItemGroup><ProjectReference Include="../../src/Sed.Formats/Sed.Formats.csproj" /></ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Sed.Formats/Sed.Formats.csproj" />
+    <ProjectReference Include="../../src/Sed.Rendering/Sed.Rendering.csproj" />
+    <ProjectReference Include="../../src/Sed.Rendering.Vulkan/Sed.Rendering.Vulkan.csproj" />
+  </ItemGroup>
 </Project>

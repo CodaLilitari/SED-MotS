@@ -4,7 +4,7 @@ using Sed.Core.Model;
 namespace Sed.Core.Editing;
 
 /// <summary>
-/// Extrudes a surface along its normal by a distance, creating a new sector
+/// Extrudes a surface outward, opposite its inward normal, creating a new sector
 /// (adjoin surface, opposite surface, and side surfaces). Fully reversible.
 /// </summary>
 public sealed class ExtrudeSurfaceCommand : IEditCommand
@@ -19,6 +19,7 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
     private Surface? _adjoinSurface;
     private Surface? _oldAdjoin;
     private long _oldAdjoinFlags;
+    private int _oldGeo;
 
     public ExtrudeSurfaceCommand(Surface surface, double distance)
     {
@@ -28,14 +29,50 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
 
     public string Name => "Extrude surface";
 
+    /// <summary>Checks a finite positive extrusion without changing level topology.</summary>
+    public static string? Validate(Surface surface, double distance)
+    {
+        if (!double.IsFinite(distance) || distance <= 0) return "Extrusion distance must be finite and positive; inward extrusion would overlap the source room.";
+        if (!surface.Sector.Level.Sectors.Contains(surface.Sector) || !surface.Sector.Surfaces.Contains(surface))
+            return "The source surface must belong to a live sector.";
+        if (surface.Adjoin is not null) return "The source surface is already adjoined.";
+        int maximum = surface.Sector.Level.Kind == ProjectType.InfernalMachine ? 64 : 24;
+        if (surface.Corners.Count < 3 || surface.Corners.Count > maximum) return $"The source polygon must have between 3 and {maximum} corners.";
+        if (surface.Corners.Any(c => c.Vertex is null || !surface.Sector.Vertices.Contains(c.Vertex) ||
+            !double.IsFinite(c.Vertex.Position.X) || !double.IsFinite(c.Vertex.Position.Y) || !double.IsFinite(c.Vertex.Position.Z)))
+            return "The source polygon has an invalid vertex.";
+        surface.RecalcNormal();
+        if (surface.Normal.LengthSquared < 0.99) return "The source polygon has no usable normal.";
+        var origin = surface.Corners[0].Vertex.Position;
+        foreach (var corner in surface.Corners)
+            if (System.Math.Abs(surface.Normal.Dot(corner.Vertex.Position - origin)) > 1e-7)
+                return "The source polygon must be planar.";
+        for (int i = 0; i < surface.Corners.Count; i++)
+        {
+            var a = surface.Corners[i].Vertex.Position;
+            var edge = surface.Corners[(i + 1) % surface.Corners.Count].Vertex.Position - a;
+            if (edge.LengthSquared <= 1e-18) return "The source polygon has a zero-length edge.";
+            foreach (var corner in surface.Corners)
+                if (edge.Cross(corner.Vertex.Position - a).Dot(surface.Normal) < -1e-7)
+                    return "The source polygon must be convex and consistently wound.";
+            var offset = a - surface.Normal * distance;
+            if (!double.IsFinite(offset.X) || !double.IsFinite(offset.Y) || !double.IsFinite(offset.Z))
+                return "Extrusion would produce a non-finite coordinate.";
+        }
+        return null;
+    }
+
     public void Apply()
     {
         var level = _surface.Sector.Level;
 
         if (!_built)
         {
+            if (Validate(_surface, _distance) is { } problem) throw new ArgumentException(problem);
             BuildExtrusion();
             _built = true;
+            level.Sectors.Add(_newSector!);
+            level.RenumberSectors();
         }
         else
         {
@@ -48,6 +85,7 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
 
         _surface.Adjoin = _adjoinSurface;
         _surface.AdjoinFlags = AdjoinFlagMask;
+        _surface.Geo = 0; // An open portal must not retain an opaque wall face.
         if (_adjoinSurface != null)
         {
             _adjoinSurface.Adjoin = _surface;
@@ -67,6 +105,7 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
 
         _surface.Adjoin = _oldAdjoin;
         _surface.AdjoinFlags = _oldAdjoinFlags;
+        _surface.Geo = _oldGeo;
 
         if (_adjoinSurface != null)
         {
@@ -83,9 +122,11 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
 
         _oldAdjoin = _surface.Adjoin;
         _oldAdjoinFlags = _surface.AdjoinFlags;
+        _oldGeo = _surface.Geo;
 
         // 1. Create new sector, copy properties from source sector.
-        _newSector = level.NewSector();
+        // Build detached so a failed allocation/geometry step cannot append a partial sector.
+        _newSector = new Sector(level);
         _newSector.Ambient = source.Ambient;
         _newSector.Flags = source.Flags & ~0x1000L; // New volume has no inherited interior COLLIDEBOX.
         _newSector.ColorMap = source.ColorMap;
@@ -109,9 +150,10 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
         for (int i = 0; i < n; i++)
             back[i] = _newSector.AddVertex(_surface.Corners[i].Vertex.Position - normal * _distance);
 
-        // Adjoin surface — copy of the original using front ring (same winding/UVs).
+        // Front cap faces into the new volume, opposite the source face.
         _adjoinSurface = NewSurfaceLike(_surface, _newSector);
-        for (int i = 0; i < n; i++)
+        _adjoinSurface.Geo = 0;
+        for (int i = n - 1; i >= 0; i--)
             _adjoinSurface.Corners.Add(new Surface.Corner
             {
                 Vertex = front[i],
@@ -121,9 +163,9 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
             });
         _adjoinSurface.RecalcNormal();
 
-        // Opposite surface — reversed winding so it faces the adjoin.
+        // The far cap has the source winding and faces back toward the portal.
         var opposite = NewSurfaceLike(_surface, _newSector);
-        for (int i = n - 1; i >= 0; i--)
+        for (int i = 0; i < n; i++)
             opposite.Corners.Add(new Surface.Corner
             {
                 Vertex = back[i],

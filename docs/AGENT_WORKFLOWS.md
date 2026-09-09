@@ -1,8 +1,10 @@
 # Local agent workflows
 
-The packaged `agent/sed-agent.exe` supports local tools that can start an executable and read JSON. It works without an editor window, graphics device, model SDK, credentials, or a network service. The calling agent chooses edits; the executable handles parsing, validation, provenance checks, and new output creation. This command-line protocol is not an MCP server.
+The packaged `agent/sed-agent.exe` supports local tools that can start an executable and read JSON. Editing works without an editor window, graphics device, model SDK, credentials, or network service; optional diagnostic snapshots use offscreen Vulkan. The calling agent chooses edits; the executable handles parsing, validation, provenance checks, and new output creation. This command-line protocol is not an MCP server.
 
 Start with `sed-agent --help`, `sed-agent schema commands`, and `sed-agent schema query`. Use `sed-agent schema setGravity` (or another operation name) for a focused patch schema. All normal command responses, including expected failures, are JSON. Check the process exit code before using the result; the full contract is in [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md).
+
+For a complete connected-geometry example, run [Test-AgentDesign.ps1](../tools/Test-AgentDesign.ps1) with an explicit `-AgentPath` and fresh `-OutputDirectory`. It discovers face directions, constructs an L-shaped three-room MotS layout through reviewed edits, assigns resource references and UVs, verifies a JK connection, and captures offscreen interior views. Fictional resource names make the test self-contained; no assets or playable episode are implied. `-SkipSnapshot` exercises only the authoring path on machines without Vulkan. Exact requests, results and a receipt remain in the output folder.
 
 ## Read, plan, review, apply, read back
 

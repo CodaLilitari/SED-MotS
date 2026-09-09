@@ -10,6 +10,8 @@ The fork preserves MotS's independent mono/RGB lighting, architectural arrays an
 
 Agents can discover focused command schemas, query current values in bounded pages, send JSON on stdin, and require an exact reviewed output hash before writing. Native project edits also bind the imported template dependencies. The [agent workflows](docs/AGENT_WORKFLOWS.md) show the inspect, plan, apply and readback loop; no model service or API key is needed.
 
+The agent can also register material/colormap references, edit surface UVs, extrude rooms and connect matching faces with checked portals. Queries expose surface normals, geometry bounds and neighboring sectors. An explicit-camera `snapshot` produces a diagnostic PNG using offscreen Vulkan without opening a window; it does not represent game textures, things or MotS lighting. The included [Codex skill](.agents/skills/sed-mots/SKILL.md) supports this workflow through the CLI. An MCP adapter is optional future integration; see the [agent design roadmap](docs/AGENT_DESIGN_ROADMAP.md).
+
 ## .NET build and packaging
 
 Use the .NET SDK pinned by `global.json`:
