@@ -29,7 +29,7 @@ The validation and launch-contract checks do not constitute a campaign or multip
 
 Point the assistant or script at `agent/sed-agent.exe` and [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md). No AI service, credentials or model is bundled; this is a local executable it can call.
 
-`schema` returns JSON commands and a patch JSON Schema. `inspect` reports the source SHA256 and indices. `plan` checks edits without writing. `apply` creates a new output and refuses to overwrite existing work. `launch-plan` returns an engine invocation without launching it.
+`--help` gives compact command discovery, and `schema <operation>` gives a focused patch schema. `query` reads current values and template candidates in bounded pages. JSON requests can arrive on stdin using `-`. `plan` checks edits without writing; passing its output hash to `apply` binds the new file to those reviewed bytes. Native projects also bind their imported template dependencies. `launch-plan` returns an engine invocation without launching it. See [AGENT_WORKFLOWS.md](AGENT_WORKFLOWS.md) for a complete read, plan, apply and readback example.
 
 ## Source and notices
 

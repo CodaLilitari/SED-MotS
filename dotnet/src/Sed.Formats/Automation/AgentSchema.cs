@@ -3,15 +3,18 @@ namespace Sed.Formats.Automation;
 /// <summary>JSON Schema for constructing the exact version-one patch protocol.</summary>
 public static class AgentSchema
 {
-    public static object Patch()
+    public static object Patch(string? operationName = null)
     {
+        if (operationName is not null && !AgentWorkspace.OperationFields.ContainsKey(operationName))
+            throw new AgentRequestException($"Unknown schema '{operationName}'. Use schema commands or schema for discovery.");
         object Number(double minimum, double maximum) => new { type = "number", minimum, maximum };
-        object Index() => new { type = "integer", minimum = 0 };
+        object Index() => new { type = "integer", minimum = 0, maximum = int.MaxValue };
         object Vector(double min, double max) => new { type = "array", minItems = 3, maxItems = 3, items = Number(min, max) };
         object Token() => new { type = "string", minLength = 1, maxLength = 127, pattern = "^[!$-~]+$" };
         var variants = new List<object>();
         foreach (var (operation, fields) in AgentWorkspace.OperationFields)
         {
+            if (operationName is not null && operation != operationName) continue;
             var properties = new Dictionary<string, object> { ["op"] = new Dictionary<string, object> { ["const"] = operation } };
             foreach (var field in fields)
                 properties[field] = field switch
@@ -29,7 +32,7 @@ public static class AgentSchema
                     "key" => new { type = "string", minLength = 1, maxLength = 127, pattern = "^[A-Za-z0-9_]+$" },
                     _ => Token(),
                 };
-            variants.Add(new { type = "object", additionalProperties = false,
+            variants.Add(new { type = "object", description = OperationDescription(operation), additionalProperties = false,
                 required = new[] { "op" }.Concat(fields).ToArray(), properties });
         }
         return new Dictionary<string, object>
@@ -42,9 +45,32 @@ public static class AgentSchema
             {
                 ["schemaVersion"] = new Dictionary<string, object> { ["const"] = 1 },
                 ["inputSha256"] = new { type = "string", pattern = "^[0-9a-fA-F]{64}$" },
+                ["sourceRevision"] = new { type = "string", pattern = "^[0-9a-fA-F]{64}$",
+                    description = "Required for native JED/SED/NED inputs; copy from inspect or query. Binds template dependencies as well as source bytes." },
                 ["operations"] = new { type = "array", minItems = 1, maxItems = AgentWorkspace.MaxOperations,
                     items = new { oneOf = variants } },
             },
         };
     }
+
+    private static string OperationDescription(string operation) => operation switch
+    {
+        "setThingPosition" => "Place a thing at an absolute world position and explicitly assign its sector.",
+        "setThingOrientation" => "Set absolute pitch, yaw and roll in degrees; read the current orientation using query things.",
+        "setThingName" => "Set the thing's display name without changing its template.",
+        "setThingTemplate" => "Use an existing template from query templates. Clear an incompatible architecture binding explicitly first.",
+        "setThingValue" => "Set one named thing parameter. Inspect values before editing; this is not a COG reference-remapping operation.",
+        "clearThingArchitecture" => "Explicitly clear a thing's architectural lighting binding; retain the stored lighting arrays.",
+        "setVertexPosition" => "Move a sector-local vertex in world units; all referencing surfaces in that sector use the new position.",
+        "setVertexLight" => "Change one stored lighting component on every corner sharing the sector-local vertex. RGB channels require MotS; this does not bake lighting.",
+        "setSurfaceMaterial" => "Choose an existing index from query materials; this does not import a new material.",
+        "setSurfaceFlags" => "Replace the surface flag bitmask with an unsigned 32-bit value.",
+        "setSectorFlags" => "Replace sector flags; collision-box metadata must agree with its presence flag.",
+        "setSectorAmbient" => "Set scalar ambient light in [0,1]; read the current value using query sectors.",
+        "setGravity" => "Set absolute level gravity; read the current value using query summary.",
+        "addBox" => "Append an untextured, unconnected box sector; this does not create a portal or corridor connection.",
+        "addThing" => "Append a thing using an existing template from query templates and return its new index in the plan.",
+        "addLight" => "Append an editor light; this does not bake surface lighting. Colored lights require MotS.",
+        _ => operation,
+    };
 }

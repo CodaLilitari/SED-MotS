@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
 using Sed.Formats.Automation;
 using Sed.Formats.Launching;
 
@@ -11,15 +12,38 @@ try
     int exitCode = 0;
     switch (args.FirstOrDefault())
     {
+        case null:
+        case "help" when args.Length is 1 or 2:
+        case "--help" when args.Length == 1:
+        case "-h" when args.Length == 1:
+            var commands = AgentCommandCatalog.Commands();
+            if (args.Length == 2)
+            {
+                commands = commands.Where(c => c.Name == args[1]).ToArray();
+                if (commands.Count == 0) throw new AgentRequestException("Unknown command. Use help to list commands.");
+            }
+            result = new { schemaVersion = 1, commands = commands.Select(c => new { c.Name, c.Usage, c.Description, c.WritesFiles }),
+                next = "Use schema query for bounded readback, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
+            break;
+        case "--version" when args.Length == 1:
+        case "version" when args.Length == 1:
+            result = new { schemaVersion = 1, name = "sed-agent",
+                version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
+                capabilities = Capabilities() };
+            break;
+        case "schema" when args.Length == 2:
+            result = args[1] switch {
+                "query" => AgentQueries.Schema(), "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
+                "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
+                _ => AgentSchema.Patch(args[1]) };
+            break;
         case "schema" when args.Length == 1:
-            result = new { schemaVersion = 1, commands = new[] {
-                "inspect <level.jkl> [sector-index]", "validate <level.jkl>",
-                "plan <level.jkl> <patch.json>", "apply <level.jkl> <patch.json> <new-output.jkl>",
-                "new <new-output.jkl> [mots|jk]", "launch-plan <launch-request.json>",
-                "convert <legacy.jed> <new-output.jkl>", "archive <archive.gob|archive.goo>",
-                "extract <archive.gob|archive.goo> <exact-entry-name> <new-output.jkl>" },
+            result = new { schemaVersion = 1, commands = AgentCommandCatalog.Commands().Select(c => c.Usage),
                 patch = new { schemaVersion = 1, inputSha256 = "SHA256 returned by inspect", operations = AgentWorkspace.OperationFields },
                 patchJsonSchema = AgentSchema.Patch(),
+                queryJsonSchema = AgentQueries.Schema(),
+                commandSchemas = AgentCommandCatalog.Commands(),
+                capabilities = Capabilities(),
                 selectors = "Zero-based indices from inspect, bound to the exact inputSha256.",
                 vectors = "position, orientation, center, rgb are arrays of three finite numbers; orientation is pitch/yaw/roll in degrees.",
                 limits = new { operations = AgentWorkspace.MaxOperations, requestBytes = AgentWorkspace.MaxRequestBytes, levelBytes = AgentWorkspace.MaxLevelBytes },
@@ -29,6 +53,9 @@ try
         case "inspect" when args.Length is 2 or 3:
             result = AgentWorkspace.Inspect(args[1], args.Length == 3 ? int.Parse(args[2]) : null);
             break;
+        case "query" when args.Length == 3:
+            result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
+            break;
         case "validate" when args.Length == 2:
             result = AgentWorkspace.Validate(args[1]);
             var validation = JsonSerializer.SerializeToElement(result, AgentWorkspace.JsonOptions);
@@ -37,8 +64,8 @@ try
         case "plan" when args.Length == 3:
             result = AgentWorkspace.Plan(args[1], ReadRequest(args[2])).Report;
             break;
-        case "apply" when args.Length == 4:
-            result = AgentWorkspace.Commit(AgentWorkspace.Plan(args[1], ReadRequest(args[2])), args[3]);
+        case "apply" when args.Length is 4 or 5:
+            result = AgentWorkspace.Commit(AgentWorkspace.Plan(args[1], ReadRequest(args[2])), args[3], args.Length == 5 ? args[4] : null);
             break;
         case "new" when args.Length is 2 or 3:
             result = AgentWorkspace.Create(args[1], args.Length == 3 ? args[2] : "mots");
@@ -54,8 +81,9 @@ try
             break;
         case "launch-plan" when args.Length == 2:
             var launchOptions = new JsonSerializerOptions(AgentWorkspace.JsonOptions)
-            { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
-            launchOptions.Converters.Add(new JsonStringEnumConverter());
+            { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow, RespectRequiredConstructorParameters = true, MaxDepth = 16,
+                AllowDuplicateProperties = false };
+            launchOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false));
             var launch = JsonSerializer.Deserialize<LaunchRequest>(ReadRequest(args[1]), launchOptions)
                 ?? throw new AgentRequestException("Expected a launch request object.");
             result = new { schemaVersion = 1, plan = GameLauncher.PrepareLaunch(launch),
@@ -66,7 +94,11 @@ try
     Console.WriteLine(JsonSerializer.Serialize(result, AgentWorkspace.JsonOptions));
     return exitCode;
 }
-catch (Exception error) when (error is AgentRequestException or JsonException or FormatException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException or NotSupportedException)
+catch (AgentRequestException error)
+{ return Failure(2, "invalid_request", error.Message, details: new { error.OperationIndex, error.Operation, error.JsonPointer }); }
+catch (JsonException error)
+{ return Failure(2, "invalid_request", error.Message, details: new { jsonPath = error.Path, lineNumber = error.LineNumber, bytePositionInLine = error.BytePositionInLine }); }
+catch (Exception error) when (error is FormatException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException or NotSupportedException)
 { return Failure(2, "invalid_request", error.Message); }
 catch (AgentValidationException error)
 { return Failure(3, "validation_failed", error.Message, error.Issues); }
@@ -77,11 +109,13 @@ catch (Exception error) when (error is IOException or UnauthorizedAccessExceptio
 
 static string ReadRequest(string path)
 {
-    if (new FileInfo(path).Length > AgentWorkspace.MaxRequestBytes) throw new AgentRequestException("Patch exceeds 1 MiB.");
-    return File.ReadAllText(path);
+    if (path == "-") return AgentRequestReader.Read(Console.OpenStandardInput());
+    using var input = File.OpenRead(path);
+    return AgentRequestReader.Read(input);
 }
-static int Failure(int code, string type, string message, object? issues = null)
+static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics"];
+static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
-    Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues }, AgentWorkspace.JsonOptions));
+    Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));
     return code;
 }

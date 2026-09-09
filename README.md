@@ -8,6 +8,8 @@ Start with [the Windows guide](docs/WINDOWS_QUICKSTART.md) or [the agent protoco
 
 The fork preserves MotS's independent mono/RGB lighting, architectural arrays and thing bindings, declared thing capacity, sector metadata and repeated parameters such as `frame=`. Copy/paste, lighting undo and sector cleaving preserve the added fields. The agent tool shares Core editing commands with the GUI and binds every patch's indices to its input SHA256. Windows launch profiles build direct executable arguments, and the Windows renderer uses `vulkan-1.dll`.
 
+Agents can discover focused command schemas, query current values in bounded pages, send JSON on stdin, and require an exact reviewed output hash before writing. Native project edits also bind the imported template dependencies. The [agent workflows](docs/AGENT_WORKFLOWS.md) show the inspect, plan, apply and readback loop; no model service or API key is needed.
+
 ## .NET build and packaging
 
 Use the .NET SDK pinned by `global.json`:

@@ -11,22 +11,36 @@ using Sed.Formats.Gob;
 
 namespace Sed.Formats.Automation;
 
-public sealed class AgentRequestException(string message) : Exception(message);
+public sealed class AgentRequestException(string message, int? operationIndex = null,
+    string? operation = null, string? jsonPointer = null, Exception? innerException = null)
+    : Exception(message, innerException)
+{
+    public int? OperationIndex { get; } = operationIndex;
+    public string? Operation { get; } = operation;
+    public string? JsonPointer { get; } = jsonPointer;
+}
 public sealed class AgentConflictException(string message) : Exception(message);
 public sealed class AgentValidationException(string message, object issues) : Exception(message)
 {
     public object Issues { get; } = issues;
 }
 
+public sealed record AgentInputDependency(string Role, string Path, bool Exists, long? Bytes, string? Sha256);
+public sealed record AgentDocumentSnapshot(JklDocument Document, string InputSha256, string SourceRevision,
+    IReadOnlyList<AgentInputDependency> Dependencies);
 public sealed record PreparedAgentEdit(string InputPath, string InputSha256, string OutputText,
-    object Report);
+    object Report)
+{
+    public string? SourceRevision { get; init; }
+    public IReadOnlyList<AgentInputDependency> Dependencies { get; init; } = Array.Empty<AgentInputDependency>();
+}
 
 /// <summary>
 /// Headless document operations. Edits use the GUI's Core commands on an isolated
 /// parsed document. Planning never writes; committing creates a new file atomically.
 /// Numeric selectors are valid only for the exact input hash in the request.
 /// </summary>
-public static class AgentWorkspace
+public static partial class AgentWorkspace
 {
     public const int SchemaVersion = 1;
     public const int MaxOperations = 1000;
@@ -42,28 +56,85 @@ public static class AgentWorkspace
 
     public static (JklDocument Document, string Hash) Load(string path)
     {
+        var snapshot = LoadWithProvenance(path);
+        return (snapshot.Document, snapshot.InputSha256);
+    }
+
+    public static AgentDocumentSnapshot LoadWithProvenance(string path)
+    {
+        path = Path.GetFullPath(path);
         string extension = Path.GetExtension(path).ToLowerInvariant();
         if (extension is not (".jkl" or ".jed" or ".sed" or ".ned"))
             throw new AgentRequestException("Read a JKL or supported text JED/SED/NED project. Use archive/extract for GOB/GOO contents.");
-        var info = new FileInfo(path);
-        if (!info.Exists) throw new FileNotFoundException("The level file was not found.", path);
-        if (info.Length > MaxLevelBytes) throw new AgentRequestException("The level exceeds the 128 MiB input limit.");
-        var bytes = File.ReadAllBytes(path);
+        var bytes = ReadBoundedFile(path);
+        string hash = Hash(bytes);
         if (extension != ".jkl")
         {
-            var import = JedImporter.ImportFile(path);
-            if (Hash(File.ReadAllBytes(path)) != Hash(bytes))
-                throw new AgentConflictException("The legacy project changed during import.");
+            string text = LegacyText.Decode(bytes);
+            bool mots = JedImporter.DetectProjectType(text) == ProjectType.MysteriesOfTheSith;
+            string library = mots ? "mots.tpl" : "master.tpl";
+            var captured = new[] {
+                CaptureDependency("bundledTemplates", Path.Combine(AppContext.BaseDirectory, "data", library)),
+                CaptureDependency("companionTemplates", Path.Combine(Path.GetDirectoryName(path)!, library)) };
+            var dependencies = Array.AsReadOnly(captured.Select(c => c.metadata).ToArray());
+            var templates = JedImporter.LoadTemplateTexts(captured.Where(c => c.content is not null).Select(c => LegacyText.Decode(c.content!)));
+            var import = JedImporter.ImportText(text, templates);
+            EnsureInputsUnchanged(path, hash, dependencies);
+            if (templates.Count == 0 && import.Document.Level.Things.Count > 0)
+                import.Document.PreservationWarnings.Add($"No {library} template library was found beside the project or in the editor data folder; supply templates before exporting game entities.");
             if (!ReferenceEquals(import.Document.PreservationWarnings, import.Warnings))
                 import.Document.PreservationWarnings.AddRange(import.Warnings);
-            return (import.Document, Hash(bytes));
+            return new(import.Document, hash, ComputeSourceRevision(hash, dependencies), dependencies);
         }
-        return (JklParser.ParseDocument(LegacyText.Decode(bytes)), Hash(bytes));
+        return new(JklParser.ParseDocument(LegacyText.Decode(bytes)), hash, hash, Array.Empty<AgentInputDependency>());
+    }
+
+    private static byte[] ReadBoundedFile(string path)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        if (stream.Length > MaxLevelBytes) throw new AgentRequestException("The source or template library exceeds the 128 MiB input limit.");
+        var bytes = new byte[checked((int)stream.Length)];
+        stream.ReadExactly(bytes);
+        if (stream.ReadByte() != -1) throw new AgentConflictException("An input grew while it was being captured.");
+        return bytes;
+    }
+
+    private static (AgentInputDependency metadata, byte[]? content) CaptureDependency(string role, string path)
+    {
+        path = Path.GetFullPath(path);
+        if (!File.Exists(path)) return (new(role, path, false, null, null), null);
+        byte[] content = ReadBoundedFile(path);
+        return (new(role, path, true, content.LongLength, Hash(content)), content);
+    }
+
+    private static string ComputeSourceRevision(string inputHash, IReadOnlyList<AgentInputDependency> dependencies)
+    {
+        if (dependencies.Count == 0) return inputHash;
+        // Paths are reported for review; content/role/existence bind semantics independently of machine locations.
+        var canonical = new StringBuilder("sed-agent-native-source-v1\n").Append(inputHash).Append('\n');
+        foreach (var dependency in dependencies.OrderBy(d => d.Role, StringComparer.Ordinal))
+            canonical.Append(dependency.Role).Append('|').Append(Path.GetFileName(dependency.Path).ToLowerInvariant())
+                .Append('|').Append(dependency.Exists ? "present" : "absent").Append('|')
+                .Append(dependency.Sha256 ?? "-").Append('\n');
+        return Hash(Encoding.UTF8.GetBytes(canonical.ToString()));
+    }
+
+    private static void EnsureInputsUnchanged(string path, string expectedHash, IReadOnlyList<AgentInputDependency> dependencies)
+    {
+        if (Hash(ReadBoundedFile(path)) != expectedHash)
+            throw new AgentConflictException("The input changed after capture. No output was written.");
+        foreach (var dependency in dependencies)
+        {
+            var current = CaptureDependency(dependency.Role, dependency.Path).metadata;
+            if (current.Exists != dependency.Exists || current.Bytes != dependency.Bytes || current.Sha256 != dependency.Sha256)
+                throw new AgentConflictException($"The {dependency.Role} input changed after capture: {dependency.Path}. No output was written.");
+        }
     }
 
     public static object Inspect(string path, int? sectorIndex = null)
     {
-        var (doc, hash) = Load(path);
+        var snapshot = LoadWithProvenance(path);
+        var doc = snapshot.Document; var hash = snapshot.InputSha256;
         var level = doc.Level;
         object? detail = null;
         if (sectorIndex is int index)
@@ -87,7 +158,8 @@ public static class AgentWorkspace
         }
         return new
         {
-            schemaVersion = SchemaVersion, inputSha256 = hash, game = level.Kind.ToString(),
+            schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
+            dependencies = snapshot.Dependencies, game = level.Kind.ToString(),
             counts = Counts(level), materials = doc.Materials,
             preservationWarnings = doc.PreservationWarnings,
             sectors = level.Sectors.Select((s, i) => new { index = i, s.Num, vertices = s.Vertices.Count, surfaces = s.Surfaces.Count }),
@@ -102,16 +174,19 @@ public static class AgentWorkspace
 
     public static object Validate(string path)
     {
-        var (doc, hash) = Load(path);
+        var snapshot = LoadWithProvenance(path);
+        var doc = snapshot.Document; var hash = snapshot.InputSha256;
         var issues = ConsistencyChecker.Check(doc.Level);
-        return new { schemaVersion = SchemaVersion, inputSha256 = hash,
+        return new { schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
+            dependencies = snapshot.Dependencies,
             valid = issues.All(i => i.Severity != IssueSeverity.Error), issues = DescribeIssues(issues),
             preservationWarnings = doc.PreservationWarnings };
     }
 
     public static PreparedAgentEdit ConvertDocument(string path)
     {
-        var (doc, hash) = Load(path);
+        var snapshot = LoadWithProvenance(path);
+        var doc = snapshot.Document; var hash = snapshot.InputSha256;
         string output = JklWriter.Build(doc);
         var reopened = JklParser.ParseDocument(output);
         var issues = ConsistencyChecker.Check(reopened.Level);
@@ -119,10 +194,11 @@ public static class AgentWorkspace
             throw new AgentValidationException("Converted output has validation errors. Inspect the project before exporting.", DescribeIssues(issues));
         return new PreparedAgentEdit(Path.GetFullPath(path), hash, output, new
         {
-            schemaVersion = 1, inputSha256 = hash, counts = Counts(reopened.Level),
+            schemaVersion = 1, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
+            dependencies = snapshot.Dependencies, outputSha256 = Hash(Encoding.UTF8.GetBytes(output)), counts = Counts(reopened.Level),
             preservationWarnings = doc.PreservationWarnings, issues = DescribeIssues(issues),
             note = "Legacy conversion uses the recorded importer coverage. Editor-only and unsupported records can produce warnings; this is not a gameplay test.",
-        });
+        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies };
     }
 
     public static object InspectArchive(string path)
@@ -154,29 +230,54 @@ public static class AgentWorkspace
             throw new AgentRequestException("Patch exceeds the 1 MiB request limit.");
         using var request = JsonDocument.Parse(requestText, new JsonDocumentOptions { MaxDepth = 16 });
         var root = request.RootElement;
-        Fields(root, "schemaVersion", "inputSha256", "operations");
+        FieldsWithOptional(root, ["sourceRevision"], "schemaVersion", "inputSha256", "operations");
         if (Integer(root, "schemaVersion") != SchemaVersion) throw new AgentRequestException("Unsupported patch schemaVersion.");
         var expected = String(root, "inputSha256");
         if (expected.Length != 64 || expected.Any(c => !Uri.IsHexDigit(c)))
             throw new AgentRequestException("inputSha256 must be a 64-digit SHA256 from inspect.");
-        var (doc, hash) = Load(path);
+        var snapshot = LoadWithProvenance(path);
+        var doc = snapshot.Document; var hash = snapshot.InputSha256;
         if (!string.Equals(hash, expected, StringComparison.OrdinalIgnoreCase))
             throw new AgentConflictException("The input changed since inspection. Inspect the current file and regenerate the patch.");
+        if (!root.TryGetProperty("sourceRevision", out _) && snapshot.Dependencies.Count != 0)
+            throw new AgentRequestException("Native projects require sourceRevision from inspect/query so companion templates are included in the input guard.", jsonPointer: "/sourceRevision");
+        if (root.TryGetProperty("sourceRevision", out _))
+        {
+            var revision = String(root, "sourceRevision");
+            if (revision.Length != 64 || revision.Any(c => !Uri.IsHexDigit(c)))
+                throw new AgentRequestException("sourceRevision must be a 64-digit SHA256 from inspect/query.", jsonPointer: "/sourceRevision");
+            if (!string.Equals(revision, snapshot.SourceRevision, StringComparison.OrdinalIgnoreCase))
+                throw new AgentConflictException("The source or a native template dependency changed since inspection. Inspect again and regenerate the patch.");
+        }
         var operations = root.GetProperty("operations");
         if (operations.ValueKind != JsonValueKind.Array || operations.GetArrayLength() is < 1 or > MaxOperations)
             throw new AgentRequestException("operations must contain between 1 and 1000 operations.");
 
         var before = Counts(doc.Level);
         var history = new EditHistory();
-        var changes = new List<object>();
+        var changes = new List<(JsonElement operation, int? createdIndex, string command, object? before, object? after)>();
         int operationIndex = 0;
         foreach (var operation in operations.EnumerateArray())
         {
             // Build each command against the current isolated model so later
             // operations can address objects appended by earlier operations.
-            var command = PrepareOperation(doc, operation);
-            history.Do(command);
-            changes.Add(new { index = operationIndex++, operation = String(operation, "op"), command = command.Name });
+            string? name = operation.ValueKind == JsonValueKind.Object && operation.TryGetProperty("op", out var operationName)
+                && operationName.ValueKind == JsonValueKind.String ? operationName.GetString() : null;
+            try
+            {
+                var command = PrepareOperation(doc, operation);
+                int? created = name switch { "addBox" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
+                    "addLight" => doc.Level.Lights.Count, _ => null };
+                object? oldValue = created is null ? OperationEffect(doc, operation, null) : null;
+                history.Do(command);
+                changes.Add((operation, created, command.Name, oldValue, OperationEffect(doc, operation, created)));
+            }
+            catch (Exception error) when (error is AgentRequestException or ArgumentException or InvalidOperationException or FormatException or OverflowException or KeyNotFoundException)
+            {
+                string pointer = $"/operations/{operationIndex}" + (error is AgentRequestException requestError ? requestError.JsonPointer : null);
+                throw new AgentRequestException(error.Message, operationIndex, name, pointer, error);
+            }
+            operationIndex++;
         }
         var issues = ConsistencyChecker.Check(doc.Level);
         if (issues.Any(i => i.Severity == IssueSeverity.Error))
@@ -188,22 +289,35 @@ public static class AgentWorkspace
             throw new AgentValidationException("The serialized level does not pass validation. No file was written.", DescribeIssues(roundTripIssues));
         if (reopened.Level.Sectors.Count != doc.Level.Sectors.Count || reopened.Level.Things.Count != doc.Level.Things.Count)
             throw new AgentValidationException("The serialized level changed its sector or thing count.", Array.Empty<object>());
+        var effects = new List<object>();
+        for (int index = 0; index < changes.Count; index++)
+        {
+            var change = changes[index];
+            object finalExpected = OperationEffect(doc, change.operation, change.createdIndex);
+            object readBack = OperationEffect(reopened, change.operation, change.createdIndex);
+            if (JsonSerializer.Serialize(finalExpected, JsonOptions) != JsonSerializer.Serialize(readBack, JsonOptions))
+                throw new AgentValidationException($"Operation {index} ({String(change.operation, "op")}) has an effect that cannot be preserved in the serialized level. No file was written.",
+                    new[] { new { operationIndex = index, operation = String(change.operation, "op"),
+                        jsonPointer = $"/operations/{index}", expected = finalExpected, actual = readBack } });
+            effects.Add(new { index, operation = String(change.operation, "op"), command = change.command,
+                before = change.before, afterOperation = change.after, serializedFinal = readBack });
+        }
         var outputHash = Hash(new UTF8Encoding(false).GetBytes(text));
         return new PreparedAgentEdit(Path.GetFullPath(path), hash, text, new
         {
-            schemaVersion = SchemaVersion, inputSha256 = hash, outputSha256 = outputHash,
-            before, after = Counts(reopened.Level), changes, issues = DescribeIssues(roundTripIssues),
+            schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
+            dependencies = snapshot.Dependencies, outputSha256 = outputHash,
+            before, after = Counts(reopened.Level), changes = effects, issues = DescribeIssues(roundTripIssues),
             preservationWarnings = doc.PreservationWarnings,
             note = "Planning uses the same Core editing commands as the GUI. It validates structure, not gameplay or resource availability. Moved models may require relighting.",
-        });
+        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies };
     }
 
     public static object Commit(PreparedAgentEdit edit, string outputPath)
     {
         // Output creation is deliberately no-clobber. An agent can produce a
         // reviewable result without overwriting the user's original project.
-        if (Hash(File.ReadAllBytes(edit.InputPath)) != edit.InputSha256)
-            throw new AgentConflictException("The input changed after planning. No output was written.");
+        EnsureInputsUnchanged(edit.InputPath, edit.InputSha256, edit.Dependencies);
         WriteNew(outputPath, edit.OutputText);
         return new { schemaVersion = SchemaVersion, written = Path.GetFullPath(outputPath), plan = edit.Report };
     }
@@ -301,7 +415,10 @@ public static class AgentWorkspace
                 return new SetSurfaceFlagsCommand(Surface(), UnsignedFlags(op, "flags"));
             case "setSectorFlags":
                 Fields(op, "op", "sector", "flags");
-                return new SetSectorFlagsCommand(Sector(), UnsignedFlags(op, "flags"));
+                long flags = UnsignedFlags(op, "flags");
+                if (((flags & 0x1000) != 0) != Sector().HasCollideBox)
+                    throw new AgentRequestException("The COLLIDEBOX flag must agree with stored collision-box data; this operation cannot create or remove a collision box.", jsonPointer: "/flags");
+                return new SetSectorFlagsCommand(Sector(), flags);
             case "setSectorAmbient":
                 Fields(op, "op", "sector", "value");
                 float ambient = (float)Number(op, "value", 0, 1);
@@ -320,7 +437,10 @@ public static class AgentWorkspace
                     Name = Token(op, "name"), Position = Vector(op, "position") });
             case "addLight":
                 Fields(op, "op", "position", "rgb", "intensity", "range");
-                return new CreateLightCommand(level, new Light { Position = Vector(op, "position"), Color = Color(op, "rgb"),
+                var rgb = Color(op, "rgb");
+                if (level.Kind == ProjectType.JediKnight && rgb != ColorF.White)
+                    throw new AgentRequestException("JK editor lights do not store RGB values. Use rgb [1,1,1] and the intensity field, or use a MotS level.", jsonPointer: "/rgb");
+                return new CreateLightCommand(level, new Light { Position = Vector(op, "position"), Color = rgb,
                     Intensity = Number(op, "intensity", 0, 1000), Range = Number(op, "range", 0.0001, 100000) });
             default: throw new AgentRequestException($"Unknown operation '{name}'. Use schema to list supported operations.");
         }
@@ -339,60 +459,114 @@ public static class AgentWorkspace
         ["addThing"] = ["sector", "template", "name", "position"], ["addLight"] = ["position", "rgb", "intensity", "range"],
     };
 
+    // Reports the editable fields addressed by one operation. The final readback
+    // is compared with the final model, so a later operation may intentionally
+    // replace an earlier value without producing a false serialization failure.
+    private static object OperationEffect(JklDocument doc, JsonElement op, int? created)
+    {
+        string name = String(op, "op");
+        var level = doc.Level;
+        if (name == "setGravity") return new { target = new { kind = "header" }, state = new { gravity = level.Header.Gravity } };
+        if (name.StartsWith("setThing", StringComparison.Ordinal) || name is "addThing" or "clearThingArchitecture")
+        {
+            int index = created ?? Integer(op, "thing"); var thing = At(level.Things, index, "thing");
+            return new { target = new { kind = "thing", index }, state = new {
+                thing.Name, thing.Template, position = Position(thing.Position), orientation = new[] { thing.Pitch, thing.Yaw, thing.Roll },
+                sector = thing.Sector is null ? -1 : level.Sectors.IndexOf(thing.Sector), thing.ArchLightingIndex,
+                values = thing.Values.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => new { key = p.Key, value = p.Value }).ToArray() } };
+        }
+        if (name == "addLight")
+        {
+            int index = created!.Value; var light = At(level.Lights, index, "light");
+            return new { target = new { kind = "light", index }, state = new { position = Position(light.Position),
+                rgb = new[] { light.Color.R, light.Color.G, light.Color.B }, light.Intensity, light.Range } };
+        }
+        int sectorIndex = created ?? Integer(op, "sector"); var sector = At(level.Sectors, sectorIndex, "sector");
+        if (name == "addBox") return new { target = new { kind = "sector", index = sectorIndex }, state = new {
+            vertices = sector.Vertices.Select(v => Position(v.Position)).ToArray(), surfaces = sector.Surfaces.Count } };
+        if (name == "setSectorFlags") return new { target = new { kind = "sector", index = sectorIndex }, state = new { sector.Flags, sector.HasCollideBox } };
+        if (name == "setSectorAmbient") return new { target = new { kind = "sector", index = sectorIndex }, state = new {
+            ambient = new[] { sector.Ambient.R, sector.Ambient.G, sector.Ambient.B } } };
+        if (name.StartsWith("setSurface", StringComparison.Ordinal))
+        {
+            int index = Integer(op, "surface"); var surface = At(sector.Surfaces, index, "surface");
+            return new { target = new { kind = "surface", sector = sectorIndex, index }, state = new { surface.Material, surface.MaterialIndex, surface.SurfFlags } };
+        }
+        int vertexIndex = Integer(op, "vertex"); var vertex = At(sector.Vertices, vertexIndex, "vertex");
+        if (name == "setVertexPosition") return new { target = new { kind = "vertex", sector = sectorIndex, index = vertexIndex }, state = new { position = Position(vertex.Position) } };
+        return new { target = new { kind = "vertex", sector = sectorIndex, index = vertexIndex }, state = new {
+            corners = sector.Surfaces.SelectMany((surface, surfaceIndex) => surface.Corners.Select((corner, cornerIndex) =>
+                new { surfaceIndex, cornerIndex, corner })).Where(c => c.corner.Vertex == vertex).Select(c => new {
+                    surface = c.surfaceIndex, corner = c.cornerIndex, mono = c.corner.MonoIntensity ?? c.corner.Intensity.R,
+                    rgb = new[] { c.corner.Intensity.R, c.corner.Intensity.G, c.corner.Intensity.B } }).ToArray() } };
+    }
+
     private static void Fields(JsonElement value, params string[] allowed)
+        => FieldsWithOptional(value, Array.Empty<string>(), allowed);
+
+    private static void FieldsWithOptional(JsonElement value, string[] optional, params string[] required)
     {
         if (value.ValueKind != JsonValueKind.Object) throw new AgentRequestException("Expected a JSON object.");
         var names = new HashSet<string>(StringComparer.Ordinal);
         foreach (var property in value.EnumerateObject())
-            if (!names.Add(property.Name) || !allowed.Contains(property.Name, StringComparer.Ordinal))
-                throw new AgentRequestException($"Duplicate or unsupported property '{property.Name}'.");
-        foreach (var name in allowed)
-            if (!names.Contains(name)) throw new AgentRequestException($"Missing required property '{name}'.");
+            if (!names.Add(property.Name) || !(required.Contains(property.Name, StringComparer.Ordinal) || optional.Contains(property.Name, StringComparer.Ordinal)))
+                throw FieldError($"Duplicate or unsupported property '{property.Name}'.", property.Name);
+        foreach (var name in required)
+            if (!names.Contains(name)) throw FieldError($"Missing required property '{name}'.", name);
     }
-    private static string String(JsonElement value, string key) => value.GetProperty(key).ValueKind == JsonValueKind.String
-        ? value.GetProperty(key).GetString()! : throw new AgentRequestException($"{key} must be a string.");
+    private static AgentRequestException FieldError(string message, string key) =>
+        new(message, jsonPointer: "/" + key.Replace("~", "~0").Replace("/", "~1"));
+    private static string String(JsonElement value, string key) => value.ValueKind == JsonValueKind.Object &&
+        value.TryGetProperty(key, out var property) && property.ValueKind == JsonValueKind.String
+        ? property.GetString()! : throw FieldError($"{key} must be a string.", key);
     private static string Token(JsonElement value, string key)
     {
         var text = String(value, key);
         if (text.Length is < 1 or > 127 || text.Any(c => c <= 32 || c >= 127 || c is '#' or '"'))
-            throw new AgentRequestException($"{key} must be a nonempty ASCII token of at most 127 characters without whitespace, quotes, or comments.");
+            throw FieldError($"{key} must be a nonempty ASCII token of at most 127 characters without whitespace, quotes, or comments.", key);
         return text;
     }
-    private static int Integer(JsonElement value, string key) => value.GetProperty(key).TryGetInt32(out var i)
-        ? i : throw new AgentRequestException($"{key} must be an integer.");
+    private static int Integer(JsonElement value, string key) => value.TryGetProperty(key, out var property) &&
+        property.ValueKind == JsonValueKind.Number && property.TryGetInt32(out var i)
+        ? i : throw FieldError($"{key} must be an integer.", key);
     private static long UnsignedFlags(JsonElement value, string key)
     {
-        if (!value.GetProperty(key).TryGetInt64(out var i) || i < 0 || i > uint.MaxValue)
-            throw new AgentRequestException($"{key} must be an unsigned 32-bit integer, expressed in decimal JSON.");
+        if (!value.TryGetProperty(key, out var property) || property.ValueKind != JsonValueKind.Number || !property.TryGetInt64(out var i) || i < 0 || i > uint.MaxValue)
+            throw FieldError($"{key} must be an unsigned 32-bit integer, expressed in decimal JSON.", key);
         return i;
     }
     private static double Number(JsonElement value, string key, double min, double max)
     {
-        if (!value.GetProperty(key).TryGetDouble(out var number) || !double.IsFinite(number) || number < min || number > max)
-            throw new AgentRequestException($"{key} must be finite and between {min} and {max}.");
+        if (!value.TryGetProperty(key, out var property) || property.ValueKind != JsonValueKind.Number || !property.TryGetDouble(out var number) || !double.IsFinite(number) || number < min || number > max)
+            throw FieldError($"{key} must be finite and between {min} and {max}.", key);
         return number;
     }
     private static Vec3 Vector(JsonElement value, string key)
     {
-        var a = value.GetProperty(key);
-        if (a.ValueKind != JsonValueKind.Array || a.GetArrayLength() != 3) throw new AgentRequestException($"{key} must contain three numbers.");
-        var n = a.EnumerateArray().Select(x => x.GetDouble()).ToArray();
-        if (n.Any(x => !double.IsFinite(x) || System.Math.Abs(x) > 1000000)) throw new AgentRequestException($"{key} contains an invalid or out-of-range coordinate.");
+        if (!value.TryGetProperty(key, out var a) || a.ValueKind != JsonValueKind.Array || a.GetArrayLength() != 3)
+            throw FieldError($"{key} must contain three numbers.", key);
+        var n = new double[3]; int i = 0;
+        foreach (var element in a.EnumerateArray())
+        {
+            if (element.ValueKind != JsonValueKind.Number || !element.TryGetDouble(out n[i]) || !double.IsFinite(n[i]) || System.Math.Abs(n[i]) > 1000000)
+                throw new AgentRequestException($"{key} contains an invalid or out-of-range coordinate.", jsonPointer: $"/{key}/{i}");
+            i++;
+        }
         return new Vec3(n[0], n[1], n[2]);
     }
     private static ColorF Color(JsonElement value, string key)
     {
         var v = Vector(value, key);
-        if (v.X < 0 || v.Y < 0 || v.Z < 0 || v.X > 1 || v.Y > 1 || v.Z > 1) throw new AgentRequestException("RGB values must be between zero and one.");
+        if (v.X < 0 || v.Y < 0 || v.Z < 0 || v.X > 1 || v.Y > 1 || v.Z > 1) throw FieldError("RGB values must be between zero and one.", key);
         return new ColorF((float)v.X, (float)v.Y, (float)v.Z);
     }
     private static T At<T>(IReadOnlyList<T> list, int index, string kind) => (uint)index < (uint)list.Count
-        ? list[index] : throw new AgentRequestException($"{kind} index {index} is outside the current document.");
+        ? list[index] : throw FieldError($"{kind} index {index} is outside the current document.", kind == "material" ? "materialIndex" : kind);
     private static double[] Position(Vec3 p) => [p.X, p.Y, p.Z];
     private static object Counts(Level level) => new { sectors = level.Sectors.Count,
         surfaces = level.Sectors.Sum(s => s.Surfaces.Count), vertices = level.Sectors.Sum(s => s.Vertices.Count),
         things = level.Things.Count, lights = level.Lights.Count, cogs = level.Cogs.Count,
         architecturalObjects = level.ArchitecturalLighting.Count };
     private static object[] DescribeIssues(IEnumerable<ConsistencyIssue> issues) => issues.Select(i => (object)new
-        { type = i.Type.ToString(), severity = i.Severity.ToString(), i.SectorIndex, i.SurfaceIndex, i.Message }).ToArray();
+        { type = i.Type.ToString(), severity = i.Severity.ToString(), i.SectorIndex, i.SurfaceIndex, i.ItemIndex, i.ParameterIndex, i.Message }).ToArray();
 }

@@ -18,8 +18,7 @@ public static class JedImporter
     public static JedImportResult ImportFile(string path)
     {
         string text = LegacyText.ReadFile(path);
-        bool mots = text.Split('\n').Any(line => Clean(line).Equals("SEC: MOTS", StringComparison.OrdinalIgnoreCase) ||
-            Clean(line).Equals("SEC: ARCHLIGHTING", StringComparison.OrdinalIgnoreCase));
+        bool mots = DetectProjectType(text) == ProjectType.MysteriesOfTheSith;
         string name = mots ? "mots.tpl" : "master.tpl";
         var templates = LoadTemplates(mots ? ProjectType.MysteriesOfTheSith : ProjectType.JediKnight,
             Path.GetDirectoryName(Path.GetFullPath(path)));
@@ -27,6 +26,19 @@ public static class JedImporter
         if (templates.Count == 0 && result.Document.Level.Things.Count > 0)
             result.Document.PreservationWarnings.Add($"No {name} template library was found beside the project or in the editor data folder; supply templates before exporting game entities.");
         return result;
+    }
+
+    /// <summary>Uses the same newline and section-token rules as the native parser when selecting template libraries.</summary>
+    public static ProjectType DetectProjectType(string text)
+    {
+        foreach (string line in text.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n'))
+        {
+            var tokens = JklReader.Tokens(Clean(line));
+            if (tokens.Length == 2 && tokens[0].Equals("SEC:", StringComparison.OrdinalIgnoreCase) &&
+                (tokens[1].Equals("MOTS", StringComparison.OrdinalIgnoreCase) || tokens[1].Equals("ARCHLIGHTING", StringComparison.OrdinalIgnoreCase)))
+                return ProjectType.MysteriesOfTheSith;
+        }
+        return ProjectType.JediKnight;
     }
 
     /// <summary>
@@ -50,6 +62,14 @@ public static class JedImporter
             string companion = Path.Combine(Path.GetFullPath(companionDirectory), name);
             if (File.Exists(companion)) ReadTemplates(LegacyText.ReadFile(companion), templates);
         }
+        return templates.Values.ToArray();
+    }
+
+    /// <summary>Parses already captured libraries in merge order, without reopening their source files.</summary>
+    public static IReadOnlyList<Template> LoadTemplateTexts(IEnumerable<string> libraries)
+    {
+        var templates = new Dictionary<string, Template>(StringComparer.OrdinalIgnoreCase);
+        foreach (string text in libraries) ReadTemplates(text, templates);
         return templates.Values.ToArray();
     }
 
