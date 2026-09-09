@@ -72,6 +72,8 @@ public sealed class VulkanView : Control
     public Thing? SelectedThing => Selection.PrimaryThing;
 
     private TextureLookup? _textures;
+    private ColormapLookup? _colormaps;
+    public IReadOnlyList<string> RenderDiagnostics => _renderer?.Diagnostics ?? Array.Empty<string>();
     private Func<string, ThreeDoModel?>? _models;
     private HashSet<string> _sceneMaterialNames = new(StringComparer.OrdinalIgnoreCase);
 
@@ -113,12 +115,13 @@ public sealed class VulkanView : Control
     private List<Thing> _markerThings = new();
 
     public void SetLevel(Level level, TextureLookup? textures = null, Func<string, ThreeDoModel?>? models = null,
-        byte[]? paletteRgb = null, byte[]? lightTable = null)
+        byte[]? paletteRgb = null, byte[]? lightTable = null, ColormapLookup? colormaps = null)
     {
         if (_renderer is null) return;
         _loadingLevel = true;
         _level = level;
         _textures = textures;
+        _colormaps = colormaps;
         _models = models;
         Selection.Clear();
         _activeSector = null;
@@ -127,7 +130,8 @@ public sealed class VulkanView : Control
 
         if (paletteRgb is not null && lightTable is not null)
             _renderer.SetColormap(paletteRgb, lightTable);
-        _renderer.SetSky(level.Header.CeilingSky.Height, (float)level.Header.CeilingSky.Offset.X, (float)level.Header.CeilingSky.Offset.Y);
+        _renderer.SetSky(level.Header.CeilingSky.Height, (float)level.Header.CeilingSky.Offset.X, (float)level.Header.CeilingSky.Offset.Y,
+            (float)level.Header.HorizonSky.Offset.X, (float)level.Header.HorizonSky.Offset.Y);
 
         if (textures is not null)
         {
@@ -138,7 +142,7 @@ public sealed class VulkanView : Control
                 ? assembler.AddThings(level, models, Layers)
                 : level.Things.Where(Layers.IsVisible).ToList();
             var scene = assembler.Build();
-            _renderer.SetScene(scene, textures);
+            _renderer.SetScene(scene, textures, colormaps);
             _sceneMaterialNames = scene.Submeshes.Select(s => s.Material).ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
         else
@@ -201,7 +205,7 @@ public sealed class VulkanView : Control
         var materialNames = scene.Submeshes.Select(s => s.Material).ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (!_sceneMaterialNames.IsSupersetOf(materialNames))
         {
-            _renderer.SetScene(scene, _textures);
+            _renderer.SetScene(scene, _textures, _colormaps);
             _sceneMaterialNames = materialNames;
         }
         else _renderer.UpdateGeometry(scene);
@@ -410,7 +414,7 @@ public sealed class VulkanView : Control
         _brightness = _brightness < 0.25f ? 0.6f : _brightness < 0.85f ? 1f : 0f;
         _renderer?.SetBrightness(_brightness);
         RenderFrame();
-        var label = _brightness == 0 ? "real lighting" : _brightness >= 1f ? "full bright" : "medium";
+        var label = _brightness == 0 ? "baked lighting" : _brightness >= 1f ? "full bright" : "medium";
         SelectionChanged?.Invoke($"Brightness: {label} (press B to cycle)");
     }
 

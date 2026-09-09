@@ -23,8 +23,40 @@ public static class AgentSnapshotRunner
         request.VerifySource(source);
         var level = source.Document.Level; // independent parsed model, never the live GUI document
         var mesh = new Mesh();
+        using var resources = request.Mode == "lit" ? new SnapshotResources(request.ResourceArchives) : null;
+        RenderScene? scene = null;
+        var renderWarnings = new List<string>();
+        int omittedThings = level.Things.Count;
         int surfaceCount = 0, omittedPortals = 0, degenerateTriangles = 0;
         long triangleBudget = 0;
+        if (resources is not null)
+        {
+            var assembler = new SceneAssembler(AgentSnapshotRequest.MaxTriangles);
+            assembler.AddLevel(level);
+            var unmodeled = assembler.AddThings(level, resources.Model);
+            omittedThings = unmodeled.Count;
+            scene = assembler.Build();
+            if (request.LightingMode != "game") scene.LightingMode = request.LightingMode == "rgb" ? RenderLightingMode.Rgb : RenderLightingMode.Mono;
+            scene.UsePaletteLightRamp = request.RenderProfile == "palette";
+            mesh = scene.Mesh;
+            foreach (var batch in scene.Submeshes)
+            {
+                _ = resources.Texture(batch.Material);
+                _ = resources.Colormap(string.IsNullOrWhiteSpace(batch.Colormap) ? "dflt.cmp" : batch.Colormap);
+            }
+            renderWarnings.AddRange(scene.Diagnostics);
+            var noModel = unmodeled.Where(t => string.IsNullOrWhiteSpace(level.GetThingModel(t))).ToList();
+            if (noModel.Count > 0)
+                renderWarnings.Add($"{noModel.Count} things have no resolved 3DO model and are omitted (including invisible controllers); "
+                    + $"first indices: {string.Join(", ", noModel.Take(32).Select(t => level.Things.IndexOf(t)))}.");
+            // Missing models/materials, malformed ARCH bindings and unsupported assets cannot silently certify a lit image.
+            if (request.StrictAssets && (resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0))
+                throw new AgentRequestException("Lit snapshot asset validation failed: " + string.Join("; ", resources.Diagnostics.Concat(scene.Diagnostics).Take(12)));
+            surfaceCount = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo != 0 && f.Corners.Count >= 3 && !string.IsNullOrEmpty(f.Material)));
+            omittedPortals = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo == 0));
+        }
+        else
+        {
         // Count before allocating the expanded per-triangle mesh.
         foreach (var sector in level.Sectors)
         foreach (var surface in sector.Surfaces)
@@ -62,7 +94,8 @@ public static class AgentSnapshotRunner
                 }
             }
         }
-        if (mesh.IsEmpty) throw new AgentRequestException("Snapshot has no drawable diagnostic geometry.");
+        }
+        if (mesh.IsEmpty) throw new AgentRequestException("Snapshot has no drawable geometry for the requested mode.");
         var camera = Camera.LookingAt(request.Position, request.Target, request.FieldOfViewDegrees);
         camera.NearPlane = request.NearPlane; camera.FarPlane = request.FarPlane;
         object cameraDescription = new
@@ -79,7 +112,16 @@ public static class AgentSnapshotRunner
             using var device = VulkanDevice.Create(context);
             deviceName = device.DeviceName;
             using var renderer = new SceneRenderer(device);
-            renderer.SetMesh(mesh);
+            if (scene is not null && resources is not null)
+            {
+                renderer.SetSky(level.Header.CeilingSky.Height, (float)level.Header.CeilingSky.Offset.X, (float)level.Header.CeilingSky.Offset.Y,
+                    (float)level.Header.HorizonSky.Offset.X, (float)level.Header.HorizonSky.Offset.Y);
+                if (scene.Submeshes.Any(s => string.IsNullOrWhiteSpace(s.Colormap)) && resources.Colormap("dflt.cmp") is { } defaultCmp)
+                    renderer.SetColormap(defaultCmp.PaletteRgb, defaultCmp.LightTable);
+                renderer.SetScene(scene, resources.Texture, resources.Colormap);
+                renderWarnings.AddRange(renderer.Diagnostics);
+            }
+            else renderer.SetMesh(mesh);
             pixels = renderer.Render(camera.ViewProjection((double)request.Width / request.Height), camera.Position,
                 (uint)request.Width, (uint)request.Height);
         }
@@ -105,11 +147,23 @@ public static class AgentSnapshotRunner
             var current = AgentWorkspace.LoadWithProvenance(path);
             if (current.InputSha256 != source.InputSha256 || current.SourceRevision != source.SourceRevision)
                 throw new AgentConflictException("Snapshot source or native dependency changed while rendering. No output was written.");
+            resources?.VerifyUnchanged();
             try { File.Move(temporary, outputPath, overwrite: false); }
             catch (IOException) when (File.Exists(outputPath) || Directory.Exists(outputPath))
             { throw new AgentConflictException("Snapshot output already exists; no file was replaced."); }
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        if (resources is not null) renderWarnings.AddRange(resources.Diagnostics);
+        if (nonBackgroundPixels == 0) renderWarnings.Add("No geometry is visible from this camera; inspect camera position, target and clipping planes.");
+        string[] contentLimitations = request.Mode == "lit" ? [
+            "Static lighting preview: baked world mono/RGB, scalar 3DO base light, compatible ARCHLIGHTING, sector/surface extra light and per-sector CMP. No runtime dynamic lights, COG, animation or moving geometry.",
+            "Indexed MAT first cel/mip and model geoset zero only; truecolor MATs are unsupported and reported. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
+            "Model hierarchy is shown in its rest pose; absent models are omitted. Resource hashes identify all supplied archives and every used entry.",
+        ] : [
+            "Diagnostic polygon geometry only: untextured solid faces are included; reciprocal visible untextured or Geo=0 portal faces are omitted.",
+            "Colors identify surfaces, not material or game lighting. MotS RGB and architectural lighting, sky, transparency, things and 3DO models are not represented.",
+        ];
+        var distinctWarnings = renderWarnings.Distinct().ToArray();
         return new
         {
             schemaVersion = 1, written = outputPath, outputSha256 = outputHash, outputBytes,
@@ -118,19 +172,20 @@ public static class AgentSnapshotRunner
             camera = cameraDescription,
             cameraSha256 = AgentWorkspace.Hash(JsonSerializer.SerializeToUtf8Bytes(cameraDescription, AgentWorkspace.JsonOptions)),
             request.Width, request.Height, rgbaSha256 = AgentWorkspace.Hash(pixels),
-            renderer = "Vulkan flat diagnostic geometry", deviceName, guiLaunched = false,
+            request.Mode, lightingMode = scene?.LightingMode.ToString().ToLowerInvariant(),
+            renderProfile = scene is null ? null : request.RenderProfile,
+            renderer = scene is null ? "Vulkan flat diagnostic geometry" : "Vulkan static lit scene", deviceName, guiLaunched = false,
+            resourceArchives = resources?.Archives ?? Array.Empty<object>(), usedResources = resources?.UsedResources ?? Array.Empty<object>(),
             counts = new { sectors = level.Sectors.Count, renderedSurfaces = surfaceCount, triangles = mesh.TriangleCount,
-                omittedPortalSurfaces = omittedPortals, skippedDegenerateTriangles = degenerateTriangles, omittedThings = level.Things.Count },
+                omittedPortalSurfaces = omittedPortals, skippedDegenerateTriangles = degenerateTriangles, omittedThings },
             nonBackgroundPixels, elapsedMilliseconds = timer.ElapsedMilliseconds,
             preservationWarnings = source.Document.PreservationWarnings,
-            warnings = nonBackgroundPixels == 0 ? new[] { "No geometry is visible from this camera; inspect camera position, target and clipping planes." } : Array.Empty<string>(),
-            limitations = new[] {
-                "Diagnostic polygon geometry only: untextured solid faces are included; reciprocal visible untextured or Geo=0 portal faces are omitted.",
-                "Colors identify surfaces, not material or game lighting. MotS RGB and architectural lighting, sky, transparency, things and 3DO models are not represented.",
+            warningCount = distinctWarnings.Length, warnings = distinctWarnings.Take(200).ToArray(), warningsTruncated = distinctWarnings.Length > 200,
+            limitations = contentLimitations.Concat(new[] {
                 "Double-sided triangle fans without engine portal visibility or gameplay simulation; concave/non-planar polygons may differ from engine rendering.",
                 "RGBA PNG only: no depth or object-ID image. Driver differences may change image bytes; use reported source and camera provenance.",
                 "Requires a usable Vulkan loader/device. Callers should enforce a process timeout; existing driver fence waits cannot be cancelled here.",
-            },
+            }).ToArray(),
         };
     }
 }

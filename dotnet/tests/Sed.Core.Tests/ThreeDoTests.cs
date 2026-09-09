@@ -6,6 +6,43 @@ namespace Sed.Core.Tests;
 
 public class ThreeDoTests
 {
+    [Fact]
+    public void ACompleteFirstMeshDoesNotHideATruncatedFinalMesh()
+    {
+        string prefix = SampleModel[..SampleModel.IndexOf("FACE NORMALS 1", StringComparison.Ordinal)]
+            .Replace("MESHES 1", "MESHES 2");
+        string lastMesh = "MESH 1\nNAME empty\nVERTICES 0\nTEXTURE VERTICES 0\n";
+        Assert.Throws<FormatException>(() => ThreeDoParser.Parse(prefix + lastMesh + "END\n"));
+        Assert.Throws<FormatException>(() => ThreeDoParser.Parse(prefix + lastMesh));
+        Assert.Equal(2, ThreeDoParser.Parse(prefix + lastMesh + "FACES 0\nEND\n").Meshes.Count);
+    }
+
+    [Theory]
+    [InlineData("TEXTURE\tVERTICES\t3")]
+    [InlineData("TEXTURE  VERTICES  3")]
+    public void TextureHeaderAcceptsEngineCompatibleWhitespace(string header)
+    {
+        var model = ThreeDoParser.Parse(SampleModel.Replace("TEXTURE VERTICES 3", header));
+        Assert.Equal(3, Assert.Single(model.Meshes).Uvs.Count);
+        Assert.Equal(new[] { 0, 1, 2 }, Assert.Single(model.Meshes[0].Faces).UvIndices);
+    }
+
+    [Theory]
+    [InlineData("VERTICES 3", "VERTICES 2147483647")]
+    [InlineData("TEXTURE VERTICES 3", "TEXTURE VERTICES 2147483647")]
+    [InlineData("FACES 1", "FACES 2147483647")]
+    [InlineData("MESHES 1", "MESHES -1")]
+    public void DeclaredCountsCannotAllocateBeyondDecodedBudget(string before, string after)
+        => Assert.Throws<FormatException>(() => ThreeDoParser.Parse(SampleModel.Replace(before, after)));
+
+    [Theory]
+    [InlineData("VERTICES 3")][InlineData("TEXTURE VERTICES 3")][InlineData("FACES 1")]
+    public void TruncatedDeclaredTablesAreRefusedImmediately(string header)
+    {
+        int end = SampleModel.IndexOf(header, StringComparison.Ordinal) + header.Length;
+        Assert.Throws<FormatException>(() => ThreeDoParser.Parse(SampleModel[..end]));
+    }
+
     private const string SampleModel = """
         SECTION: HEADER
         3DO 2.1
@@ -70,10 +107,38 @@ public class ThreeDoTests
         Assert.Equal(3, face.VertexIndices.Count);
         Assert.Equal(new[] { 0, 1, 2 }, face.VertexIndices);
         Assert.Equal(new[] { 0, 1, 2 }, face.UvIndices);
+        Assert.Equal(3, face.Geo); Assert.Equal(0, face.Light); Assert.Equal(0, face.Tex);
+        Assert.Equal(0.5f, face.ExtraLight); Assert.Equal(0, face.FaceFlags);
+        Assert.Equal(4, mesh.GeometryMode); Assert.Equal(3, mesh.LightingMode); Assert.Equal(3, mesh.TextureMode);
+        Assert.Equal(new[] { 0f, 0f, 0f }, mesh.VertexIntensities);
+        Assert.Equal(3, mesh.VertexNormals.Count);
+        Assert.All(mesh.VertexNormals, n => Assert.Equal(new Sed.Core.Math.Vec3(0, 0, 1), n));
 
         var node = Assert.Single(model.Nodes);
         Assert.Equal(0, node.Mesh);
         Assert.Equal(-1, node.Parent);
+    }
+
+    [Fact]
+    public void DistinctModelBaseLightsAndMeshFaceModesSurviveSave()
+    {
+        var text = SampleModel.ReplaceLineEndings("\n").Replace("0: 0.0 0.0 0.0\n", "0: 0.0 0.0 0.0 0.125\n")
+            .Replace("1: 1.0 0.0 0.0\n", "1: 1.0 0.0 0.0 0.5\n")
+            .Replace("2: 0.0 1.0 0.0\n", "2: 0.0 1.0 0.0 0.875\n")
+            .Replace("LIGHTINGMODE 3", "LIGHTINGMODE 2").Replace("0: 0 0x0 3 0 0 0.5", "0: 0 0x12 4 3 1 -0.25");
+        var model = ThreeDoParser.Parse(text);
+        var reparsed = ThreeDoParser.Parse(ThreeDoWriter.Build(model));
+        Assert.Equal(new[] { 0.125f, 0.5f, 0.875f }, reparsed.Meshes[0].VertexIntensities);
+        Assert.Equal(2, reparsed.Meshes[0].LightingMode);
+        var face = reparsed.Meshes[0].Faces[0];
+        Assert.Equal(0x12, face.FaceFlags); Assert.Equal(4, face.Geo);
+        Assert.Equal(3, face.Light); Assert.Equal(1, face.Tex); Assert.Equal(-0.25f, face.ExtraLight);
+    }
+
+    [Fact]
+    public void NonfiniteModelBaseLightingIsRefused()
+    {
+        Assert.Throws<FormatException>(() => ThreeDoParser.Parse(SampleModel.ReplaceLineEndings("\n").Replace("0: 0.0 0.0 0.0\n", "0: 0.0 0.0 0.0 NaN\n")));
     }
 }
 

@@ -1,24 +1,29 @@
 using Sed.Core.Math;
+using System.Runtime.InteropServices;
 
 namespace Sed.Rendering;
 
-/// <summary>A GPU-ready vertex: position, normal, RGB color, and UV (interleaved float32).</summary>
+/// <summary>A GPU-ready vertex with independent RGB and monochrome light (interleaved float32).</summary>
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
 public struct MeshVertex
 {
     public float Px, Py, Pz;
     public float Nx, Ny, Nz;
     public float R, G, B;
     public float U, V;
+    public float Mono;
 
-    public MeshVertex(Vec3 p, Vec3 n, ColorF c, double u = 0, double v = 0)
+    public MeshVertex(Vec3 p, Vec3 n, ColorF c, double u = 0, double v = 0, float? mono = null)
     {
         Px = (float)p.X; Py = (float)p.Y; Pz = (float)p.Z;
         Nx = (float)n.X; Ny = (float)n.Y; Nz = (float)n.Z;
         R = c.R; G = c.G; B = c.B;
         U = (float)u; V = (float)v;
+        Mono = mono ?? c.R;
     }
 
-    public const uint Stride = 11 * sizeof(float);
+    public const uint Stride = 12 * sizeof(float);
+    public const uint MonoOffset = 11 * sizeof(float);
 }
 
 /// <summary>An indexed triangle mesh produced from the level model.</summary>

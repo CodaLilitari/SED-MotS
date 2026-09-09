@@ -19,6 +19,40 @@ public sealed class AgentSnapshotRequestTests
     private static AgentSnapshotRequest Parse(Dictionary<string, object> request) => AgentSnapshotRequest.Parse(JsonSerializer.Serialize(request));
 
     [Fact]
+    public void LitSnapshotsBindExplicitArchiveHashesAndSelectLighting()
+    {
+        var request = Valid(); request["mode"] = "lit"; request["lightingMode"] = "mono";
+        string path = Path.GetFullPath("test-resources.goo");
+        request["resourceArchives"] = new[] { new { path, sha256 = Hash.ToUpperInvariant() } };
+        var parsed = Parse(request);
+        Assert.Equal("lit", parsed.Mode); Assert.Equal("mono", parsed.LightingMode); Assert.True(parsed.StrictAssets);
+        Assert.Equal(new SnapshotArchive(path, Hash), Assert.Single(parsed.ResourceArchives));
+        request["strictAssets"] = false; Assert.False(Parse(request).StrictAssets);
+    }
+
+    [Fact]
+    public void LitSnapshotRejectsUnboundRelativeDuplicateAndUnknownArchives()
+    {
+        var request = Valid(); request["mode"] = "lit";
+        Assert.Throws<AgentRequestException>(() => Parse(request));
+        request["resourceArchives"] = new[] { new { path = "relative.goo", sha256 = Hash } };
+        Assert.Throws<AgentRequestException>(() => Parse(request));
+        var entry = new { path = Path.GetFullPath("a.goo"), sha256 = Hash };
+        request["resourceArchives"] = new[] { entry, entry }; Assert.Throws<AgentRequestException>(() => Parse(request));
+        request["resourceArchives"] = new[] { new { entry.path, entry.sha256, discover = true } }; Assert.Throws<AgentRequestException>(() => Parse(request));
+        request["resourceArchives"] = new[] { new { entry.path, sha256 = "bad" } }; Assert.Throws<AgentRequestException>(() => Parse(request));
+        request["resourceArchives"] = new[] { entry }; request["mode"] = "diagnostic"; Assert.Throws<AgentRequestException>(() => Parse(request));
+    }
+
+    [Theory]
+    [InlineData("mode", "auto")][InlineData("lightingMode", "auto")][InlineData("strictAssets", "true")]
+    public void RejectsMistypedSnapshotModes(string name, string value)
+    {
+        var request = Valid(); request[name] = value;
+        Assert.Throws<AgentRequestException>(() => Parse(request));
+    }
+
+    [Fact]
     public void ValidCameraKeepsExplicitPoseAndDefaults()
     {
         var request = Parse(Valid());

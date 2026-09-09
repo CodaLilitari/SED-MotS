@@ -30,7 +30,7 @@ public class LightCalculatorTests
     }
 
     [Fact]
-    public void FalloffMatchesTheEngineFormula()
+    public void FalloffMatchesTheHistoricalEditorFormula()
     {
         var (level, _, surf) = MakeQuadLevel();
 
@@ -266,6 +266,132 @@ public class LightCalculatorTests
         Assert.True(sector.Ambient.R > 0.4f);
     }
 
+    [Theory]
+    [InlineData(ProjectType.JediKnight)]
+    [InlineData(ProjectType.MysteriesOfTheSith)]
+    public void SectorAmbientUsesIndependentMonoInsteadOfRgb(ProjectType kind)
+    {
+        var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = kind;
+        for (int i = 0; i < surf.Corners.Count; i++)
+        {
+            surf.Corners[i].MonoIntensity = 0.2f * (i + 1);
+            surf.Corners[i].Intensity = new ColorF(1, 0, 0);
+        }
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        Assert.Equal(new ColorF(0.5f, 0.5f, 0.5f), sector.Ambient);
+        Assert.All(surf.Corners, c => Assert.Equal(new ColorF(1, 0, 0), c.Intensity));
+    }
+
+    [Fact]
+    public void SectorAmbientUsesRedFallbackOnlyForMissingMonoSamples()
+    {
+        var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = ProjectType.MysteriesOfTheSith;
+        surf.Corners[0].Intensity = new ColorF(0.2f, 0.9f, 0.1f);
+        surf.Corners[1].Intensity = new ColorF(1, 0.8f, 0.6f);
+        surf.Corners[1].MonoIntensity = 0.4f;
+        surf.Corners[2].Intensity = new ColorF(0.6f, 0, 1);
+        surf.Corners[3].Intensity = new ColorF(0, 1, 1);
+        surf.Corners[3].MonoIntensity = 0.8f;
+        var before = surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray();
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        Assert.Equal(new ColorF(0.5f, 0.5f, 0.5f), sector.Ambient);
+        Assert.Equal(before, surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SectorAmbientClampsEachMonoSampleBelowZeroWithoutAnUpperClamp(bool useLegacyFallback)
+    {
+        var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = ProjectType.MysteriesOfTheSith;
+        float[] samples = { -2, 0, 2, 4 };
+        for (int i = 0; i < samples.Length; i++)
+        {
+            surf.Corners[i].Intensity = new ColorF(useLegacyFallback ? samples[i] : 0, 0.1f, 0.2f);
+            surf.Corners[i].MonoIntensity = useLegacyFallback ? null : samples[i];
+        }
+        var before = surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray();
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        // (max(0,-2) + 0 + 2 + 4) / 4 = 1.5, not a 0..1-clamped average.
+        Assert.Equal(new ColorF(1.5f, 1.5f, 1.5f), sector.Ambient);
+        Assert.Equal(before, surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray());
+    }
+
+    [Theory]
+    [InlineData(0.4f, 0.5f)]
+    [InlineData(0.8f, 0.64f)]
+    public void SectorAmbientComparesCornerWeightedMonoAgainstMeanSurfaceExtra(float mono, float expected)
+    {
+        var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = ProjectType.MysteriesOfTheSith;
+        surf.ExtraLightIntensity = 0.1f;
+        foreach (var corner in surf.Corners)
+        {
+            corner.MonoIntensity = mono;
+            corner.Intensity = ColorF.Black;
+        }
+        var second = sector.NewSurface();
+        second.ExtraLightIntensity = 0.9f;
+        second.Corners.Add(new Surface.Corner
+        {
+            Vertex = surf.Corners[0].Vertex, MonoIntensity = 0, Intensity = ColorF.White,
+        });
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        // Mono uses all five corners; extra light is averaged over two surfaces.
+        Assert.Equal(expected, sector.Ambient.R, 6);
+        Assert.Equal(sector.Ambient.R, sector.Ambient.G);
+        Assert.Equal(sector.Ambient.R, sector.Ambient.B);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SectorAmbientWithoutCornersPreservesAuthoredValue(bool hasEmptySurface)
+    {
+        var level = new Level { Kind = ProjectType.MysteriesOfTheSith };
+        var sector = level.NewSector();
+        sector.Ambient = new ColorF(0.2f, 0.3f, 0.4f);
+        if (hasEmptySurface) sector.NewSurface().ExtraLightIntensity = 0.9f;
+        var before = sector.Ambient;
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        Assert.Equal(before, sector.Ambient);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void InfernalMachineRetainsItsColoredAmbientPolicy(bool suppressRgbAmbient)
+    {
+        var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = ProjectType.InfernalMachine;
+        if (suppressRgbAmbient) sector.Flags |= SectorFlags.NoRgbAmbientLight;
+        foreach (var corner in surf.Corners)
+        {
+            corner.Intensity = new ColorF(2, 0.6f, -0.1f);
+            corner.MonoIntensity = 0.05f;
+        }
+
+        LightCalculator.CalculateSectorAmbients(new[] { sector });
+
+        var expected = suppressRgbAmbient
+            ? new ColorF(1.6f / 3, 1.6f / 3, 1.6f / 3)
+            : new ColorF(1, 0.6f, 0);
+        Assert.Equal(expected, sector.Ambient);
+    }
+
     [Fact]
     public void NoAmbientLightFlagLeavesSectorAmbientAlone()
     {
@@ -283,19 +409,24 @@ public class LightCalculatorTests
     public void BakeIsOneUndoStep_AndRestoresEveryIntensityAndAmbient()
     {
         var (level, sector, surf) = MakeQuadLevel();
+        level.Kind = ProjectType.MysteriesOfTheSith;
 
         // Hand-authored lighting that must survive an undo.
         for (int i = 0; i < surf.Corners.Count; i++)
+        {
             surf.Corners[i].Intensity = new ColorF(0.1f * i, 0.2f, 0.3f);
+            surf.Corners[i].MonoIntensity = i == 0 ? null : 0.8f - 0.3f * i;
+        }
         sector.Ambient = new ColorF(0.7f, 0.6f, 0.5f);
 
         var before = surf.Corners.Select(c => c.Intensity).ToList();
+        var monoBefore = surf.Corners.Select(c => c.MonoIntensity).ToList();
         var ambientBefore = sector.Ambient;
 
         level.Lights.Add(new Light
         {
             Position = new Vec3(0, 0, 1), Range = 8, Intensity = 1.0,
-            Color = ColorF.White, Flags = LightFlags.NoBlock,
+            Color = new ColorF(1, 0, 0), Flags = LightFlags.NoBlock,
         });
 
         var history = new EditHistory();
@@ -304,16 +435,26 @@ public class LightCalculatorTests
 
         Assert.NotNull(command.Stats);
         Assert.NotEqual(before[0], surf.Corners[0].Intensity);
+        Assert.Equal(surf.Corners[0].MonoIntensity!.Value, sector.Ambient.R, 6);
+        Assert.Equal(sector.Ambient.R, sector.Ambient.G);
+        Assert.Equal(sector.Ambient.R, sector.Ambient.B);
+        Assert.Equal(0, surf.Corners[0].Intensity.G);
+        var baked = surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray();
+        var ambientBaked = sector.Ambient;
 
         history.Undo();
         for (int i = 0; i < surf.Corners.Count; i++)
+        {
             Assert.Equal(before[i], surf.Corners[i].Intensity);
+            Assert.Equal(monoBefore[i], surf.Corners[i].MonoIntensity);
+        }
         Assert.Equal(ambientBefore, sector.Ambient);
         Assert.False(history.CanUndo);           // one step, not one per vertex
 
         var afterRedoExpected = command.Stats;
         history.Redo();
-        Assert.NotEqual(before[0], surf.Corners[0].Intensity);
+        Assert.Equal(baked, surf.Corners.Select(c => (c.Intensity, c.MonoIntensity)).ToArray());
+        Assert.Equal(ambientBaked, sector.Ambient);
         Assert.Same(afterRedoExpected, command.Stats);   // redo replays, does not recompute
     }
 

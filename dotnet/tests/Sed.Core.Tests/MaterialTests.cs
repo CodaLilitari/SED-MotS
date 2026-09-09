@@ -66,4 +66,26 @@ public class MaterialTests
         Assert.Equal(20, rgba[1]);
         Assert.Equal(30, rgba[2]);
     }
+
+    [Theory]
+    [InlineData(16)] [InlineData(24)] [InlineData(32)] [InlineData(9)]
+    public void TruecolorPixelsCannotBeMistakenForPaletteIndices(int bpp)
+    {
+        var bytes = BuildTextureMat(2, 2, new byte[16]);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(24), bpp);
+        Assert.Throws<InvalidDataException>(() => MatFile.Read(bytes));
+    }
+
+    [Fact]
+    public void TextureDimensionsCelHeadersAndTruncatedColorAreBounded()
+    {
+        var bytes = BuildTextureMat(int.MaxValue, 2, new byte[4]);
+        Assert.Throws<InvalidDataException>(() => MatFile.Read(bytes));
+        bytes = BuildTextureMat(2, 2, new byte[4]);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(12), int.MaxValue);
+        Assert.Throws<InvalidDataException>(() => MatFile.Read(bytes));
+        bytes = BuildTextureMat(2, 2, new byte[4])[..76];
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(8), 0);
+        Assert.Throws<InvalidDataException>(() => MatFile.Read(bytes));
+    }
 }

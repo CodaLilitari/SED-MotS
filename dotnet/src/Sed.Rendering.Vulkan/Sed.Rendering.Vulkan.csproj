@@ -9,19 +9,15 @@
     <EmbeddedResource Include="Shaders\*.spv" />
   </ItemGroup>
 
-  <!-- Recompile GLSL -> SPIR-V when glslangValidator is available; the checked-in
-       .spv files are used as-is otherwise (e.g. CI without the Vulkan SDK). -->
-  <Target Name="CompileShaders" BeforeTargets="BeforeBuild">
-    <PropertyGroup>
-      <Glslang Condition="Exists('/opt/homebrew/bin/glslangValidator')">/opt/homebrew/bin/glslangValidator</Glslang>
-      <Glslang Condition="'$(Glslang)'=='' And Exists('/usr/local/bin/glslangValidator')">/usr/local/bin/glslangValidator</Glslang>
-    </PropertyGroup>
-    <ItemGroup>
-      <ShaderSource Include="Shaders/*.vert;Shaders/*.frag" />
-    </ItemGroup>
-    <Exec Condition="'$(Glslang)'!=''"
-          Command="&quot;$(Glslang)&quot; -V %(ShaderSource.Identity) -o %(ShaderSource.Identity).spv"
-          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  <!-- GLSL and SPIR-V are a checked pair. Run tools/Compile-Shaders.ps1 after
+       shader edits; builds without a compiler still reject stale binaries. -->
+  <Import Project="Shaders/ShaderHashes.props" />
+  <Target Name="VerifyCommittedShaders" BeforeTargets="BeforeBuild">
+    <GetFileHash Files="@(VerifiedShader)" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="ShaderWithHash" />
+    </GetFileHash>
+    <Error Condition="'%(ShaderWithHash.FileHash)' != '%(ShaderWithHash.ExpectedHash)'"
+           Text="Shader source/binary hash mismatch: %(ShaderWithHash.Identity). Run tools/Compile-Shaders.ps1 with glslangValidator and spirv-val, then review all shader outputs." />
   </Target>
 
   <ItemGroup>

@@ -37,28 +37,34 @@ public sealed class MatFile
         int type = I32(d, 8);
         int celCount = I32(d, 12);
         int bpp = I32(d, 24);            // ColorInfo.bpp
-        int pixelSize = bpp / 8;
 
         if (type == 0)
         {
+            if (d.Length < HeaderSize + 8) throw new InvalidDataException("Truncated color MAT header.");
             // Flat color: ColorHeader { int textype, int colornum, … } at offset 76.
             int colorNum = I32(d, HeaderSize + 4);
             return new MatFile { Width = 64, Height = 64, IsColor = true, ColorIndex = colorNum };
         }
 
-        if (pixelSize is < 1 or > 4)
-            throw new InvalidDataException($"Unsupported MAT bpp {bpp}");
+        if (type != 2) throw new InvalidDataException($"Unsupported MAT type {type}.");
+        if (bpp != 8)
+            throw new InvalidDataException($"MAT {bpp}-bit pixels are not supported by the indexed decoder.");
+        if (celCount < 1 || celCount > (d.Length - HeaderSize) / TextureHeaderSize)
+            throw new InvalidDataException("MAT cel headers are out of range.");
 
         // Skip the per-cel texture headers, then read cel 0's TextureData.
         int td = HeaderSize + celCount * TextureHeaderSize;
+        if (td > d.Length - TextureDataHeader) throw new InvalidDataException("Truncated MAT texture header.");
         int w = I32(d, td);
         int h = I32(d, td + 4);
         int pixels = td + TextureDataHeader;
-        int count = w * h * pixelSize;
-        if (pixels + count > d.Length)
+        if (w < 1 || h < 1 || w > 16384 || h > 16384 || (long)w * h > 16_777_216)
+            throw new InvalidDataException("MAT dimensions exceed the supported 16-million-pixel budget.");
+        int count = w * h;
+        if (count > d.Length - pixels)
             throw new InvalidDataException("MAT pixel data out of range");
 
-        var indices = d.Slice(pixels, w * h).ToArray(); // 8-bit indices (pixelSize 1)
+        var indices = d.Slice(pixels, count).ToArray();
         return new MatFile { Width = w, Height = h, Indices = indices };
     }
 

@@ -55,7 +55,7 @@ foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }
@@ -96,6 +96,9 @@ if ((Get-FileHash -LiteralPath $smokeInput -Algorithm SHA256).Hash.ToLowerInvari
 
 & (Join-Path $PSScriptRoot 'Test-AgentWorkflow.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-workflow')
 & (Join-Path $PSScriptRoot 'Test-AgentDesign.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-design') -SkipSnapshot:(!$RunAgentSnapshots)
+if ($RunAgentSnapshots) {
+    & (Join-Path $PSScriptRoot 'Test-AgentLitSnapshot.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-lit-snapshot')
+}
 
 Assert-SourceUnchanged
 $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Version; commit=$head;

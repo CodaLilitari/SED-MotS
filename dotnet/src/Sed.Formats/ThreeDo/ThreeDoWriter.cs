@@ -53,9 +53,9 @@ public static class ThreeDoWriter
             WF("MESH {0}", model.Meshes.IndexOf(mesh));
             W($"NAME {mesh.Name}");
             WF("RADIUS {0:0.000000}", FindRadius(mesh));
-            W("GEOMETRYMODE\t4");
-            W("LIGHTINGMODE\t3");
-            W(ijim ? "TEXTUREMODE\t3" : "TEXTUREMODE\t1");
+            WF("GEOMETRYMODE\t{0}", mesh.GeometryMode);
+            WF("LIGHTINGMODE\t{0}", mesh.LightingMode);
+            WF("TEXTUREMODE\t{0}", mesh.TextureMode);
             W("");
 
             WF("VERTICES {0}", mesh.Vertices.Count);
@@ -66,7 +66,8 @@ public static class ThreeDoWriter
                 if (ijim)
                     WF("{0}: {1:0.000000} {2:0.000000} {3:0.000000} 0.000000 0.000000 0.000000 1.000000", j, v.X, v.Y, v.Z);
                 else
-                    WF("{0}: {1:0.000000} {2:0.000000} {3:0.000000} 0", j, v.X, v.Y, v.Z);
+                    WF("{0}: {1:0.000000} {2:0.000000} {3:0.000000} {4:G9}", j, v.X, v.Y, v.Z,
+                        j < mesh.VertexIntensities.Count ? mesh.VertexIntensities[j] : 0f);
             }
             W("");
 

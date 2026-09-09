@@ -10,6 +10,11 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
     Vec3 Position, Vec3 Target, double FieldOfViewDegrees, int Width, int Height,
     double NearPlane, double FarPlane)
 {
+    public string Mode { get; init; } = "diagnostic";
+    public string LightingMode { get; init; } = "game";
+    public string RenderProfile { get; init; } = "openjk";
+    public bool StrictAssets { get; init; } = true;
+    public IReadOnlyList<SnapshotArchive> ResourceArchives { get; init; } = Array.Empty<SnapshotArchive>();
     public const int MinDimension = 64;
     public const int MaxDimension = 2048;
     public const int MaxPixels = 2_097_152;
@@ -23,8 +28,8 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
         return new Dictionary<string, object>
         {
             ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
-            ["title"] = "SED agent diagnostic snapshot version 1",
-            ["description"] = "One flat diagnostic geometry PNG using offscreen Vulkan, without a window. Camera coordinates are engine world units with Z up. Distinct position/target must not look vertically along Z. Requires width*height <= 2097152 and nearPlane < farPlane. Native inputs require sourceRevision. No textures, game lighting, 3DO things, depth image, or object-ID image are rendered.",
+            ["title"] = "SED agent offscreen snapshot version 1",
+            ["description"] = "One PNG using offscreen Vulkan without a window. Mode diagnostic uses flat geometry. Mode lit uses static world/model lighting and explicit hash-bound resource archives (first archive wins), with strict missing/unsupported asset errors by default. No dynamic lights, COG, animations, game simulation, depth or ID images. Camera is Z up; width*height <= 2097152 and nearPlane < farPlane. Native inputs require sourceRevision.",
             ["type"] = "object", ["additionalProperties"] = false,
             ["required"] = new[] { "schemaVersion", "inputSha256", "position", "target", "fieldOfViewDegrees", "width", "height" },
             ["properties"] = new Dictionary<string, object>
@@ -37,6 +42,14 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
                 ["height"] = new { type = "integer", minimum = MinDimension, maximum = MaxDimension },
                 ["nearPlane"] = new { type = "number", minimum = 0.001, maximum = 1000, @default = 0.01 },
                 ["farPlane"] = new { type = "number", minimum = 0.01, maximum = 100000, @default = 1000 },
+                ["mode"] = new { type = "string", @enum = new[] { "diagnostic", "lit" }, @default = "diagnostic" },
+                ["lightingMode"] = new { type = "string", @enum = new[] { "game", "mono", "rgb" }, @default = "game" },
+                ["renderProfile"] = new { type = "string", @enum = new[] { "openjk", "palette" }, @default = "openjk",
+                    description = "openjk uses palette times scalar for textured mono; palette uses CMP light rows. Neither profile establishes retail pixel parity." },
+                ["strictAssets"] = new { type = "boolean", @default = true },
+                ["resourceArchives"] = new { type = "array", minItems = 1, maxItems = 16, items = new {
+                    type = "object", additionalProperties = false, required = new[] { "path", "sha256" },
+                    properties = new Dictionary<string, object> { ["path"] = new { type = "string", minLength = 1 }, ["sha256"] = Hash() } } },
             },
         };
     }
@@ -49,7 +62,7 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
         var root = document.RootElement;
         if (root.ValueKind != JsonValueKind.Object) throw new AgentRequestException("Expected a snapshot request object.");
         string[] required = ["schemaVersion", "inputSha256", "position", "target", "fieldOfViewDegrees", "width", "height"];
-        string[] optional = ["sourceRevision", "nearPlane", "farPlane"];
+        string[] optional = ["sourceRevision", "nearPlane", "farPlane", "mode", "lightingMode", "renderProfile", "strictAssets", "resourceArchives"];
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var property in root.EnumerateObject())
             if (!seen.Add(property.Name) || (!required.Contains(property.Name) && !optional.Contains(property.Name)))
@@ -102,8 +115,51 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
             throw new AgentRequestException("Camera position and target must differ and cannot look directly along the Z-up axis.", jsonPointer: "/target");
         double near = Number("nearPlane", 0.001, 1000, 0.01), far = Number("farPlane", 0.01, 100000, 1000);
         if (near >= far) throw new AgentRequestException("nearPlane must be less than farPlane.", jsonPointer: "/nearPlane");
+        string Choice(string key, string fallback, params string[] choices)
+        {
+            if (!root.TryGetProperty(key, out var value)) return fallback;
+            if (value.ValueKind != JsonValueKind.String || !choices.Contains(value.GetString()))
+                throw new AgentRequestException($"{key} must be one of: {string.Join(", ", choices)}.", jsonPointer: "/" + key);
+            return value.GetString()!;
+        }
+        var mode = Choice("mode", "diagnostic", "diagnostic", "lit");
+        var lighting = Choice("lightingMode", "game", "game", "mono", "rgb");
+        var profile = Choice("renderProfile", "openjk", "openjk", "palette");
+        bool strict = true;
+        if (root.TryGetProperty("strictAssets", out var strictValue))
+        {
+            if (strictValue.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+                throw new AgentRequestException("strictAssets must be a boolean.");
+            strict = strictValue.GetBoolean();
+        }
+        var archives = new List<SnapshotArchive>();
+        if (root.TryGetProperty("resourceArchives", out var archiveArray))
+        {
+            if (archiveArray.ValueKind != JsonValueKind.Array || archiveArray.GetArrayLength() is < 1 or > 16)
+                throw new AgentRequestException("resourceArchives must contain 1 through 16 explicit archives.");
+            foreach (var entry in archiveArray.EnumerateArray())
+            {
+                if (entry.ValueKind != JsonValueKind.Object || entry.EnumerateObject().Count() != 2
+                    || !entry.TryGetProperty("path", out var pathValue) || pathValue.ValueKind != JsonValueKind.String
+                    || !entry.TryGetProperty("sha256", out var hashValue) || hashValue.ValueKind != JsonValueKind.String)
+                    throw new AgentRequestException("Each resource archive requires only path and sha256.");
+                string path = pathValue.GetString()!, hash = hashValue.GetString()!;
+                if (string.IsNullOrWhiteSpace(path) || !Path.IsPathFullyQualified(path))
+                    throw new AgentRequestException("Resource archive paths must be explicit absolute paths.");
+                path = Path.GetFullPath(path);
+                if (hash.Length != 64 || hash.Any(c => !Uri.IsHexDigit(c)))
+                    throw new AgentRequestException("Resource archive sha256 must contain 64 hex digits.");
+                if (archives.Any(a => a.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                    throw new AgentRequestException("Duplicate resource archive path.");
+                archives.Add(new(path, hash.ToLowerInvariant()));
+            }
+        }
+        if (mode == "lit" && archives.Count == 0) throw new AgentRequestException("Lit snapshots require resourceArchives with explicit paths and SHA256 hashes.");
+        if (mode == "diagnostic" && (archives.Count > 0 || seen.Contains("lightingMode") || seen.Contains("renderProfile") || seen.Contains("strictAssets")))
+            throw new AgentRequestException("resourceArchives, lightingMode, renderProfile and strictAssets apply only to lit snapshots.");
         return new(Hash("inputSha256"), seen.Contains("sourceRevision") ? Hash("sourceRevision") : null,
-            position, target, Number("fieldOfViewDegrees", 10, 140), width, height, near, far);
+            position, target, Number("fieldOfViewDegrees", 10, 140), width, height, near, far)
+            { Mode = mode, LightingMode = lighting, RenderProfile = profile, StrictAssets = strict, ResourceArchives = archives };
     }
 
     public void VerifySource(AgentDocumentSnapshot snapshot)
@@ -133,3 +189,5 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
         && (surface.AdjoinFlags & AdjoinFlags.Visible) != 0
         && (surface.Geo == 0 || string.IsNullOrWhiteSpace(surface.Material));
 }
+
+public sealed record SnapshotArchive(string Path, string Sha256);

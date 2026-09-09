@@ -1,0 +1,4 @@
+*.vert text eol=lf
+*.frag text eol=lf
+*.props text eol=lf
+*.spv binary

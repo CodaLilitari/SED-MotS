@@ -6,7 +6,7 @@ namespace Sed.Formats.Material;
 public readonly record struct ResolvedTexture(int Width, int Height, byte[] Rgba);
 
 /// <summary>8-bit palette-indexed pixels for a resolved material.</summary>
-public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices);
+public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices, bool IsSolid = false);
 
 /// <summary>
 /// Resolves JKL material names (e.g. "wall01.mat") to RGBA textures by locating
@@ -19,6 +19,7 @@ public sealed class MaterialLibrary
     private readonly Colormap _palette;
     private readonly Dictionary<string, ResolvedTexture?> _cache = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, IndexedMaterial?> _indexCache = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Colormap?> _colormapCache = new(StringComparer.OrdinalIgnoreCase);
 
     public Colormap Palette => _palette;
 
@@ -26,6 +27,22 @@ public sealed class MaterialLibrary
     {
         _palette = palette;
         _archives = archives;
+    }
+
+    /// <summary>Resolves the named sector CMP in the same archive precedence as materials.</summary>
+    public Colormap? GetColormap(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return _palette;
+        if (_colormapCache.TryGetValue(name, out var cached)) return cached;
+        foreach (var archive in _archives)
+        {
+            var entry = archive.Find(name);
+            if (entry is null) continue;
+            try { return _colormapCache[name] = Colormap.Read(archive.ReadBytes(entry)); }
+            catch (Exception error) when (error is IOException or ArgumentException)
+            { return _colormapCache[name] = null; }
+        }
+        return _colormapCache[name] = null;
     }
 
     /// <summary>Loads the level's master palette (first colormap) from the archives, or default.</summary>
@@ -84,7 +101,7 @@ public sealed class MaterialLibrary
                 if (entry is null) continue;
                 var mat = MatFile.Read(gob.ReadBytes(entry));
                 result = mat.IsColor
-                    ? new IndexedMaterial(1, 1, new[] { (byte)(mat.ColorIndex & 0xFF) })
+                    ? new IndexedMaterial(1, 1, new[] { (byte)(mat.ColorIndex & 0xFF) }, IsSolid: true)
                     : new IndexedMaterial(mat.Width, mat.Height, mat.Indices);
                 break;
             }

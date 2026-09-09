@@ -127,8 +127,11 @@ public static class LightCalculator
 
     /// <summary>
     /// Sets each sector's ambient to the brighter of its average vertex light and
-    /// its average surface extra-light (mirrors `CalcSectorAmbients`). Sectors
-    /// flagged <see cref="SectorFlags.NoAmbientLight"/> are skipped.
+    /// its average surface extra-light. JK/MotS use nonnegative monochrome samples
+    /// without an upper clamp, matching `CalcSectorAmbients` in JED/NJED; RGB and
+    /// authored corner values are preserved. Infernal Machine retains colored
+    /// ambient calculation. Sectors flagged <see cref="SectorFlags.NoAmbientLight"/>
+    /// or without corners are left unchanged.
     /// </summary>
     public static void CalculateSectorAmbients(IReadOnlyList<Sector> sectors)
     {
@@ -136,6 +139,31 @@ public static class LightCalculator
         {
             if ((sector.Flags & SectorFlags.NoAmbientLight) != 0) continue;
             if (sector.Surfaces.Count == 0) continue;
+
+            if (sector.Level.Kind != ProjectType.InfernalMachine)
+            {
+                double monoLight = 0;
+                double extraLight = 0;
+                int cornerCount = 0;
+
+                foreach (var surf in sector.Surfaces)
+                {
+                    extraLight += surf.ExtraLightIntensity;
+                    foreach (var corner in surf.Corners)
+                    {
+                        // Old scalar corners have no independent mono field.
+                        // Clamp each sample's lower bound before averaging; bright
+                        // samples above 1 remain significant to the authored ambient.
+                        monoLight += System.Math.Max(0, corner.MonoIntensity ?? corner.Intensity.R);
+                        cornerCount++;
+                    }
+                }
+
+                if (cornerCount > 0)
+                    sector.Ambient = Grey(System.Math.Max(monoLight / cornerCount,
+                        extraLight / sector.Surfaces.Count));
+                continue;
+            }
 
             var vertexLight = ColorF.Black;
             var surfaceLight = ColorF.Black;

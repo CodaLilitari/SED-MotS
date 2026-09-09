@@ -392,6 +392,7 @@ public class MainWindow : Window
     private void LoadLevel(Level level, string name)
     {
         TextureLookup? textures = null;
+        ColormapLookup? colormaps = null;
         Func<string, Sed.Formats.ThreeDo.ThreeDoModel?>? models = null;
         byte[]? paletteRgb = null, lightTable = null;
 
@@ -407,8 +408,10 @@ public class MainWindow : Window
                 textures = material =>
                 {
                     var t = library.GetIndexed(material);
-                    return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices) : null;
+                    return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid) : null;
                 };
+                colormaps = name => library.GetColormap(name) is { } cmp
+                    ? new ColormapData(cmp.PaletteRgb, cmp.LightTable) : null;
                 _modelLibrary ??= new Sed.Formats.ThreeDo.ModelLibrary(_materialArchives);
                 models = _modelLibrary.Get;
             }
@@ -420,7 +423,7 @@ public class MainWindow : Window
         _inspector.Context = new InspectorContext(this, level, Assets());
         _view.Layers.ShowAll();      // a new level starts fully visible
         _view.Materials = _currentDoc?.Materials ?? new List<string>();
-        _view.SetLevel(level, textures, models, paletteRgb, lightTable);
+        _view.SetLevel(level, textures, models, paletteRgb, lightTable, colormaps);
         _mapView.SetLevel(level);
         _consistencyWindow?.Run();
         _findWindow?.SetLevel(level);
@@ -434,6 +437,8 @@ public class MainWindow : Window
                        $"{level.Things.Count} things ({(textures is null ? "untextured" : "textured")})";
         if (_currentDoc?.PreservationWarnings.Count > 0)
             _status.Text += $" — {_currentDoc.PreservationWarnings.Count} import/preservation warning(s): {_currentDoc.PreservationWarnings[0]}";
+        if (_view.RenderDiagnostics.Count > 0)
+            _status.Text += $" — {_view.RenderDiagnostics.Count} rendering warning(s): {_view.RenderDiagnostics[0]}";
     }
 
     // ---- material inspector ----

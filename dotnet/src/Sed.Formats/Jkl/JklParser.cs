@@ -543,13 +543,23 @@ public static class JklParser
     {
         if (!r.Next()) return;
         int n = LastInt(r.Current);
+        if (n < 0 || n > 1_000_000) throw new FormatException("Editor light count exceeds the supported bound.");
         for (int i = 0; i < n; i++)
         {
-            if (!r.Next(upper: false) || r.EndOfSection) break;
+            if (!r.Next(upper: false) || r.EndOfSection) throw new FormatException("Truncated editor LIGHTS section.");
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
-            if (t.Length < 7) continue;
+            if (t.Length is not (6 or 7 or 10)) throw new FormatException("Editor light row must contain 6 legacy, 7 JK or 10 MotS values.");
 
             var light = level.NewLight();
+            // Original JED stores no flags and places intensity before range.
+            if (t.Length == 6)
+            {
+                light.Layer = JklReader.ParseInt(t[0]);
+                light.Position = new Vec3(JklReader.ParseFloat(t[1]), JklReader.ParseFloat(t[2]), JklReader.ParseFloat(t[3]));
+                light.Intensity = JklReader.ParseFloat(t[4]);
+                light.Range = JklReader.ParseFloat(t[5]);
+                continue;
+            }
             // JK:    flags(hex) layer x y z range intensity
             // MotS:  flags(hex) layer x y z range intensity r g b
             light.Flags = JklReader.ParseHex(t[0]);

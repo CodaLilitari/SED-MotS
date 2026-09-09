@@ -9,9 +9,9 @@ public sealed class Face3do
 
     /// <summary>Engine per-face fields, preserved verbatim on write (surfflags, geo, light, tex, extralight).</summary>
     public long FaceFlags;
-    public int Geo;
-    public int Light;
-    public int Tex;
+    public int Geo = 4;
+    public int Light = 3;
+    public int Tex = 3;
     public float ExtraLight;
 
     public List<int> VertexIndices { get; } = new();
@@ -22,7 +22,13 @@ public sealed class Face3do
 public sealed class Mesh3do
 {
     public string Name = string.Empty;
+    public int GeometryMode = 4;
+    public int LightingMode = 3;
+    public int TextureMode = 3;
     public List<Vec3> Vertices { get; } = new();
+    /// <summary>Scalar base light stored as the fourth component of each 3DO vertex.</summary>
+    public List<float> VertexIntensities { get; } = new();
+    public List<Vec3> VertexNormals { get; } = new();
     public List<Vec2> Uvs { get; } = new();
     public List<Face3do> Faces { get; } = new();
 }
@@ -44,6 +50,8 @@ public sealed class ThreeDoModel
 {
     public string Name { get; set; } = string.Empty;
     public double Version { get; set; }
+    /// <summary>Windows Delphi native-project normalized model fingerprint, when source encoding is verifiable.</summary>
+    public string? ArchitectureContentHash { get; set; }
     public Vec3 InsertOffset { get; set; }
     public List<string> Materials { get; } = new();
     public List<Mesh3do> Meshes { get; } = new();

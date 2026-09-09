@@ -6,12 +6,17 @@ namespace Sed.Formats.ThreeDo;
 /// <summary>
 /// Parses the Sith-engine 3DO model text format (per PJ3DO_IO.INC). Reads the
 /// MODELRESOURCE materials, the highest-detail geoset's meshes (vertices,
-/// texture vertices, faces) and the HIERARCHYDEF node transforms. Vertex normals
-/// are skipped. Reuses <see cref="JklReader"/> for the shared tokenizer.
+/// texture vertices, base lighting, vertex normals and face/mesh modes) and the
+/// HIERARCHYDEF node transforms. Reuses <see cref="JklReader"/> for the shared tokenizer.
 /// </summary>
 public static class ThreeDoParser
 {
-    public static ThreeDoModel Parse(string text) => Parse(new StringReader(text));
+    public static ThreeDoModel Parse(string text)
+    {
+        var model = Parse(new StringReader(text));
+        model.ArchitectureContentHash = ArchitectureModelFingerprint.Compute(text);
+        return model;
+    }
 
     public static ThreeDoModel Parse(TextReader reader)
     {
@@ -49,10 +54,10 @@ public static class ThreeDoParser
     private static void LoadMaterials(JklReader r, ThreeDoModel model)
     {
         if (!r.Next()) return;
-        int n = LastInt(r.Current);
+        int n = Count(r.Current, 65536);
         for (int i = 0; i < n; i++)
         {
-            if (!r.Next(upper: false) || r.EndOfSection) break;
+            if (!r.Next(upper: false) || r.EndOfSection) throw new FormatException("Truncated 3DO material table.");
             // "i: name.mat"
             var name = JklReader.WordAt(JklReader.StripIndex(r.Current), 0);
             if (name.Length > 0) model.Materials.Add(name);
@@ -75,62 +80,95 @@ public static class ThreeDoParser
         if (r.EndOfSection) return;
 
         if (!r.Next()) return; // MESHES n
-        int nmeshes = LastInt(r.Current);
+        int nmeshes = Count(r.Current, 4096);
 
         for (int i = 0; i < nmeshes; i++)
         {
             // advance to "MESH"
             while (r.Next() && !r.EndOfSection)
                 if (JklReader.FirstWord(r.Current) == "MESH") break;
-            if (r.EndOfSection) return;
+            if (r.Eof || r.EndOfSection) throw new FormatException("Truncated 3DO mesh table.");
 
             var mesh = new Mesh3do();
             model.Meshes.Add(mesh);
 
             if (r.Next()) mesh.Name = JklReader.WordAt(r.Current, 1); // NAME x
 
-            // skip mode lines until VERTICES n
+            // Preserve mesh modes before VERTICES; rendering combines mesh and face modes.
             int nverts = 0;
             while (r.Next() && !r.EndOfSection)
             {
                 var t = JklReader.Tokens(r.Current);
-                if (t[0] == "VERTICES") { nverts = LastInt(r.Current); break; }
+                if (t[0] == "VERTICES") { nverts = Count(r.Current); break; }
+                if (t.Length >= 2)
+                {
+                    if (t[0] == "GEOMETRYMODE") mesh.GeometryMode = JklReader.ParseInt(t[1]);
+                    if (t[0] == "LIGHTINGMODE") mesh.LightingMode = JklReader.ParseInt(t[1]);
+                    if (t[0] == "TEXTUREMODE") mesh.TextureMode = JklReader.ParseInt(t[1]);
+                }
             }
+            if (model.Meshes.Sum(m => (long)m.Vertices.Count) + nverts > 1_000_000)
+                throw new FormatException("3DO exceeds the one-million decoded vertex budget.");
 
             for (int j = 0; j < nverts; j++)
             {
-                r.Next();
+                RequireRow(r, "vertices");
                 var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
+                if (t.Length < 3) throw new FormatException("Truncated 3DO vertex.");
                 mesh.Vertices.Add(new Vec3(
                     JklReader.ParseFloat(t.ElementAtOrDefault(0) ?? "0"),
                     JklReader.ParseFloat(t.ElementAtOrDefault(1) ?? "0"),
                     JklReader.ParseFloat(t.ElementAtOrDefault(2) ?? "0")));
+                // Legacy editor fixtures sometimes omit this component; zero is
+                // an unlit base contribution, not an invented full-bright value.
+                mesh.VertexIntensities.Add(ReadLight(t.ElementAtOrDefault(3) ?? "0"));
             }
 
-            r.Next(); // TEXTURE VERTICES n
-            int ntex = LastInt(r.Current);
+            RequireRow(r, "texture vertex header");
+            var textureHeader = JklReader.Tokens(r.Current);
+            if (textureHeader.Length != 3 || textureHeader[0] != "TEXTURE" || textureHeader[1] != "VERTICES")
+                throw new FormatException("Missing 3DO texture vertex header.");
+            int ntex = Count(r.Current);
+            if (model.Meshes.Sum(m => (long)m.Uvs.Count) + ntex > 1_000_000)
+                throw new FormatException("3DO exceeds the one-million decoded UV budget.");
             for (int j = 0; j < ntex; j++)
             {
-                r.Next();
+                RequireRow(r, "texture vertices");
                 var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
+                if (t.Length < 2) throw new FormatException("Truncated 3DO texture vertex.");
                 mesh.Uvs.Add(new Vec2(
                     JklReader.ParseFloat(t.ElementAtOrDefault(0) ?? "0"),
                     JklReader.ParseFloat(t.ElementAtOrDefault(1) ?? "0")));
             }
-
             // advance to FACES n
             int nfaces = 0;
+            bool foundFaces = false;
             while (r.Next() && !r.EndOfSection)
             {
                 var t = JklReader.Tokens(r.Current);
-                if (t[0] == "FACES") { nfaces = LastInt(r.Current); break; }
+                if (t[0] == "FACES") { nfaces = Count(r.Current); foundFaces = true; break; }
+                if (t.Length >= 2 && t[0] == "VERTEX" && t[1] == "NORMALS")
+                {
+                    int count = t.Length >= 3 ? Count(r.Current) : mesh.Vertices.Count;
+                    if (count != mesh.Vertices.Count) throw new FormatException("3DO vertex normal count differs from vertex count.");
+                    for (int normal = 0; normal < count; normal++)
+                    {
+                        if (!r.Next() || r.EndOfSection) throw new FormatException("Truncated 3DO vertex normals.");
+                        var components = JklReader.Tokens(JklReader.StripIndex(r.Current));
+                        if (components.Length < 3) throw new FormatException("Truncated 3DO vertex normal.");
+                        mesh.VertexNormals.Add(new Vec3(JklReader.ParseFloat(components[0]), JklReader.ParseFloat(components[1]), JklReader.ParseFloat(components[2])));
+                    }
+                }
             }
+            if (!foundFaces) throw new FormatException("Missing 3DO face table header.");
+            if (model.Meshes.Sum(m => (long)m.Faces.Count) + nfaces > 1_000_000)
+                throw new FormatException("3DO exceeds the one-million decoded face budget.");
             for (int j = 0; j < nfaces; j++)
             {
-                r.Next();
+                RequireRow(r, "faces");
                 mesh.Faces.Add(ParseFace(r.Current));
             }
-            // VERTEX NORMALS follow — skipped by the next mesh's "MESH" scan.
+            // Face normals that follow are skipped by the next mesh's MESH scan.
         }
     }
 
@@ -139,13 +177,20 @@ public static class ThreeDoParser
         // num: material type geo light tex extralight nverts  v,uv v,uv ...
         var t = JklReader.Tokens(line);
         var face = new Face3do();
-        if (t.Length < 8) return face;
+        if (t.Length < 8) throw new FormatException("Truncated 3DO face.");
         face.Material = JklReader.ParseInt(t[1]);
+        face.FaceFlags = JklReader.ParseHex(t[2]);
+        face.Geo = JklReader.ParseInt(t[3]);
+        face.Light = JklReader.ParseInt(t[4]);
+        face.Tex = JklReader.ParseInt(t[5]);
+        face.ExtraLight = ReadLight(t[6]);
         int nverts = JklReader.ParseInt(t[7]);
+        if (nverts < 0 || nverts > 64) throw new FormatException("3DO face corner count must be from 0 through 64.");
 
         // Pairs start at token 8; rejoin and split commas to tolerate "v,uv" or "v, uv".
         var rest = string.Join(' ', t.Skip(8)).Replace(',', ' ');
         var pair = JklReader.Tokens(rest);
+        if (pair.Length != nverts * 2) throw new FormatException("3DO face corner count differs from its vertex/UV pairs.");
         for (int k = 0; k < nverts && k * 2 + 1 < pair.Length; k++)
         {
             face.VertexIndices.Add(JklReader.ParseInt(pair[k * 2]));
@@ -157,13 +202,13 @@ public static class ThreeDoParser
     private static void LoadHierarchy(JklReader r, ThreeDoModel model)
     {
         if (!r.Next()) return;
-        int n = LastInt(r.Current);
+        int n = Count(r.Current, 65536);
         for (int i = 0; i < n; i++)
         {
-            if (!r.Next() || r.EndOfSection) break;
+            RequireRow(r, "hierarchy");
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
             // After stripping "i:": flags type mesh parent child sibling numChildren x y z pitch yaw roll ...
-            if (t.Length < 13) { model.Nodes.Add(new HierarchyNode()); continue; }
+            if (t.Length < 13) throw new FormatException("Truncated 3DO hierarchy node.");
             model.Nodes.Add(new HierarchyNode
             {
                 Mesh = JklReader.ParseInt(t[2]),
@@ -180,5 +225,25 @@ public static class ThreeDoParser
     {
         var t = JklReader.Tokens(line);
         return t.Length == 0 ? 0 : JklReader.ParseInt(t[^1]);
+    }
+
+    private static int Count(string line, int maximum = 1_000_000)
+    {
+        int count = LastInt(line);
+        if (count < 0 || count > maximum) throw new FormatException($"3DO declared count exceeds the 0..{maximum} bound.");
+        return count;
+    }
+
+    private static void RequireRow(JklReader reader, string section)
+    {
+        if (!reader.Next() || reader.EndOfSection) throw new FormatException($"Truncated 3DO {section}.");
+    }
+
+    private static float ReadLight(string text)
+    {
+        double value = JklReader.ParseFloat(text);
+        if (!double.IsFinite(value) || System.Math.Abs(value) > float.MaxValue)
+            throw new FormatException("3DO lighting must be a finite representable value.");
+        return (float)value;
     }
 }

@@ -28,7 +28,7 @@ public static class AgentCommandCatalog
                 ("level", path), ("sectorIndex", new { type = "integer", minimum = 0, maximum = int.MaxValue })),
             Make("query", "query <level> <query.json|->", "Bounded readback of header, sectors, things, lights, templates, materials, colormaps, surfaces or vertices, with geometry bounds, normals and neighbors.", false, ["level", "request"],
                 ("level", path), ("request", request)),
-            Make("snapshot", "snapshot <level> <snapshot.json|-> <new-output.png>", "Offscreen Vulkan diagnostic geometry image from an explicit camera. No window, materials, models or game-lighting parity.", true, ["level", "request", "output"],
+            Make("snapshot", "snapshot <level> <snapshot.json|-> <new-output.png>", "Offscreen Vulkan diagnostic or static lit image from an explicit camera. Lit mode takes hash-bound resource archives; no window or game simulation.", true, ["level", "request", "output"],
                 ("level", path), ("request", request), ("output", Text("New PNG path in an existing directory; never overwritten."))),
             Make("validate", "validate <level>", "Structural diagnostics with object and parameter selectors; no gameplay or resource-load claim.", false, ["level"], ("level", path)),
             Make("plan", "plan <level> <patch.json|->", "Apply a patch to an isolated model and return a reviewable output hash. No writes.", false, ["level", "request"],

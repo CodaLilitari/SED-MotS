@@ -3,8 +3,8 @@ using System.Text;
 namespace Sed.Formats.Material;
 
 /// <summary>
-/// A JK CMP colormap. Only the 256-entry RGB palette is decoded here (the
-/// lighting/transparency tables that follow are not needed for base texturing).
+/// A JK CMP colormap. Decodes the 256-entry RGB palette and 64-row lighting
+/// table. The separate software transparency table is not decoded here.
 ///
 /// Layout (per graph_files.pas): 64-byte header (sig "CMP ", uint32 ×2, 52 pad
 /// bytes) then 256 × { byte r, g, b }. Palette values are full 0–255 range.
