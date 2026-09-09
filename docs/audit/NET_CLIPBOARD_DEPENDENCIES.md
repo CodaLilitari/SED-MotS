@@ -1,0 +1,15 @@
+# Clipboard dependency preservation
+
+The original clipboard copied layer indexes and template names into another document without their definitions. Export could reset pasted layer membership, substitute a different inherited template, or replace an absent sector colormap with colormap zero.
+
+`LevelFragment` now captures referenced layer names and required thing-template parent chains. Paste reuses matching target layers or appends missing layers, maintaining separate source layers even when their names are duplicated. All pasted sectors, things and lights use the remapped indexes. Source layer renames after copying do not change the snapshot. The unnamed default layer in a model without a layer table is represented as `Layer0`; other missing layer references produce a preflight error.
+
+Template snapshots retain effective values and ordered source parameters, including repeated `frame=` records. Missing definitions are appended with parents before children. Existing definitions must match the captured parent, effective values and ordered source records; declaration position alone is not part of this comparison. This comparison is deliberately conservative and may refuse differently represented definitions with equivalent effective behavior. A target child with an absent parent is refused because appending that parent after the existing child would not preserve engine loading order. Cycles and missing cross-document definitions are also reported through `CompatibilityError`, which the GUI checks before constructing the paste operation. An unresolved reference can remain unresolved only in its original document while that reference is still undefined.
+
+Missing nonempty sector colormap names are appended to the target colormap table. This preserves the JKL sector lookup; it does not copy or verify external CMP files. Materials use the separate format writer's name/index reconciliation. The parent command's cross-game preflight rejects incompatible game kinds rather than implicitly converting MotS lighting to JK.
+
+Dependency additions and cloned objects are staged before the target lists change. Undo removes the added layers, templates, colormaps and architectural objects together with pasted entities. Redo reuses the same cloned entities and definitions. Changes to these owned dependencies outside normal undo history are detected before removal or reinsertion, avoiding deletion of unrelated work.
+
+`ClipboardDependencyTests.cs` adds **11 executable tests** for named/duplicate layer remapping, template parent order and snapshot ownership, effective and repeated-parameter conflicts, unresolved/cyclic/missing dependencies, native JKL export of layers/templates/colormaps, and undo/redo behavior. The focused combined clipboard, MotS editing and light-entity run passed **42 tests**, zero failures or skips. No GUI or game was launched for these checks.
+
+This work snapshots parent inheritance only. It does not recursively acquire model, material, COG, sound or other resources named by template parameters, nor does it validate those files' contents or rebake architectural lighting.

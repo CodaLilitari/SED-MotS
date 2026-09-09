@@ -11,27 +11,28 @@ namespace Sed.Formats.Jkl;
 /// </summary>
 public static class JklWriter
 {
-    public static void Save(JklDocument doc, string path) =>
-        File.WriteAllText(path, Build(doc));
+    public static void Save(JklDocument doc, string path)
+    {
+        string content = Build(doc);
+        string fullPath = Path.GetFullPath(path);
+        string temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllText(temporary, content);
+            File.Move(temporary, fullPath, overwrite: true);
+        }
+        finally { if (File.Exists(temporary)) File.Delete(temporary); }
+    }
 
     public static string Build(JklDocument doc)
     {
         var src = doc.SourceLines;
         var level = doc.Level;
-        var (geo, sectors) = GeoResourceWriter.Build(level);
-
         var ranges = new List<(int start, int end, List<string> replacement)>();
         var appended = new List<List<string>>();
-
-        AddSection(ranges, appended, src, "HEADER", GenerateHeader(level), true);
-        AddSection(ranges, appended, src, "GEORESOURCE", geo, true);
-        AddSection(ranges, appended, src, "SECTORS", sectors, true);
-        AddSection(ranges, appended, src, "TEMPLATES", GenerateTemplates(level), level.Templates.Count > 0);
-        AddSection(ranges, appended, src, "THINGS", GenerateThings(level), level.Things.Count > 0);
-        AddSection(ranges, appended, src, "LIGHTS", GenerateLights(level), level.Lights.Count > 0);
-        AddSection(ranges, appended, src, "COGS", GenerateCogs(level), level.Cogs.Count > 0);
-        AddSection(ranges, appended, src, "LAYERS", GenerateLayers(level), level.Layers.Count > 0);
-        ranges.Sort((a, b) => a.start.CompareTo(b.start));
+        foreach (var section in GenerateSections(doc))
+            AddSection(ranges, appended, doc, section.name, section.lines, section.hasContent);
+        ranges.Sort((a, b) => a.start != b.start ? a.start.CompareTo(b.start) : a.end.CompareTo(b.end));
 
         var result = new List<string>(src.Length + 64);
         int i = 0, r = 0;
@@ -60,6 +61,58 @@ public static class JklWriter
         return string.Join('\n', result);
     }
 
+    internal static void CaptureBaseline(JklDocument doc)
+    {
+        foreach (var section in GenerateSections(doc))
+            doc.OriginalSections.Add(section.name, string.Join('\n', section.lines));
+    }
+
+    private static List<(string name, List<string> lines, bool hasContent)> GenerateSections(JklDocument doc)
+    {
+        var level = doc.Level;
+        foreach (var surface in level.Sectors.SelectMany(s => s.Surfaces))
+            if (!string.IsNullOrWhiteSpace(surface.Material) &&
+                !doc.Materials.Contains(surface.Material, StringComparer.OrdinalIgnoreCase))
+                doc.Materials.Add(surface.Material);
+        var (geo, sectors) = GeoResourceWriter.Build(level, doc.Materials);
+        var arch = new List<string> { "SECTION: ARCHLIGHTING" };
+        arch.AddRange(ArchitecturalLightingFormat.Build(level.ArchitecturalLighting));
+        arch.Add("END");
+        return new()
+        {
+            ("HEADER", GenerateHeader(level), true), ("MATERIALS", GenerateMaterials(doc), doc.Materials.Count > 0),
+            ("GEORESOURCE", geo, true), ("SECTORS", sectors, true),
+            ("TEMPLATES", GenerateTemplates(level), level.Templates.Count > 0),
+            ("THINGS", GenerateThings(level), level.Things.Count > 0),
+            ("LIGHTS", GenerateLights(level), level.Lights.Count > 0),
+            ("COGS", GenerateCogs(level), level.Cogs.Count > 0),
+            ("LAYERS", GenerateLayers(level), level.Layers.Count > 0),
+            ("ARCHLIGHTING", arch, level.Kind == ProjectType.MysteriesOfTheSith)
+        };
+    }
+
+    private static List<string> GenerateMaterials(JklDocument doc)
+    {
+        var originalRows = new Dictionary<int, string>();
+        var (start, end) = FindSection(doc.SourceLines, "MATERIALS");
+        for (int i = start + 1; start >= 0 && i <= end; i++)
+        {
+            string line = doc.SourceLines[i];
+            var first = JklReader.FirstWord(line.Trim());
+            if (first.EndsWith(':') && int.TryParse(first[..^1], out int index)) originalRows[index] = line;
+        }
+        var lines = new List<string> { "SECTION: MATERIALS", $"World materials {doc.Materials.Count}" };
+        for (int i = 0; i < doc.Materials.Count; i++)
+        {
+            if (originalRows.TryGetValue(i, out string? row) &&
+                JklReader.WordAt(JklReader.StripIndex(row), 0).Equals(doc.Materials[i], StringComparison.OrdinalIgnoreCase))
+                lines.Add(row);
+            else lines.Add($"{i}: {doc.Materials[i]} 1 1");
+        }
+        lines.Add("END");
+        return lines;
+    }
+
     /// <summary>
     /// Registers a section for rewriting. When the source already has the section
     /// its lines are replaced in place; when it does not and
@@ -68,10 +121,19 @@ public static class JklWriter
     /// skipped entirely so untouched levels do not sprout empty ones.
     /// </summary>
     private static void AddSection(List<(int, int, List<string>)> ranges, List<List<string>> appended,
-        string[] lines, string name, List<string> replacement, bool hasContent)
+        JklDocument doc, string name, List<string> replacement, bool hasContent)
     {
+        var lines = doc.SourceLines;
+        if (doc.OriginalSections.TryGetValue(name, out string? original) &&
+            original == string.Join('\n', replacement)) return;
+        if (doc.SectionsWithUnmodeledFields.Contains(name))
+            throw new InvalidOperationException($"Cannot rewrite {name}: its source contains unmodeled fields. Keep the original section or use an editor that supports those fields.");
+        if (doc.Level.Kind == ProjectType.InfernalMachine && name is "GEORESOURCE" or "SECTORS")
+            throw new NotSupportedException("Regenerating Infernal Machine geometry is not supported; unchanged source can be retained.");
         var (start, end) = FindSection(lines, name);
         if (start >= 0) ranges.Add((start, end, replacement));
+        else if (hasContent && name == "MATERIALS" && FindSection(lines, "GEORESOURCE").start is var geoStart && geoStart >= 0)
+            ranges.Add((geoStart, geoStart - 1, replacement));
         else if (hasContent) appended.Add(replacement);
     }
 
@@ -85,7 +147,7 @@ public static class JklWriter
         int start = -1;
         for (int i = 0; i < lines.Length; i++)
         {
-            var t = lines[i].Trim();
+            var t = lines[i].Split('#')[0].Trim();
             if (start < 0)
             {
                 if (IsSectionHeader(t, out var hdr) && hdr.Equals(name, StringComparison.OrdinalIgnoreCase))
@@ -113,16 +175,26 @@ public static class JklWriter
 
     private static List<string> GenerateThings(Level level)
     {
-        var lines = new List<string> { "SECTION: THINGS", "", $"World things {level.Things.Count}" };
+        var lines = new List<string> { "SECTION: THINGS", "", $"World things {System.Math.Max(level.ThingCapacity, level.Things.Count)}" };
         for (int i = 0; i < level.Things.Count; i++)
         {
             var t = level.Things[i];
             var template = t.Template.Length > 0 ? t.Template : "none";
             var name = t.Name.Length > 0 ? t.Name : "thing";
-            int sector = t.Sector?.Num ?? 0;
+            int sector = t.Sector is null ? -1 : level.Sectors.IndexOf(t.Sector);
+            if (t.Sector is not null && sector < 0) throw new InvalidOperationException($"Thing {i} references a deleted sector.");
             var line = $"{i}: {template} {name} {F(t.Position.X)} {F(t.Position.Y)} {F(t.Position.Z)} " +
                        $"{F(t.Pitch)} {F(t.Yaw)} {F(t.Roll)} {sector}";
-            foreach (var (k, v) in t.Values) line += $" {k}={v}";
+            if (level.Kind == ProjectType.MysteriesOfTheSith)
+            {
+                if (t.ArchLightingIndex < -1 || t.ArchLightingIndex >= level.ArchitecturalLighting.Count)
+                    throw new InvalidOperationException($"Thing {i} references missing architectural lighting object {t.ArchLightingIndex}.");
+                if (t.ArchLightingIndex >= 0 && !string.Equals(t.ArchLightingSourceModel,
+                    level.GetThingModel(t), StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException($"Thing {i} model changed after architectural lighting import; unbind or rebake before saving.");
+                line += $" {t.ArchLightingIndex}";
+            }
+            foreach (var (k, v) in ParameterRecords.Merge(t.SourceParameters, t.Values)) line += $" {k}={v}";
             lines.Add(line);
         }
         lines.Add("end");
@@ -168,7 +240,7 @@ public static class JklWriter
 
             var sb = new StringBuilder();
             sb.Append(tpl.Name).Append(' ').Append(parent);
-            foreach (var (k, v) in tpl.Values)
+            foreach (var (k, v) in ParameterRecords.Merge(tpl.SourceParameters, tpl.Values))
                 sb.Append(' ').Append(k).Append('=').Append(v);
             lines.Add(sb.ToString());
         }
@@ -240,7 +312,7 @@ public static class JklWriter
         return lines;
     }
 
-    private static string F(double v) => v.ToString("0.000000", CultureInfo.InvariantCulture);
-    private static string F6(double v) => v.ToString("0.000000", CultureInfo.InvariantCulture);
-    private static string F8(double v) => v.ToString("0.00000000", CultureInfo.InvariantCulture);
+    private static string F(double v) => v.ToString("R", CultureInfo.InvariantCulture);
+    private static string F6(double v) => F(v);
+    private static string F8(double v) => F(v);
 }

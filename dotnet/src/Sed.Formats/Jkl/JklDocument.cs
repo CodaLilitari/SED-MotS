@@ -3,10 +3,10 @@ using Sed.Core.Model;
 namespace Sed.Formats.Jkl;
 
 /// <summary>
-/// A parsed JKL together with its original source lines and the line numbers of
-/// the editable entries (world vertices, things). This lets <see cref="JklWriter"/>
-/// rewrite only the lines that changed and preserve everything else verbatim,
-/// keeping COGs/lights/layers/etc. intact for a game-loadable save.
+/// A parsed JKL together with its original source lines and modeled-section
+/// baselines. <see cref="JklWriter"/> retains unchanged section text and
+/// regenerates changed supported sections; unknown external index references
+/// may still require a resource-aware editing workflow.
 /// </summary>
 public sealed class JklDocument
 {
@@ -27,6 +27,9 @@ public sealed class JklDocument
 
     /// <summary>Original material names (index order) for resolving surface material indices on save.</summary>
     public List<string> Materials { get; } = new();
+    internal Dictionary<string, string> OriginalSections { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal HashSet<string> SectionsWithUnmodeledFields { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public List<string> PreservationWarnings { get; } = new();
 
     public JklDocument(string[] sourceLines) => SourceLines = sourceLines;
 

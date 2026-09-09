@@ -22,11 +22,25 @@ public sealed class CompositeCommand : IEditCommand
 
     public void Apply()
     {
-        foreach (var c in _commands) c.Apply();
+        int applied = 0;
+        try { for (; applied < _commands.Length; applied++) _commands[applied].Apply(); }
+        catch
+        {
+            // Each child must make its own failed Apply atomic. Roll back the
+            // children that completed so a rejected group leaves no partial edit.
+            for (int i = applied - 1; i >= 0; i--) _commands[i].Revert();
+            throw;
+        }
     }
 
     public void Revert()
     {
-        for (int i = _commands.Length - 1; i >= 0; i--) _commands[i].Revert();
+        int index = _commands.Length - 1;
+        try { for (; index >= 0; index--) _commands[index].Revert(); }
+        catch
+        {
+            for (int i = index + 1; i < _commands.Length; i++) _commands[i].Apply();
+            throw;
+        }
     }
 }

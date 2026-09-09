@@ -1,0 +1,27 @@
+{
+  "recordedAtUtc": "2026-09-09T03:40:03.893080+00:00",
+  "sdk": "10.0.401",
+  "configuration": "Release",
+  "buildExitCode": 0,
+  "buildWarnings": 0,
+  "buildErrors": 0,
+  "auditExitCode": 0,
+  "isolatedBuildDirectory": "build/community-audit-isolated",
+  "buildLogSHA256": "6341ed9211b0f4da4ee1f79825c9815cca9c57006d1db05580e3073506e96194",
+  "auditLogSHA256": "1d60fab87d67a2ade1e0efbb49c97ee8b3a4c425c2851ea66603c25430486359",
+  "formatAssemblySha256": "1552cb5037aa5c74bec6fa6f9704bb4bfab3c67080e0336683e228c890f65a9b",
+  "verifierAssemblySha256": "63e512621595defaa21ebf3acb795155271c624622f497afe933022d9375015d",
+  "sourceManifestSha256": "a85744ec3912e7bb920d264520cee6094c6260320e864de79348e7f8bfa6bc39",
+  "supplementalPayloadManifestSha256": "908a5c0a7cc5d71b22969f79145366a764984d0559905d94aec5577e82822ed0",
+  "toolSources": [
+    {
+      "relativePath": "dotnet/tools/Sed.CommunityAudit/Program.cs",
+      "sha256": "39bc30514065d964924a24b51fa8b822f463b0a62ccd9a044c1cf702c71c9b3d"
+    },
+    {
+      "relativePath": "dotnet/tools/Sed.CommunityAudit/Sed.CommunityAudit.csproj",
+      "sha256": "15903460b2be9c46d23c1c926732d359a8fe08bb485e98b35dbd76b40a63ee48"
+    }
+  ],
+  "executedGameOrInstaller": false
+}

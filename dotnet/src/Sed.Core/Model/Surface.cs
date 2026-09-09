@@ -14,6 +14,8 @@ public sealed class Surface
         public Vertex Vertex = null!;
         public TexVertex Uv;
         public ColorF Intensity = ColorF.White;
+        /// <summary>Independent MotS monochrome component. Null uses Intensity.R for newly authored scalar lighting.</summary>
+        public float? MonoIntensity;
     }
 
     // Legacy inline flags (prefer SurfaceFlags / FaceFlags constants in EngineFlags.cs).

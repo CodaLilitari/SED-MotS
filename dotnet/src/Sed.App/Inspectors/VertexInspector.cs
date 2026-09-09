@@ -29,6 +29,22 @@ public static class VertexInspector
             FontSize = 11,
         }));
 
+        if (vertex.Sector is { } sector && sector.Surfaces.SelectMany(s => s.Corners).FirstOrDefault(c => c.Vertex == vertex) is { } corner)
+        {
+            var components = sector.Level.Kind == ProjectType.JediKnight
+                ? new[] { VertexLightComponent.Mono } : Enum.GetValues<VertexLightComponent>();
+            foreach (var component in components)
+            {
+                float value = component switch { VertexLightComponent.Mono => corner.MonoIntensity ?? corner.Intensity.R,
+                    VertexLightComponent.Red => corner.Intensity.R, VertexLightComponent.Green => corner.Intensity.G, _ => corner.Intensity.B };
+                p.Children.Add(InspectorPanel.Row(component + " light", InspectorPanel.NumericField(value, v =>
+                {
+                    if (double.IsFinite(v) && v is >= 0 and <= 1000)
+                        history.Do(new SetVertexLightComponentCommand(sector, vertex, component, (float)v));
+                })));
+            }
+        }
+
         return p;
     }
 }

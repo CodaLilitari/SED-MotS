@@ -44,23 +44,32 @@ public sealed class GameInstall : IDisposable
         var (levelNames, resourceNames) = ExpectedFiles(game);
 
         GobArchive? levels = null;
-        foreach (var name in levelNames)
-        {
-            var path = FindFile(baseDir, name);
-            if (path is not null) { levels = GobArchive.Open(path); break; }
-        }
-
         var resources = new List<GobArchive>();
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var name in resourceNames)
+        try
         {
-            var path = FindFile(baseDir, name);
-            if (path is not null && seen.Add(Path.GetFileName(path)))
-                resources.Add(GobArchive.Open(path));
-        }
+            foreach (var name in levelNames)
+            {
+                var path = FindFile(baseDir, name);
+                if (path is not null) { levels = GobArchive.Open(path); break; }
+            }
 
-        if (levels is null && resources.Count == 0) return null;
-        return new GameInstall(game, baseDir, levels, resources);
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var name in resourceNames)
+            {
+                var path = FindFile(baseDir, name);
+                if (path is not null && seen.Add(Path.GetFileName(path)))
+                    resources.Add(GobArchive.Open(path));
+            }
+
+            if (levels is null && resources.Count == 0) return null;
+            return new GameInstall(game, baseDir, levels, resources);
+        }
+        catch
+        {
+            levels?.Dispose();
+            foreach (var archive in resources) archive.Dispose();
+            throw;
+        }
     }
 
     /// <summary>Whether a base dir looks like a valid install (has at least one expected archive).</summary>

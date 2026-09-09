@@ -311,6 +311,7 @@ public sealed class TemplateEditorWindow : Window
 
         var clone = new Template { Name = UniqueName(source.Name + "_copy"), Parent = source.Parent };
         foreach (var (k, v) in source.Values) clone.Values[k] = v;
+        clone.SourceParameters.AddRange(source.SourceParameters);
 
         _history.Do(new CreateTemplateCommand(_level, clone));
         _selected = clone;

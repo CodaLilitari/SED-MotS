@@ -32,7 +32,7 @@ public sealed class SetSectorAmbientCommand : IEditCommand
 /// </summary>
 public sealed class SetVertexLightCommand : IEditCommand
 {
-    private readonly List<(Surface.Corner corner, ColorF old)> _changes = new();
+    private readonly List<(Surface.Corner corner, ColorF old, float? mono)> _changes = new();
     private readonly ColorF _new;
 
     public SetVertexLightCommand(Sector sector, Vertex vertex, ColorF intensity)
@@ -41,12 +41,12 @@ public sealed class SetVertexLightCommand : IEditCommand
         foreach (var surf in sector.Surfaces)
             foreach (var c in surf.Corners)
                 if (c.Vertex == vertex)
-                    _changes.Add((c, c.Intensity));
+                    _changes.Add((c, c.Intensity, c.MonoIntensity));
     }
 
     public string Name => "Set vertex light";
-    public void Apply() { foreach (var (c, _) in _changes) c.Intensity = _new; }
-    public void Revert() { foreach (var (c, old) in _changes) c.Intensity = old; }
+    public void Apply() { foreach (var (c, _, _) in _changes) { c.Intensity = _new; c.MonoIntensity = _new.R; } }
+    public void Revert() { foreach (var (c, old, mono) in _changes) { c.Intensity = old; c.MonoIntensity = mono; } }
 
     /// <summary>Builds a command that brightens/darkens the vertex light by a grey delta.</summary>
     public static SetVertexLightCommand Adjust(Sector sector, Vertex vertex, float delta)

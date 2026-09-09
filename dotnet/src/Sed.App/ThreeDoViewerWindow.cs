@@ -57,8 +57,8 @@ public sealed class ThreeDoViewerWindow : Window
             MinWidth = 280,
             ItemTemplate = new FuncTreeDataTemplate(
                 typeof(NodeItem),
-                (item, _) => new TextBlock { Text = ((NodeItem)item).Label, FontSize = 12, Margin = new Thickness(4, 2) },
-                item => ((NodeItem)item).Children),
+                (item, _) => new TextBlock { Text = (item as NodeItem)?.Label ?? string.Empty, FontSize = 12, Margin = new Thickness(4, 2) },
+                item => (item as NodeItem)?.Children ?? []),
         };
         _tree.SelectionChanged += (_, _) => ShowDetail();
         _detail = new StackPanel { Margin = new Thickness(12) };

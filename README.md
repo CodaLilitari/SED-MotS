@@ -1,4 +1,34 @@
-# SED Level Editor
+# SED MotS — Windows editor and agent tools
+
+This local development fork modernizes SED for Jedi Knight: Dark Forces II and Mysteries of the Sith. It uses C#, Avalonia and Vulkan, with a separate headless agent executable. The Windows distribution includes the .NET runtime: users do not need Delphi or an SDK.
+
+OpenJKDF2 is the primary compatibility target. Separate retail profiles are included. This is a development build, not a claim of complete original-editor parity or verified gameplay compatibility.
+
+Start with [the Windows guide](docs/WINDOWS_QUICKSTART.md) or [the agent protocol](docs/AGENT_PROTOCOL.md). The [MotS format audit](docs/audit/NET_MOTS_FORMAT_AUDIT.md) records preservation fixes and the precise scope of the stock-level checks.
+
+The fork preserves MotS's independent mono/RGB lighting, architectural arrays and thing bindings, declared thing capacity, sector metadata and repeated parameters such as `frame=`. Copy/paste, lighting undo and sector cleaving preserve the added fields. The agent tool shares Core editing commands with the GUI and binds every patch's indices to its input SHA256. Windows launch profiles build direct executable arguments, and the Windows renderer uses `vulkan-1.dll`.
+
+## .NET build and packaging
+
+Use the .NET SDK pinned by `global.json`:
+
+```powershell
+./tools/Build-Net.ps1 -DotNet 'C:/path/to/dotnet.exe'
+```
+
+This builds the solution and runs its tests, recording unique logs under `build/dotnet`. It does not start the editor or a game. The checked-in shaders permit a Windows build without a Vulkan SDK; running the 3D viewport needs a Vulkan graphics driver.
+
+After committing the reviewed source, `tools/Package-Windows.ps1` creates a self-contained Windows editor, self-contained agent, corresponding source ZIP, Git history bundle, notices and SHA256 manifests. It requires PowerShell 7 and smoke-tests the packaged agent. `tools/Collect-NetNotices.ps1` collects notices from restored packages and their pinned upstream sources.
+
+## Provenance
+
+This is a GPLv3 source-derived fork based on [davidagnome/SED at 908d53d](https://github.com/davidagnome/SED/tree/908d53d70d6b95784a92e9f1746ab5b13afcfdf0), which builds on [smlu/SED](https://github.com/smlu/SED) and JED by Alexei Novikov and the Code Alliance. It is not represented as a clean-room implementation. Preserve those credits and [LICENSE](LICENSE).
+
+Separate .NET dependency and Phosphor font notices are in [licenses/net](licenses/net). Original game data, downloaded community levels, historical editor executables and restricted archival material remain external research inputs. They are not bundled. Research findings do not establish a right to copy unpublished source into the editor.
+
+The local fork has not yet been published to GitHub. The original upstream release links below describe upstream releases, not this development build.
+
+## Historical upstream description
 
 Yet another port of [JED](https://jkdf2.fandom.com/wiki/JED) level editor for games based on the [Sith game engine](https://starwars.fandom.com/wiki/Sith_Engine).  
 The editor supports games: [Star Wars Jedi Knight: Dark Forces II](https://en.wikipedia.org/wiki/Star_Wars_Jedi_Knight:_Dark_Forces_II), [Star Wars Jedi Knight: Mysteries of the Sith](https://en.wikipedia.org/wiki/Star_Wars_Jedi_Knight:_Mysteries_of_the_Sith), and [Indiana Jones and the Infernal Machine](https://en.wikipedia.org/wiki/Indiana_Jones_and_the_Infernal_Machine). 
@@ -11,9 +41,9 @@ The codebase has been ported to better support modern Windows systems, as well a
 
 Special thanks go to Alexei Novikov and the Code Alliance for creating the original JED.
 
-## Building
+## Historical Pascal build
 
-To build the SED editor from source code, use Delphi version 11 or later. You can download it from [https://www.embarcadero.com/products/delphi](https://www.embarcadero.com/products/delphi).
+The historical Pascal implementation requires Delphi version 11 or later. It remains in the tree for provenance and is not required by the .NET distribution.
 
 ## Releases
 

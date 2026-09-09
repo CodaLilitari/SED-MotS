@@ -1,0 +1,39 @@
+{
+  "capturedUtc": "2026-09-09T03:38:42.3463414Z",
+  "scope": "Full Release solution build and aggregate synthetic test suite before packaging",
+  "sourceState": "Reviewed worktree before milestone commit; final package identifies its exact committed source",
+  "projects": 25,
+  "buildWarnings": 0,
+  "buildErrors": 0,
+  "tests": {
+    "total": 461,
+    "executed": 461,
+    "passed": 461,
+    "failed": 0,
+    "error": 0,
+    "timeout": 0,
+    "aborted": 0,
+    "inconclusive": 0,
+    "passedButRunAborted": 0,
+    "notRunnable": 0,
+    "notExecuted": 0,
+    "disconnected": 0,
+    "warning": 0,
+    "completed": 0,
+    "inProgress": 0,
+    "pending": 0
+  },
+  "buildReceipt": {
+    "startedUtc": "2026-09-09T03:36:58.5893592Z",
+    "configuration": "Release",
+    "dotnetPath": "E:\\DevTools\\dotnet-10.0.401\\dotnet.exe",
+    "dotnetSha256": "21a46f1e5235cf4e844b9de5429f0e198b9c97a41f0503a66442f1d639ca3ee6",
+    "status": "passed",
+    "guiLaunched": false,
+    "finishedUtc": "2026-09-09T03:37:30.0481206Z"
+  },
+  "trxSha256": "88aa116d3e802062c60154f0689bfe7aab0381a12219940666f53577b6d33b1b",
+  "suiteAssemblySha256": "ca4e33c301e8f73d10da6603aa3e0f9fe727c98787b9bf1ec8d47a024236a228",
+  "guiSmoke": "Bounded offscreen Avalonia MainWindow only; see NET_ENGINE_CONTRACTS.md",
+  "gameLaunched": false
+}

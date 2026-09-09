@@ -21,6 +21,19 @@ public static class ThingInspector
                 () => context?.Level is { } lvl ? PickerField.Templates(lvl) : Array.Empty<PickerItem>(),
                 v => history.Do(new SetThingTemplateCommand(thing, v)))));
 
+        if (thing.ArchLightingIndex >= 0)
+        {
+            p.Children.Add(new TextBlock
+            {
+                Text = $"Baked lighting #{thing.ArchLightingIndex} is preserved from the original model.",
+                TextWrapping = TextWrapping.Wrap, Margin = new Thickness(4, 6), FontSize = 11,
+            });
+            var unbind = new Button { Content = "Unbind baked lighting", Margin = new Thickness(4, 0, 4, 6) };
+            ToolTip.SetTip(unbind, "Use before replacing the model. The old lighting arrays remain available and Undo restores the binding.");
+            unbind.Click += (_, _) => history.Do(new ClearThingArchitectureCommand(thing));
+            p.Children.Add(unbind);
+        }
+
         int sectorNum = thing.Sector?.Num ?? -1;
         p.Children.Add(InspectorPanel.Row("Sector",
             InspectorPanel.NumericField(sectorNum, v =>

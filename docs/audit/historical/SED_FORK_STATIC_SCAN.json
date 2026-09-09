@@ -1,0 +1,1420 @@
+[
+  {
+    "path": "dotnet/src/Sed.App/AppSettings.cs",
+    "pattern": "game_mode",
+    "lines": [
+      8,
+      15,
+      74,
+      75,
+      83,
+      84,
+      103,
+      104
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/AppSettings.cs",
+    "pattern": "writes",
+    "lines": [
+      67
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/AppSettings.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      57,
+      69
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/CogGeneratorWindow.cs",
+    "pattern": "writes",
+    "lines": [
+      164
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/CogGeneratorWindow.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      112,
+      208
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/DfImportWindow.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/EpisodeEditorWindow.cs",
+    "pattern": "writes",
+    "lines": [
+      341,
+      345,
+      347
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/EpisodeEditorWindow.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      187,
+      213,
+      359
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/FindWindow.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      158,
+      177,
+      181,
+      187,
+      272,
+      275,
+      279,
+      284,
+      287
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/FindWindow.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      17
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/InspectorPanel.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      133
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/LightInspector.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      25
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/SectorInspector.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      18
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/SurfaceInspector.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      17,
+      24,
+      36,
+      43,
+      50,
+      71,
+      79,
+      83,
+      84
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/SurfaceInspector.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      66,
+      68,
+      69,
+      72
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/KeyBindings.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      119
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/KeyBindings.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      27,
+      28,
+      65,
+      66
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "pattern": "game_mode",
+    "lines": [
+      186,
+      187
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "pattern": "process_execution",
+    "lines": [
+      579,
+      580,
+      583,
+      600
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "pattern": "writes",
+    "lines": [
+      594,
+      634,
+      667
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      312,
+      363,
+      417
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      1030,
+      1031,
+      1032,
+      1033
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.App/VulkanView.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      324,
+      325,
+      345,
+      348,
+      632,
+      633,
+      681,
+      684,
+      686,
+      688,
+      690,
+      692,
+      696,
+      697,
+      698,
+      700,
+      773,
+      774,
+      776,
+      777,
+      778,
+      779,
+      782,
+      783,
+      785,
+      786,
+      787,
+      845
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/AdjoinCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      6,
+      7,
+      10,
+      13,
+      16,
+      17,
+      21,
+      22,
+      23,
+      24,
+      25,
+      28,
+      30,
+      31,
+      36,
+      39,
+      42,
+      45,
+      46,
+      50,
+      51,
+      52,
+      54,
+      55,
+      56,
+      58,
+      61,
+      63,
+      64,
+      65,
+      67,
+      68
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/AlignTextureCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      8,
+      82,
+      90
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/BridgeCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      10,
+      14,
+      49,
+      91,
+      92,
+      93,
+      96
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CalculateLightingCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      56,
+      65
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CleaveCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      61
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CleaveSectorCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      7,
+      17,
+      22,
+      24,
+      35,
+      36,
+      58,
+      62,
+      65,
+      98,
+      121,
+      147,
+      148,
+      149,
+      150,
+      167,
+      168,
+      169,
+      350,
+      353,
+      359,
+      361,
+      367,
+      369,
+      375,
+      379,
+      380,
+      381,
+      382,
+      386,
+      390,
+      392,
+      405,
+      410,
+      411,
+      415,
+      416
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CogCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      33,
+      57,
+      89,
+      115,
+      118,
+      121,
+      124,
+      154,
+      157,
+      161,
+      164
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CompositeCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      28
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ConnectSectorsCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      13,
+      19,
+      79,
+      80,
+      81,
+      86,
+      87,
+      90,
+      95,
+      96,
+      97,
+      102,
+      127,
+      139
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CreateDeleteCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      15,
+      16,
+      34,
+      37,
+      40,
+      53,
+      54,
+      59,
+      70,
+      86,
+      89,
+      90,
+      91,
+      94,
+      97,
+      103,
+      104,
+      108,
+      152,
+      206
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/EditHistory.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      8
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ExtrudeCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      8,
+      12,
+      19,
+      20,
+      21,
+      45,
+      49,
+      50,
+      51,
+      53,
+      54,
+      58,
+      65,
+      68,
+      69,
+      71,
+      73,
+      74,
+      84,
+      85,
+      110,
+      111,
+      113,
+      119,
+      121
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/FlipSurfaceCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/HeaderFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      30
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LevelClipboard.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      7,
+      9,
+      13,
+      47,
+      72,
+      100,
+      135,
+      156,
+      172,
+      177,
+      181,
+      185,
+      187,
+      191,
+      192,
+      260,
+      261,
+      262,
+      265,
+      273,
+      274,
+      275
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightCreateDeleteCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24,
+      27,
+      30,
+      57,
+      60,
+      64,
+      86
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      18,
+      33,
+      48,
+      63,
+      78,
+      93
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightingCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      19,
+      49
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/MoveGeometryCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      21,
+      43
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/MoveThingCommand.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      21
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/SectorFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      18,
+      33,
+      48,
+      63,
+      85,
+      100
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/SurfaceFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      14,
+      26,
+      38,
+      50,
+      62,
+      74,
+      91,
+      94,
+      99,
+      101,
+      102,
+      103
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TemplateCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24,
+      48,
+      74,
+      96,
+      157
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TextureCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      27,
+      59,
+      95,
+      166
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ThingFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      21,
+      39,
+      57,
+      80,
+      103,
+      121,
+      145
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TransformCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      16,
+      44,
+      90
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/VertexFieldCommands.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      21
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Lighting/LightCalculator.cs",
+    "pattern": "game_mode",
+    "lines": [
+      32
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Lighting/LightCalculator.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      11,
+      255,
+      256,
+      284
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/Box.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      3
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/EngineFlags.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      60,
+      64,
+      65
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Level.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      75,
+      81,
+      87,
+      93
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/ProjectType.cs",
+    "pattern": "game_mode",
+    "lines": [
+      11,
+      12
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Sector.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      19,
+      26,
+      53
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Surface.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      7,
+      42,
+      43,
+      50
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/FieldCriteria.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      155,
+      162
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/FieldCriteria.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      31,
+      73,
+      95,
+      113,
+      114,
+      115
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/LevelQuery.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      59
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/LevelQuery.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      48,
+      107,
+      192,
+      193,
+      194,
+      195,
+      196,
+      197
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Validation/ConsistencyChecker.cs",
+    "pattern": "game_mode",
+    "lines": [
+      17
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Validation/ConsistencyChecker.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      72,
+      73,
+      74
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Asc/AscImporter.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      69,
+      70,
+      72,
+      133
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Df/DfLevelImporter.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      1070
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Df/DfLevelImporter.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      32,
+      44,
+      234,
+      291,
+      293,
+      303,
+      528,
+      530,
+      630,
+      640,
+      763,
+      827,
+      829,
+      830,
+      932,
+      940,
+      941,
+      946,
+      957,
+      958,
+      959,
+      960,
+      1125,
+      1132,
+      1135,
+      1143
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Game/Episode.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      76
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Game/GameInstall.cs",
+    "pattern": "game_mode",
+    "lines": [
+      35,
+      36
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Gob/GobArchive.cs",
+    "pattern": "game_mode",
+    "lines": [
+      13
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/GeoData.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      16,
+      18,
+      31,
+      38,
+      40
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/GeoResourceWriter.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      11,
+      36,
+      49,
+      52,
+      60,
+      77
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklParser.cs",
+    "pattern": "game_mode",
+    "lines": [
+      107,
+      173,
+      288,
+      289,
+      293,
+      478
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklParser.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      117,
+      126,
+      131,
+      136,
+      148,
+      149,
+      196,
+      197,
+      198,
+      211,
+      212,
+      224,
+      225,
+      250,
+      251,
+      252,
+      294,
+      295,
+      296,
+      304,
+      333,
+      334,
+      340,
+      344,
+      480,
+      482,
+      483,
+      484,
+      485,
+      486
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklParser.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      13,
+      64,
+      72,
+      73,
+      78,
+      79,
+      80,
+      81,
+      82,
+      84,
+      85,
+      215,
+      222,
+      237,
+      260,
+      563,
+      564,
+      565,
+      566,
+      569
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklReader.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      101,
+      104,
+      110
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklWriter.cs",
+    "pattern": "game_mode",
+    "lines": [
+      136,
+      182,
+      188
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklWriter.cs",
+    "pattern": "writes",
+    "lines": [
+      15
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoExport.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      10,
+      52
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoParser.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      105,
+      106,
+      107,
+      117,
+      118
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoWriter.cs",
+    "pattern": "writes",
+    "lines": [
+      201
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Sed.Rendering.Vulkan.csproj",
+    "pattern": "process_execution",
+    "lines": [
+      22
+    ]
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/SceneAssembler.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/AdjoinFlipTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      8,
+      52,
+      58,
+      61,
+      62,
+      66,
+      67,
+      71,
+      77,
+      79,
+      81,
+      84,
+      85,
+      89,
+      90
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/BridgeTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      49,
+      54,
+      64,
+      65,
+      68,
+      69,
+      84,
+      94,
+      112,
+      128,
+      131,
+      132,
+      134,
+      189
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/CleaveSectorTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      16,
+      21,
+      39,
+      40,
+      42,
+      43,
+      113
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ClipboardTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      17,
+      116,
+      123,
+      124,
+      139,
+      140,
+      141,
+      142,
+      146,
+      152,
+      154,
+      163,
+      164,
+      167,
+      168,
+      236
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/CogScriptTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      165
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ConnectSectorsTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      18,
+      65,
+      70,
+      72,
+      73,
+      75,
+      78,
+      83,
+      84,
+      91,
+      96,
+      97,
+      102,
+      103,
+      106,
+      131,
+      132,
+      133,
+      177
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ConsistencyTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      15,
+      46,
+      54,
+      55,
+      57,
+      60,
+      62
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/DfImportTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24,
+      49,
+      50,
+      51,
+      52,
+      69,
+      70,
+      71,
+      72,
+      89,
+      90,
+      91,
+      92,
+      156,
+      157,
+      158,
+      159,
+      160,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      263,
+      265,
+      273,
+      274,
+      275
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/EngineFlagTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      83,
+      85,
+      86,
+      87,
+      88
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ExtrudeCleaveTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      16,
+      51,
+      54,
+      55,
+      56,
+      57,
+      64,
+      76,
+      80,
+      84
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/FieldQueryTests.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      144,
+      148,
+      151
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/FieldQueryTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24,
+      27,
+      28,
+      34,
+      35,
+      65,
+      69,
+      73,
+      130
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/GameInstallTests.cs",
+    "pattern": "writes",
+    "lines": [
+      42,
+      44,
+      58,
+      72
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/GobWriterTests.cs",
+    "pattern": "writes",
+    "lines": [
+      40
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/JklParserTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      25
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/JklRoundTripTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      25,
+      86,
+      99,
+      132
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LevelQueryTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      24,
+      25,
+      33,
+      37
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LightCalculatorTests.cs",
+    "pattern": "game_mode",
+    "lines": [
+      119,
+      136,
+      137,
+      138,
+      139,
+      144,
+      146
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LightCalculatorTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      16,
+      213,
+      215,
+      232,
+      233,
+      241,
+      242,
+      243,
+      346
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LightEntityTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      19,
+      25,
+      93,
+      109
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/MultiEditTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      19,
+      148
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/PluginHostTests.cs",
+    "pattern": "writes",
+    "lines": [
+      143,
+      154
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/PluginHostTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      53,
+      57
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SectionRoundTripTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      35
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SelectionSetTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      15
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SurfaceNormalTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      63,
+      104
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/TemplateEditTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      31
+    ]
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ThreeDoAndAscTests.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      85,
+      93,
+      107,
+      114,
+      116,
+      119,
+      120,
+      125
+    ]
+  },
+  {
+    "path": "dotnet/tools/Sed.InteriorProbe/Program.cs",
+    "pattern": "parser_defaults",
+    "lines": [
+      15
+    ]
+  },
+  {
+    "path": "dotnet/tools/Sed.JklProbe/Program.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      85
+    ]
+  },
+  {
+    "path": "dotnet/tools/Sed.OpsProbe/Program.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      22,
+      23,
+      36,
+      39,
+      50,
+      52,
+      89,
+      93,
+      94,
+      95,
+      96,
+      98,
+      99,
+      130,
+      138,
+      140,
+      141,
+      198,
+      225,
+      227,
+      228,
+      299,
+      301,
+      309,
+      310,
+      689,
+      707,
+      708,
+      710,
+      713,
+      714,
+      721
+    ]
+  },
+  {
+    "path": "dotnet/tools/Sed.SaveProbe/Program.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      19,
+      20,
+      26,
+      34,
+      35
+    ]
+  },
+  {
+    "path": "dotnet/tools/Sed.UiProbe/Program.cs",
+    "pattern": "geometry_undo",
+    "lines": [
+      37,
+      46,
+      57
+    ]
+  }
+]

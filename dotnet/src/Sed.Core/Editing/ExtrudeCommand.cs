@@ -87,12 +87,14 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
         // 1. Create new sector, copy properties from source sector.
         _newSector = level.NewSector();
         _newSector.Ambient = source.Ambient;
-        _newSector.Flags = source.Flags;
+        _newSector.Flags = source.Flags & ~0x1000L; // New volume has no inherited interior COLLIDEBOX.
         _newSector.ColorMap = source.ColorMap;
         _newSector.Tint = source.Tint;
         _newSector.ExtraLight = source.ExtraLight;
         _newSector.Sound = source.Sound;
         _newSector.SoundVolume = source.SoundVolume;
+        _newSector.Thrust = source.Thrust;
+        _newSector.Layer = source.Layer;
 
         _surface.RecalcNormal();
         var normal = _surface.Normal;
@@ -115,6 +117,7 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
                 Vertex = front[i],
                 Uv = _surface.Corners[i].Uv,
                 Intensity = _surface.Corners[i].Intensity,
+                MonoIntensity = _surface.Corners[i].MonoIntensity,
             });
         _adjoinSurface.RecalcNormal();
 

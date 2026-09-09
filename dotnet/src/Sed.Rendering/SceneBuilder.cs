@@ -165,13 +165,14 @@ public static class SceneBuilder
         }
     }
 
-    public static Mesh FromLevel(Level level)
+    public static Mesh FromLevel(Level level, Func<Sector, bool>? visibleSector = null)
     {
         var mesh = new Mesh();
         int surfaceCounter = 0;
 
         foreach (var sector in level.Sectors)
         {
+            if (visibleSector is not null && !visibleSector(sector)) continue;
             foreach (var surface in sector.Surfaces)
             {
                 if (surface.Corners.Count < 3)

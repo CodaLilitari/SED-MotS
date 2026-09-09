@@ -31,6 +31,7 @@ public sealed class CleaveSurfaceCommand : IEditCommand
     }
 
     public string Name => "Cleave surface";
+    public string? FailureReason { get; private set; }
 
     public void Apply()
     {
@@ -96,6 +97,12 @@ public sealed class CleaveSurfaceCommand : IEditCommand
         if (!hasFront || !hasBack)
             return;
 
+        if (_surface.Adjoin is not null)
+        {
+            FailureReason = "The cut crosses a portal. Splitting both portal sides together is not supported; unadjoin deliberately or choose another surface.";
+            return;
+        }
+
         _frontCorners = new List<Surface.Corner>();
         _backCorners = new List<Surface.Corner>();
         _insertedVertices = new List<Vertex>();
@@ -138,9 +145,12 @@ public sealed class CleaveSurfaceCommand : IEditCommand
                 cur.Intensity.R + (nxt.Intensity.R - cur.Intensity.R) * ftf,
                 cur.Intensity.G + (nxt.Intensity.G - cur.Intensity.G) * ftf,
                 cur.Intensity.B + (nxt.Intensity.B - cur.Intensity.B) * ftf);
+            float? mono = cur.MonoIntensity is null && nxt.MonoIntensity is null ? null :
+                (cur.MonoIntensity ?? cur.Intensity.R) +
+                ((nxt.MonoIntensity ?? nxt.Intensity.R) - (cur.MonoIntensity ?? cur.Intensity.R)) * ftf;
 
-            _frontCorners.Add(new Surface.Corner { Vertex = newVert, Uv = interpUv, Intensity = interpIntensity });
-            _backCorners.Add(new Surface.Corner { Vertex = newVert, Uv = interpUv, Intensity = interpIntensity });
+            _frontCorners.Add(new Surface.Corner { Vertex = newVert, Uv = interpUv, Intensity = interpIntensity, MonoIntensity = mono });
+            _backCorners.Add(new Surface.Corner { Vertex = newVert, Uv = interpUv, Intensity = interpIntensity, MonoIntensity = mono });
         }
 
         _newSurface = new Surface(sector);
@@ -154,6 +164,7 @@ public sealed class CleaveSurfaceCommand : IEditCommand
         Vertex = src.Vertex,
         Uv = src.Uv,
         Intensity = src.Intensity,
+        MonoIntensity = src.MonoIntensity,
     };
 
     private static void CopySurfaceProps(Surface src, Surface dst)

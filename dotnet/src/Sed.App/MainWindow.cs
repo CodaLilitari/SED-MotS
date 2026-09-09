@@ -10,6 +10,7 @@ using Sed.Core.Model;
 using Sed.Formats.Game;
 using Sed.Formats.Gob;
 using Sed.Formats.Jkl;
+using Sed.Formats.Launching;
 using Sed.Formats.Material;
 using Sed.Rendering;
 
@@ -23,7 +24,7 @@ namespace Sed.App;
 /// </summary>
 public class MainWindow : Window
 {
-    private readonly AppSettings _settings = AppSettings.Load();
+    private readonly AppSettings _settings;
     private readonly CommandKeys _bindings;
     private readonly TextBlock _status;
     private readonly VulkanView _view;
@@ -39,14 +40,15 @@ public class MainWindow : Window
 
     // Active session (whichever source is open).
     private GameInstall? _install;
-    private GobArchive? _adhocGob;
-    private GobArchive? _adhocResourceGob;
+    private PreparedLevelOpen? _openSession;
+    private bool _changingLevelList;
     private GobArchive? _levelArchive;
     private GobArchive[] _materialArchives = Array.Empty<GobArchive>();
     private Sed.Formats.ThreeDo.ModelLibrary? _modelLibrary;
     private JklDocument? _currentDoc;     // for saving the currently loaded level
     private Level? _currentLevel;         // the model the views are editing
     private string _levelName = "level";  // current level's file name (for Save and Test)
+    private string? _documentBaseline;
     private List<GobEntry> _levels = new();
     private ConsistencyWindow? _consistencyWindow;
     private FindWindow? _findWindow;
@@ -59,8 +61,12 @@ public class MainWindow : Window
     private AssetCatalog? _assetCatalog;
     private readonly PluginHost _plugins = new();
 
-    public MainWindow()
+    /// <summary>The editable document; also usable by isolated headless integration tests.</summary>
+    public JklDocument? CurrentDocument => _currentDoc;
+
+    public MainWindow(AppSettings? settings = null)
     {
+        _settings = settings ?? AppSettings.Load();
         _bindings = new CommandKeys(_settings);
         Title = "SED — Sith Engine Editor (.NET / Vulkan)";
         Width = 1100;
@@ -172,6 +178,7 @@ public class MainWindow : Window
         center.Children.Add(_mapView);
         root.Children.Add(center);
         Content = root;
+        _view.History.Changed += RefreshMaterialNames;
 
         TryAutoOpenConfiguredGame();
         StartAutosave();
@@ -231,14 +238,8 @@ public class MainWindow : Window
 
         try
         {
-            var install = GameInstall.TryOpen(game, dir);
-            if (install is null) { _status.Text = $"No game archives found under {dir}."; return; }
-
-            ClearSession();
-            _install = install;
-            _levelArchive = install.LevelArchive;
-            _materialArchives = install.ResourceArchives.ToArray();
-            PopulateLevels($"{game} — {Path.GetFileName(dir.TrimEnd('/', '\\'))}");
+            var prepared = PreparedLevelOpen.FromGame(game, dir);
+            CommitPreparedOpen(prepared, $"{game} — {Path.GetFileName(dir.TrimEnd('/', '\\'))}");
         }
         catch (Exception ex)
         {
@@ -256,8 +257,8 @@ public class MainWindow : Window
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType("Jedi Knight files (*.jkl, *.gob)")
-                    { Patterns = new[] { "*.jkl", "*.gob", "*.goo" } },
+                new FilePickerFileType("Jedi Knight / MotS levels and archives")
+                    { Patterns = new[] { "*.jkl", "*.jed", "*.sed", "*.ned", "*.gob", "*.goo" } },
                 FilePickerFileTypes.All,
             },
         });
@@ -272,23 +273,10 @@ public class MainWindow : Window
         displayName ??= Path.GetFileName(path);
         try
         {
-            ClearSession();
-            DiscoverAdhocResources(path);
-            if (path.EndsWith(".gob", StringComparison.OrdinalIgnoreCase) ||
-                path.EndsWith(".goo", StringComparison.OrdinalIgnoreCase))
-            {
-                _adhocGob = GobArchive.Open(path);
-                _levelArchive = _adhocGob;
-                PopulateLevels(Path.GetFileName(path));
-            }
-            else
-            {
-                _currentDoc = JklParser.ParseDocument(File.ReadAllText(path));
-                LoadLevel(_currentDoc.Level, displayName);
-            }
+            var prepared = PreparedLevelOpen.FromPath(path, _settings.DirFor);
+            CommitPreparedOpen(prepared, displayName);
             _settings.AddRecent(path);
             RebuildRecentMenu();
-            _status.Text = $"Opened {displayName}";
         }
         catch (Exception ex)
         {
@@ -296,45 +284,109 @@ public class MainWindow : Window
         }
     }
 
-    private void DiscoverAdhocResources(string openedPath)
+    private void CommitPreparedOpen(PreparedLevelOpen prepared, string header)
     {
-        var dir = Path.GetDirectoryName(openedPath);
-        if (dir is null) return;
-        foreach (var c in new[]
+        string? recoveryPath;
+        try { recoveryPath = SaveRecoveryBeforeSwitch(); }
+        catch { prepared.Dispose(); throw; }
+        var oldSession = _openSession;
+        var oldDocument = _currentDoc;
+        var oldName = _levelName;
+        var oldArchive = _levelArchive;
+        var oldInstall = _install;
+        var oldResources = _materialArchives;
+        var oldBaseline = _documentBaseline;
+        try
         {
-            Path.Combine(dir, "Res2.gob"),
-            Path.Combine(dir, "..", "Resource", "Res2.gob"),
-            Path.Combine(Directory.GetParent(dir)?.FullName ?? dir, "Resource", "Res2.gob"),
-        })
-        {
-            if (!File.Exists(c)) continue;
-            try { _adhocResourceGob = GobArchive.Open(c); _materialArchives = new[] { _adhocResourceGob }; return; }
-            catch { /* try next */ }
+            _openSession = prepared;
+            _install = prepared.Install;
+            _levelArchive = prepared.LevelArchive;
+            _materialArchives = prepared.Resources.ToArray();
+            ResetResourceCaches();
+            _currentDoc = prepared.Document;
+            LoadLevel(prepared.Document.Level, prepared.LevelName);
         }
+        catch
+        {
+            _openSession = oldSession;
+            _install = oldInstall;
+            _levelArchive = oldArchive;
+            _materialArchives = oldResources;
+            ResetResourceCaches();
+            _currentDoc = oldDocument;
+            _currentLevel = oldDocument?.Level;
+            _levelName = oldName;
+            _documentBaseline = oldBaseline;
+            prepared.Dispose();
+            if (oldDocument is not null)
+                try { LoadLevel(oldDocument.Level, oldName); }
+                catch { /* preserve the document even if rendering also fails */ }
+            throw;
+        }
+        // Do not release old resources until the candidate document has loaded.
+        oldSession?.Dispose();
+        RememberDocumentBaseline();
+        _consistencyWindow?.Close();
+        _consistencyWindow = null;
+        PopulateLevels(header, selectFirst: false);
+        if (_levels.Count > 0)
+        {
+            _changingLevelList = true;
+            try { _levelList.SelectedIndex = 0; }
+            finally { _changingLevelList = false; }
+        }
+        if (recoveryPath is not null) _status.Text += " — previous edits saved in recovery";
     }
 
     // ---- shared session ----
 
-    private void PopulateLevels(string header)
+    private void PopulateLevels(string header, bool selectFirst = true)
     {
         _levels = _levelArchive?.FindByExtension(".jkl").OrderBy(e => e.NormalizedName).ToList() ?? new();
         _sidePanelHeader.Text = $"{header} — {_levels.Count} levels";
-        _levelList.ItemsSource = _levels.Select(e => Path.GetFileName(e.NormalizedName)).ToList();
-        if (_levels.Count > 0) _levelList.SelectedIndex = 0;
-        else _status.Text = $"{header}: no levels found";
+        _changingLevelList = true;
+        try { _levelList.ItemsSource = _levels.Select(e => Path.GetFileName(e.NormalizedName)).ToList(); }
+        finally { _changingLevelList = false; }
+        if (selectFirst && _levels.Count > 0) _levelList.SelectedIndex = 0;
     }
 
     private void OnLevelSelected()
     {
+        if (_changingLevelList) return;
         int i = _levelList.SelectedIndex;
         if (_levelArchive is null || (uint)i >= (uint)_levels.Count) return;
         var entry = _levels[i];
         try
         {
-            _currentDoc = JklParser.ParseDocument(_levelArchive.ReadText(entry));
-            LoadLevel(_currentDoc.Level, Path.GetFileName(entry.NormalizedName));
+            var document = JklParser.ParseDocument(_levelArchive.ReadText(entry));
+            SaveRecoveryBeforeSwitch();
+            var oldDocument = _currentDoc;
+            try
+            {
+                _currentDoc = document;
+                LoadLevel(document.Level, Path.GetFileName(entry.NormalizedName));
+                RememberDocumentBaseline();
+                _consistencyWindow?.Close();
+                _consistencyWindow = null;
+            }
+            catch { _currentDoc = oldDocument; _currentLevel = oldDocument?.Level; throw; }
         }
         catch (Exception ex) { _status.Text = $"Failed to parse {entry.Name}: {ex.Message}"; }
+    }
+
+    private void NewLevel(ProjectType game)
+    {
+        try
+        {
+            var level = LevelFactory.CreateUntexturedRoom(game);
+            foreach (var template in Sed.Formats.Jed.JedImporter.LoadTemplates(game))
+                level.Templates[template.Name] = template;
+            var name = game == ProjectType.MysteriesOfTheSith ? "new_mots.jkl" : "new_jk.jkl";
+            var prepared = PreparedLevelOpen.FromDocument(new JklDocument(level), name, _settings.DirFor(game));
+            CommitPreparedOpen(prepared, game + " — new level");
+            _status.Text = $"New {game} room — add a player start and game content before testing; save with File > Save As.";
+        }
+        catch (Exception ex) { _status.Text = "Could not create the new level: " + ex.Message; }
     }
 
     private void LoadLevel(Level level, string name)
@@ -380,6 +432,8 @@ public class MainWindow : Window
         int surfaces = level.Sectors.Sum(s => s.Surfaces.Count);
         _status.Text = $"{name} — {level.Sectors.Count} sectors, {surfaces} surfaces, " +
                        $"{level.Things.Count} things ({(textures is null ? "untextured" : "textured")})";
+        if (_currentDoc?.PreservationWarnings.Count > 0)
+            _status.Text += $" — {_currentDoc.PreservationWarnings.Count} import/preservation warning(s): {_currentDoc.PreservationWarnings[0]}";
     }
 
     // ---- material inspector ----
@@ -418,6 +472,24 @@ public class MainWindow : Window
             _matThumbs.Add(new MaterialThumb { Name = names[i], Index = i, Image = thumb });
         }
         _materialList.ItemsSource = _matThumbs;
+    }
+
+    private void RefreshMaterialNames()
+    {
+        if (_currentDoc is null || _currentLevel is null) return;
+        bool changed = false;
+        foreach (string name in _currentLevel.Sectors.SelectMany(s => s.Surfaces).Select(s => s.Material)
+            .Where(name => !string.IsNullOrWhiteSpace(name)).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            if (_currentDoc.Materials.Contains(name, StringComparer.OrdinalIgnoreCase)) continue;
+            _currentDoc.Materials.Add(name);
+            changed = true;
+        }
+        if (changed)
+        {
+            _view.Materials = _currentDoc.Materials;
+            PopulateMaterials();
+        }
     }
 
     private void FilterMaterials()
@@ -470,6 +542,7 @@ public class MainWindow : Window
         try
         {
             JklWriter.Save(_currentDoc, file.Path.LocalPath);
+            RememberDocumentBaseline();
             _status.Text = $"Saved → {file.Name}";
         }
         catch (Exception ex)
@@ -479,21 +552,23 @@ public class MainWindow : Window
     }
 
     /// <summary>
-    /// Writes the level as a GOB containing a single `jkl\&lt;name&gt;.jkl` entry —
-    /// the form the game loads. Mirrors the original's "Gob Project" output.
+    /// Exports a JK/MotS archive with an episode definition and its level entry.
     /// </summary>
     private async void SaveGob()
     {
         if (_currentDoc is null) { _status.Text = "No level loaded to save."; return; }
 
+        bool mots = _currentDoc.Level.Kind == ProjectType.MysteriesOfTheSith;
+        string extension = mots ? "goo" : "gob";
+
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Save level as GOB",
-            DefaultExtension = "gob",
-            SuggestedFileName = "edited.gob",
+            Title = "Save level archive",
+            DefaultExtension = extension,
+            SuggestedFileName = "edited." + extension,
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("Sith engine archive (*.gob)") { Patterns = new[] { "*.gob" } },
+                new FilePickerFileType("Sith engine archive") { Patterns = new[] { "*.gob", "*.goo" } },
             },
         });
         if (file is null) return;
@@ -501,16 +576,16 @@ public class MainWindow : Window
         try
         {
             var path = file.Path.LocalPath;
-            // The engine finds levels by their archive path, so the entry must be
-            // under jkl\ with a .jkl extension regardless of the archive's name.
-            var entryName = Path.GetFileNameWithoutExtension(path);
-            if (string.IsNullOrEmpty(entryName)) entryName = "level";
-
+            var entryName = TestEpisode.SafeLevelName(_levelName);
             var jkl = JklWriter.Build(_currentDoc);
-            var bytes = System.Text.Encoding.ASCII.GetBytes(jkl);
-            GobWriter.Build(path, new[] { ($"jkl\\{entryName}.jkl", bytes) });
-
-            _status.Text = $"Saved → {file.Name}  (jkl\\{entryName}.jkl, {bytes.Length:N0} bytes)";
+            if (_currentDoc.Level.Kind == ProjectType.InfernalMachine)
+                GobWriter.Build(path, new[] { ($"jkl\\{entryName}.jkl", System.Text.Encoding.ASCII.GetBytes(jkl)) });
+            else
+            {
+                var package = TestEpisode.Build(_currentDoc.Level.Kind, entryName + ".jkl", jkl);
+                GobWriter.Build(path, package.Entries.Select(e => (e.Name, e.Data)));
+            }
+            _status.Text = $"Saved → {file.Name}  (jkl\\{entryName}.jkl)";
         }
         catch (Exception ex)
         {
@@ -519,13 +594,10 @@ public class MainWindow : Window
     }
 
     /// <summary>
-    /// Save GOB and test — the original's "Save JKL, GOB, and Test". Writes the
-    /// level as a single-entry GOB into the project directory, then launches the
-    /// game. On Windows this is the original's generated test batch; elsewhere it
-    /// is the user-configured launch command (Game ▸ Test Setup…), which is how a
-    /// Wine/CrossOver install gets pointed at the saved level.
+    /// Prepares the loose override the engine actually reads, plus a GOB/GOO,
+    /// then starts the reviewed executable directly on Windows.
     /// </summary>
-    private async void SaveAndTest()
+    private void SaveAndTest()
     {
         if (_currentDoc is null || _currentLevel is null)
         {
@@ -533,7 +605,7 @@ public class MainWindow : Window
             return;
         }
 
-        var game = _install?.Game ?? ProjectType.JediKnight;
+        var game = _currentLevel.Kind;
         var gameDir = _settings.DirFor(game);
         if (string.IsNullOrEmpty(gameDir))
         {
@@ -541,26 +613,33 @@ public class MainWindow : Window
             return;
         }
 
-        if (!await Dialogs.Confirm(this, "Save and test",
-                "You're about to test your level. Proceed?"))
-            return;
-
         try
         {
             var projectDir = _settings.ResolvedProjectDir();
             Directory.CreateDirectory(projectDir);
-
-            var levelName = SanitizeName(_levelName);
-            var gobPath = Path.Combine(projectDir, $"Test_{levelName}.gob");
-
-            // The engine finds levels by archive path, so the entry must be under
-            // jkl\ with a .jkl extension regardless of the archive's name.
+            var levelName = TestEpisode.SafeLevelName(_levelName);
+            var episodePath = Path.Combine(projectDir, "episode.jk");
+            var existingEpisode = File.Exists(episodePath) ? File.ReadAllText(episodePath) : null;
             var jkl = JklWriter.Build(_currentDoc);
-            var bytes = System.Text.Encoding.ASCII.GetBytes(jkl);
-            GobWriter.Build(gobPath, new[] { ($"jkl\\{levelName}.jkl", bytes) });
+            var package = TestEpisode.Build(game, levelName + ".jkl", jkl, existingEpisode);
+            var gobPath = Path.Combine(projectDir, $"Test_{levelName}{package.ArchiveExtension}");
+            GameLaunchPlan? plan = OperatingSystem.IsWindows() ? GameLauncher.PrepareLaunch(new LaunchRequest(
+                game, gameDir, projectDir, package.LevelFileName, _settings.TestExecutableFor(game), _settings.TestEngineFor(game))) : null;
+            string? command = OperatingSystem.IsWindows() ? null : _settings.BuildTestCommand(game, projectDir, gobPath, levelName);
+            if (plan is null && string.IsNullOrWhiteSpace(command))
+                throw new InvalidOperationException("Configure a non-Windows launch command in Game > Test Setup.");
 
-            LaunchTest(game, gameDir, projectDir, gobPath, levelName);
-            _status.Text = $"Saved Test_{levelName}.gob → {Path.GetFileName(gobPath)}";
+            // -path loads loose resources; a GOB merely sitting in this folder is insufficient.
+            foreach (var entry in package.Entries)
+            {
+                if (existingEpisode is not null && entry.Name == "episode.jk") continue;
+                var destination = Path.Combine(projectDir, entry.Name.Replace('\\', Path.DirectorySeparatorChar));
+                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+                File.WriteAllBytes(destination, entry.Data);
+            }
+            GobWriter.Build(gobPath, package.Entries.Select(e => (e.Name, e.Data)));
+            LaunchTest(plan, command, gameDir);
+            _status.Text = $"Saved {Path.GetFileName(gobPath)} and loose test files; select the test episode in the game menus.";
         }
         catch (Exception ex)
         {
@@ -568,40 +647,28 @@ public class MainWindow : Window
         }
     }
 
-    private void LaunchTest(ProjectType game, string gameDir, string projectDir, string gobPath, string levelName)
+    private static void LaunchTest(GameLaunchPlan? plan, string? command, string gameDir)
     {
-        var command = _settings.BuildTestCommand(game, projectDir, gobPath, levelName);
-        if (!string.IsNullOrWhiteSpace(command))
+        if (plan is not null)
         {
-            // User-configured template: run through the platform shell so Wine
-            // invocations and quoted paths behave as written.
-            var psi = OperatingSystem.IsWindows()
-                ? new System.Diagnostics.ProcessStartInfo("cmd.exe")
-                : new System.Diagnostics.ProcessStartInfo("/bin/sh");
-            psi.ArgumentList.Add("/c");
-            psi.ArgumentList.Add(command);
-            System.Diagnostics.Process.Start(psi);
+            var start = new System.Diagnostics.ProcessStartInfo(plan.Executable)
+                { WorkingDirectory = plan.WorkingDirectory, UseShellExecute = false };
+            foreach (var argument in plan.Arguments) start.ArgumentList.Add(argument);
+            using var process = System.Diagnostics.Process.Start(start)
+                ?? throw new InvalidOperationException("The game process could not be started.");
             return;
         }
-
-        if (OperatingSystem.IsWindows())
+        if (!OperatingSystem.IsWindows() && !string.IsNullOrWhiteSpace(command))
         {
-            // Faithful port of the original: a batch that runs the game from its
-            // install dir with -path pointing at the project dir.
-            var bat = Path.Combine(projectDir, $"Test_{levelName}.bat");
-            if (!File.Exists(bat))
-            {
-                File.WriteAllText(bat, string.Join(Environment.NewLine,
-                    "@echo off",
-                    $"cd /d \"{gameDir}\"",
-                    $"{AppSettings.GameExeName(game)} -devmode -dispstats -debug log " +
-                    $"-displayconfig -path \"{projectDir}\""));
-            }
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(bat) { UseShellExecute = true });
+            var start = new System.Diagnostics.ProcessStartInfo("/bin/sh")
+                { WorkingDirectory = gameDir, UseShellExecute = false };
+            start.ArgumentList.Add("-c");
+            start.ArgumentList.Add(command);
+            using var process = System.Diagnostics.Process.Start(start)
+                ?? throw new InvalidOperationException("The launch command could not be started.");
             return;
         }
-
-        _status.Text = "Saved the test GOB — configure a launch command (Game ▸ Test Setup…) to start the game.";
+        throw new InvalidOperationException("No launch plan was prepared.");
     }
 
     private static string SanitizeName(string name)
@@ -612,6 +679,33 @@ public class MainWindow : Window
     }
 
     // ---- autosave / backup / recovery (the original's SaveTimer + backup copies) ----
+
+    private void RememberDocumentBaseline()
+    {
+        try { _documentBaseline = _currentDoc is null ? null : DocumentRecovery.Fingerprint(_currentDoc); }
+        catch { _documentBaseline = null; }
+    }
+
+    private string? SaveRecoveryBeforeSwitch()
+    {
+        if (_currentDoc is null) return null;
+        string text;
+        try { text = JklWriter.Build(_currentDoc); }
+        catch when (!_view.History.CanUndo && !_view.History.CanRedo && _documentBaseline is null)
+        { return null; } // An untouched recovery/import-only document still exists in its source file.
+        string fingerprint = DocumentRecovery.FingerprintText(text);
+        if (fingerprint == _documentBaseline) return null;
+        return DocumentRecovery.Save(Path.Combine(_settings.ResolvedProjectDir(), "recovery"), _levelName, text);
+    }
+
+    private void RecoverPreviousSession()
+    {
+        string directory = Path.Combine(_settings.ResolvedProjectDir(), "recovery");
+        string? newest = Directory.Exists(directory) ? Directory.EnumerateFiles(directory, "*.jkl")
+            .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault() : null;
+        if (newest is null) { _status.Text = "No recovery snapshot has been saved yet."; return; }
+        OpenPath(newest, Path.GetFileName(newest) + " (recovered)");
+    }
 
     private void StartAutosave()
     {
@@ -731,18 +825,23 @@ public class MainWindow : Window
     private void ClearSession()
     {
         _currentDoc = null;
-        _install?.Dispose(); _install = null;
-        _adhocGob?.Dispose(); _adhocGob = null;
-        _adhocResourceGob?.Dispose(); _adhocResourceGob = null;
+        _currentLevel = null;
+        _openSession?.Dispose(); _openSession = null;
+        _install = null;
         _levelArchive = null;
         _materialArchives = Array.Empty<GobArchive>();
+        ResetResourceCaches();
+        _materialList.ItemsSource = null;
+        _levels = new();
+        _levelList.ItemsSource = null;
+    }
+
+    private void ResetResourceCaches()
+    {
         _cogScripts = null;
         _assetCatalog = null;
         _modelLibrary = null;
         _matLibrary = null;
-        _materialList.ItemsSource = null;
-        _levels = new();
-        _levelList.ItemsSource = null;
     }
 
     /// <summary>
@@ -855,6 +954,12 @@ public class MainWindow : Window
         exit.Click += (_, _) => (Application.Current?.ApplicationLifetime
             as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.Shutdown();
         var file = new MenuItem { Header = "_File" };
+        file.Items.Add(Item(null, "New _MotS Level", new KeyGesture(Key.N, KeyModifiers.Control),
+            () => NewLevel(ProjectType.MysteriesOfTheSith)));
+        KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.N, KeyModifiers.Control),
+            Command = new RelayCommand(() => NewLevel(ProjectType.MysteriesOfTheSith)) });
+        file.Items.Add(Item(null, "New _JK Level", null, () => NewLevel(ProjectType.JediKnight)));
+        file.Items.Add(new Separator());
         file.Items.Add(open);
         var saveAs = new MenuItem { Header = "Save _As…", InputGesture = new KeyGesture(Key.S, KeyModifiers.Control), Icon = Glyph("\uE236") };
         saveAs.Click += (_, _) => SaveAs();
@@ -864,6 +969,7 @@ public class MainWindow : Window
         file.Items.Add(Item(null, "Save GOB and _Test…", null, SaveAndTest));
         file.Items.Add(new Separator());
         file.Items.Add(Item(null, "Make a _Backup Copy…", null, MakeBackupCopy));
+        file.Items.Add(Item(null, "Recover _Previous Session", null, RecoverPreviousSession));
         file.Items.Add(new Separator());
         _recentMenu = new MenuItem { Header = "Recent _Files" };
         RebuildRecentMenu();
@@ -1127,8 +1233,8 @@ public class MainWindow : Window
                          .Distinct(StringComparer.OrdinalIgnoreCase))
                 doc.Materials.Add(m);
 
-            _currentDoc = doc;
-            LoadLevel(level, Path.GetFileName(dialog.LevPath));
+            CommitPreparedOpen(PreparedLevelOpen.FromDocument(doc, Path.GetFileName(dialog.LevPath), _settings.DirFor(level.Kind)),
+                Path.GetFileName(dialog.LevPath));
 
             _status.Text = $"Imported {Path.GetFileName(dialog.LevPath)} — {level.Sectors.Count} sectors, " +
                            $"{level.Things.Count} things" +
@@ -1160,8 +1266,7 @@ public class MainWindow : Window
         {
             var level = Sed.Formats.Asc.AscImporter.Import(File.ReadAllText(file.Path.LocalPath));
             var doc = new JklDocument(level);
-            _currentDoc = doc;
-            LoadLevel(level, file.Name);
+            CommitPreparedOpen(PreparedLevelOpen.FromDocument(doc, file.Name, _settings.DirFor(level.Kind)), file.Name);
 
             _status.Text = $"Imported {file.Name} — {level.Sectors.Count} sector(s), " +
                            $"{level.Things.Count} thing(s)";
@@ -1396,7 +1501,9 @@ public class MainWindow : Window
             return;
         }
 
-        var window = new ConsistencyWindow(level)
+        _cogScripts ??= new Sed.Formats.Cogs.CogScriptLibrary(new[] { _levelArchive }, _materialArchives);
+        var window = new ConsistencyWindow(level, () => Sed.Formats.Cogs.CogValidation.Options(_cogScripts,
+            _settings.TestEngineFor(level.Kind) == GameEngineProfile.Retail))
         {
             IssueSelected = (sector, surface) =>
             {
@@ -1506,5 +1613,16 @@ public class MainWindow : Window
     {
         ClearSession();
         base.OnClosed(e);
+    }
+
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        try { SaveRecoveryBeforeSwitch(); }
+        catch (Exception ex)
+        {
+            e.Cancel = true;
+            _status.Text = "Could not save a recovery snapshot; the document remains open: " + ex.Message;
+        }
+        base.OnClosing(e);
     }
 }

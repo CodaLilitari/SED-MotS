@@ -33,6 +33,7 @@ internal sealed class TempSurface
     public List<int> Vxs { get; } = new();
     public List<int> Tvxs { get; } = new();
     public List<ColorF> Intensities { get; } = new();
+    public List<float?> MonoIntensities { get; } = new();
 }
 
 /// <summary>A parsed WORLD ADJOINS record: flags, the mirror (paired) record index,

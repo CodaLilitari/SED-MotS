@@ -1,0 +1,167 @@
+{
+  "createdUtc": "2026-09-09T03:39:03.9366053Z",
+  "passed": 30,
+  "failed": 0,
+  "gitTransport": "stubbed; no Git objects or release products created",
+  "realComponents": [
+    "ZIP parsing",
+    "ZIP EOCD comments",
+    "SHA256",
+    "JSON",
+    "bundle header/ref checks",
+    "exact file-set checks"
+  ],
+  "scriptSha256": "8F32EDBD2EC7F149C0B8DB903A5F0EC3862374D0854C4DDD48E1281CD11776C7",
+  "results": [
+    {
+      "diagnostic": null,
+      "case": "valid",
+      "passed": true
+    },
+    {
+      "diagnostic": "Source ZIP lacks the git archive commit comment.",
+      "case": "missing-comment",
+      "passed": true
+    },
+    {
+      "diagnostic": "Source ZIP git archive commit differs from binary provenance.",
+      "case": "wrong-comment",
+      "passed": true
+    },
+    {
+      "diagnostic": "Top-level checksum manifest must cover exactly the binary ZIP, source ZIP and history bundle.",
+      "case": "empty-top",
+      "passed": true
+    },
+    {
+      "diagnostic": "Malformed top-level checksum row.",
+      "case": "malformed-top",
+      "passed": true
+    },
+    {
+      "diagnostic": "Duplicate or unexpected top-level checksum member: SED-MotS-0.0.0-fixture-win-x64.zip",
+      "case": "duplicate-top",
+      "passed": true
+    },
+    {
+      "diagnostic": "Checksum mismatch: SED-MotS-0.0.0-fixture-win-x64.zip",
+      "case": "wrong-top-hash",
+      "passed": true
+    },
+    {
+      "diagnostic": "Unexpected distribution artifact: extra.zip",
+      "case": "unexpected-artifact",
+      "passed": true
+    },
+    {
+      "diagnostic": "The in-package checksum manifest is empty.",
+      "case": "empty-inner",
+      "passed": true
+    },
+    {
+      "diagnostic": "Malformed in-package checksum row.",
+      "case": "malformed-inner",
+      "passed": true
+    },
+    {
+      "diagnostic": "Malformed in-package checksum row.",
+      "case": "missing-inner-name",
+      "passed": true
+    },
+    {
+      "diagnostic": "ZIP member checksum mismatch: SED-MotS-0.0.0-fixture-win-x64/Sed.App.exe",
+      "case": "wrong-inner-hash",
+      "passed": true
+    },
+    {
+      "diagnostic": "Duplicate manifest member: SED-MotS-0.0.0-fixture-win-x64/Sed.App.exe",
+      "case": "duplicate-inner",
+      "passed": true
+    },
+    {
+      "diagnostic": "The ZIP contains files outside its manifest.",
+      "case": "unexpected-member",
+      "passed": true
+    },
+    {
+      "diagnostic": "Duplicate or case-colliding ZIP member: SED-MotS-0.0.0-fixture-win-x64/LICENSE",
+      "case": "duplicate-zip",
+      "passed": true
+    },
+    {
+      "diagnostic": "Duplicate or case-colliding ZIP member: SED-MotS-0.0.0-fixture-win-x64/LICENSE",
+      "case": "case-alias",
+      "passed": true
+    },
+    {
+      "diagnostic": "Unsafe Windows ZIP path: SED-MotS-0.0.0-fixture-win-x64/../outside.txt",
+      "case": "traversal",
+      "passed": true
+    },
+    {
+      "diagnostic": "Unsafe ZIP path: SED-MotS-0.0.0-fixture-win-x64/C:/outside.txt",
+      "case": "rooted",
+      "passed": true
+    },
+    {
+      "diagnostic": "ZIP file also used as a directory: SED-MotS-0.0.0-fixture-win-x64/agent/sed-agent.exe",
+      "case": "file-directory-collision",
+      "passed": true
+    },
+    {
+      "diagnostic": "The binary ZIP root does not match its distribution name.",
+      "case": "wrong-prefix",
+      "passed": true
+    },
+    {
+      "diagnostic": "The binary ZIP lacks a required distribution member: Sed.App.exe",
+      "case": "missing-required",
+      "passed": true
+    },
+    {
+      "diagnostic": "Invalid or incomplete binary source provenance.",
+      "case": "bad-provenance",
+      "passed": true
+    },
+    {
+      "diagnostic": "Invalid or incomplete binary source provenance.",
+      "case": "null-provenance",
+      "passed": true
+    },
+    {
+      "diagnostic": "Corresponding source archive lacks LICENSE",
+      "case": "missing-source-file",
+      "passed": true
+    },
+    {
+      "diagnostic": "Duplicate or case-colliding ZIP member: license",
+      "case": "source-case-alias",
+      "passed": true
+    },
+    {
+      "diagnostic": "History bundle must advertise only HEAD at the binary provenance commit.",
+      "case": "bundle-wrong-ref",
+      "passed": true
+    },
+    {
+      "diagnostic": "History bundle must advertise only HEAD at the binary provenance commit.",
+      "case": "bundle-wrong-commit",
+      "passed": true
+    },
+    {
+      "diagnostic": "History bundle has prerequisites; the handoff must include complete history.",
+      "case": "bundle-prerequisite",
+      "passed": true
+    },
+    {
+      "diagnostic": "Git history bundle verification failed.",
+      "case": "transport-failure",
+      "passed": true
+    },
+    {
+      "diagnostic": "History bundle HEAD differs from binary provenance.",
+      "case": "reported-head-mismatch",
+      "passed": true
+    }
+  ]
+}

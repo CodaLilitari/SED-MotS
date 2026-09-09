@@ -1,0 +1,25 @@
+# Native JED, SED and NED text-project import
+
+`Sed.Formats.Jed.JedImporter` imports the native editor text layout into a new `JklDocument`. It exposes `ImportText`, `ImportFile`, and `LoadTemplates(ProjectType, companionDirectory)`. `JedImportResult` contains the document, source signature/version, warnings and imported section coverage. Import warnings are also retained in `JklDocument.PreservationWarnings` for the GUI and agent callers.
+
+This is a source-derived importer for this GPL fork. The format evidence is the recovered SED/JED Pascal `LEVEL_IO.INC` native save/load implementation and the separately inspected NED `JKLevel.cs` `SaveToJED` implementation. NED writes a `NED` signature while using the `.jed` extension. No NED implementation code was copied. The archaeology inventory found no actual native project samples in the 50 community archives or 65 editor/plugin archives inspected; the tests below are original synthetic fixtures based on those writers, not a native community-project compatibility corpus.
+
+## Implemented coverage
+
+- Native `JED`, `SED` and `NED` signatures; source version text is reported. Structural validation follows the observed record layouts. Engine world versions other than JK/MotS version 1 are refused.
+- `HEADER`: gravity, projection/lighting distances, colormap, pixels per unit, horizon/ceiling sky, mip and LOD settings.
+- `GEO`: sector flags, sound/volume, colormap, ambient/extra/tint, layers, per-sector vertices, surface material/flags/modes/extra light, UVs/scales and deferred adjoin references. MotS corners retain independent monochrome and RGB components. JK uses its active monochrome component and warns when otherwise inactive native RGB values differ.
+- Native sector records contain flags but no interior collision box. If flag `0x1000` is set, import clears only that shortcut flag and warns, allowing engine surface collision tests. The importer does not substitute the sector's outer bounding box as an interior box.
+- `THINGS`: template name, position/orientation, sector/layer and ordered parameter values including repeated `frame=` entries. Empty parameter lines do not consume the next thing. Native projects have no runtime capacity field; generated JKL reserves placed count plus 256, following the existing Pascal writer.
+- `LIGHTS`: observed current SED ten-field and legacy JED/NED twelve-field records. Legacy MotS maps RGB intensity and primary range into the current light model. Independent white intensity and the unused separate RGB range are reported as unrepresented when different. Baked surface components remain separate. JK keeps the primary intensity and white light color.
+- `COGS`: observed typed `name:type=value` records, preserving engine argument order, including the observed global surface-index representation. Alternate encodings outside this layout fail clearly.
+- `LAYERS`, structured `ARCHLIGHTING`, and this fork's `ARCHLIGHTINGBINDINGS`. Thing/object references and duplicate binding rows are validated. Native model-name and hash baselines remain attached to their things in memory. Hash verification needs resource-aware loading; JKL itself does not carry the native editor's model-hash metadata.
+- Template libraries are external to the original native project format. `LoadTemplates` reads bundled `data/master.tpl` or `data/mots.tpl`, then overlays an optional project companion library, retaining repeated parameter values. Each call returns independently owned templates. `ImportFile` supplies those libraries automatically and warns if none is available for a project containing things. `ImportText` accepts explicit templates and clones them.
+
+The parser builds a fresh document and requires complete sections, valid bounded counts, finite numeric values and existing references before returning. Unknown substantive sections and nonempty hierarchy definitions fail with an explicit unsupported result. Native layer visibility and NED COG groups are reported as unrepresented editor metadata. Empty hierarchy definitions are accepted. No native JED writer is provided in this pass.
+
+## Executed checks
+
+`dotnet/tests/Sed.Core.Tests/JedImporterTests.cs` passed **16 tests**, zero failures/skips, using the native .NET 10 SDK. These cover all three signatures, native-to-JKL modeled conversion, mono/RGB behavior, both light layouts, ordered/empty thing parameter rows, forward adjoin resolution, absent collision-box handling, architecture binding/hash retention, template companion loading and instance ownership, NED metadata warnings, malformed counts/numbers/references, truncation and explicit unsupported sections. The combined native and JKL preservation run passed **44 tests**.
+
+These checks do not establish arbitrary historical version support, native editor UI parity, interactive editing, engine loading or rendered output. Template availability and unsupported metadata warnings must be considered by callers. No licensed level/model payload or recovered native project is included in these fixtures.

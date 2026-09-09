@@ -13,9 +13,12 @@ public sealed class Level
 
     public List<Sector> Sectors { get; } = new();
     public List<Thing> Things { get; } = new();
+    /// <summary>Declared engine thing capacity, including space for runtime-created entities.</summary>
+    public int ThingCapacity { get; set; }
     public List<Light> Lights { get; } = new();
     public List<Cog> Cogs { get; } = new();
     public List<string> Layers { get; } = new();
+    public List<ArchitecturalLightObject> ArchitecturalLighting { get; } = new();
 
     /// <summary>CMP colormap file names from GEORESOURCE; index 0 is the master palette.</summary>
     public List<string> ColorMaps { get; } = new();
@@ -118,6 +121,9 @@ public sealed class Level
         Lights.Clear();
         Cogs.Clear();
         Layers.Clear();
+        ArchitecturalLighting.Clear();
+        Templates.Clear();
+        ColorMaps.Clear();
         _curId = 0;
     }
 }

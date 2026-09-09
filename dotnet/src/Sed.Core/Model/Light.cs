@@ -37,4 +37,6 @@ public sealed class Template
     /// </summary>
     public int Order;
     public Dictionary<string, string> Values { get; } = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>Ordered imported parameters, retaining repeated engine entries such as frame=.</summary>
+    public List<KeyValuePair<string, string>> SourceParameters { get; } = new();
 }

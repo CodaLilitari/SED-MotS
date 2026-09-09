@@ -36,8 +36,9 @@ public sealed class EditHistory
     public void Undo()
     {
         if (_undo.Count == 0) return;
-        var cmd = _undo.Pop();
+        var cmd = _undo.Peek();
         cmd.Revert();
+        _undo.Pop();
         _redo.Push(cmd);
         Changed?.Invoke();
     }
@@ -45,8 +46,9 @@ public sealed class EditHistory
     public void Redo()
     {
         if (_redo.Count == 0) return;
-        var cmd = _redo.Pop();
+        var cmd = _redo.Peek();
         cmd.Apply();
+        _redo.Pop();
         _undo.Push(cmd);
         Changed?.Invoke();
     }

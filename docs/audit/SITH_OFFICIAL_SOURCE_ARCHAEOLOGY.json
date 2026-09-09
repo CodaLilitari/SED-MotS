@@ -1,0 +1,778 @@
+{
+  "schemaVersion": 1,
+  "createdUtc": "2026-09-09T03:08:31.055804+00:00",
+  "conclusion": "No original LucasArts JKDF2/MotS/LEIA source archive or public official Sith editor SDK located in bounded inspected evidence; not proof of absence",
+  "downloadedProgramsExecuted": false,
+  "codeCopiedToFork": false,
+  "documents": [
+    {
+      "file": "MotS_Production_Ryan_Kaufman.pdf",
+      "bytes": 107147,
+      "status": "downloaded",
+      "sha256": "bc98dd72053f288970f64bd2af8dcce707989c2f49dd7a145f9bc8ace764539e",
+      "url": "https://jkdf2.net/JKBot/JKArchive/JKDF2/JKDF2/Documents%20And%20Development%20Information/Text/MotS_Production_by_Ryan_Kaufman.pdf",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Production_Ryan_Kaufman.pdf"
+    },
+    {
+      "file": "MotS_Script_Preliminary_1997.pdf",
+      "bytes": 7528565,
+      "status": "downloaded",
+      "sha256": "edd4abffc083efc34b2a13ad3626f62d6aba300911b70509b9d8cf63c0ca495b",
+      "url": "https://jkdf2.net/JKBot/JKArchive/JKDF2/JKDF2/Documents%20And%20Development%20Information/Text/97-10_MotS_Script_Preliminary.pdf",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Script_Preliminary_1997.pdf"
+    },
+    {
+      "file": "JK_Technical_Design_1996.pdf",
+      "bytes": 17261423,
+      "status": "downloaded",
+      "sha256": "9b8955d054c64d9951ead6e81444857be3dd51a3d2895731373308b41ec75030",
+      "url": "https://jkdf2.net/JKBot/JKArchive/JKDF2/JKDF2/Documents%20And%20Development%20Information/Text/96-11_Jedi_Knight_Technical_Design_Document_compressed-1.pdf",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JK_Technical_Design_1996.pdf"
+    },
+    {
+      "file": "GDM_August_1999.pdf",
+      "bytes": 948619,
+      "status": "downloaded",
+      "sha256": "143b5fe8a7f8385bc9ceb50e0ef76c5ec8fd584eacd37bbd9dbf46f3141b2f52",
+      "url": "https://media.gdcvault.com/GD_Mag_Archives/GDM_August_1999.pdf",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\GDM_August_1999.pdf"
+    }
+  ],
+  "repositories": [
+    {
+      "repo": "jdmclark/gorc",
+      "url": "https://github.com/jdmclark/gorc",
+      "revision": "a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+      "date": "2020-12-21T02:34:31Z",
+      "branch": "develop",
+      "license": "Apache-2.0",
+      "status": "verified_public_repository"
+    },
+    {
+      "repo": "shinyquagsire23/OpenJKDF2",
+      "url": "https://github.com/shinyquagsire23/OpenJKDF2",
+      "revision": "0dbd1ea8bb2211c158f6af928b5e4fb14dfa0dac",
+      "date": "2026-07-19T10:55:42Z",
+      "branch": "master",
+      "license": "NOASSERTION",
+      "status": "verified_public_repository"
+    },
+    {
+      "repo": "smlu/OpenJones3D",
+      "url": "https://github.com/smlu/OpenJones3D",
+      "revision": "a675b395a5d5cff238332d091368483b849e8b5b",
+      "date": "2025-07-08T19:14:20Z",
+      "branch": "main",
+      "license": "NOASSERTION",
+      "status": "verified_public_repository"
+    },
+    {
+      "repo": "smlu/Urgon",
+      "url": "https://github.com/smlu/Urgon",
+      "revision": "35b98178787c33957886d701f31e3a86ee0a8fd3",
+      "date": "2025-09-28T20:44:58Z",
+      "branch": "master",
+      "license": "GPL-2.0",
+      "status": "verified_public_repository"
+    },
+    {
+      "repo": "bahstrike/SmithPlugin",
+      "url": "https://github.com/bahstrike/SmithPlugin",
+      "revision": "8bdd1d2dc434ee502d2db711c56648232cd44f53",
+      "date": "2024-12-28T21:56:25Z",
+      "branch": "master",
+      "license": null,
+      "status": "verified_public_repository"
+    },
+    {
+      "repo": "smlu/blender-ijim",
+      "url": "https://github.com/smlu/blender-ijim",
+      "revision": "e8b190133bc9f08255dff1f984cf512fb64de2c8",
+      "date": "2022-05-17T21:14:06Z",
+      "branch": "main",
+      "license": null,
+      "status": "verified_public_repository"
+    }
+  ],
+  "internetArchiveQueries": [
+    {
+      "query": "title:(\"Jedi Knight\") AND (prototype OR source OR SDK OR development)",
+      "url": "https://archive.org/advancedsearch.php?q=title%3A%28%22Jedi%20Knight%22%29%20AND%20%28prototype%20OR%20source%20OR%20SDK%20OR%20development%29&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=description&rows=40&page=1&output=json",
+      "found": 27,
+      "items": [
+        {
+          "identifier": "redump-id-135606",
+          "title": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16) (Alt)"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-jedi-academy-2003-09-16",
+          "title": "STAR WARS - Jedi Knight, Jedi Academy (2003) [PC]"
+        },
+        {
+          "identifier": "twitch-vod-v522651628",
+          "title": "RetroMontag - Dark Forces 2: Jedi Knight"
+        },
+        {
+          "identifier": "jedi-knight-1-2.7z",
+          "title": "Jedi Knight 1& 2.7z"
+        },
+        {
+          "identifier": "jedi-1",
+          "title": "Jedi Knight Dark Forces II"
+        },
+        {
+          "identifier": "jedi-2",
+          "title": "Jedi Knight Dark Forces II Disc 2"
+        },
+        {
+          "identifier": "jospolszczenie",
+          "title": "Jedi Knight: Jedi Outcast - Pełne Spolszczenie"
+        },
+        {
+          "identifier": "twitch-vod-v546698055",
+          "title": "retroMAX #12: Kyle Katarn & Jedi Knight 2 - die hatten es noch drauf!"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-dark-forces-2-unreal-engine-v-1.02-with-backup",
+          "title": "Star Wars Jedi Knight Dark Forces 2 Unreal Engine"
+        },
+        {
+          "identifier": "jedi-knight",
+          "title": "Star Wars: Jedi Knight - Dark Forces II - Files"
+        },
+        {
+          "identifier": "redump-id-135605",
+          "title": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16)"
+        },
+        {
+          "identifier": "jkiiup104_202104",
+          "title": "Star Wars Jedi Knight II - Jedi Outcast v1.04 patch"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-dark-forces-ii-and-mysteries-of-the-sith-1997-1998-pc",
+          "title": "STAR WARS - Jedi Knight, Dark Forces II & Mysteries of the Sith (1997~1998) [PC]"
+        },
+        {
+          "identifier": "open-jkdf-2x-xbox-beta",
+          "title": "Star Wars: Jedi Knight + Mysteries of the Sith [XBOX]"
+        },
+        {
+          "identifier": "swjkiijo_es",
+          "title": "Star Wars: Jedi Knight - Jedi Outcast (Spain)"
+        },
+        {
+          "identifier": "jedi-knight-ii-voces-espanol-para-steam",
+          "title": "Jedi Knight II Voces Español Para Steam"
+        },
+        {
+          "identifier": "StarWarsJediKnightJediAcademyOct62003prototype",
+          "title": "Star Wars - Jedi Knight - Jedi Academy (Oct 6, 2003 prototype)"
+        },
+        {
+          "identifier": "jediknightaltinstaller",
+          "title": "Star Wars: Dark Forces 2 - Jedi Knight Alternative Installer"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-ii-jedi-outcast-demo-for-open-jo",
+          "title": "Star Wars Jedi Knight II: Jedi Outcast Demo for OpenJO Sourceport"
+        },
+        {
+          "identifier": "star-wars-jedi-kinght-ii-jedi-outcast",
+          "title": "Star Wars Jedi Knight II: Jedi Outcast"
+        },
+        {
+          "identifier": "disc-2_202605",
+          "title": "Star Wars: Jedi Knight Academy"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-jedi-academy-2003",
+          "title": "Star Wars Jedi Knight Jedi Academy ( 2003)"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-ii-jedi-outcast",
+          "title": "Star Wars Jedi Knight II Jedi Outcast"
+        },
+        {
+          "identifier": "StarWarsJediKnightIIJediOutcastSep252002prototype",
+          "title": "Star Wars - Jedi Knight II - Jedi Outcast (Sep 25, 2002 prototype)"
+        },
+        {
+          "identifier": "star-wars-jedi-knight-dark-forces-ii-1997-pc-full",
+          "title": "Star Wars Jedi Knight Dark Forces II ( 1997) PC Full"
+        },
+        {
+          "identifier": "versusbooksoffic00rich",
+          "title": "Star Wars, Jedi Knight II : Jedi outcast perfect guide"
+        },
+        {
+          "identifier": "starwarslukeskyw00stac",
+          "title": "Star Wars : Luke Skywalker, Jedi Knight"
+        }
+      ]
+    },
+    {
+      "query": "title:(\"Infernal Machine\") AND (prototype OR source OR development)",
+      "url": "https://archive.org/advancedsearch.php?q=title%3A%28%22Infernal%20Machine%22%29%20AND%20%28prototype%20OR%20source%20OR%20development%29&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=description&rows=40&page=1&output=json",
+      "found": 13,
+      "items": [
+        {
+          "identifier": "infernalmachineh00carr",
+          "title": "The infernal machine : a history of terrorism"
+        },
+        {
+          "identifier": "indianna-jones-infernal-machine-ps-3-4-5-controller",
+          "title": "Indianna Jones Infernal Machine PS3/4/5 Controller cfg"
+        },
+        {
+          "identifier": "indiana-jones-and-the-infernal-machine-pc-game",
+          "title": "Indiana Jones and the Infernal Machine (1999) [PC]"
+        },
+        {
+          "identifier": "j-3-dprev-fr",
+          "title": "Indiana Jones and the Infernal Machine Preview Demo FR"
+        },
+        {
+          "identifier": "isbn_9781595581792",
+          "title": "The infernal machine : a history of terrorism"
+        },
+        {
+          "identifier": "indiana.-jones.and.the.-infernal.-machine.-gog",
+          "title": "Indiana. Jones.and.the. Infernal. Machine.[ GOG]"
+        },
+        {
+          "identifier": "indiana-jones-and-the-infernal-machine",
+          "title": "Indiana Jones and the Infernal Machine"
+        },
+        {
+          "identifier": "indiana-jones-infernal-machine",
+          "title": "Indiana Jones Infernal Machine (GOG)"
+        },
+        {
+          "identifier": "rootifera-indiana-jones-and-the-infernal-machine-1999",
+          "title": "Indiana Jones and the Infernal Machine (1999) (PC)"
+        },
+        {
+          "identifier": "divineartinferna00eliz",
+          "title": "Divine art, infernal machine [electronic resource] : the reception of printing in the West from first impressions to the sense of an ending"
+        },
+        {
+          "identifier": "indiana-jones-and-the-infernal-machine-us-1999-win-1.0",
+          "title": "Indiana Jones and the Infernal Machine (1999)(Win)(LucasArts Entertainment Company)(US)(en)(v1.0)(2CD)"
+        },
+        {
+          "identifier": "infernalmachinea00coct",
+          "title": "The infernal machine, and other plays"
+        },
+        {
+          "identifier": "infernalmachineo00coct",
+          "title": "The infernal machine, and other plays"
+        }
+      ]
+    },
+    {
+      "query": "title:(\"Obi-Wan\") AND (prototype OR source OR tools OR development)",
+      "url": "https://archive.org/advancedsearch.php?q=title%3A%28%22Obi-Wan%22%29%20AND%20%28prototype%20OR%20source%20OR%20tools%20OR%20development%29&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=description&rows=40&page=1&output=json",
+      "found": 33,
+      "items": [
+        {
+          "identifier": "ep-101-7-8-22-obi-wan-kenobi",
+          "title": "Episode 101: Help Us, Obi-Wan Kenobi"
+        },
+        {
+          "identifier": "twitch-vod-v1002527539",
+          "title": "Tommy's Obi Wan powerpoint"
+        },
+        {
+          "identifier": "wiki-kenobifandomcom",
+          "title": "Wiki - Star Wars: Obi-Wan Kenobi Wiki"
+        },
+        {
+          "identifier": "p6inta17zjmlyveelbl6km6r8yzvws1sdhwfmqvq",
+          "title": "Obi-Wan Kenobi (Disney+) Review & Comparison"
+        },
+        {
+          "identifier": "l2vkyrytw7ulfqf1d8d8oi4iiue2qf5np3ca2fac",
+          "title": "Star Wars: Obi Wan Kenobi Primer: What is The Inquisitorius Disney+"
+        },
+        {
+          "identifier": "twitter-709109626466213888",
+          "title": "Bernie Sanders - \"We need you Obi-Wan.\" - @DannyDeVito introducing Bernie in St. Louis before Missouri's primary on Tuesday."
+        },
+        {
+          "identifier": "youtube-xVk_rsAOthY",
+          "title": "Bud Porn - Obi Wan OG Extras"
+        },
+        {
+          "identifier": "youtube-dhKTMPe4Ajg",
+          "title": "OBI-WAN KENOBI | Deborah Chow Official Interview"
+        },
+        {
+          "identifier": "giepzmaqr1tbmsxo4a5uvn9nj1aomh87wxfoikti",
+          "title": "#013 SWORR - Obi-Wan Kenobi PART VI Review and Opinions"
+        },
+        {
+          "identifier": "uhpsjmfoa8g8wxibbm16bhakkdfenjm5brdjdgxj",
+          "title": "Obi-Wan Kenobi Episode 5, Ms. Marvel Episode 2 & The Boys Episode 5 Reviews"
+        },
+        {
+          "identifier": "youtube-Lhuoj-IAlww",
+          "title": "OBI-WAN KENOBI: A Jedi’s Return | behind-the-scenes documentary"
+        },
+        {
+          "identifier": "youtube-EO9vswb1AGA",
+          "title": "OBI-WAN KENOBI | Toronto Marathon Screening"
+        },
+        {
+          "identifier": "youtube-GBBWGsyVybg",
+          "title": "OBI-WAN KENOBI - Season 1 | Memory Lane Featurette"
+        },
+        {
+          "identifier": "twitch-vod-v1011315479",
+          "title": "I AM YOUNG OBI-WAN | !discord !newyt"
+        },
+        {
+          "identifier": "youtube-BLGAOSoMfdQ",
+          "title": "Bud Porn - Obi Wan OG Kush"
+        },
+        {
+          "identifier": "youtube-N6KTPpFsc1A",
+          "title": "OBI-WAN KENOBI | Global Press Tour: London PhotoCall"
+        },
+        {
+          "identifier": "youtube-AU4Y3-KXgyc",
+          "title": "Obi Wan OG Kush Harvest Time!"
+        },
+        {
+          "identifier": "star-wars-obi-wan-usa.xiso",
+          "title": "Star Wars Obi Wan ( USA).xiso"
+        },
+        {
+          "identifier": "youtube-uDHYqAlpVK8",
+          "title": "Obi-Wan Kenobi Review - Disney's War on Boys"
+        },
+        {
+          "identifier": "twitter-951489319860129792",
+          "title": "BBC Archive - #OTD 1982: Chris Serle was the Luke Skywalker to Ian McNaught-Davis' Obi-Wan Kenobi, in the first ever episode of The Computer Programme."
+        },
+        {
+          "identifier": "youtube-XYJwA-EVFFo",
+          "title": "OBI-WAN KENOBI | Fan Event \"Star Wars Celebration\""
+        },
+        {
+          "identifier": "eacast-ep-577",
+          "title": "Everything Actioncas Ep 577 \"Moon Knight, Obi-Wan, Fast X, Barry and More\""
+        },
+        {
+          "identifier": "youtube-007IHtJGisE",
+          "title": "Obi Wan OG Shots and Top Offs!"
+        },
+        {
+          "identifier": "youtube-KX1j367DkVQ",
+          "title": "Anakin vs Obi-Wan only the music is replaced by Grand Central from IASIP OST"
+        },
+        {
+          "identifier": "youtube-5hC53BkhUfg",
+          "title": "Star Wars: The Clone Wars - Season 4 - Finale Clip - Pits Obi-Wan Against Darth Maul"
+        },
+        {
+          "identifier": "youtube-3azZPgj8r10",
+          "title": "OBI-WAN KENOBI - Season 1 | A Series of Firsts Featurette"
+        },
+        {
+          "identifier": "youtube-6GKX5tL4GC0",
+          "title": "OBI-WAN KENOBI | Ewan McGregor Official Interview"
+        },
+        {
+          "identifier": "thingiverse-5546812",
+          "title": "Obi-wan Kenobi Darth Vader Helmet (5546812)"
+        },
+        {
+          "identifier": "youtube-RbI4uAjxcLA",
+          "title": "OBI-WAN KENOBI | Moses Ingram Official Interview"
+        },
+        {
+          "identifier": "youtube-f5jL_ht8gt8",
+          "title": "OBI-WAN KENOBI - Season 1 | Looking Back On The Series Featurette"
+        },
+        {
+          "identifier": "youtube-ypZ6dfyj5TE",
+          "title": "Anakin VS Obi-Wan: A Perfectly Balanced Duel (Why It’s Great)"
+        },
+        {
+          "identifier": "youtube-vBjEof5AiKQ",
+          "title": "Mario Vs Obi-Wan Kenobi"
+        },
+        {
+          "identifier": "isbn_9780545085595",
+          "title": "The life and legend of Obi-Wan Kenobi"
+        }
+      ]
+    },
+    {
+      "query": "title:(\"JKEdit\")",
+      "url": "https://archive.org/advancedsearch.php?q=title%3A%28%22JKEdit%22%29&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=description&rows=40&page=1&output=json",
+      "found": 0,
+      "items": []
+    }
+  ],
+  "internetArchiveItems": [
+    {
+      "id": "redump-id-135605",
+      "url": "https://archive.org/details/redump-id-135605",
+      "classification": "Catalog metadata only, not independently inspected game/source",
+      "downloadedGameArchive": false,
+      "title": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16)",
+      "files": [
+        {
+          "name": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16).bin",
+          "bytes": "526890336",
+          "publisherSHA1": "9b3c06cdcfae1292767089db95c6a56bcf0c77da",
+          "publisherMD5": "b4834b4ffa475580c35c6b3143134ac9"
+        },
+        {
+          "name": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16).cue",
+          "bytes": "127",
+          "publisherSHA1": "65b4d1350188c3b86e4ae317ba2a2011cf509491",
+          "publisherMD5": "dd23f22a05594a8bd41b0d7da40b2866"
+        }
+      ]
+    },
+    {
+      "id": "redump-id-135606",
+      "url": "https://archive.org/details/redump-id-135606",
+      "classification": "Catalog metadata only, not independently inspected game/source",
+      "downloadedGameArchive": false,
+      "title": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16) (Alt)",
+      "files": [
+        {
+          "name": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16) (Alt).bin",
+          "bytes": "526890336",
+          "publisherSHA1": "9983adbd349396c654377e4f2d7fe8cf557c14b5",
+          "publisherMD5": "119dffedff4545e63ce41106d8dd691c"
+        },
+        {
+          "name": "Jedi Knight - Dark Forces II (USA) (Demo) (Beta) (1998-06-16) (Alt).cue",
+          "bytes": "133",
+          "publisherSHA1": "2c18062e7fb8683798f70d190ba60bb9356317dd",
+          "publisherMD5": "98fc5230e2fd26dc1a53592c55653842"
+        }
+      ]
+    },
+    {
+      "id": "jedi-knight",
+      "url": "https://archive.org/details/jedi-knight",
+      "classification": "Catalog metadata only, not independently inspected game/source",
+      "downloadedGameArchive": false,
+      "title": "Star Wars: Jedi Knight - Dark Forces II - Files",
+      "files": [
+        {
+          "name": "jedidemo.exe",
+          "bytes": "21195858",
+          "publisherSHA1": "ed285053d8c267b5fe9aa1ec5728fa37936b3689",
+          "publisherMD5": "637fb311e8c7c0383056f20b6b6a6694"
+        },
+        {
+          "name": "jkpvr.zip",
+          "bytes": "5088",
+          "publisherSHA1": "be87e1c4abb9e6997f46fd8309a691ce39dc581a",
+          "publisherMD5": "ff3f9ded54775e7f361d48cf4a2896c6"
+        },
+        {
+          "name": "jkupd101.exe",
+          "bytes": "621299",
+          "publisherSHA1": "56099720cea0795dc1e3137197f5ac1996a4b6b9",
+          "publisherMD5": "f7e83673f29ab052f429776a99afb36d"
+        }
+      ]
+    },
+    {
+      "id": "j-3-dprev-fr",
+      "url": "https://archive.org/details/j-3-dprev-fr",
+      "classification": "Catalog metadata only, not independently inspected game/source",
+      "downloadedGameArchive": false,
+      "title": "Indiana Jones and the Infernal Machine Preview Demo FR",
+      "files": [
+        {
+          "name": "J3DPREV_FR.zip",
+          "bytes": "39024640",
+          "publisherSHA1": "4b7b57bf36e98eaf66db4a1e70fa0136b17fa8e4",
+          "publisherMD5": "c10157bbeba595feee797257b86dfb1e"
+        }
+      ]
+    }
+  ],
+  "prototypeCatalogs": [
+    {
+      "url": "https://hiddenpalace.org/Indiana_Jones_and_the_Infernal_Machine_(Australian_Prototype)",
+      "game": "Infernal Machine",
+      "platform": "Nintendo 64",
+      "status": "catalog states released, current download missing",
+      "releaseDate": "2014-06-04",
+      "origin": "Developer cartridge per catalog",
+      "downloaded": false
+    },
+    {
+      "url": "https://hiddenpalace.org/Star_Wars%3A_Jedi_Knight_-_Jedi_Academy_%28Oct_6%2C_2003_prototype%29",
+      "game": "Jedi Academy",
+      "platform": "Xbox",
+      "engineFamily": "Raven/idTech3, not Sith",
+      "downloaded": false,
+      "publisherSHA1": "dc80520f44eff4dd5e18a2d9dcb937ce08edc234"
+    }
+  ],
+  "primaryTestimony": [
+    {
+      "url": "https://www.jkdf2.net/articles/yves-borckmans-conversation-2015/",
+      "speaker": "Yves Borckmans",
+      "date": "2015",
+      "claim": "LEIA was not made public; no personal copy; source-loss fate unknown to speaker"
+    }
+  ],
+  "unverifiedLeads": [
+    {
+      "name": "Obi-Wan tools leak",
+      "status": "community comment only, no primary archive located"
+    },
+    {
+      "name": "LucasArts definitely lost JK source",
+      "status": "not established by inspected participant testimony or recovered artifact"
+    }
+  ],
+  "accessLimits": [
+    {
+      "surface": "Chrome CUA",
+      "result": "Browser is not available: chrome; browser inventory empty"
+    },
+    {
+      "surface": "Chrome headless fallback",
+      "result": "automatic approval review rejected before execution: blocked by policy",
+      "retried": false
+    },
+    {
+      "surface": "Brave/Mojeek/DDG web opens",
+      "result": "non-retryable safe-open failures; no successful alternate-engine browsing claimed"
+    },
+    {
+      "surface": "ModDB JKEdit",
+      "result": "HTTP 403 browser challenge",
+      "bypassed": false
+    },
+    {
+      "surface": "JKDF2 document parent directory",
+      "result": "HTTP 403; individually known public PDFs downloaded"
+    },
+    {
+      "surface": "TCRF direct game page",
+      "result": "fetch failures; no complete site inspection claimed"
+    }
+  ],
+  "collectionManifest": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\legacy-editors\\manifest.json",
+  "corpusManifest": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\manifest.json",
+  "evidenceFiles": [
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\articles-yves-borckmans-conversation-2015.html",
+      "bytes": 199012,
+      "sha256": "a22d3a226cd10cee03d6eb1379add7c226d3f9370dcdff37aaf08ee21b95aeeb"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\bahstrike-SmithPlugin-README.md",
+      "bytes": 1021,
+      "sha256": "1c0dc8c7ed4ac99e487f2296e144dafd206bc163f8fc814d1066a540b8de68e7"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\document-downloads.json",
+      "bytes": 1845,
+      "sha256": "ac389154a8aa4d93216cc521cec752f82033ba7142f523aca43d4fefff6ab34a"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\GDM_August_1999.pdf",
+      "bytes": 948619,
+      "sha256": "143b5fe8a7f8385bc9ceb50e0ef76c5ec8fd584eacd37bbd9dbf46f3141b2f52"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\GDM_August_1999.txt",
+      "bytes": 22104,
+      "sha256": "b0506e2c9b35d88f87d00168ff82205aeb538a98be836a895fe1ef6075f7e37c"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-j-3-dprev-fr-metadata.json",
+      "bytes": 3862,
+      "sha256": "b53dc6fccc6fe9a87ec91cc9cf972d5b5b17355f12256519e9d41f2221a09121"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-jedi-knight-metadata.json",
+      "bytes": 4064,
+      "sha256": "759422af3cf199161a7963fb2a09d4c06afb091dbe8de066061e71f1fb463dc9"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-query-0.json",
+      "bytes": 12794,
+      "sha256": "1fea45c726a502e5dfdfa8a4f24b229108c648afba42396e8ae44537fa3f83bc"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-query-1.json",
+      "bytes": 5873,
+      "sha256": "801af651e9c9db2392aa40d73ec8c341e9a5700a0a873c1a222067359be902b6"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-query-2.json",
+      "bytes": 33903,
+      "sha256": "f70182bcecf4fada602260e3fedc06b5235f0d9bb5888fc06da8aa75c9e7f380"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-query-3.json",
+      "bytes": 365,
+      "sha256": "bfc91a0c403c419e7454ecfe93be65251747de1e866925e6c55258b2a6350d70"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-redump-id-135605-metadata.json",
+      "bytes": 4457,
+      "sha256": "54d76b0227bc93054c8919beae9478f4e6ed4fc0919c94ed26240bead4fcb583"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-redump-id-135606-metadata.json",
+      "bytes": 4475,
+      "sha256": "2b2257412bd3ccf6a71795a8cf5efce73d8c7a61342c06e660aa1434ae287fcc"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\ia-searches.json",
+      "bytes": 12070,
+      "sha256": "fbe227d68ed2561a7e7b9b07a192fb7dc71322247925732f6761ae7acd93f87a"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\jdmclark-gorc-README.md",
+      "bytes": 2656,
+      "sha256": "ee37d87ca97326fc335d1fab6bae8100e27051fb0a6169b59b927ae4842429ad"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\jedplugs.html",
+      "bytes": 10825,
+      "sha256": "7e70e6eef4c5cdce15a7d06f71fc02015684f26095b0550706bca5c8deec24af"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JKBoBoFett-NJED-releases.json",
+      "bytes": 35007,
+      "sha256": "f7db3526d6ec1fc63f07421778d1da55b7a5e7a90530be1279f1969563458f28"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JK_Technical_Design_1996.pdf",
+      "bytes": 17261423,
+      "sha256": "9b8955d054c64d9951ead6e81444857be3dd51a3d2895731373308b41ec75030"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JK_Technical_Design_1996.txt",
+      "bytes": 1489,
+      "sha256": "5fee8a44015cbf0b887e8f50daa5dd0268fc42156b13baa578822d7605d62648"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JK_Technical_Design_page-45.png",
+      "bytes": 218334,
+      "sha256": "902ad2f9bec7d893fde8cff90712fbaca86bd0b29ab7d4820462f2b8e8a1b71f"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\JK_Technical_Design_page-46.png",
+      "bytes": 411447,
+      "sha256": "38626d9005ba47b772ff76574d07023463ba3319acf529745b78ff19c3826d4c"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\massassi-jksp-rating.html",
+      "bytes": 33794,
+      "sha256": "bc2ac90e71bdefb66f17226ce281d8f1e0516b5bc0def46397116cd1113f1fd2"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\massassi-jksp.html",
+      "bytes": 33692,
+      "sha256": "3dad447e6201ab707d45c71373bdb1b0c336fbc122ce5da9c57ffe05cf20ac05"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\massassi-level-3123.html",
+      "bytes": 7907,
+      "sha256": "19b0c8c87129ab15d7b04e9cfb614b433bcb1dadba801bdd1c1d70dd42a076e4"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\massassi-levels.html",
+      "bytes": 20577,
+      "sha256": "68259a397f73f9e0811d644961a2608bc58a8a50640401f17e4737996086a109"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\massassi-programs.html",
+      "bytes": 17106,
+      "sha256": "0f9a56daae24ea84895cb507d2489da861b8f084ea35ed829e4ca86070de2e5a"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Production_Ryan_Kaufman.pdf",
+      "bytes": 107147,
+      "sha256": "bc98dd72053f288970f64bd2af8dcce707989c2f49dd7a145f9bc8ace764539e"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Production_Ryan_Kaufman.txt",
+      "bytes": 10944,
+      "sha256": "ae84f2374877d111e027d21c779a626d61e9e05f33b12209ddb60c16b1860743"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Script_Preliminary_1997.pdf",
+      "bytes": 7528565,
+      "sha256": "edd4abffc083efc34b2a13ad3626f62d6aba300911b70509b9d8cf63c0ca495b"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\MotS_Script_Preliminary_1997.txt",
+      "bytes": 514,
+      "sha256": "de87eb737ce9d615003c6763332a450a46e8c69e09fe3798ad9de4d99de7ad84"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\Raven-Tools_readme2.txt.txt",
+      "bytes": 1286,
+      "sha256": "addd98fbba2ed1f5427d1037ea9fca89d09c2f551f633659c8ffcb49326fd3fe"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\Raven-update-archive-list.txt",
+      "bytes": 98238,
+      "sha256": "6b2a0801440deeff22b1ee49cf2b3b8fa932f0f789445cc550d78b31e1460335"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\Raven-update-zip-entries.json",
+      "bytes": 22648,
+      "sha256": "7b88e17b5d49dae31023d258f3ccf2bfc908e1b45817c8f0f9a69a286ccfb564"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\repository-pins.json",
+      "bytes": 1749,
+      "sha256": "7db8a20fac2e7786dd94e30b189f60c04e08c97f575423d0fc6401f297424a82"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\shinyquagsire23-OpenJKDF2-README.md",
+      "bytes": 25662,
+      "sha256": "cc9fa708eaeae6924b9af4d3c7f2abcf5acb1492e921b8df22d81d0c70e51097"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\smith-home.html",
+      "bytes": 8048,
+      "sha256": "eb7c9775cc7b0c5c0eb83b4edc49491ea6ab8b5d8273b57586ea549861759ad6"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\Smith-setup-archive-list.txt",
+      "bytes": 2969,
+      "sha256": "5b67b3b51d8bb8c64ea290a402de976fcad08ba685f6b78e3dd234884daff480"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\smlu-blender-ijim-README.md",
+      "bytes": 96,
+      "sha256": "7c5dca672ffca867d6d4194dae69f922627916a2f85d0e9c746807bc7c958003"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\smlu-OpenJones3D-README.md",
+      "bytes": 13428,
+      "sha256": "0f8fbc92862fcb4b1de9c7521a646e3d55dd08e9752142320029b994fd625496"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\smlu-SED-releases.json",
+      "bytes": 13150,
+      "sha256": "46de8090f2b336a635b6869f589f7c78aedd11e9d70b5c1a307d627731c1c40f"
+    },
+    {
+      "path": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\notes\\archaeology-evidence\\smlu-Urgon-README.md",
+      "bytes": 2847,
+      "sha256": "7ee68eae79951a570266caf08c152b1e0e3c745c32b56ba10f12b2c0bf679de9"
+    }
+  ]
+}

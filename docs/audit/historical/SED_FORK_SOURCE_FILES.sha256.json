@@ -1,0 +1,2672 @@
+[
+  {
+    "path": ".DS_Store",
+    "bytes": 8196,
+    "sha256": "19981b6132c981b6297cac36bdb40270916ad2f940d521dfd8f15c3f909574be",
+    "source_lines": null
+  },
+  {
+    "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+    "bytes": 632,
+    "sha256": "6e5eb9321cc08b46d70692577624181ffcaf300d47e126caf50be66e9f1d542c",
+    "source_lines": null
+  },
+  {
+    "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+    "bytes": 595,
+    "sha256": "1f48c52f209a971b8e7eae4120144d28fcf8ee38a7778a7b4d8cf1ab356617d2",
+    "source_lines": null
+  },
+  {
+    "path": ".gitignore",
+    "bytes": 711,
+    "sha256": "dbcb4d239e21b9c87624e5a05d25b2d67780f88cf9b9ff8b5a60c1118ae4a60f",
+    "source_lines": null
+  },
+  {
+    "path": "CHANGELOG.md",
+    "bytes": 12198,
+    "sha256": "3cc028c8758a7e4e358e78dd27183a4f302ff539b791b9c7534fcc550cc5fba5",
+    "source_lines": null
+  },
+  {
+    "path": "data/df2jk.lst",
+    "bytes": 1444,
+    "sha256": "3faec812fddc2c88d8f05dedb999c03d3fa824f050ba6a1b1f29c1fb8a796fe8",
+    "source_lines": null
+  },
+  {
+    "path": "data/ijim.tpl",
+    "bytes": 281675,
+    "sha256": "881af1c87d5014245c08aee66b1426c52c0ef28740b0bf440f726812bf4d1e54",
+    "source_lines": null
+  },
+  {
+    "path": "data/master.tpl",
+    "bytes": 130672,
+    "sha256": "9f5fc0428b90dbb52a70b343c8840ce8484c37e0396f1aa1c92230059a11b0bc",
+    "source_lines": null
+  },
+  {
+    "path": "data/mats.jlh",
+    "bytes": 629,
+    "sha256": "f830c7de0f9ca5c96ba6aafa7b780e276ee002714a4ae8897fa63084d0cc86ce",
+    "source_lines": null
+  },
+  {
+    "path": "data/mats.jll",
+    "bytes": 747,
+    "sha256": "ee2633a3f63fede9004ee73a24cf8db79bd7470b44c1e6bc3c1c940e6a405929",
+    "source_lines": null
+  },
+  {
+    "path": "data/mots.tpl",
+    "bytes": 144277,
+    "sha256": "28ecfe3ad0a3b8232bc85400f40768ecac45a5a90d73943ebac309bd7ad0431a",
+    "source_lines": null
+  },
+  {
+    "path": "data/mtpls.jlh",
+    "bytes": 1056,
+    "sha256": "5d4243ba1ba115d67638eacbe8be88ba0494fbb16ecb52114911de89f1ce8219",
+    "source_lines": null
+  },
+  {
+    "path": "data/mtpls.jll",
+    "bytes": 5945,
+    "sha256": "d063cca170601addfa4e0da7a3471c281dca98772d3933b3987cacfbd1d72284",
+    "source_lines": null
+  },
+  {
+    "path": "data/shapes.tpl",
+    "bytes": 4488,
+    "sha256": "a6a76383a16b75197aa1a7a35b5da07c0ffaa7d3b84a5f9976a14e90435269d7",
+    "source_lines": null
+  },
+  {
+    "path": "data/tpls.jlh",
+    "bytes": 928,
+    "sha256": "c76180c0bc53490e5378e45d1d18ea51a44d41c27b03b8af43881611526cc4a0",
+    "source_lines": null
+  },
+  {
+    "path": "data/tpls.jll",
+    "bytes": 3974,
+    "sha256": "2ad3c5ebc6a026c935c0268fe4560b9b4fe9bc6c4b70bba529b65d15a9977b94",
+    "source_lines": null
+  },
+  {
+    "path": "docs/banner.png",
+    "bytes": 2017069,
+    "sha256": "679537f1a14aa4a9b460d4042733a4d65921c09d1c194fccb63359ff83c16b9d",
+    "source_lines": null
+  },
+  {
+    "path": "docs/JEDCHANGES.TXT",
+    "bytes": 3257,
+    "sha256": "e8b3d7f28168a679dd15252aa9f3e2edb328eed48968239e57def1124dc46324",
+    "source_lines": null
+  },
+  {
+    "path": "docs/JEDREADME.md",
+    "bytes": 29332,
+    "sha256": "ae17968d752681114b28bb91e27cfef2d416a83dcd446159ec0852cf0f37e910",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/JEDHELP.GID",
+    "bytes": 8628,
+    "sha256": "8e25979df796ec30f1f757073a496c01866f9a7d453fb06726d9ab3eb0222be3",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/JEDHELP.HLP",
+    "bytes": 279681,
+    "sha256": "31c48a6df3f93dd47da80a86a4f34cd5d1b16123477d20eec4ac9b9a8e05d938",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm0.shg",
+    "bytes": 4830,
+    "sha256": "691aab89db187289fe4f5da91eceb1e44df7003dc0e587b149b6fd0a7365e0e0",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm1.bmp",
+    "bytes": 1526,
+    "sha256": "a3f3efdaab12bab31a8559841d50351aa6f3f585131730f3b036ae958abe8cad",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm10.bmp",
+    "bytes": 6778,
+    "sha256": "976e03e7c7857e20692cbe31334765f7e7edaf5b1884ff9c2d0d6761a3cc00e4",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm11.bmp",
+    "bytes": 56054,
+    "sha256": "35f0ef7f300c27ba398a4fb41d9a7e617f9ef7bd206e906c0b78a5d5d000c0dd",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm12.shg",
+    "bytes": 19029,
+    "sha256": "cf24198628ab82a19579efba48f686a73fc5e4160dc06b5c24a5a38d02eecf5e",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm13.shg",
+    "bytes": 17541,
+    "sha256": "687d6cf9f4f6a02cf018839b1b5ce639885c2ac1f89b452a1a21c0462aa05a68",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm14.shg",
+    "bytes": 18342,
+    "sha256": "69bcf9b6c690eb0876525a2000d26f71e80df84c6262534c36578636383dad32",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm15.shg",
+    "bytes": 13009,
+    "sha256": "59ce30e2717a04bf378e6638f71a07a8cc9bbc6e786edfde5acd42e523a61845",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm16.bmp",
+    "bytes": 95542,
+    "sha256": "108e01955bca5d636401779e64cb7c388521d581d7498a5edb441a1c5147867f",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm17.shg",
+    "bytes": 8316,
+    "sha256": "3bc4ed4ce84b83adcfa5b3355bafa8d443af2c5d80d7ec1f4537397a90b1e34a",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm18.shg",
+    "bytes": 7979,
+    "sha256": "802ade2f3f55275d1ddc72210fe3cef8396ccd332ba0af6a5e8f95ded81b82b2",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm19.shg",
+    "bytes": 7380,
+    "sha256": "be3286da5939e3f829818f3310401467790bb48682c2dfbe211fb9878c339aa2",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm2.shg",
+    "bytes": 17783,
+    "sha256": "4f4f62213645c820299ddccba00a70820a800784a2988a3bf46dcd11db6984c2",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm20.shg",
+    "bytes": 8650,
+    "sha256": "3ec31df16212a68b141c7f250db1470bf8c92f17f8a4344f0e133b175c078a0e",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm21.shg",
+    "bytes": 11827,
+    "sha256": "1f2c5e98da66444b72de7ee98d188c47a1fa965bc62306d20c1ab0c01cbb8e76",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm22.shg",
+    "bytes": 6306,
+    "sha256": "d520db951270e4e791e335b3549b4e790f894526cf713b096ff3029914d77044",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm23.shg",
+    "bytes": 11791,
+    "sha256": "d530eab39655aa4590766b5b262220caec17ff1ccb8e709f578b3a640d047248",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm24.bmp",
+    "bytes": 59814,
+    "sha256": "1e155ccd8bcd3630f043a45849614f8cced593a1c60178e040054cb143a8e3df",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm25.bmp",
+    "bytes": 45218,
+    "sha256": "6ef9622e67e17ac91dd14fca10122bca309dfd680a5e3f4fe95643b4a7ea849c",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm26.bmp",
+    "bytes": 45686,
+    "sha256": "a98f1111caa0f084e935d7ca7c1b1161962e43c88600e989977b335b48c82203",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm27.bmp",
+    "bytes": 71602,
+    "sha256": "22f714b3df169484491eeb6860c6c5032c3e83019627394fcdbe35dfe37e8a23",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm28.bmp",
+    "bytes": 97318,
+    "sha256": "bf32b8c27e7692c1614718a199b8c635d5730c0856c26e318bf624ccb3a8ecd8",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm29.bmp",
+    "bytes": 43042,
+    "sha256": "a64484abd0708406124a989d8e5058c02f0f883fdece7b7cc271a4ee365a89d9",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm3.shg",
+    "bytes": 2066,
+    "sha256": "03503a13328b7ca4628f90be4e16ac514897615508144b65eae3df67ac35d5ab",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm30.bmp",
+    "bytes": 50694,
+    "sha256": "51b2c3c3b9835de3920d9606219b9ab9655027e0b74df79b8eed7b9f9ed66860",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm31.bmp",
+    "bytes": 120678,
+    "sha256": "16d75d10b30cb9c8a80936fc35dd75c5d3811882f329ac93cecb132e61e7710b",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm32.bmp",
+    "bytes": 103438,
+    "sha256": "da9aef76ffeedf5c98272db7b2ae63018429062d725ef1857479f5cab838aef0",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm33.shg",
+    "bytes": 1941,
+    "sha256": "665809a8be6d376a4314e5b9187742bbc2dbeffd399f13bae001aa426fe550e3",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm34.bmp",
+    "bytes": 61558,
+    "sha256": "d2cee068e6b3a756cf3842b3342f35fc8840bc03fe30c389f589b661d10d5455",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm35.shg",
+    "bytes": 1942,
+    "sha256": "3cb389a8385a14f751403548ef0f30323d0d80aff21f8b09d9505a15fed0a5cc",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm36.bmp",
+    "bytes": 61558,
+    "sha256": "02df144a109dbeda683de8316e7817965369f21d872454133cbfee5427d1fdeb",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm37.shg",
+    "bytes": 1903,
+    "sha256": "aec00ff831b90e7a998f9e21bcd2460c565ac4b8084fb883caee5a08a708eb86",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm38.bmp",
+    "bytes": 61558,
+    "sha256": "3316320291e0ced92cb7a37bc7c20e01f78e42dcc6e329d4c788cb24afca349a",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm39.shg",
+    "bytes": 1942,
+    "sha256": "6455672aea4c30a724e85ff6d1afa45615d4323b813831e480ed232810228cb5",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm4.shg",
+    "bytes": 1185,
+    "sha256": "20f813ff9168a648464f502f4d216c234f0711044ee78bcab71f4c0c80926f29",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm40.bmp",
+    "bytes": 61558,
+    "sha256": "a4fec354cba4a6141e5eb01c7a04a84bf44271fd52c6070529381ca35f7768f8",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm41.shg",
+    "bytes": 1944,
+    "sha256": "2840c04ae18b0a2e614b369ad097d47ed979c41467dc731f1429ee914ea69450",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm42.bmp",
+    "bytes": 61558,
+    "sha256": "75f7d5e57b379a4250191059acec71620e7c2524ca5f6cffc9baba9e211edc22",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm43.shg",
+    "bytes": 1908,
+    "sha256": "c06795ea9f98c1f457c037e31b1e89d85b6fbd40ae835e6a74a1c9f9a0040bc6",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm44.bmp",
+    "bytes": 61558,
+    "sha256": "9ee5945f0a829c662e48cb9232d7c40db6c1279f03bacda97ad00e5ecedf7540",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm45.shg",
+    "bytes": 1939,
+    "sha256": "cdc84fe324c757ddfc5dd8adb38e63c81a0753397c043937da7dee51785a8576",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm46.bmp",
+    "bytes": 20982,
+    "sha256": "c8b76df1fa3284fd9b16d2331ac75db4244ae4252d1fbc53678853f011761c24",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm47.bmp",
+    "bytes": 61558,
+    "sha256": "12b66672a445c0149af864ce2d91e566f6faec388221640cd62f030c44af6955",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm48.bmp",
+    "bytes": 4854,
+    "sha256": "6da3228a5e28e81011888c626d4826f5edaa0b2ec353b8f31e75e6d3870188f7",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm49.bmp",
+    "bytes": 5558,
+    "sha256": "a631c11f8f1c5b5262e69cb6ae8fdf4bb5b44ac3f446c0e7bd10ca915317a97c",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm5.bmp",
+    "bytes": 95062,
+    "sha256": "a4d05605c90735a51cf8ce4084747414b05f3cde62a9b0ce6776767dbda8a36a",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm50.bmp",
+    "bytes": 5830,
+    "sha256": "9c2663e5824755315efe3ebfdbbbf8ef208f4994c0c218a67836eab9550a31f3",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm51.bmp",
+    "bytes": 5302,
+    "sha256": "1a738c60866e755a120476026e98522b6fc3f1212f25e47db1beb9135207f470",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm6.bmp",
+    "bytes": 13474,
+    "sha256": "bdd29363270c31b3bbf89aefbfe1f5456d220f9e0424078b69d674a54add10b4",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm7.bmp",
+    "bytes": 11526,
+    "sha256": "389f75fc50689fba13d740ef87deca099159ee1976bd6d37b59d5a4a3f5402bf",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm8.bmp",
+    "bytes": 32278,
+    "sha256": "e02bb9a9567d302ca7542b5d6c3b7f06a0f792c2dc086bdbb5d6b0240cd12465",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/bm9.bmp",
+    "bytes": 58870,
+    "sha256": "2f403d895044343f97fd020eb3300a9fa38f7d4ba52df2bf20d1ce9115e74e0e",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/index.html",
+    "bytes": 295566,
+    "sha256": "29a54b1d5bcb578c28ea6ec87fbc4acff7ee1c32f8a0ea9a87f651968a6498b1",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/JEDHELP.hpj",
+    "bytes": 2479,
+    "sha256": "d837be0f971510ab25531775ecd2ec7820c8f947bb1d96e52f900b717264286a",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/JEDHELP.ph",
+    "bytes": 11445,
+    "sha256": "0622dffc0262485a76d58cffa37429eeac099e53baff529ec6a984637dcebd87",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/jedhelp/JEDHELP.rtf",
+    "bytes": 155366,
+    "sha256": "d39b01e54aed55530990e748718086e46c8d2378cfd5621f05869bb64ba0a7ee",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/JEDTUTOR.GID",
+    "bytes": 8628,
+    "sha256": "df48b635bd7e4b13ca6ecfbdb2c329a6de306526b4c40b20276e9996c6dfab0c",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/JEDTUTOR.HLP",
+    "bytes": 98710,
+    "sha256": "ab2729d8e184a1ffc219fc4f9df14a0682251254539832cf0347c199636f9ae7",
+    "source_lines": null
+  },
+  {
+    "path": "docs/old/JEDTUTOR.JPS",
+    "bytes": 1315,
+    "sha256": "f2af242620fe9d5a1e3333bd4aba71b5392f0c3d7ace0dba46511662f8059281",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.DS_Store",
+    "bytes": 8196,
+    "sha256": "4e53d04b33928a4d50ac4b2a53712b9d851408d1b5f728d2f28ca7411b126908",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.gitignore",
+    "bytes": 17,
+    "sha256": "01c781a645101ca29e494046ca28ce8acfbd7b682649df3ed9400d0e25ff6876",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.idea/.idea.Sed/.idea/.gitignore",
+    "bytes": 324,
+    "sha256": "76035b4e3ba370975a334c6cc24ead583f0a9763d69508b036021351cef796d3",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.idea/.idea.Sed/.idea/.name",
+    "bytes": 3,
+    "sha256": "3318a4dd1e7c5d501005045bf8bf6a3ae6a8dfa395a7c1ae34a595992e1c3b28",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.idea/.idea.Sed/.idea/encodings.xml",
+    "bytes": 169,
+    "sha256": "c592a2d2f91c9bdcca692a185ed4097bf7effb05339fcd3142d5b34cb6bc4c14",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.idea/.idea.Sed/.idea/indexLayout.xml",
+    "bytes": 198,
+    "sha256": "4d05af3d32bca5a27e2c87e614e5ab8c6cb8f663edf5584e949b879c3b95762d",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/.idea/.idea.Sed/.idea/vcs.xml",
+    "bytes": 183,
+    "sha256": "269064f5ba7307dcd31a03b5c690698b3442c0f0024c1358361542f49f5509ae",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/ARCHITECTURE.md",
+    "bytes": 50278,
+    "sha256": "7acfba37f449ec346830d74ff097d38c00c265f01dce7965d4b96c28076d8005",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/assets/Phosphor.ttf",
+    "bytes": 488636,
+    "sha256": "06b91e022b7ee899a63efced879392a74f0bacbda54e4467e9f663220d173a10",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/PLAN.md",
+    "bytes": 15568,
+    "sha256": "45047604c5b7c374ab1679937e54ba12f61af81b2068a27c050489e47fa5b628",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/Sed.slnx",
+    "bytes": 1529,
+    "sha256": "68c40028f86665fbb38ee1bb2d6a1b72bb95ac58af97861b36bd35cc72579696",
+    "source_lines": 30
+  },
+  {
+    "path": "dotnet/src/.DS_Store",
+    "bytes": 8196,
+    "sha256": "46b07119a9da617af3de2cf64536f178032543c070f420b7ee68c9417c06b4f4",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/src/Sed.App/App.cs",
+    "bytes": 567,
+    "sha256": "6317adbb49cdc187f341cc37390851eeef5f873edf9ab6ae81bc5b51ec531993",
+    "source_lines": 22
+  },
+  {
+    "path": "dotnet/src/Sed.App/AppSettings.cs",
+    "bytes": 5111,
+    "sha256": "2c3195da5eda129b0c8288855aef7173122c52de141f632cd6010d165a172a3e",
+    "source_lines": 134
+  },
+  {
+    "path": "dotnet/src/Sed.App/AssetCatalog.cs",
+    "bytes": 3064,
+    "sha256": "0f2209ad3024de686a61b5cf03dc7be6c85703e843c3bd87a14421f400d119c8",
+    "source_lines": 72
+  },
+  {
+    "path": "dotnet/src/Sed.App/CogEditorWindow.cs",
+    "bytes": 11862,
+    "sha256": "520d6e70f6491481c3bbfe1fdbade4331df9c7c568cb10ac8601bedd64e10aff",
+    "source_lines": 329
+  },
+  {
+    "path": "dotnet/src/Sed.App/CogGeneratorWindow.cs",
+    "bytes": 8237,
+    "sha256": "78b921ee405ca8027504cdecb7ee9ab07c86a0ba2ab351e0bd6cb6c661389b53",
+    "source_lines": 230
+  },
+  {
+    "path": "dotnet/src/Sed.App/ConsistencyWindow.cs",
+    "bytes": 4826,
+    "sha256": "ec05f3011984a64f0133da3d5c5e82f5835fe28bd251d8e71d07003ab9d3f57d",
+    "source_lines": 140
+  },
+  {
+    "path": "dotnet/src/Sed.App/DfImportWindow.cs",
+    "bytes": 4411,
+    "sha256": "adfb945775ff21a6453c449eecdfbf8b8463bfd471a808967af66c987cc6fd91",
+    "source_lines": 117
+  },
+  {
+    "path": "dotnet/src/Sed.App/Dialogs.cs",
+    "bytes": 1837,
+    "sha256": "cb26740b879b604ebcb23289374ee99ace3eac30faaddd4b4b91e811ada2d554",
+    "source_lines": 58
+  },
+  {
+    "path": "dotnet/src/Sed.App/EpisodeEditorWindow.cs",
+    "bytes": 14078,
+    "sha256": "84d68db850db7605197c3b5d622a56295ea7b07c50acf4780094a8b17fc6fd1f",
+    "source_lines": 361
+  },
+  {
+    "path": "dotnet/src/Sed.App/FindWindow.cs",
+    "bytes": 11223,
+    "sha256": "63f0614201ff36a454a2d76368d76c935828b9ac350dfafb05eaa2ba51152f17",
+    "source_lines": 298
+  },
+  {
+    "path": "dotnet/src/Sed.App/HeaderEditorWindow.cs",
+    "bytes": 6868,
+    "sha256": "d75f210c910ee5a960da79d51134303312c11bba78125b6709b07f3aa12216db",
+    "source_lines": 159
+  },
+  {
+    "path": "dotnet/src/Sed.App/InspectorPanel.cs",
+    "bytes": 5073,
+    "sha256": "1789b03de2274598fe9cdcb93617a9fce9e29430b40d3dcf4cd935a659915a1a",
+    "source_lines": 167
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/LightInspector.cs",
+    "bytes": 2889,
+    "sha256": "8a972e70d176113445f56d829be87a2033ebeda67c792add27cecd9c0ec18dad",
+    "source_lines": 63
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/SectorInspector.cs",
+    "bytes": 2612,
+    "sha256": "021f4025db75297b950d40d521d86b5e017bfc0c505480ec4cd7432dc9967f08",
+    "source_lines": 57
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/SurfaceInspector.cs",
+    "bytes": 3754,
+    "sha256": "271665f75f811838120cbcc5dea51df356615574a4fb3f7ec2681f9f51d825ae",
+    "source_lines": 86
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/ThingInspector.cs",
+    "bytes": 3387,
+    "sha256": "42e2111c4d13665d1030f23f21160ee56340c91469c2dfacb9a613660043dea8",
+    "source_lines": 78
+  },
+  {
+    "path": "dotnet/src/Sed.App/Inspectors/VertexInspector.cs",
+    "bytes": 1161,
+    "sha256": "1eedf1ec7679a87f77f5aede729b4a8f76a89a1a54cbff8bc1c04ad02bd531b2",
+    "source_lines": 34
+  },
+  {
+    "path": "dotnet/src/Sed.App/KeyBindings.cs",
+    "bytes": 6135,
+    "sha256": "d888b7745daedf25319a0931bb9b89387a9a3449940f17c7f936a8ad0fc0c76a",
+    "source_lines": 121
+  },
+  {
+    "path": "dotnet/src/Sed.App/KeyBindingsWindow.cs",
+    "bytes": 4018,
+    "sha256": "d1617aec305d3037f3de3dafa11b16c3767da30c931c31db5e2f607f8d499192",
+    "source_lines": 115
+  },
+  {
+    "path": "dotnet/src/Sed.App/MainWindow.cs",
+    "bytes": 59872,
+    "sha256": "c0c54e67153f566d29a77afe788a3dfae3d00ab989074064eb7ffbc6e9c9c426",
+    "source_lines": 1510
+  },
+  {
+    "path": "dotnet/src/Sed.App/MapView.cs",
+    "bytes": 29570,
+    "sha256": "5c16dbb6fb05e9d4760d20db324c2fb321377494337f0741b6f0ac0335f0f48f",
+    "source_lines": 786
+  },
+  {
+    "path": "dotnet/src/Sed.App/PickerDialog.cs",
+    "bytes": 4356,
+    "sha256": "9e6f7fbb9e092a54f01da6fb898cc01578bbe37ce6f1a9ddec10e8da788d65b5",
+    "source_lines": 120
+  },
+  {
+    "path": "dotnet/src/Sed.App/PickerField.cs",
+    "bytes": 3057,
+    "sha256": "238a4ecfdeae7877bcb2c405540485f8e753fd8ca355e31b960de944a89d85de",
+    "source_lines": 79
+  },
+  {
+    "path": "dotnet/src/Sed.App/PluginHost.cs",
+    "bytes": 6016,
+    "sha256": "74f65d33096b164e6c9ed1c2fff010f6ab86fd7362dfdfb1501043ad9ad13bf8",
+    "source_lines": 164
+  },
+  {
+    "path": "dotnet/src/Sed.App/Program.cs",
+    "bytes": 392,
+    "sha256": "61acd9095436bc7313c99e226818f55cbe3870b86a55479bf8c872734233376d",
+    "source_lines": 16
+  },
+  {
+    "path": "dotnet/src/Sed.App/Sed.App.csproj",
+    "bytes": 1013,
+    "sha256": "4ecb347d664aaad80efbfbc351e6f711ee6754d3e63d6b35ad22e94a6eb3dd77",
+    "source_lines": 30
+  },
+  {
+    "path": "dotnet/src/Sed.App/TemplateEditorWindow.cs",
+    "bytes": 13672,
+    "sha256": "b646aad39bd2de4623a3eb76d108672e32d8e24e5a21b6b2602bb55e99a2f6af",
+    "source_lines": 377
+  },
+  {
+    "path": "dotnet/src/Sed.App/TestSetupWindow.cs",
+    "bytes": 4741,
+    "sha256": "26bb020bbee7db5279db7c56e9ddb926a325511bab144049e66ca93f1e77c97d",
+    "source_lines": 125
+  },
+  {
+    "path": "dotnet/src/Sed.App/ThreeDoViewerWindow.cs",
+    "bytes": 12104,
+    "sha256": "78d981e812ba1ac6b4ed0f86807dad273f2a40041d2773962caf3d61a03ec3aa",
+    "source_lines": 300
+  },
+  {
+    "path": "dotnet/src/Sed.App/VulkanView.cs",
+    "bytes": 51053,
+    "sha256": "f324e9c62081d58b7f67d8d09b913430964bbcd2b5c7b0c75dc4958c85707ee0",
+    "source_lines": 1249
+  },
+  {
+    "path": "dotnet/src/Sed.App/VulkanViewport.cs",
+    "bytes": 1565,
+    "sha256": "870234071934edd10585365bbd6231dfda2fe62ac2de9241fd236d66a2dba455",
+    "source_lines": 45
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/AdjoinCommand.cs",
+    "bytes": 2029,
+    "sha256": "d87d25458d6c12e4abb7845e77e019c50ff944e7e2e7b0c580f57f3f975dc6bd",
+    "source_lines": 71
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/AlignTextureCommand.cs",
+    "bytes": 6295,
+    "sha256": "f308ff7b927f437f4db5f1c34a63d23d72cd1fcab6fa7301a8a0a9d7cc581ad8",
+    "source_lines": 170
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/BridgeCommand.cs",
+    "bytes": 4836,
+    "sha256": "c4c3586d5afa9d0d21be9c925046a9d4f3ccb2a84b17b1bcadc1a8f5153c4ebd",
+    "source_lines": 134
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CalculateLightingCommand.cs",
+    "bytes": 2873,
+    "sha256": "7afce79c813638042fa1a45cddab5ef19bdd32516fe0d3e64a40abb2a8c762e5",
+    "source_lines": 80
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CleaveCommand.cs",
+    "bytes": 5517,
+    "sha256": "e6ddb549e4844c48f9d999150d111e565fb93f6eb587d16892917d88a1bad583",
+    "source_lines": 172
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CleaveSectorCommand.cs",
+    "bytes": 15288,
+    "sha256": "aa9cad71d3d88a7dde840074f2ae90d40a5e558fad4203d2f938f64804231a0e",
+    "source_lines": 419
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CogCommands.cs",
+    "bytes": 4308,
+    "sha256": "b9fb64e09135d5b04786f30fdd8fc9e587083914e6cb446a93c48c179985a1f4",
+    "source_lines": 168
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CompositeCommand.cs",
+    "bytes": 907,
+    "sha256": "3454964eb272bb1d9e1a9557c910e79fd546da1e7b002de4b870c7c8ce00ab6f",
+    "source_lines": 32
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ConnectSectorsCommand.cs",
+    "bytes": 5240,
+    "sha256": "119e67844fb6e9b56af80406f3dc4817106b61bbfe15d57ac003447683fca635",
+    "source_lines": 145
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/CreateDeleteCommands.cs",
+    "bytes": 7226,
+    "sha256": "6f7c5e470cb80ea52964a96c7decb82455f5f17d606b5b5f42d0a13d585f8716",
+    "source_lines": 211
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/EditHistory.cs",
+    "bytes": 1533,
+    "sha256": "f1e53e78b7dfeb5f236391813855c2d17eaa1781161b68cc10b9855169909091",
+    "source_lines": 60
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/EditMode.cs",
+    "bytes": 379,
+    "sha256": "04f5fa0b3627c890c8990a355f346b23ac9f1158f645a03882ce8697776b5a94",
+    "source_lines": 16
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ExtrudeCommand.cs",
+    "bytes": 5290,
+    "sha256": "c61e11b887ca3b0ad82a339a2bc8a7f247282880409eeff8708ca43e629952d1",
+    "source_lines": 160
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/FlipSurfaceCommand.cs",
+    "bytes": 828,
+    "sha256": "c5fc27fa40e0b134b3ac14a71d273545564dcced8e26a6515ac9730bc8f748ab",
+    "source_lines": 30
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/HeaderFieldCommands.cs",
+    "bytes": 1317,
+    "sha256": "38039898c5aa16fb40666119a9520f74cf2a43dc9fc0d5c3616058264b1858b2",
+    "source_lines": 39
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LayerVisibility.cs",
+    "bytes": 2091,
+    "sha256": "253b7abc1d8897b5ebf5a57b6068c2e0c38d033ffdcc92d84ae422fe705a2826",
+    "source_lines": 59
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LevelClipboard.cs",
+    "bytes": 9932,
+    "sha256": "c8cc8b17a744f23612068b0aa2d0ac7a32f5512c94a99e4950bc47dabc25f339",
+    "source_lines": 277
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightCreateDeleteCommands.cs",
+    "bytes": 2140,
+    "sha256": "8216ceea84b760339c0c1661edf65fe7216592599e70e6a87bf446e824d1a308",
+    "source_lines": 87
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightFieldCommands.cs",
+    "bytes": 2568,
+    "sha256": "1a1a0b187c9562924693f179555a7c05ea0309a744e885657567ae7e36f43751",
+    "source_lines": 94
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/LightingCommands.cs",
+    "bytes": 2301,
+    "sha256": "4a2ac20976eab1cd92c7c26ccde6c4f9767e66d185b3d038edba4f78a051e4dd",
+    "source_lines": 61
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/MoveGeometryCommands.cs",
+    "bytes": 1260,
+    "sha256": "ee1ae5089d98a472231d3737e5aa4572bf68385ddcf4ca1b461243c89f03c165",
+    "source_lines": 47
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/MoveThingCommand.cs",
+    "bytes": 581,
+    "sha256": "95b13fa18c924fe9ac8d978adfcd1bfda3313daef9563bc33215baffc2930c08",
+    "source_lines": 22
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/SectorFieldCommands.cs",
+    "bytes": 2954,
+    "sha256": "24969b0cf93e7349abba59127509c7160ecb12aa7d02d596e9ee0a6179a2844f",
+    "source_lines": 101
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/SelectionSet.cs",
+    "bytes": 7810,
+    "sha256": "04a480349a9ed7b9cbdc131a1b55f4a5dc5eea61914e6105a733999990850b7a",
+    "source_lines": 207
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/SurfaceFieldCommands.cs",
+    "bytes": 3890,
+    "sha256": "710b79b37f31c6384b60c762b9fc9a6c6527606216cd5191489d50a1f0c01a93",
+    "source_lines": 104
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TemplateCommands.cs",
+    "bytes": 5695,
+    "sha256": "cf3de10b9606d55c84956ba5e4042222e7c557c491341dc2d1d4a65332e00242",
+    "source_lines": 168
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TextureCommands.cs",
+    "bytes": 5554,
+    "sha256": "c86d8f6c70e73380524a7295f0bd7bd86e58adf735a3c75199b8ddb4ddb04448",
+    "source_lines": 171
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/ThingFieldCommands.cs",
+    "bytes": 4113,
+    "sha256": "19e66aba740ec3375e2823f6f3463158e5c840614ac7ce3df67b05489b9f8349",
+    "source_lines": 152
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/TransformCommands.cs",
+    "bytes": 3445,
+    "sha256": "004e03b257a6305e0e5567154b19556436987a7974c76417aa9cf1bab4c6701c",
+    "source_lines": 91
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Editing/VertexFieldCommands.cs",
+    "bytes": 626,
+    "sha256": "c64b8ee39c2c7ac42f9c3dcba4f21072ed35294b4567d8bbe7c247e6ea8d6a4d",
+    "source_lines": 22
+  },
+  {
+    "path": "dotnet/src/Sed.Core/GeometryOps.cs",
+    "bytes": 6407,
+    "sha256": "30e1f38160c571f0a576b7372b4d3368b35f5b42fcefb93db50e72b0aa063959",
+    "source_lines": 167
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Lighting/LightCalculator.cs",
+    "bytes": 15587,
+    "sha256": "88e5e33e0f8e8ffe596977246c508abfd21fcd71c89c5ee692c62964658a6249",
+    "source_lines": 391
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/Box.cs",
+    "bytes": 850,
+    "sha256": "8c260b89f3268b59874ffb39a83bb9f57287f554255866ec1bd8c17b9501e7d9",
+    "source_lines": 27
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/ColorF.cs",
+    "bytes": 663,
+    "sha256": "983968e5e2a6329135474f8b0847134c718ce1eef3663a2682beead627baf54c",
+    "source_lines": 16
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/Mat4.cs",
+    "bytes": 3900,
+    "sha256": "3ef738e6a348dbacc077b61d4216eb8cd73320ea5976c60c87183e00a56fdfd8",
+    "source_lines": 121
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/Vec2.cs",
+    "bytes": 961,
+    "sha256": "c538911a79fc92907f3fdc59f5b87dc79d4dcc8205ce7c2dd9e7d7e128c93cfb",
+    "source_lines": 26
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Math/Vec3.cs",
+    "bytes": 2096,
+    "sha256": "88d9e30ae38bf7092d6a51bac7aa19b177a932a3a636f98222807c76c1af907b",
+    "source_lines": 50
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/EngineFlags.cs",
+    "bytes": 2906,
+    "sha256": "cd8c4fc8f252ab27c5a521a86446bc5d70ec63483da187a5fff113ab6d7309f7",
+    "source_lines": 79
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Level.cs",
+    "bytes": 3679,
+    "sha256": "cf77bc0fb41009372150201f6c370920ea1bfaa3300f5b7b053796106a707141",
+    "source_lines": 123
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/LevelHeader.cs",
+    "bytes": 775,
+    "sha256": "b7403b849b34799ecc42fe18e207bd39c61f6479a7b08ee065d8215ec5570be0",
+    "source_lines": 38
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Light.cs",
+    "bytes": 1127,
+    "sha256": "bcb398ed4881698b6aad4bc649326ffed7455690b88c707a65c90581a3092cb8",
+    "source_lines": 40
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/ProjectType.cs",
+    "bytes": 600,
+    "sha256": "cfbfdde6b776faaacceb184a9c19545402eb84c654e28e0f8c762fb088738276",
+    "source_lines": 26
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Sector.cs",
+    "bytes": 1437,
+    "sha256": "fbc377f723917521d57ef3abda596ea4549efec0e229ef67e66be8dfea3d3d1e",
+    "source_lines": 58
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/SectorFactory.cs",
+    "bytes": 2552,
+    "sha256": "e320e1fe00c71e09a0cdd25d0aeb194730feb63a79e612c173d16822385e2980",
+    "source_lines": 55
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Surface.cs",
+    "bytes": 3255,
+    "sha256": "64bb0694dd0baa328b9ae7d74fa3ec2f67df2908093a8e0c48e6f0edd9844a0b",
+    "source_lines": 90
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/TemplateParams.cs",
+    "bytes": 3043,
+    "sha256": "e68c7109240066cc6b6a4fca8a79b6f04ae1359404faa5e1f6d236a38f855195",
+    "source_lines": 82
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Thing.cs",
+    "bytes": 809,
+    "sha256": "486d196df68179cd5eeb136d2404cf3d68ca19ecb80e79ae665b0d755603bfa4",
+    "source_lines": 28
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Model/Vertex.cs",
+    "bytes": 640,
+    "sha256": "47726b28b4358729aaa7d3ed9b60a3b2ef63346719c71b486495a6c777b6b8b1",
+    "source_lines": 25
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/FieldCriteria.cs",
+    "bytes": 7046,
+    "sha256": "584c095b1c3d45242962b27ac5b4ce81d481af6ba769f030d632cffc77c8d191",
+    "source_lines": 174
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Query/LevelQuery.cs",
+    "bytes": 13426,
+    "sha256": "0efc6616408d96c91d28182b3c2f6eb6d1ed53fa7854e42bbd28afba49def277",
+    "source_lines": 310
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Sed.Core.csproj",
+    "bytes": 210,
+    "sha256": "11c0c110e19c9eaeaef66a0382f7a3e4ff6ab395d99ca6664e1ba378371cc47c",
+    "source_lines": 9
+  },
+  {
+    "path": "dotnet/src/Sed.Core/Validation/ConsistencyChecker.cs",
+    "bytes": 3193,
+    "sha256": "473f4f638be14c0373cbc0f14e6b118cf4b688a144f8c1fc98a4cdc68420cee1",
+    "source_lines": 80
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Asc/AscImporter.cs",
+    "bytes": 6984,
+    "sha256": "63568a887ea9b2dec77e099510373ae12d25f23e19009f1321781230323d9c66",
+    "source_lines": 221
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Cogs/CogScript.cs",
+    "bytes": 5259,
+    "sha256": "0fef9391adc261e55d63e56889f071e512fa33c8857b8095c63944575eb0b02b",
+    "source_lines": 166
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Cogs/CogScriptLibrary.cs",
+    "bytes": 1880,
+    "sha256": "7f90609f04edc8406d356431053ec24c1135a83ab1031304617db422ca1bbd61",
+    "source_lines": 52
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Cogs/MasterCogGenerator.cs",
+    "bytes": 4988,
+    "sha256": "a0894e2c73da5af5824bf4efe9036d2cc610fc74b894f5b7e96eec4b83230a1c",
+    "source_lines": 123
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Df/DfLevelImporter.cs",
+    "bytes": 43492,
+    "sha256": "a17246c7d1754296a5933d301ec5f6c5afef87435305b86c82cfb354e9455a73",
+    "source_lines": 1162
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Game/Episode.cs",
+    "bytes": 6986,
+    "sha256": "610c09231dc4349eb55c6a0f43c669a0df085ebde607c0f8513bfb87ae804947",
+    "source_lines": 205
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Game/GameInstall.cs",
+    "bytes": 4320,
+    "sha256": "1409691f1db2b4e64a34a3cf83c1cbe0436480944c8ba7a33e4ba120895c3b8d",
+    "source_lines": 108
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Gob/GobArchive.cs",
+    "bytes": 3558,
+    "sha256": "8342a62f20d0d3a759f985b689a8ab2d6b246f1c229081975ab72b6154f7fdad",
+    "source_lines": 101
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Gob/GobWriter.cs",
+    "bytes": 1804,
+    "sha256": "0a9fe37515fceff37c5b0d0b9cc353a5b184f2cb5fab05593e1a8ae5ab35aa7f",
+    "source_lines": 59
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/GeoData.cs",
+    "bytes": 1605,
+    "sha256": "cae174b3f2b886c76a08d1d797e7cb6c36502d23146db66c8504cbd718501f08",
+    "source_lines": 45
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/GeoResourceWriter.cs",
+    "bytes": 7970,
+    "sha256": "159ce70dea7a519d030f9142f7cd92e513141c171398c574b1db6dd93c31a11b",
+    "source_lines": 175
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklDocument.cs",
+    "bytes": 1743,
+    "sha256": "37c7e762a3611df8b6306d5bc64e50906fb59bf32bbf244035c0aa1b51ad928b",
+    "source_lines": 39
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklParser.cs",
+    "bytes": 22190,
+    "sha256": "e63e76c48c81259c58b5950808bf11c06fe393686c2c8e710c408b63b11530e7",
+    "source_lines": 580
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklReader.cs",
+    "bytes": 3514,
+    "sha256": "1187a1c50c4b0c7a81bd48e361c65d5d0c78a3c2ee6649056051784a68dca649",
+    "source_lines": 112
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Jkl/JklWriter.cs",
+    "bytes": 10377,
+    "sha256": "b3fef85b8e146e4ab9075f05492db6bbd5aab448a4d76c989ca032271df6d494",
+    "source_lines": 246
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Keyframe/KeyFile.cs",
+    "bytes": 7691,
+    "sha256": "c7f2830660accf0fd14924d7eb870dd266b347e235cc421c4ca2e006c7b6a138",
+    "source_lines": 212
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Material/Colormap.cs",
+    "bytes": 2772,
+    "sha256": "813b68ebf7a1a43b64fb2b7f8c79a9bdd90b557378ff679afdf95a6a95112777",
+    "source_lines": 68
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Material/MaterialLibrary.cs",
+    "bytes": 3526,
+    "sha256": "452d451545ac27afbfdfedaa2af67a78feeb00d309ffb9ab86edc7abfb09aaf1",
+    "source_lines": 100
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Material/MatFile.cs",
+    "bytes": 3458,
+    "sha256": "afac1dddf160bfbe315694913c1f6c8f049e62fa1e390fa0389a352a5bb98a95",
+    "source_lines": 89
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/Sed.Formats.csproj",
+    "bytes": 303,
+    "sha256": "13317236c9f35da471adce63fecefd8f96de8eeb6b9950130d03f3f6f511d847",
+    "source_lines": 13
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ModelLibrary.cs",
+    "bytes": 1109,
+    "sha256": "43981ecfe3d95d25d0fffdeeb78e99f62c0e3c6f08a7ca2fb25ce2119519caa3",
+    "source_lines": 40
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoExport.cs",
+    "bytes": 4515,
+    "sha256": "b8e9003531ed436006cfc47a3a0868a66c00d0a5d80c7e0510a9f62d21fb5adc",
+    "source_lines": 125
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoModel.cs",
+    "bytes": 1778,
+    "sha256": "62c766b110a49f36796f2d1a77b334e411dc35798cc14241ac44a9d073a0aa98",
+    "source_lines": 54
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoParser.cs",
+    "bytes": 6748,
+    "sha256": "4481bed2dc740bfdb178c39394fe5f342306e2a70bf6e5ef3d507ec9fde16174",
+    "source_lines": 184
+  },
+  {
+    "path": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoWriter.cs",
+    "bytes": 9225,
+    "sha256": "b3fd14c17482abc82bdbe086754060f6909498f570ebda378683415345e6b20d",
+    "source_lines": 233
+  },
+  {
+    "path": "dotnet/src/Sed.Plugins/ISedPlugin.cs",
+    "bytes": 1932,
+    "sha256": "963dd617b65177d886cd418b290f42b4df9e6b5441721759b1e72c815204c788",
+    "source_lines": 60
+  },
+  {
+    "path": "dotnet/src/Sed.Plugins/Sed.Plugins.csproj",
+    "bytes": 300,
+    "sha256": "63f81b746e04ad3999ba3475edabfefb8031b1898336cfcee50e50d7922f69a3",
+    "source_lines": 13
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/NativeVulkanLocator.cs",
+    "bytes": 3747,
+    "sha256": "3c34ec3dbab8f8b0c0dcfce776195de4aa3dc5dcfdd2e615e9887fe498252731",
+    "source_lines": 96
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/OffscreenRenderer.cs",
+    "bytes": 16404,
+    "sha256": "2951097e1cd46c1c39e28f8826b681546e5c783c11bc95f663457fdcc3655002",
+    "source_lines": 409
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/SceneRenderer.cs",
+    "bytes": 41199,
+    "sha256": "971b8bfb0261b7f4dfa2316449dda1925214c9a5a0b69f62ea7ae02751732a7b",
+    "source_lines": 726
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Sed.Rendering.Vulkan.csproj",
+    "bytes": 1575,
+    "sha256": "442280dfee98cbcbabb11a7c601b1ee5cc1b6b316b3da2695fc968ed21851a47",
+    "source_lines": 40
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.frag",
+    "bytes": 2808,
+    "sha256": "48cd7e74b5d6e315a09924ebac8c2855d8cb9cca258987c7476f15fdb89138e4",
+    "source_lines": 71
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.frag.spv",
+    "bytes": 7172,
+    "sha256": "7a3471e771208c60014a5f2bf54ad95def9a5eeef2b0125eda604140b099149b",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.vert",
+    "bytes": 914,
+    "sha256": "7c6ca3f75546000a040c36b141f956a4f021b26f5fd98260dea85f81aec5ff62",
+    "source_lines": 32
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.vert.spv",
+    "bytes": 2072,
+    "sha256": "cb67fa9a0457f5f4690cebb0c93213564968968001d7f928a44e61332cc09066",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.frag",
+    "bytes": 148,
+    "sha256": "29ec5f77f5062330c3eeea22eb2d0483f6c56c0d13d040fd5d233316fd060703",
+    "source_lines": 9
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.frag.spv",
+    "bytes": 500,
+    "sha256": "2334ec7272e743d1297fffa169b5714e64a02931c074f4a7396c000b558e24a7",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.vert",
+    "bytes": 526,
+    "sha256": "c903cb410b8d9955210cbdbea52c61b2a08f07a0a9afad0be45bcdab9b70439d",
+    "source_lines": 23
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.vert.spv",
+    "bytes": 1432,
+    "sha256": "1f741231c7b5b7b6d49f69f423b387195051e082d807636f2b82634a7adc77e4",
+    "source_lines": null
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/VulkanContext.cs",
+    "bytes": 4390,
+    "sha256": "e48cc6cc0bb13054250e9f76867b72315b3507197e1af642a7ebb8fbba166a01",
+    "source_lines": 126
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering.Vulkan/VulkanDevice.cs",
+    "bytes": 6439,
+    "sha256": "d171a8e9bc59f7e028672230dc601f373b035d10f73493d84f6a5bba4ba9967a",
+    "source_lines": 174
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/Camera.cs",
+    "bytes": 2014,
+    "sha256": "880d1d16bf639dbe595873b06cee424887913260643d4d500820679627b7c8ac",
+    "source_lines": 54
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/IRenderer.cs",
+    "bytes": 739,
+    "sha256": "e84f59ed00bd4f7c79fcfb2d324c048be45682665639e33bea48e0a3365e8c73",
+    "source_lines": 20
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/Mesh.cs",
+    "bytes": 1531,
+    "sha256": "27c1864d2a0e209fee51fbfe5830b5c27241be4a2b8eb1a133dcf80cb5320155",
+    "source_lines": 51
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/Picker.cs",
+    "bytes": 6312,
+    "sha256": "57188827f38a3c6d7ca0da14e9b14f34e297c55ae542dc880e92c19e4534bfbc",
+    "source_lines": 163
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/PngWriter.cs",
+    "bytes": 2693,
+    "sha256": "748bbe3c1b88db3025440fde8961bb43592858befa4cdab5825aacd9ae641d25",
+    "source_lines": 76
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/RenderScene.cs",
+    "bytes": 1602,
+    "sha256": "a592d426a97b7c6d3f1b2fa7a7f1beffea628d5f7e5c0ba9585999c1909004d3",
+    "source_lines": 39
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/SampleScene.cs",
+    "bytes": 1542,
+    "sha256": "4b4daaab487f985e1b15a0dc7ad2d22260f8d70976ab487ad7334c784c637990",
+    "source_lines": 52
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/SceneAssembler.cs",
+    "bytes": 8040,
+    "sha256": "47ab21f4f78f861ded14ced65b60708db3f48eaa654001dae4c16b818218628e",
+    "source_lines": 182
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/SceneBuilder.cs",
+    "bytes": 8473,
+    "sha256": "e5e43eaf578347c4f6944116def0e78e59e666951526a3ac80bf6e7c816407bc",
+    "source_lines": 224
+  },
+  {
+    "path": "dotnet/src/Sed.Rendering/Sed.Rendering.csproj",
+    "bytes": 372,
+    "sha256": "3e554598e8aaf551d140c40a5bc03b3cd90a891ff90659474b6f0f128f7de0f3",
+    "source_lines": 14
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/AdjoinFlipTests.cs",
+    "bytes": 3379,
+    "sha256": "fb83ce51fea99d2922c765fcb709db9dfb76d6cb0383f5d01687ebd16300c1cf",
+    "source_lines": 114
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/AlignAndGenerateTests.cs",
+    "bytes": 8284,
+    "sha256": "2cbc35f58bf72083a56a291d555ec8b10452498c744377c47c5185e76a4af9fc",
+    "source_lines": 217
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/BridgeTests.cs",
+    "bytes": 6493,
+    "sha256": "9cf1711fc5fff76aeafce670bf26c9fe5248a82173b22f450c53af2a8087d80e",
+    "source_lines": 194
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/CleaveSectorTests.cs",
+    "bytes": 5937,
+    "sha256": "ee4535d4da8843e825e5f2fbadbc6120ebdad7120d23c18bc752454d37787e54",
+    "source_lines": 166
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ClipboardTests.cs",
+    "bytes": 8890,
+    "sha256": "eaa4aede4b8a07f0c0cc937f12744f860aac201149b4dff7c7cedd2deeb87808",
+    "source_lines": 263
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/CogScriptTests.cs",
+    "bytes": 6458,
+    "sha256": "336e0112a80db8313d9df73cf63ea9b2f89b8ba01934642175ff0d5b4d4406f2",
+    "source_lines": 216
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ConnectSectorsTests.cs",
+    "bytes": 6719,
+    "sha256": "f17429558913670f010131bbc03fef28a566e85f1c590f7a058ecbc5d5d5ff1e",
+    "source_lines": 189
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ConsistencyTests.cs",
+    "bytes": 2543,
+    "sha256": "c6cf4e201bab66656ac56fcd7c7cf550821424f1089b16e3b9fe52acb9d70dbc",
+    "source_lines": 92
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/DfImportTests.cs",
+    "bytes": 12331,
+    "sha256": "60ad5b47aa572c1ba20d206c79a228b283cdd34cfb7de51f952f5b1468a7cf88",
+    "source_lines": 277
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/EditingTests.cs",
+    "bytes": 9987,
+    "sha256": "d64af767acf6a3f9c8d82b50c5fbec438134b7d8863c1548a1bda10f424f7c36",
+    "source_lines": 307
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/EngineFlagTests.cs",
+    "bytes": 3184,
+    "sha256": "3ed8f31bd02b72c23ae2aeec166a2c736a7b177cbd69055aaa093602e4571972",
+    "source_lines": 91
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/EpisodeTests.cs",
+    "bytes": 3463,
+    "sha256": "ea1e5ee02f55c854505df95412a1caf16b33e6f631de0d5430795b29c2af1f1f",
+    "source_lines": 108
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ExtrudeCleaveTests.cs",
+    "bytes": 6590,
+    "sha256": "7d3536df7b5d6d83c2226e7a9f70063d76f1d3336d3819b02d2c6ef046adcdde",
+    "source_lines": 178
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/FieldQueryTests.cs",
+    "bytes": 5436,
+    "sha256": "534d2960b2d504b3235be40247ea41a1485669fc05e9ea5e875f8aaa5f6977d8",
+    "source_lines": 163
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/GameInstallTests.cs",
+    "bytes": 2707,
+    "sha256": "b3540ffa6ce554bb7c06a3dd61185ca275967a86a7edbbe07078edd5ff4ef125",
+    "source_lines": 74
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/GobArchiveTests.cs",
+    "bytes": 2311,
+    "sha256": "6a253556c30c85fb0a774e2435b95f97db93368db45d6dd9a7beee5b8663eca1",
+    "source_lines": 73
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/GobWriterTests.cs",
+    "bytes": 1142,
+    "sha256": "7bda4f4674415543864c1521bf5f774cd74152dd8264579be6eb464c11270114",
+    "source_lines": 43
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/HeaderFieldTests.cs",
+    "bytes": 4179,
+    "sha256": "430c9c1c27b1edc1bce2fb72ed187a52b8dea4c953efbca33e139e67558f79e0",
+    "source_lines": 134
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/JklParserTests.cs",
+    "bytes": 2495,
+    "sha256": "83ffbeaf7a15301a13a710c485be316dea7803ec21f6b8f686e2766e14b8bd74",
+    "source_lines": 95
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/JklRoundTripTests.cs",
+    "bytes": 5665,
+    "sha256": "35ef73df5faf3b35d7c9705f13531165bed15f539b7bdd77cb3c6912a7577fec",
+    "source_lines": 170
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/KeyFileTests.cs",
+    "bytes": 2932,
+    "sha256": "2d1e0ecb817d8ba22b7454dc64e09529f33af81acbce82bf6996e7d6bc85ae89",
+    "source_lines": 107
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LayerVisibilityTests.cs",
+    "bytes": 3017,
+    "sha256": "e570cbb7d72b5c9a8cfd2f75d9635a1e95c810f9e6e105ec1eae4a1e9ef6cb9d",
+    "source_lines": 117
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LevelQueryTests.cs",
+    "bytes": 6241,
+    "sha256": "9a9dfef18cc1ef07cf660ee8e32bffca8a0a2ba056ecf6c8d9ba8d82164b1be0",
+    "source_lines": 191
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LightCalculatorTests.cs",
+    "bytes": 12869,
+    "sha256": "e24bf555fd36d3f8c28dbe73b34db37e2697e4dded1728b01f62a629d7d55d94",
+    "source_lines": 351
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/LightEntityTests.cs",
+    "bytes": 6433,
+    "sha256": "d9719ab35c8cfe75e4da71ab7e17099d5a5cf170d201ff074ee94fb9fc860467",
+    "source_lines": 214
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/MaterialTests.cs",
+    "bytes": 2242,
+    "sha256": "f2e2c52e47a5ab04f9e159fa02950c62bb6e14b8b25e4f4395ddb097a9b8911d",
+    "source_lines": 69
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/MathTests.cs",
+    "bytes": 2764,
+    "sha256": "830631e4797d57c7080bad18d29dda895f4664a3e5e2d5ca195fa93f15d2e204",
+    "source_lines": 101
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/MidCleavePlaneTests.cs",
+    "bytes": 4114,
+    "sha256": "ae0ed14d6a146014c423fd20db2b06692871c981836f856a1a8989718d63b9eb",
+    "source_lines": 120
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/MultiEditTests.cs",
+    "bytes": 4842,
+    "sha256": "f81dbc823aa95687ccd3ecfb17d5576978a28e00ab2ecec1ea66946ccfb1c928",
+    "source_lines": 150
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/PickerTests.cs",
+    "bytes": 1847,
+    "sha256": "87b09bf395db187d6d2c71e45d17fe163268179efea4e5b4556bb106fd6be2d8",
+    "source_lines": 54
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/PluginHostTests.cs",
+    "bytes": 5710,
+    "sha256": "c79e50bed4b90d3210f576ad981fc789a9c98ae0a372f41f160588b4695f9dc0",
+    "source_lines": 170
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SectionRoundTripTests.cs",
+    "bytes": 6578,
+    "sha256": "d954d356a335b31a2537b03cb69f220399b57f36a615774eaded156548f90902",
+    "source_lines": 208
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SectorFieldTests.cs",
+    "bytes": 2212,
+    "sha256": "1f5158343252dcff9dd16ab5ce1ca78a2d78c8e692105baa673c952d246a7847",
+    "source_lines": 81
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/Sed.Core.Tests.csproj",
+    "bytes": 938,
+    "sha256": "b97017b962584a46f5aa0942742a6d89d9604fa3b09d36f0b8cb44bc045d3449",
+    "source_lines": 28
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SelectionSetTests.cs",
+    "bytes": 6204,
+    "sha256": "f9732202ddb26d225ffc3cd21d3bc109d655899318b38d1aef167afa8f5dce99",
+    "source_lines": 215
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/SurfaceNormalTests.cs",
+    "bytes": 4998,
+    "sha256": "cccc05d093bcd79327edf2f953fd5013fb4a2cdee43fb0bd8e82b751496d9005",
+    "source_lines": 149
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/TemplateEditTests.cs",
+    "bytes": 8936,
+    "sha256": "5043edcf9826d60cb9575bf4fd7507c2aa3ba5f1e45e2cdcc5127a708b31dacb",
+    "source_lines": 245
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/TextureCommandTests.cs",
+    "bytes": 3883,
+    "sha256": "af9217cc14f7b2a2afaca42424e4758128ac6074d1b38dbb7fb3db848dd3046e",
+    "source_lines": 115
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ThreeDoAndAscTests.cs",
+    "bytes": 6527,
+    "sha256": "69b26e01a5fceca8a9a8769d8197c39ebf1d6a2f6d51d38aa979309aa2e533b2",
+    "source_lines": 199
+  },
+  {
+    "path": "dotnet/tests/Sed.Core.Tests/ThreeDoTests.cs",
+    "bytes": 2974,
+    "sha256": "bc974347d0feff7302284e9c55a7064c7ac0a92d087ccfdc65a28f3253e9a28c",
+    "source_lines": 109
+  },
+  {
+    "path": "dotnet/tools/Sed.AppShot/Program.cs",
+    "bytes": 1096,
+    "sha256": "a04f7e790edacda8cf9c0ced16dc30c5e32fc23d523e6f6bc0f76118553a8c9f",
+    "source_lines": 32
+  },
+  {
+    "path": "dotnet/tools/Sed.AppShot/Sed.AppShot.csproj",
+    "bytes": 507,
+    "sha256": "48661c328f1434a4518bc79929909a84a4e37cfdf40f634e8b26542434a3a386",
+    "source_lines": 19
+  },
+  {
+    "path": "dotnet/tools/Sed.EditProbe/Program.cs",
+    "bytes": 2260,
+    "sha256": "f86f90961413def966d0baf1be9f8446317191b990c0edfa3c365971c3641a80",
+    "source_lines": 52
+  },
+  {
+    "path": "dotnet/tools/Sed.EditProbe/Sed.EditProbe.csproj",
+    "bytes": 517,
+    "sha256": "a51c74ba3262088f6e88cd5982ac125aac4864c991f2016b664cf0d719ca9b85",
+    "source_lines": 16
+  },
+  {
+    "path": "dotnet/tools/Sed.GameProbe/Program.cs",
+    "bytes": 3615,
+    "sha256": "07ee62e0fe92bb73b1e791d33f21fc25f28778b7dd0f4ebb226370688a411fca",
+    "source_lines": 87
+  },
+  {
+    "path": "dotnet/tools/Sed.GameProbe/Sed.GameProbe.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.GobTool/Program.cs",
+    "bytes": 3610,
+    "sha256": "f78f32444252949fd9a57e36893e5f3ced5b870d4a070754f01bc4d430ed2d67",
+    "source_lines": 99
+  },
+  {
+    "path": "dotnet/tools/Sed.GobTool/Sed.GobTool.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.InteriorProbe/Program.cs",
+    "bytes": 3649,
+    "sha256": "0d7ac2520b598c9c0bb1892230ec044bec1ddef67fba655084ff87a2967ddab5",
+    "source_lines": 69
+  },
+  {
+    "path": "dotnet/tools/Sed.InteriorProbe/Sed.InteriorProbe.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.JklProbe/Program.cs",
+    "bytes": 4069,
+    "sha256": "37a3e2f34dcb997fa35596b083132fd5612530e7a170fd0b920286162c6eaa2c",
+    "source_lines": 106
+  },
+  {
+    "path": "dotnet/tools/Sed.JklProbe/Sed.JklProbe.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.LevelRender/Program.cs",
+    "bytes": 2830,
+    "sha256": "2aff933a4231c9c598b2f4819398c433675f0f27863325843b782566fe1f6cf5",
+    "source_lines": 75
+  },
+  {
+    "path": "dotnet/tools/Sed.LevelRender/Sed.LevelRender.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.MatTool/Program.cs",
+    "bytes": 1425,
+    "sha256": "f92580b35ef2fa43f1e350086f510cabafc20394d1934339be6b078e71575fc0",
+    "source_lines": 34
+  },
+  {
+    "path": "dotnet/tools/Sed.MatTool/Sed.MatTool.csproj",
+    "bytes": 429,
+    "sha256": "5df179e04fb720f9083e1a6c15a1f349ee7b4903dd8809aba6e063a3d52bf3ed",
+    "source_lines": 15
+  },
+  {
+    "path": "dotnet/tools/Sed.OpsProbe/Program.cs",
+    "bytes": 34368,
+    "sha256": "34345cacf712704dda75f14a79f1ba46c67123d723dfa5559f3fbb2ce38e4b8c",
+    "source_lines": 739
+  },
+  {
+    "path": "dotnet/tools/Sed.OpsProbe/Sed.OpsProbe.csproj",
+    "bytes": 567,
+    "sha256": "7f9d43e9e69b4617e80a3d58cedef2c5da584d897659243dac164527747982ee",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.SaveProbe/Program.cs",
+    "bytes": 2840,
+    "sha256": "682f3bd23103936fb85533685655a68bdd2bffd9a628029711100750d78eb3cd",
+    "source_lines": 46
+  },
+  {
+    "path": "dotnet/tools/Sed.SaveProbe/Sed.SaveProbe.csproj",
+    "bytes": 419,
+    "sha256": "ad344628da609a8f90c5cc6e1e8f1834bd85cf09741996362c99d90dc0e1df8b",
+    "source_lines": 15
+  },
+  {
+    "path": "dotnet/tools/Sed.SceneProbe/Program.cs",
+    "bytes": 2022,
+    "sha256": "c3d31da2e0cc33efd247b00ccfa397717b6bf9dec591cf79a396304e1bbc894f",
+    "source_lines": 48
+  },
+  {
+    "path": "dotnet/tools/Sed.SceneProbe/Sed.SceneProbe.csproj",
+    "bytes": 517,
+    "sha256": "a51c74ba3262088f6e88cd5982ac125aac4864c991f2016b664cf0d719ca9b85",
+    "source_lines": 16
+  },
+  {
+    "path": "dotnet/tools/Sed.ThreeDoProbe/Program.cs",
+    "bytes": 2595,
+    "sha256": "dd5b01b5f6e578e69ca52181f1b0d14c8c972e5cebeaf81237e8e16ffaecfefc",
+    "source_lines": 50
+  },
+  {
+    "path": "dotnet/tools/Sed.ThreeDoProbe/Sed.ThreeDoProbe.csproj",
+    "bytes": 593,
+    "sha256": "6b7c0662d5a7c17870cdf48a3d20458b1621e5d5a2765b63ae9e2e7fd1eece80",
+    "source_lines": 17
+  },
+  {
+    "path": "dotnet/tools/Sed.TriangleProbe/Program.cs",
+    "bytes": 1182,
+    "sha256": "5ab019f89af812631759a95dbf9fa49e6bd6b8d31fcad6d4cb0ee88da836e880",
+    "source_lines": 28
+  },
+  {
+    "path": "dotnet/tools/Sed.TriangleProbe/Sed.TriangleProbe.csproj",
+    "bytes": 367,
+    "sha256": "9f968235e5a8b274757fcdd71961aad0a8774b91544319f78a78549cea715e6c",
+    "source_lines": 14
+  },
+  {
+    "path": "dotnet/tools/Sed.TriangleProbe/SimplePng.cs",
+    "bytes": 2976,
+    "sha256": "b13c6cd132df3e2e8d5b336fc65776a99552b11e8a71e6e6e6ce6e62de70669e",
+    "source_lines": 86
+  },
+  {
+    "path": "dotnet/tools/Sed.UiProbe/Program.cs",
+    "bytes": 12220,
+    "sha256": "28ba4b8bf83c35a15cc46d612daedf46c0fc3052435d4461ef9df0b7360c65e3",
+    "source_lines": 301
+  },
+  {
+    "path": "dotnet/tools/Sed.UiProbe/Sed.UiProbe.csproj",
+    "bytes": 507,
+    "sha256": "48661c328f1434a4518bc79929909a84a4e37cfdf40f634e8b26542434a3a386",
+    "source_lines": 19
+  },
+  {
+    "path": "dotnet/tools/Sed.VulkanSmoke/Program.cs",
+    "bytes": 1005,
+    "sha256": "48249f206c6b100bdf461ce4018900d64ed1a0f37f1b2215472f33a189c7b106",
+    "source_lines": 31
+  },
+  {
+    "path": "dotnet/tools/Sed.VulkanSmoke/Sed.VulkanSmoke.csproj",
+    "bytes": 517,
+    "sha256": "a51c74ba3262088f6e88cd5982ac125aac4864c991f2016b664cf0d719ca9b85",
+    "source_lines": 16
+  },
+  {
+    "path": "LICENSE",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "source_lines": null
+  },
+  {
+    "path": "README.md",
+    "bytes": 1458,
+    "sha256": "d0b907d84e9427baaed3cd0faa819e6e95e47d06deeb8ade7b4d4a52c1396d5f",
+    "source_lines": null
+  },
+  {
+    "path": "res/eye.cur",
+    "bytes": 4286,
+    "sha256": "e99072464ca2c22fae35956d0aedfa0e5cb8cca649db7d01a9a717a11dd8311e",
+    "source_lines": null
+  },
+  {
+    "path": "res/sed_Icon.ico",
+    "bytes": 4286,
+    "sha256": "94498dee58c9d3af5d0d2c52769fb59f1a93115869fee725c9ded1ec7f7dd121",
+    "source_lines": null
+  },
+  {
+    "path": "res/sed_Icon1.ico",
+    "bytes": 4286,
+    "sha256": "94498dee58c9d3af5d0d2c52769fb59f1a93115869fee725c9ded1ec7f7dd121",
+    "source_lines": null
+  },
+  {
+    "path": "res/sed.ico",
+    "bytes": 4286,
+    "sha256": "94498dee58c9d3af5d0d2c52769fb59f1a93115869fee725c9ded1ec7f7dd121",
+    "source_lines": null
+  },
+  {
+    "path": "res/sed.jpg",
+    "bytes": 95952,
+    "sha256": "73e6910fb1f0694a39b51d95f2554b7292b31c19a9ae428add8bf9c38f662989",
+    "source_lines": null
+  },
+  {
+    "path": "res/SEDstatic.res",
+    "bytes": 4788,
+    "sha256": "54e17797ad86371ae41177931a59ec500e1fcbd0dfece6ac66e696fd45b73859",
+    "source_lines": null
+  },
+  {
+    "path": "sed.DPR",
+    "bytes": 4535,
+    "sha256": "af070d4eee7255de4847fbbe7602a2781df58be3d1de9ec1558f32ec86462276",
+    "source_lines": 120
+  },
+  {
+    "path": "sed.dproj",
+    "bytes": 15323,
+    "sha256": "7475292f610a452a42078c2e0d06a6d68bd76f50ab1b5bbd9a72027c27b630d1",
+    "source_lines": 311
+  },
+  {
+    "path": "src/3DO_IO.INC",
+    "bytes": 19741,
+    "sha256": "b232e40dc0629559ea89b08883d224bc82e9ad892371d5e74ffc5228d10f8f6b",
+    "source_lines": 850
+  },
+  {
+    "path": "src/ASC_IMPORT.INC",
+    "bytes": 3811,
+    "sha256": "0527c1c68687a3b29d7c7ccad5eded1b7c58f9c1ccef9bfd5d90b2b98f991cc4",
+    "source_lines": 179
+  },
+  {
+    "path": "src/CONS_CHECKER.DFM",
+    "bytes": 2278,
+    "sha256": "a8ec245d93670cfbbdc618fa335a370a373dc2dc019210551efbfd3513a7493a",
+    "source_lines": null
+  },
+  {
+    "path": "src/CONS_CHECKER.PAS",
+    "bytes": 16829,
+    "sha256": "834ddd0f77c5cf5963bf088010e54d4560ebabf59c8e4aa4c5f9f813891e89ea",
+    "source_lines": 678
+  },
+  {
+    "path": "src/CONTAINERS.PAS",
+    "bytes": 23631,
+    "sha256": "124ecaea074c4772b4855f1d7958c974399f7f7fecee4bfe9263effc441241cb",
+    "source_lines": 874
+  },
+  {
+    "path": "src/d3d/COMSWITCH.INC",
+    "bytes": 109,
+    "sha256": "53d912fa94e9d490aad5e33edfc488e9423bac97a16333fba5b041ca08d6cc3c",
+    "source_lines": 7
+  },
+  {
+    "path": "src/d3d/D3D.pas",
+    "bytes": 31059,
+    "sha256": "bcb6902f8aa57ffa0f3eb524d85034c192abe4c542e8c00eca67970786fea0e3",
+    "source_lines": 736
+  },
+  {
+    "path": "src/d3d/D3DCaps.pas",
+    "bytes": 13775,
+    "sha256": "2fad4c88c48353a56dbc10df0e9e01b44155fa48f487c3752b53427f1aa3771a",
+    "source_lines": 347
+  },
+  {
+    "path": "src/d3d/D3DRM.pas",
+    "bytes": 16145,
+    "sha256": "407c3e3b67757aa66c318c8207641425b2e250a98ea75509a110cd2440a6f84b",
+    "source_lines": 316
+  },
+  {
+    "path": "src/d3d/D3DRMDef.pas",
+    "bytes": 15814,
+    "sha256": "839cf2022fd932758c1606b29efe12985b34f423bf0960191b4e225c4e56d666",
+    "source_lines": 543
+  },
+  {
+    "path": "src/d3d/D3DRMObj.pas",
+    "bytes": 85068,
+    "sha256": "bb65b4c39b8052bb5458eb107d7fffb86df81d35d61f7171a5e729c712ca8d20",
+    "source_lines": 1638
+  },
+  {
+    "path": "src/d3d/D3DRMWin.pas",
+    "bytes": 1377,
+    "sha256": "33d37f5aad978d36a01ebb3667565798d27a8190d93d3a425fe23eb277a76f8e",
+    "source_lines": 61
+  },
+  {
+    "path": "src/d3d/D3DTypes.pas",
+    "bytes": 41358,
+    "sha256": "a38fe2e46e03dbb6b8bdb134fbc214d20c87d7ef4cdefa2b38f7ac2e3cd82228",
+    "source_lines": 1448
+  },
+  {
+    "path": "src/d3d/D3DUtils.pas",
+    "bytes": 43766,
+    "sha256": "39acf8df755d3d3e6b3189f5bc45f3ba1a365155683a5cd8d5170324a3e9203a",
+    "source_lines": 1317
+  },
+  {
+    "path": "src/d3d/DDraw.pas",
+    "bytes": 122421,
+    "sha256": "b3a5dccec3acbed5489fc531011b32aa3e38c7dcc0003ffd1fe2be871fa86504",
+    "source_lines": 3637
+  },
+  {
+    "path": "src/d3d/DelphiDX5.htm",
+    "bytes": 12830,
+    "sha256": "e9808b6b5244b3bc1ef721395dd35a0285c07238dd75b25135ae1104470df5c2",
+    "source_lines": null
+  },
+  {
+    "path": "src/d3d/DInput.pas",
+    "bytes": 55299,
+    "sha256": "17a4b75c37636bd4a33ac39d45930b894689202daf0f6df8cad189a1dc6755a4",
+    "source_lines": 1765
+  },
+  {
+    "path": "src/d3d/DPlay.pas",
+    "bytes": 51367,
+    "sha256": "03d0c8e91215c9a215b382e2873aa9a5ca74d4833e592e88e8728eec9bc9c60d",
+    "source_lines": 1568
+  },
+  {
+    "path": "src/d3d/DPLobby.pas",
+    "bytes": 20160,
+    "sha256": "1d1612f97593f466358a43f449e331723832a4dab54460fa4dfb5c5da9aacbb5",
+    "source_lines": 649
+  },
+  {
+    "path": "src/d3d/DSetup.pas",
+    "bytes": 8287,
+    "sha256": "9ed8bd1cd6930c818f6e22bfa421082d9bd1d206eb663262bc90d0e8827e88a3",
+    "source_lines": 237
+  },
+  {
+    "path": "src/d3d/DSound.pas",
+    "bytes": 26465,
+    "sha256": "abf6c4c80e6d0369ce520f5d6ca307bc65df27a0754ded33b6f8e13921347316",
+    "source_lines": 758
+  },
+  {
+    "path": "src/d3d/DVP.pas",
+    "bytes": 24302,
+    "sha256": "9955eafd45a6d0ee4db805e4d11c2cdad88840e2cfee3fb2f4e5a3c244db9da8",
+    "source_lines": 784
+  },
+  {
+    "path": "src/d3d/DXTools.pas",
+    "bytes": 58054,
+    "sha256": "5a581f20639dd6a9ec86fcd3e41a0615ddd7bc3d25c3e28faa3fd29a6b88b845",
+    "source_lines": 1308
+  },
+  {
+    "path": "src/d3d/mform.dfm",
+    "bytes": 287,
+    "sha256": "714695dea2e4a0b30b144ad4574f82bded959eb262c6430ed7b7a3f1664f0970",
+    "source_lines": null
+  },
+  {
+    "path": "src/d3d/mform.pas",
+    "bytes": 483,
+    "sha256": "0aea97772a3e03c741f26867abf58bb28a5e1303e268d789fdfee0dcbcc06fc1",
+    "source_lines": 33
+  },
+  {
+    "path": "src/d3d/Readme.txt",
+    "bytes": 12257,
+    "sha256": "63fb421735c07c448cd9f12c850debca42250bb5240593642e7819c9a47a8226",
+    "source_lines": null
+  },
+  {
+    "path": "src/d3d/STRINGSWITCH.INC",
+    "bytes": 110,
+    "sha256": "d09d8a9c59ba99bd9a45e4a8828d8c429dd20b54df9b6d1a65628bb13ca9bfcd",
+    "source_lines": 7
+  },
+  {
+    "path": "src/DF_IMPORT.INC",
+    "bytes": 33074,
+    "sha256": "32e1bb5ab17fdbd688a8a20df3986338d0a82b491e7e230bf1bb50fdb0efb7c7",
+    "source_lines": 1479
+  },
+  {
+    "path": "src/dglOpenGL.pas",
+    "bytes": 1101837,
+    "sha256": "003a30d4db3f013dd9e83f52aedc2712f5c9cdc29186ccd4665e20086825790c",
+    "source_lines": 20739
+  },
+  {
+    "path": "src/DXTOOLS.PAS",
+    "bytes": 14386,
+    "sha256": "5ae011a27020efcff6d5afa5d818cb1c498083f5a2c6f68fe05d766553e36e04",
+    "source_lines": 224
+  },
+  {
+    "path": "src/FIELDEDIT.PAS",
+    "bytes": 13999,
+    "sha256": "521ea602e0e2f094a87e571e9bdd7b7062c9a21fb236b376faa16c0fe06dccbd",
+    "source_lines": 679
+  },
+  {
+    "path": "src/FILEDIALOGS.DFM",
+    "bytes": 2777,
+    "sha256": "141da1330f8dc2ce9de2d14678e45a425bb9770669f5d3c498a8d9cbcd31fd28",
+    "source_lines": null
+  },
+  {
+    "path": "src/FILEDIALOGS.PAS",
+    "bytes": 6060,
+    "sha256": "5fe6649ad2e4afb8fe6ddad61b3f35d51e53c1cfc544a3d0d2d0428143afb431",
+    "source_lines": 269
+  },
+  {
+    "path": "src/FILEOPERATIONS.PAS",
+    "bytes": 22160,
+    "sha256": "b839a61158f8f36bc4e54c78dfee47fe202527fe3863298b962f21570d6ad37e",
+    "source_lines": 1019
+  },
+  {
+    "path": "src/FILES_OLD.PAS",
+    "bytes": 6429,
+    "sha256": "eaf6cec0839dc695231cddaa4e1e919a11117befaefa6813391ea31e5882c561",
+    "source_lines": 327
+  },
+  {
+    "path": "src/FILES.PAS",
+    "bytes": 21854,
+    "sha256": "b855ba928fc44dc369875550cc815e5a33213cb6c7c1b29efce53c37f3b864d6",
+    "source_lines": 1012
+  },
+  {
+    "path": "src/FLAGEDITOR.DFM",
+    "bytes": 5891,
+    "sha256": "1f92a35c0e11d79f33220c12d8eb906303c5a4cc4963387acb15f390a3f62a44",
+    "source_lines": null
+  },
+  {
+    "path": "src/FLAGEDITOR.PAS",
+    "bytes": 23676,
+    "sha256": "0dedb1be63a354e2899aa500bf38a9b9c648ffd991d460cb0d059b62114eee54",
+    "source_lines": 675
+  },
+  {
+    "path": "src/GEO_UTILS.PAS",
+    "bytes": 4563,
+    "sha256": "36a406938e73aed26dcd6d2b2b8fdebfeb8f1768425dd1c6be117bde37fdde1a",
+    "source_lines": 216
+  },
+  {
+    "path": "src/GEOMETRY.PAS",
+    "bytes": 38596,
+    "sha256": "fdbd17d5e094ca7d8e04a8bb65ff9fb88bb6b5fd5c00df89337e7f6ed0c64920",
+    "source_lines": 1370
+  },
+  {
+    "path": "src/GL3DFX.PAS",
+    "bytes": 67523,
+    "sha256": "7ff5401c0cb63ce12b1a1b37346b17a7362de6bc4b55cc492af552fb2cd25c85",
+    "source_lines": 1710
+  },
+  {
+    "path": "src/GLContext.pas",
+    "bytes": 1911,
+    "sha256": "a04f202eaa04e598a97c337bc476eacee50c91d6e0240558036cdaff100ec656",
+    "source_lines": 71
+  },
+  {
+    "path": "src/GLOBALVARS.PAS",
+    "bytes": 12018,
+    "sha256": "dc8593eea890117d6560399bf4d6d6f87cfe9ac03953333dfe9c379d8fed9a59",
+    "source_lines": 421
+  },
+  {
+    "path": "src/GRAPH_FILES.PAS",
+    "bytes": 23798,
+    "sha256": "8a1e8c91a64a51c437d83f38865fb609ed453432b8a97972302e077da2fafd47",
+    "source_lines": 757
+  },
+  {
+    "path": "src/IMAGES.PAS",
+    "bytes": 19645,
+    "sha256": "7f845d651b6fdfc67a84a23f0a3efc812a883723cd9305ee7c3a2239074ad9b9",
+    "source_lines": 697
+  },
+  {
+    "path": "src/IndyWV.pas",
+    "bytes": 6455,
+    "sha256": "5198c347405099f5c0400fd7ef31bfc813eabf958824f8fa4ffbc08dd032c292",
+    "source_lines": 233
+  },
+  {
+    "path": "src/ITEM_EDIT.DFM",
+    "bytes": 2927,
+    "sha256": "a98a58f205df1fde92a6f9ee7374719ccbc2b7a287d7e63fcf49d6c9662938a5",
+    "source_lines": null
+  },
+  {
+    "path": "src/ITEM_EDIT.PAS",
+    "bytes": 49560,
+    "sha256": "c65c60b9df431ed84632f62e7048c66758849b7f610a2ae9f102d499f991cdb7",
+    "source_lines": 2135
+  },
+  {
+    "path": "src/J_LEVEL.PAS",
+    "bytes": 85808,
+    "sha256": "e37dea03a4040230cb84d1afa407f95c59017781c65166b9743679c29bd10f56",
+    "source_lines": 2662
+  },
+  {
+    "path": "src/JDH_JDL.PAS",
+    "bytes": 2666,
+    "sha256": "ae8f99efa19c1b97865a2aa58f3d5c79428669bd3b7df02fcca0d22a72682a50",
+    "source_lines": 141
+  },
+  {
+    "path": "src/JED_COM.PAS",
+    "bytes": 67113,
+    "sha256": "feb92039a8f80e8ac0883a826e9e3d6d499fa9bbbb6dfa8b27a6a77ff3da53f8",
+    "source_lines": 2125
+  },
+  {
+    "path": "src/JED_MAIN.DFM",
+    "bytes": 26512,
+    "sha256": "ea05aa2d2e8f8ca793040d0d40ee88e505e8923f5a43aa8161cef67be64d96c7",
+    "source_lines": null
+  },
+  {
+    "path": "src/JED_MAIN.PAS",
+    "bytes": 288155,
+    "sha256": "c3d77fb8225f268d3bd620a09bd23699ff5199d20b80aa52eeb22b827d4a895c",
+    "source_lines": 9915
+  },
+  {
+    "path": "src/Jed_Main.vlb",
+    "bytes": 4028,
+    "sha256": "47c15534ede44501d60885d8b1708709f1a73e73ffd016bcb4be756103e10f02",
+    "source_lines": null
+  },
+  {
+    "path": "src/JED_OLE.PAS",
+    "bytes": 63186,
+    "sha256": "1979695b5aca539874221d11a2f12628d8f36f0a744c06207ac99bf2483312d2",
+    "source_lines": 3045
+  },
+  {
+    "path": "src/JED_PLUGINS.h",
+    "bytes": 20779,
+    "sha256": "55ff746cb9f590689156c9c31f5714c5d83268beb8dc5b0ebb475813651227df",
+    "source_lines": 598
+  },
+  {
+    "path": "src/JED_PLUGINS.PAS",
+    "bytes": 28285,
+    "sha256": "6c388eb48ac980ca3866c3b366ef0e730184e89ffbf394082e21782c799e0e55",
+    "source_lines": 774
+  },
+  {
+    "path": "src/JED_PLUGINS2_.PAS",
+    "bytes": 21532,
+    "sha256": "633acbeb09a91eeceb6dcbb47d43751239a533cacfbbf5520a27f9f1db2a9a37",
+    "source_lines": 617
+  },
+  {
+    "path": "src/JED_PLUGINS3.PAS",
+    "bytes": 18415,
+    "sha256": "9f02d0bda118ccec3c5fc814595c06ffebc6b65c4d599f6edf9dd7d922bd9f6f",
+    "source_lines": 616
+  },
+  {
+    "path": "src/JLH_JLL.PAS",
+    "bytes": 2103,
+    "sha256": "ca2e7ca227b97a1e8e75cf407f86f315a4e8949dfa810e3ba6a60ba5fbb0b421",
+    "source_lines": 114
+  },
+  {
+    "path": "src/LEV_UTILS.PAS",
+    "bytes": 175785,
+    "sha256": "7de79e4605bb3fb819c393da95dd97d60ccda45852afd5ea434897f2a243fdaf",
+    "source_lines": 6925
+  },
+  {
+    "path": "src/LEVEL_IO.INC",
+    "bytes": 36838,
+    "sha256": "ed3558f7720be49dc80f02ff772545216f32980ee2bbdfec011c6d44bd12dbf6",
+    "source_lines": 1470
+  },
+  {
+    "path": "src/LISTRES.PAS",
+    "bytes": 10147,
+    "sha256": "f7c5e3159e2557ad62bd70420e49928310a5d27915b3400efa56b82dc993e13e",
+    "source_lines": 578
+  },
+  {
+    "path": "src/math.pas",
+    "bytes": 6256,
+    "sha256": "cf4a31b011681301ab52616083d0fab4a0299f38b33e6a63008106d58d567415",
+    "source_lines": 194
+  },
+  {
+    "path": "src/MEMCHECK.PAS",
+    "bytes": 79571,
+    "sha256": "7776cfe6cb1ec2447e063c11a3ba5801e441a53778368a09b0382028739b1f3d",
+    "source_lines": 2301
+  },
+  {
+    "path": "src/MISC_UTILS.PAS",
+    "bytes": 38504,
+    "sha256": "c23e76fe9ed7e1d49576ac10f3017f10dec770b1def5c3eb4694afd47eb1f153",
+    "source_lines": 1634
+  },
+  {
+    "path": "src/PJ3DO_IO.INC",
+    "bytes": 8385,
+    "sha256": "cb58c0d9867dfe677a3ed9502e32e626f01b093bcf4032a3a048b8ffc6d25f1f",
+    "source_lines": 375
+  },
+  {
+    "path": "src/PJKEY_IO.INC",
+    "bytes": 2712,
+    "sha256": "8f90851a873efe5842b78406d51412d0395fb666bec40060015121345b55f63d",
+    "source_lines": 125
+  },
+  {
+    "path": "src/PREFAB.PAS",
+    "bytes": 8469,
+    "sha256": "a7efceee3009cb98736f2f8410d2e92e34db2923cc152343297b91135670700e",
+    "source_lines": 328
+  },
+  {
+    "path": "src/PRENDER.PAS",
+    "bytes": 67243,
+    "sha256": "b4d35c8a3a34636836ef1211098c9e9d842c6416413fbca8121aaef17c9474d2",
+    "source_lines": 2454
+  },
+  {
+    "path": "src/PRenderDX.pas",
+    "bytes": 44968,
+    "sha256": "b30626b186dd312b60106f5320c5d5f8cba46c93837e5ce2ebb01456d8f9c9e6",
+    "source_lines": 1417
+  },
+  {
+    "path": "src/PRenderGL.pas",
+    "bytes": 27967,
+    "sha256": "4e8db951d07a93ddeaee639502434d43dbb1a4f28aa497c0611d8d5444eee6e2",
+    "source_lines": 1015
+  },
+  {
+    "path": "src/PREVIEW.PAS",
+    "bytes": 6760,
+    "sha256": "ffe50a40b00b643f9313dacb27ca18d26c351ee59467a76668c70324354ba56a",
+    "source_lines": 309
+  },
+  {
+    "path": "src/PROGRESSDIALOG.DFM",
+    "bytes": 585,
+    "sha256": "99b5a6b15db50b97d8b9924f89f65b0f2f20a684368d6626c689c226a7070b16",
+    "source_lines": null
+  },
+  {
+    "path": "src/PROGRESSDIALOG.PAS",
+    "bytes": 2916,
+    "sha256": "b310602049d238c6a76e7ca580d9d446cb7d5b36138970d600fd3e11f2d8f7d5",
+    "source_lines": 147
+  },
+  {
+    "path": "src/Q_SECTORS.DFM",
+    "bytes": 7026,
+    "sha256": "233ee403a33f465e43bfe97605dcecb246205550eb526529a8b8cb0cfca7e470",
+    "source_lines": null
+  },
+  {
+    "path": "src/Q_SECTORS.PAS",
+    "bytes": 4206,
+    "sha256": "28c791eecf62cbc9e7111e7d3a00cf08ea6bbeedc38cc3645c7aff8ef268916e",
+    "source_lines": 194
+  },
+  {
+    "path": "src/Q_SURFS.DFM",
+    "bytes": 9117,
+    "sha256": "963112336f755a83eb3bc6107211eccc2c9d63373f4ceeb2fa27af613790639c",
+    "source_lines": null
+  },
+  {
+    "path": "src/Q_SURFS.PAS",
+    "bytes": 5820,
+    "sha256": "6f0c0170b18846a86800d284bfa0ad3130c11b5d46193acc0f9a7efeea1815df",
+    "source_lines": 259
+  },
+  {
+    "path": "src/Q_THINGS.DFM",
+    "bytes": 7052,
+    "sha256": "a96c031c2008f7082086202d6763d73f15452cbe9fe78a250bd7c5d0c74ccf7f",
+    "source_lines": null
+  },
+  {
+    "path": "src/Q_THINGS.PAS",
+    "bytes": 3815,
+    "sha256": "b9b603f175b3e570cc85b3c23817bb2ce4cb27dffa8b2acb7e57e8abbc6f6c2e",
+    "source_lines": 177
+  },
+  {
+    "path": "src/Q_UTILS.PAS",
+    "bytes": 11650,
+    "sha256": "f7f10320f3a36d1c8e988e41f149e0c18375ff18ba4aee0877e8542a567616e5",
+    "source_lines": 509
+  },
+  {
+    "path": "src/RENDER.PAS",
+    "bytes": 14846,
+    "sha256": "d9db8b41069c3e12200afec55f1b1acf9e2fa278bfb94ac7858cfe936742e92e",
+    "source_lines": 560
+  },
+  {
+    "path": "src/RenderGL.dfm",
+    "bytes": 755,
+    "sha256": "97c866af5a131249d59ce46e802ddd2df9d5e697931aad8dd407048930fb2a55",
+    "source_lines": null
+  },
+  {
+    "path": "src/RenderGL.pas",
+    "bytes": 24923,
+    "sha256": "921d826cc5c5f36e1a7cc74fa73f7831cecd3b3916be2b94618a3de184d4e2fb",
+    "source_lines": 1027
+  },
+  {
+    "path": "src/RenderSW.pas",
+    "bytes": 21663,
+    "sha256": "1cd949273bdced57b3a25aa65e224cb5e003a07817ac3d8337ae0f1fd1a9613b",
+    "source_lines": 985
+  },
+  {
+    "path": "src/RenderUtils.pas",
+    "bytes": 8154,
+    "sha256": "7334dcd390bb0e3966ac58bd47dc165d97cac0ca64cea9e4dc86bea9aa2e3c7d",
+    "source_lines": 333
+  },
+  {
+    "path": "src/RESOURCEPICKER.DFM",
+    "bytes": 20969,
+    "sha256": "94c30a8330790188c27597995b4198fc24bdae53919330700ee37c6958b4a31a",
+    "source_lines": null
+  },
+  {
+    "path": "src/RESOURCEPICKER.PAS",
+    "bytes": 36225,
+    "sha256": "f2438ededb8b60e30eb603dff2e9098f9e19f41973e6a9a12261fcdd0d6d7543",
+    "source_lines": 1464
+  },
+  {
+    "path": "src/SAVEJKL.INC",
+    "bytes": 29936,
+    "sha256": "e543acb0f8d00d6518ce13d120568e7f32eddd284195a05bbbcabdb385558ae9",
+    "source_lines": 1142
+  },
+  {
+    "path": "src/SED_About.dfm",
+    "bytes": 29136,
+    "sha256": "bc6b6429f974e9e04a2f33887736a72d152c3902c98f202a36e6e19fc7735ec9",
+    "source_lines": null
+  },
+  {
+    "path": "src/SED_About.pas",
+    "bytes": 2690,
+    "sha256": "002ee071e594c59ffaf69398004d141d07305e2638e4dd10b608e5fff9668d7c",
+    "source_lines": 112
+  },
+  {
+    "path": "src/SED_COM.pas",
+    "bytes": 77868,
+    "sha256": "133a5691c1ddb9de341476de96d22bad2552880dd981bc128204adf2d959bc50",
+    "source_lines": 2561
+  },
+  {
+    "path": "src/sed_plugins.h",
+    "bytes": 50528,
+    "sha256": "9e42e48310a0e2605cd1d0c054d829fd706db729243f5efebc14a41be59a311c",
+    "source_lines": 1060
+  },
+  {
+    "path": "src/sed_plugins.pas",
+    "bytes": 32163,
+    "sha256": "dc2a3c19dad8b2f3fea469b2ce52e82f38285b96d9fa9b47227630b7f57d01cd",
+    "source_lines": 810
+  },
+  {
+    "path": "src/TBAR_TOOLS.PAS",
+    "bytes": 1296,
+    "sha256": "05901064bad2502db6c54e2a495e5e537acb2672f26a1dc1ed3863532c50256a",
+    "source_lines": 74
+  },
+  {
+    "path": "src/TOOLS.PAS",
+    "bytes": 744,
+    "sha256": "55e1aed809acf988e8ab502eeb2432b6626c86909585b99c2d91463f43c2b292",
+    "source_lines": 49
+  },
+  {
+    "path": "src/U_3DOFORM.DFM",
+    "bytes": 3025,
+    "sha256": "7ca3b9f1af4d734df02cf66aba2002546ae831ee3a95c39d4a312466de0d2c31",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_3DOFORM.PAS",
+    "bytes": 10214,
+    "sha256": "09ea6289c0a57663d09bc24670649b0581ac12fc01874306577560207395c338",
+    "source_lines": 462
+  },
+  {
+    "path": "src/U_3DOPREV.PAS",
+    "bytes": 2523,
+    "sha256": "03509c788b66ca6d594bfa0d8c7b3b3f45056b84702d40c803a0f5e71bf842fb",
+    "source_lines": 130
+  },
+  {
+    "path": "src/U_3DOS.PAS",
+    "bytes": 8226,
+    "sha256": "bca201fa15a866c5e15e96dfbbe6789905242d326b322e5ea00760d760ea6405",
+    "source_lines": 379
+  },
+  {
+    "path": "src/U_COGFORM.DFM",
+    "bytes": 2619,
+    "sha256": "8db0b11671796c5068aeabff662a06bdb5b96e52a726727c076a84c3eded3d28",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_COGFORM.PAS",
+    "bytes": 11623,
+    "sha256": "e6660245ac9f35dc3cbdd41528a884c3d35d9dd2cc210fc485f1a2d8863da1f0",
+    "source_lines": 551
+  },
+  {
+    "path": "src/U_COGGEN.DFM",
+    "bytes": 3505,
+    "sha256": "16569d0216bd562de33828ad1ec45ce5a8a68f3ccf9b1bab14d60d44236e4015",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_COGGEN.PAS",
+    "bytes": 5788,
+    "sha256": "3157d364447b6c100b867e8904dd0f63941d35516c265ce684cdd7180025de8e",
+    "source_lines": 242
+  },
+  {
+    "path": "src/U_COPYPASTE.PAS",
+    "bytes": 10610,
+    "sha256": "a1ae9390a0ebe16258d92441715c30b6262ba8282536d8937ab70beffe2e13eb",
+    "source_lines": 434
+  },
+  {
+    "path": "src/U_CSCENE.DFM",
+    "bytes": 193626,
+    "sha256": "b68d381380cc35a0ab5a56d5241dd8242f50eca47c1114220ec72e9eae09b38d",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_CSCENE.PAS",
+    "bytes": 3090,
+    "sha256": "fd52185a9a3b9753d3c218553e1b886928bd238661a738bfc5c68e44db0d7b28",
+    "source_lines": 135
+  },
+  {
+    "path": "src/U_DFI.DFM",
+    "bytes": 1113,
+    "sha256": "65c2da9055398ff651a1caa1f0a2d9e0847e4312240fa907ca6742eb5714cbd3",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_DFI.PAS",
+    "bytes": 740,
+    "sha256": "bab84141689e899342e45282a20a1e4b9b951b1d3e42e2f3bfe9b903f23dbd43",
+    "source_lines": 39
+  },
+  {
+    "path": "src/U_ERRORFORM.DFM",
+    "bytes": 1120,
+    "sha256": "24ecd6e8f1fc780a09ecae45c23041e5239059a8d0a4730845cae3fca9d24dc4",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_ERRORFORM.PAS",
+    "bytes": 1782,
+    "sha256": "1fdd5130dea78d0120144a06815631e50e26f9d5d722fee220eafcf07687038e",
+    "source_lines": 93
+  },
+  {
+    "path": "src/U_LHEADER.DFM",
+    "bytes": 8261,
+    "sha256": "df7e4a67608143ad622289a02aa03588a22e42a66c1ac83bfd0708f0424d09dc",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_LHEADER.PAS",
+    "bytes": 7970,
+    "sha256": "870cd09bce3c4ec5614a8b16eae6b2f60ee2c2c8bbeb105ad0385ed2659cf15d",
+    "source_lines": 296
+  },
+  {
+    "path": "src/U_MEDIT.DFM",
+    "bytes": 6392,
+    "sha256": "0d897bc81e60c16f70094f50e13448aae3409d01cdd2d1a1027475e45bbc0817",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_MEDIT.PAS",
+    "bytes": 16623,
+    "sha256": "627e7c3324953793183ad6b28379197f9e0b3b2e69603bcd84e6e8303ef89d6c",
+    "source_lines": 783
+  },
+  {
+    "path": "src/U_MSGFORM.DFM",
+    "bytes": 630,
+    "sha256": "ecb46cdd482142af93e1080bf819a554df6e62f7303ace29d95b2afe33fbe228",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_MSGFORM.PAS",
+    "bytes": 901,
+    "sha256": "70aa50aa48b40e46290a59e34beaa8a9737e10d96ad8a0ca03da1cdd353c9ad2",
+    "source_lines": 53
+  },
+  {
+    "path": "src/U_MULTISEL.PAS",
+    "bytes": 5638,
+    "sha256": "49255d481b67fdf8de8d65274deeb96568eace909d4063a9ea35adfcc99f6685",
+    "source_lines": 282
+  },
+  {
+    "path": "src/U_OPTIONS.DFM",
+    "bytes": 31456,
+    "sha256": "6c37f32f4dfa3a6ca3e06b2cabbc209cffa1e9ec013ce3697714c0ac1ac18cef",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_OPTIONS.PAS",
+    "bytes": 34928,
+    "sha256": "0241bf8868fe10e8bf367d02cbf0ce1c10511c8a10a1423a4f86a143a005de74",
+    "source_lines": 1033
+  },
+  {
+    "path": "src/U_PJ3DOS.PAS",
+    "bytes": 7404,
+    "sha256": "ea7efa224fc6930fac9b54e8e96e9331671074e8a7e3bcb2110179f60a16afeb",
+    "source_lines": 378
+  },
+  {
+    "path": "src/U_PJKEY.PAS",
+    "bytes": 4294,
+    "sha256": "deffecae37aef693c83278f215b4ffb3765140dc141fa4799a779930ce077483",
+    "source_lines": 220
+  },
+  {
+    "path": "src/U_PREVIEW.DFM",
+    "bytes": 4104,
+    "sha256": "8b4b28d5331cb47a648f60b7d901f4699e069b56f59a2ba1d0fe1075433e42a5",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_PREVIEW.PAS",
+    "bytes": 38004,
+    "sha256": "fa79d2c1d4e838698b59e29d297d7d72b280990e7c7c9f7db25bb50bb245cbdc",
+    "source_lines": 1445
+  },
+  {
+    "path": "src/U_SCFEDIT.DFM",
+    "bytes": 894,
+    "sha256": "88edc8bffbb279667a50ae88d8415d914292176c47aecdfd96de5af9ba986105",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_SCFEDIT.PAS",
+    "bytes": 2540,
+    "sha256": "a09c7cb341041b4c1dd829499740e6e58294082aec80ab4e2813d33edf83b109",
+    "source_lines": 120
+  },
+  {
+    "path": "src/U_STREDIT.DFM",
+    "bytes": 1432,
+    "sha256": "c20e84aa0711a4ad25bbc238973c934ce56c1df8ce22c50aabc4b75a0c78fa68",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_STREDIT.PAS",
+    "bytes": 1896,
+    "sha256": "a4e56e655425568a012426a9c27072f3f04df2de8664b54457a33b06e260abb6",
+    "source_lines": 95
+  },
+  {
+    "path": "src/U_TBAR.DFM",
+    "bytes": 7500,
+    "sha256": "6fc0472f0ace3087003057e82b966425007255a03342d3b362948ea739d1ac45",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_TBAR.PAS",
+    "bytes": 17155,
+    "sha256": "4cab8991e52056bce9e843f36630e4ae67caa36101506d45a4406a3abf0a24ed",
+    "source_lines": 750
+  },
+  {
+    "path": "src/U_TEMPLATES.PAS",
+    "bytes": 7980,
+    "sha256": "ac729b14c161ff8d1f0b99236acd6495edc7994a957e09f82af2badc6430efb6",
+    "source_lines": 379
+  },
+  {
+    "path": "src/U_TOOLS.DFM",
+    "bytes": 8277,
+    "sha256": "7a1f2abb5c651932938603f3977d27ffd9ff1498bc4ef70bf6420c3bb8ce5764",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_TOOLS.PAS",
+    "bytes": 10057,
+    "sha256": "1710d4695c88ab65f7eaf321a0a2865963b41e1e61e03cde5f0210966b256f25",
+    "source_lines": 419
+  },
+  {
+    "path": "src/U_TPLCREATE.DFM",
+    "bytes": 3383,
+    "sha256": "3800fe2197c2dd6e85e8543278279c1cc80969005144e84fbb974bb8c8fbb06d",
+    "source_lines": null
+  },
+  {
+    "path": "src/U_TPLCREATE.PAS",
+    "bytes": 6285,
+    "sha256": "20902ff48f948084bf586a00da3cbea3134448cce8eae4dbda0242d960146da8",
+    "source_lines": 288
+  },
+  {
+    "path": "src/U_UNDO.PAS",
+    "bytes": 28114,
+    "sha256": "6f5825601af429acab763b3ececad9ae39aaaad6f72e5a37c0da923d2635640d",
+    "source_lines": 1210
+  },
+  {
+    "path": "src/VALUES.PAS",
+    "bytes": 14218,
+    "sha256": "eab8ffb108881df72bcfb7191290c10af124bd457fe255e933157913b3d736e9",
+    "source_lines": 631
+  }
+]

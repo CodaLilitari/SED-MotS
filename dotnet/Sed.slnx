@@ -11,6 +11,9 @@
     <Project Path="tests/Sed.Core.Tests/Sed.Core.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
+    <Project Path="tools/Sed.Agent/Sed.Agent.csproj" />
+    <Project Path="tools/Sed.CommunityAudit/Sed.CommunityAudit.csproj" />
+    <Project Path="tools/Sed.MotsFormatAudit/Sed.MotsFormatAudit.csproj" />
     <Project Path="tools/Sed.AppShot/Sed.AppShot.csproj" />
     <Project Path="tools/Sed.EditProbe/Sed.EditProbe.csproj" />
     <Project Path="tools/Sed.GameProbe/Sed.GameProbe.csproj" />

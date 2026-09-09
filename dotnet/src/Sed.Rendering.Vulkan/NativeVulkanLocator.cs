@@ -56,9 +56,15 @@ public static class NativeVulkanLocator
             Environment.SetEnvironmentVariable(key, $"{loaderDir}:{existing}");
     }
 
-    /// <summary>Absolute path to libvulkan.dylib, or "vulkan" as a last-resort default name.</summary>
+    /// <summary>Uses the native loader name for each platform; macOS also searches Homebrew.</summary>
     public static string ResolveLoaderPath()
     {
+        if (OperatingSystem.IsWindows())
+        {
+            string systemLoader = Path.Combine(Environment.SystemDirectory, "vulkan-1.dll");
+            return File.Exists(systemLoader) ? systemLoader : "vulkan-1.dll";
+        }
+        if (OperatingSystem.IsLinux()) return "libvulkan.so.1";
         var loader = FindFirstExisting(
             BrewCellarGlob("vulkan-loader", "lib/libvulkan.dylib"),
             new[]

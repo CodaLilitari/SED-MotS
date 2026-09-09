@@ -1,0 +1,1898 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-09-09T01:17:05.2486763Z",
+  "upstream_base": {
+    "repository": "https://github.com/smlu/SED",
+    "revision": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+    "commit_date": "2026-08-08T20:22:27Z",
+    "subject": "Fix plugin SDK"
+  },
+  "scope": "Four publicly enumerated SED forks; all 11 published branches; GitHub ancestry comparisons, focused ahead/diverged source review",
+  "metrics_note": "GitHub comparisons are merge-base-to-head, not direct base-to-head; behind-only zero files means no unique delta, not identical trees. Large-diff additions/deletions may be incomplete; local inventory provides independent physical line counts. Physical counts include blanks/comments and inherited source; no manual all-lines claim.",
+  "branches": [
+    {
+      "repository": "davidagnome/SED",
+      "repository_url": "https://github.com/davidagnome/SED",
+      "branch": "main",
+      "head": "908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+      "status": "diverged",
+      "ahead_by": 23,
+      "behind_by": 1,
+      "total_commits": 23,
+      "changed_file_count": 219,
+      "commits": [
+        {
+          "sha": "7683eeb1325209f299b467aee372a814954ab9ca",
+          "message": "Initial Commit",
+          "date": "2026-06-17T05:52:59Z"
+        },
+        {
+          "sha": "b5e22e9c317576a8d48b2aa75dc9b4455937a2b5",
+          "message": "Vulkan Renderer and Editor Skeleton",
+          "date": "2026-06-17T06:18:36Z"
+        },
+        {
+          "sha": "bdb36370e206ecfa731cc9a4d14715255040bb0d",
+          "message": "Viewport Renderer and Tests",
+          "date": "2026-06-17T06:29:13Z"
+        },
+        {
+          "sha": "dbc2e7331921cd5e5c807160d48655af3884ad05",
+          "message": "Level Renderer",
+          "date": "2026-06-17T06:54:22Z"
+        },
+        {
+          "sha": "f88b4e9b2b940a67265b35022fa740614041a2e0",
+          "message": "Texture (MAT) Decoder",
+          "date": "2026-06-17T07:01:08Z"
+        },
+        {
+          "sha": "f097c85a2de89f73798cf0b250aa487ca37e7332",
+          "message": "Material Rendering and Level Wiring",
+          "date": "2026-06-17T13:05:29Z"
+        },
+        {
+          "sha": "86d485ba620d96eb17d8d312fad8bb2172e63c8e",
+          "message": "Game Installation Finder",
+          "date": "2026-06-17T14:14:01Z"
+        },
+        {
+          "sha": "a0ad99ffee4c3677845da0369353a0d47a0e06bf",
+          "message": "Texture Transforms per Surface",
+          "date": "2026-06-17T19:38:44Z"
+        },
+        {
+          "sha": "91e6352f675cf764a7d22a4cc8d8d635fa1adba8",
+          "message": "3DO Rendering",
+          "date": "2026-06-17T20:19:31Z"
+        },
+        {
+          "sha": "cfdc0f27e8a4797f41abc19508de5e14d753eeb4",
+          "message": "Edit Vertex - Memory Only",
+          "date": "2026-06-17T20:34:05Z"
+        },
+        {
+          "sha": "37a8aac0112c96b1c255877a6eada483330f5166",
+          "message": "Sky and Translucency Rendering",
+          "date": "2026-06-18T01:25:00Z"
+        },
+        {
+          "sha": "caa5bd56047d349f754e342ba5ea9fa28d4e89ed",
+          "message": "Sector Editor + Sky Renderer",
+          "date": "2026-06-18T13:09:22Z"
+        },
+        {
+          "sha": "659ae87dd8dea87ff546e0c58a931f7cdef49a24",
+          "message": "Rotation, Scaling, and Screen Projection Skies!",
+          "date": "2026-06-19T05:48:39Z"
+        },
+        {
+          "sha": "59daa5fb1d7b1ea4e40f61aae067f33a7214094c",
+          "message": "Updates to Architecture conversion to C# plan",
+          "date": "2026-06-19T06:33:38Z"
+        },
+        {
+          "sha": "5e51efad00bc044f67091b1c08f36392a8d3cdf3",
+          "message": "v0.7A - Working Editor with Fewer Obstructions",
+          "date": "2026-07-11T21:15:57Z"
+        },
+        {
+          "sha": "db1af6443a5525124c893d01c5bc2dd12a5256e2",
+          "message": "Almost Done\n\nMajor updates to windows and rendering",
+          "date": "2026-07-26T16:21:31Z"
+        },
+        {
+          "sha": "a6570550b024d3c62eb035ecbbb0591b7672af9c",
+          "message": "Next Steo",
+          "date": "2026-07-26T16:31:09Z"
+        },
+        {
+          "sha": "5e3a8531d86ecf88b655a6a3bfa454bf57c308d9",
+          "message": "Light Work",
+          "date": "2026-07-26T17:34:47Z"
+        },
+        {
+          "sha": "0dfdc3b15229b28e198627b4bc866d4c56af4708",
+          "message": "Level Header Editor",
+          "date": "2026-07-26T17:58:45Z"
+        },
+        {
+          "sha": "b2c142ab54bd653bf68a986b8d7a6e5bf8104fc1",
+          "message": "Editor Progress",
+          "date": "2026-07-26T23:49:03Z"
+        },
+        {
+          "sha": "b677b273687e7fe32a41ec0d04eb7a00f6d308a1",
+          "message": "SED Updates\n\nDone (all formats + editing): JKL 9-section read/write, GOB read/write, MAT/CMP/3DO, Vulkan renderer, undo system, 2D map view, multi-select/box-select/copy-paste, lighting calc, inspectors, find, header/template/layer/COG editors, consistency checker, plugin model.",
+          "date": "2026-08-12T04:17:34Z"
+        },
+        {
+          "sha": "8bd163d87111177ee346abc50e3f7a091c77437b",
+          "message": "Object Writers and Dialogs",
+          "date": "2026-08-12T19:20:29Z"
+        },
+        {
+          "sha": "908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+          "message": "Monsters and NPCs\n\nMonsters and NPCs now convert, not just read. FruaCharacter carries the 22 further fields the two import paths need (abilities, THAC0, size, the two trait-flag bytes, class levels pre-drain and pre-class-change), and FruaCharacterConverter implements both branches of ImportMonsterToUAF: race == 6 && combatMode == 1 becomes a MonsterRecord, everything else a CharacterRecord. FruaMonsterTraits names the four engine bitfields FRUA's fourteen trait bits scatter across. The plan now documents the conversion layer as its own thing, with the three findings that produce a design which loads.",
+          "date": "2026-08-13T00:13:27Z"
+        }
+      ],
+      "files": [
+        {
+          "filename": ".DS_Store",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": ".gitignore",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "changes": 3
+        },
+        {
+          "filename": "dotnet/.DS_Store",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/.gitignore",
+          "status": "added",
+          "additions": 3,
+          "deletions": 0,
+          "changes": 3
+        },
+        {
+          "filename": "dotnet/.idea/.idea.Sed/.idea/.gitignore",
+          "status": "added",
+          "additions": 15,
+          "deletions": 0,
+          "changes": 15
+        },
+        {
+          "filename": "dotnet/.idea/.idea.Sed/.idea/.name",
+          "status": "added",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "dotnet/.idea/.idea.Sed/.idea/encodings.xml",
+          "status": "added",
+          "additions": 4,
+          "deletions": 0,
+          "changes": 4
+        },
+        {
+          "filename": "dotnet/.idea/.idea.Sed/.idea/indexLayout.xml",
+          "status": "added",
+          "additions": 8,
+          "deletions": 0,
+          "changes": 8
+        },
+        {
+          "filename": "dotnet/.idea/.idea.Sed/.idea/vcs.xml",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0,
+          "changes": 6
+        },
+        {
+          "filename": "dotnet/ARCHITECTURE.md",
+          "status": "added",
+          "additions": 725,
+          "deletions": 0,
+          "changes": 725
+        },
+        {
+          "filename": "dotnet/PLAN.md",
+          "status": "added",
+          "additions": 282,
+          "deletions": 0,
+          "changes": 282
+        },
+        {
+          "filename": "dotnet/Sed.slnx",
+          "status": "added",
+          "additions": 30,
+          "deletions": 0,
+          "changes": 30
+        },
+        {
+          "filename": "dotnet/assets/Phosphor.ttf",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/.DS_Store",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.App/App.cs",
+          "status": "added",
+          "additions": 22,
+          "deletions": 0,
+          "changes": 22
+        },
+        {
+          "filename": "dotnet/src/Sed.App/AppSettings.cs",
+          "status": "added",
+          "additions": 134,
+          "deletions": 0,
+          "changes": 134
+        },
+        {
+          "filename": "dotnet/src/Sed.App/AssetCatalog.cs",
+          "status": "added",
+          "additions": 72,
+          "deletions": 0,
+          "changes": 72
+        },
+        {
+          "filename": "dotnet/src/Sed.App/CogEditorWindow.cs",
+          "status": "added",
+          "additions": 329,
+          "deletions": 0,
+          "changes": 329
+        },
+        {
+          "filename": "dotnet/src/Sed.App/CogGeneratorWindow.cs",
+          "status": "added",
+          "additions": 230,
+          "deletions": 0,
+          "changes": 230
+        },
+        {
+          "filename": "dotnet/src/Sed.App/ConsistencyWindow.cs",
+          "status": "added",
+          "additions": 140,
+          "deletions": 0,
+          "changes": 140
+        },
+        {
+          "filename": "dotnet/src/Sed.App/DfImportWindow.cs",
+          "status": "added",
+          "additions": 117,
+          "deletions": 0,
+          "changes": 117
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Dialogs.cs",
+          "status": "added",
+          "additions": 58,
+          "deletions": 0,
+          "changes": 58
+        },
+        {
+          "filename": "dotnet/src/Sed.App/EpisodeEditorWindow.cs",
+          "status": "added",
+          "additions": 361,
+          "deletions": 0,
+          "changes": 361
+        },
+        {
+          "filename": "dotnet/src/Sed.App/FindWindow.cs",
+          "status": "added",
+          "additions": 298,
+          "deletions": 0,
+          "changes": 298
+        },
+        {
+          "filename": "dotnet/src/Sed.App/HeaderEditorWindow.cs",
+          "status": "added",
+          "additions": 159,
+          "deletions": 0,
+          "changes": 159
+        },
+        {
+          "filename": "dotnet/src/Sed.App/InspectorPanel.cs",
+          "status": "added",
+          "additions": 167,
+          "deletions": 0,
+          "changes": 167
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Inspectors/LightInspector.cs",
+          "status": "added",
+          "additions": 63,
+          "deletions": 0,
+          "changes": 63
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Inspectors/SectorInspector.cs",
+          "status": "added",
+          "additions": 57,
+          "deletions": 0,
+          "changes": 57
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Inspectors/SurfaceInspector.cs",
+          "status": "added",
+          "additions": 86,
+          "deletions": 0,
+          "changes": 86
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Inspectors/ThingInspector.cs",
+          "status": "added",
+          "additions": 78,
+          "deletions": 0,
+          "changes": 78
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Inspectors/VertexInspector.cs",
+          "status": "added",
+          "additions": 34,
+          "deletions": 0,
+          "changes": 34
+        },
+        {
+          "filename": "dotnet/src/Sed.App/KeyBindings.cs",
+          "status": "added",
+          "additions": 121,
+          "deletions": 0,
+          "changes": 121
+        },
+        {
+          "filename": "dotnet/src/Sed.App/KeyBindingsWindow.cs",
+          "status": "added",
+          "additions": 115,
+          "deletions": 0,
+          "changes": 115
+        },
+        {
+          "filename": "dotnet/src/Sed.App/MainWindow.cs",
+          "status": "added",
+          "additions": 1510,
+          "deletions": 0,
+          "changes": 1510
+        },
+        {
+          "filename": "dotnet/src/Sed.App/MapView.cs",
+          "status": "added",
+          "additions": 786,
+          "deletions": 0,
+          "changes": 786
+        },
+        {
+          "filename": "dotnet/src/Sed.App/PickerDialog.cs",
+          "status": "added",
+          "additions": 120,
+          "deletions": 0,
+          "changes": 120
+        },
+        {
+          "filename": "dotnet/src/Sed.App/PickerField.cs",
+          "status": "added",
+          "additions": 79,
+          "deletions": 0,
+          "changes": 79
+        },
+        {
+          "filename": "dotnet/src/Sed.App/PluginHost.cs",
+          "status": "added",
+          "additions": 164,
+          "deletions": 0,
+          "changes": 164
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Program.cs",
+          "status": "added",
+          "additions": 16,
+          "deletions": 0,
+          "changes": 16
+        },
+        {
+          "filename": "dotnet/src/Sed.App/Sed.App.csproj",
+          "status": "added",
+          "additions": 30,
+          "deletions": 0,
+          "changes": 30
+        },
+        {
+          "filename": "dotnet/src/Sed.App/TemplateEditorWindow.cs",
+          "status": "added",
+          "additions": 377,
+          "deletions": 0,
+          "changes": 377
+        },
+        {
+          "filename": "dotnet/src/Sed.App/TestSetupWindow.cs",
+          "status": "added",
+          "additions": 125,
+          "deletions": 0,
+          "changes": 125
+        },
+        {
+          "filename": "dotnet/src/Sed.App/ThreeDoViewerWindow.cs",
+          "status": "added",
+          "additions": 300,
+          "deletions": 0,
+          "changes": 300
+        },
+        {
+          "filename": "dotnet/src/Sed.App/VulkanView.cs",
+          "status": "added",
+          "additions": 1249,
+          "deletions": 0,
+          "changes": 1249
+        },
+        {
+          "filename": "dotnet/src/Sed.App/VulkanViewport.cs",
+          "status": "added",
+          "additions": 45,
+          "deletions": 0,
+          "changes": 45
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/AdjoinCommand.cs",
+          "status": "added",
+          "additions": 71,
+          "deletions": 0,
+          "changes": 71
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/AlignTextureCommand.cs",
+          "status": "added",
+          "additions": 170,
+          "deletions": 0,
+          "changes": 170
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/BridgeCommand.cs",
+          "status": "added",
+          "additions": 134,
+          "deletions": 0,
+          "changes": 134
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CalculateLightingCommand.cs",
+          "status": "added",
+          "additions": 80,
+          "deletions": 0,
+          "changes": 80
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CleaveCommand.cs",
+          "status": "added",
+          "additions": 172,
+          "deletions": 0,
+          "changes": 172
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CleaveSectorCommand.cs",
+          "status": "added",
+          "additions": 419,
+          "deletions": 0,
+          "changes": 419
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CogCommands.cs",
+          "status": "added",
+          "additions": 168,
+          "deletions": 0,
+          "changes": 168
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CompositeCommand.cs",
+          "status": "added",
+          "additions": 32,
+          "deletions": 0,
+          "changes": 32
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/ConnectSectorsCommand.cs",
+          "status": "added",
+          "additions": 145,
+          "deletions": 0,
+          "changes": 145
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/CreateDeleteCommands.cs",
+          "status": "added",
+          "additions": 211,
+          "deletions": 0,
+          "changes": 211
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/EditHistory.cs",
+          "status": "added",
+          "additions": 60,
+          "deletions": 0,
+          "changes": 60
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/EditMode.cs",
+          "status": "added",
+          "additions": 16,
+          "deletions": 0,
+          "changes": 16
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/ExtrudeCommand.cs",
+          "status": "added",
+          "additions": 160,
+          "deletions": 0,
+          "changes": 160
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/FlipSurfaceCommand.cs",
+          "status": "added",
+          "additions": 30,
+          "deletions": 0,
+          "changes": 30
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/HeaderFieldCommands.cs",
+          "status": "added",
+          "additions": 39,
+          "deletions": 0,
+          "changes": 39
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/LayerVisibility.cs",
+          "status": "added",
+          "additions": 59,
+          "deletions": 0,
+          "changes": 59
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/LevelClipboard.cs",
+          "status": "added",
+          "additions": 277,
+          "deletions": 0,
+          "changes": 277
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/LightCreateDeleteCommands.cs",
+          "status": "added",
+          "additions": 87,
+          "deletions": 0,
+          "changes": 87
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/LightFieldCommands.cs",
+          "status": "added",
+          "additions": 94,
+          "deletions": 0,
+          "changes": 94
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/LightingCommands.cs",
+          "status": "added",
+          "additions": 61,
+          "deletions": 0,
+          "changes": 61
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/MoveGeometryCommands.cs",
+          "status": "added",
+          "additions": 47,
+          "deletions": 0,
+          "changes": 47
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/MoveThingCommand.cs",
+          "status": "added",
+          "additions": 22,
+          "deletions": 0,
+          "changes": 22
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/SectorFieldCommands.cs",
+          "status": "added",
+          "additions": 101,
+          "deletions": 0,
+          "changes": 101
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/SelectionSet.cs",
+          "status": "added",
+          "additions": 207,
+          "deletions": 0,
+          "changes": 207
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/SurfaceFieldCommands.cs",
+          "status": "added",
+          "additions": 104,
+          "deletions": 0,
+          "changes": 104
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/TemplateCommands.cs",
+          "status": "added",
+          "additions": 168,
+          "deletions": 0,
+          "changes": 168
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/TextureCommands.cs",
+          "status": "added",
+          "additions": 171,
+          "deletions": 0,
+          "changes": 171
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/ThingFieldCommands.cs",
+          "status": "added",
+          "additions": 152,
+          "deletions": 0,
+          "changes": 152
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/TransformCommands.cs",
+          "status": "added",
+          "additions": 91,
+          "deletions": 0,
+          "changes": 91
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Editing/VertexFieldCommands.cs",
+          "status": "added",
+          "additions": 22,
+          "deletions": 0,
+          "changes": 22
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/GeometryOps.cs",
+          "status": "added",
+          "additions": 167,
+          "deletions": 0,
+          "changes": 167
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Lighting/LightCalculator.cs",
+          "status": "added",
+          "additions": 391,
+          "deletions": 0,
+          "changes": 391
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Math/Box.cs",
+          "status": "added",
+          "additions": 27,
+          "deletions": 0,
+          "changes": 27
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Math/ColorF.cs",
+          "status": "added",
+          "additions": 16,
+          "deletions": 0,
+          "changes": 16
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Math/Mat4.cs",
+          "status": "added",
+          "additions": 121,
+          "deletions": 0,
+          "changes": 121
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Math/Vec2.cs",
+          "status": "added",
+          "additions": 26,
+          "deletions": 0,
+          "changes": 26
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Math/Vec3.cs",
+          "status": "added",
+          "additions": 50,
+          "deletions": 0,
+          "changes": 50
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/EngineFlags.cs",
+          "status": "added",
+          "additions": 79,
+          "deletions": 0,
+          "changes": 79
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Level.cs",
+          "status": "added",
+          "additions": 123,
+          "deletions": 0,
+          "changes": 123
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/LevelHeader.cs",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0,
+          "changes": 38
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Light.cs",
+          "status": "added",
+          "additions": 40,
+          "deletions": 0,
+          "changes": 40
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/ProjectType.cs",
+          "status": "added",
+          "additions": 26,
+          "deletions": 0,
+          "changes": 26
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Sector.cs",
+          "status": "added",
+          "additions": 58,
+          "deletions": 0,
+          "changes": 58
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/SectorFactory.cs",
+          "status": "added",
+          "additions": 55,
+          "deletions": 0,
+          "changes": 55
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Surface.cs",
+          "status": "added",
+          "additions": 90,
+          "deletions": 0,
+          "changes": 90
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/TemplateParams.cs",
+          "status": "added",
+          "additions": 82,
+          "deletions": 0,
+          "changes": 82
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Thing.cs",
+          "status": "added",
+          "additions": 28,
+          "deletions": 0,
+          "changes": 28
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Model/Vertex.cs",
+          "status": "added",
+          "additions": 25,
+          "deletions": 0,
+          "changes": 25
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Query/FieldCriteria.cs",
+          "status": "added",
+          "additions": 174,
+          "deletions": 0,
+          "changes": 174
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Query/LevelQuery.cs",
+          "status": "added",
+          "additions": 310,
+          "deletions": 0,
+          "changes": 310
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Sed.Core.csproj",
+          "status": "added",
+          "additions": 9,
+          "deletions": 0,
+          "changes": 9
+        },
+        {
+          "filename": "dotnet/src/Sed.Core/Validation/ConsistencyChecker.cs",
+          "status": "added",
+          "additions": 80,
+          "deletions": 0,
+          "changes": 80
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Asc/AscImporter.cs",
+          "status": "added",
+          "additions": 221,
+          "deletions": 0,
+          "changes": 221
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Cogs/CogScript.cs",
+          "status": "added",
+          "additions": 166,
+          "deletions": 0,
+          "changes": 166
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Cogs/CogScriptLibrary.cs",
+          "status": "added",
+          "additions": 52,
+          "deletions": 0,
+          "changes": 52
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Cogs/MasterCogGenerator.cs",
+          "status": "added",
+          "additions": 123,
+          "deletions": 0,
+          "changes": 123
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Df/DfLevelImporter.cs",
+          "status": "added",
+          "additions": 1162,
+          "deletions": 0,
+          "changes": 1162
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Game/Episode.cs",
+          "status": "added",
+          "additions": 205,
+          "deletions": 0,
+          "changes": 205
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Game/GameInstall.cs",
+          "status": "added",
+          "additions": 108,
+          "deletions": 0,
+          "changes": 108
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Gob/GobArchive.cs",
+          "status": "added",
+          "additions": 101,
+          "deletions": 0,
+          "changes": 101
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Gob/GobWriter.cs",
+          "status": "added",
+          "additions": 59,
+          "deletions": 0,
+          "changes": 59
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/GeoData.cs",
+          "status": "added",
+          "additions": 45,
+          "deletions": 0,
+          "changes": 45
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/GeoResourceWriter.cs",
+          "status": "added",
+          "additions": 175,
+          "deletions": 0,
+          "changes": 175
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/JklDocument.cs",
+          "status": "added",
+          "additions": 39,
+          "deletions": 0,
+          "changes": 39
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/JklParser.cs",
+          "status": "added",
+          "additions": 580,
+          "deletions": 0,
+          "changes": 580
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/JklReader.cs",
+          "status": "added",
+          "additions": 112,
+          "deletions": 0,
+          "changes": 112
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Jkl/JklWriter.cs",
+          "status": "added",
+          "additions": 246,
+          "deletions": 0,
+          "changes": 246
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Keyframe/KeyFile.cs",
+          "status": "added",
+          "additions": 212,
+          "deletions": 0,
+          "changes": 212
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Material/Colormap.cs",
+          "status": "added",
+          "additions": 68,
+          "deletions": 0,
+          "changes": 68
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Material/MatFile.cs",
+          "status": "added",
+          "additions": 89,
+          "deletions": 0,
+          "changes": 89
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Material/MaterialLibrary.cs",
+          "status": "added",
+          "additions": 100,
+          "deletions": 0,
+          "changes": 100
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/Sed.Formats.csproj",
+          "status": "added",
+          "additions": 13,
+          "deletions": 0,
+          "changes": 13
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/ThreeDo/ModelLibrary.cs",
+          "status": "added",
+          "additions": 40,
+          "deletions": 0,
+          "changes": 40
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoExport.cs",
+          "status": "added",
+          "additions": 125,
+          "deletions": 0,
+          "changes": 125
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoModel.cs",
+          "status": "added",
+          "additions": 54,
+          "deletions": 0,
+          "changes": 54
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoParser.cs",
+          "status": "added",
+          "additions": 184,
+          "deletions": 0,
+          "changes": 184
+        },
+        {
+          "filename": "dotnet/src/Sed.Formats/ThreeDo/ThreeDoWriter.cs",
+          "status": "added",
+          "additions": 233,
+          "deletions": 0,
+          "changes": 233
+        },
+        {
+          "filename": "dotnet/src/Sed.Plugins/ISedPlugin.cs",
+          "status": "added",
+          "additions": 60,
+          "deletions": 0,
+          "changes": 60
+        },
+        {
+          "filename": "dotnet/src/Sed.Plugins/Sed.Plugins.csproj",
+          "status": "added",
+          "additions": 13,
+          "deletions": 0,
+          "changes": 13
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/NativeVulkanLocator.cs",
+          "status": "added",
+          "additions": 96,
+          "deletions": 0,
+          "changes": 96
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/OffscreenRenderer.cs",
+          "status": "added",
+          "additions": 409,
+          "deletions": 0,
+          "changes": 409
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/SceneRenderer.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Sed.Rendering.Vulkan.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.frag",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.frag.spv",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.vert",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/mesh.vert.spv",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.frag",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.frag.spv",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.vert",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/Shaders/triangle.vert.spv",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/VulkanContext.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering.Vulkan/VulkanDevice.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/Camera.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/IRenderer.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/Mesh.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/Picker.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/PngWriter.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/RenderScene.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/SampleScene.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/SceneAssembler.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/SceneBuilder.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/src/Sed.Rendering/Sed.Rendering.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/AdjoinFlipTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/AlignAndGenerateTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/BridgeTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/CleaveSectorTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ClipboardTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/CogScriptTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ConnectSectorsTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ConsistencyTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/DfImportTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/EditingTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/EngineFlagTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/EpisodeTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ExtrudeCleaveTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/FieldQueryTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/GameInstallTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/GobArchiveTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/GobWriterTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/HeaderFieldTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/JklParserTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/JklRoundTripTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/KeyFileTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/LayerVisibilityTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/LevelQueryTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/LightCalculatorTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/LightEntityTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/MaterialTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/MathTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/MidCleavePlaneTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/MultiEditTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/PickerTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/PluginHostTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/SectionRoundTripTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/SectorFieldTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/Sed.Core.Tests.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/SelectionSetTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/SurfaceNormalTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/TemplateEditTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/TextureCommandTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ThreeDoAndAscTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tests/Sed.Core.Tests/ThreeDoTests.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.AppShot/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.AppShot/Sed.AppShot.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.EditProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.EditProbe/Sed.EditProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.GameProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.GameProbe/Sed.GameProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.GobTool/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.GobTool/Sed.GobTool.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.InteriorProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.InteriorProbe/Sed.InteriorProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.JklProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.JklProbe/Sed.JklProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.LevelRender/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.LevelRender/Sed.LevelRender.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.MatTool/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.MatTool/Sed.MatTool.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.OpsProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.OpsProbe/Sed.OpsProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.SaveProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.SaveProbe/Sed.SaveProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.SceneProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.SceneProbe/Sed.SceneProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.ThreeDoProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.ThreeDoProbe/Sed.ThreeDoProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.TriangleProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.TriangleProbe/Sed.TriangleProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.TriangleProbe/SimplePng.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.UiProbe/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.UiProbe/Sed.UiProbe.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.VulkanSmoke/Program.cs",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        },
+        {
+          "filename": "dotnet/tools/Sed.VulkanSmoke/Sed.VulkanSmoke.csproj",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "changes": 0
+        }
+      ],
+      "coverage": "Pinned archive inventory and complete-tree static patterns; focused semantic review, not every line"
+    },
+    {
+      "repository": "jscaltreto/SED",
+      "repository_url": "https://github.com/jscaltreto/SED",
+      "branch": "main",
+      "head": "28d9e46a51874aa94c447f1b6fc3dfe917bd76cd",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "28d9e46a51874aa94c447f1b6fc3dfe917bd76cd",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...28d9e46a51874aa94c447f1b6fc3dfe917bd76cd",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 33,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "LadyEebs/SED",
+      "repository_url": "https://github.com/LadyEebs/SED",
+      "branch": "main",
+      "head": "784b7351a19d44590be36d83c75c8ddee8e6d0da",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "784b7351a19d44590be36d83c75c8ddee8e6d0da",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...784b7351a19d44590be36d83c75c8ddee8e6d0da",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 17,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "fix-hotkey-in-3d",
+      "head": "af9ce67b55d35f69c0d1bf07bdc62c334d395d7f",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "af9ce67b55d35f69c0d1bf07bdc62c334d395d7f",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...af9ce67b55d35f69c0d1bf07bdc62c334d395d7f",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 76,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "main",
+      "head": "67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 1,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "noclip-persist",
+      "head": "cdbc7c6c4d570adaa44653ec7f21620714d52936",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "cdbc7c6c4d570adaa44653ec7f21620714d52936",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...cdbc7c6c4d570adaa44653ec7f21620714d52936",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 83,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "per",
+      "head": "5a41dde5e8b342dc0d62c7861bdb9e1e930c8bce",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...5a41dde5e8b342dc0d62c7861bdb9e1e930c8bce",
+      "status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 1,
+      "total_commits": 1,
+      "changed_file_count": 1,
+      "commits": [
+        {
+          "sha": "5a41dde5e8b342dc0d62c7861bdb9e1e930c8bce",
+          "message": "Customize controls\n\n- Middle MB ops -> Right MB\n- Moving camera default, Rotation modifer -> Shift\n- Rotation axis modifiers -> Ctrl and Alt\n- Cleave by Grid -> Shift + C",
+          "date": "2026-01-11T19:01:05Z"
+        }
+      ],
+      "files": [
+        {
+          "filename": "src/JED_MAIN.PAS",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 23,
+          "changes": 36
+        }
+      ],
+      "coverage": "Entire one-file source patch reviewed; no full checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "raft-repair-kit",
+      "head": "5b43077a044925e47d5c0f550e6b43a91a45f64f",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "5b43077a044925e47d5c0f550e6b43a91a45f64f",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...5b43077a044925e47d5c0f550e6b43a91a45f64f",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 71,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "reorg-dirs",
+      "head": "2f64ec21d14bf67fde492b1ebfa9174b9e13d141",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "2f64ec21d14bf67fde492b1ebfa9174b9e13d141",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...2f64ec21d14bf67fde492b1ebfa9174b9e13d141",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 87,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "stop-tracking-res",
+      "head": "d624d9e76a50cfc6430644e458f461fa2eeeb1d5",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "d624d9e76a50cfc6430644e458f461fa2eeeb1d5",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...d624d9e76a50cfc6430644e458f461fa2eeeb1d5",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 84,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    },
+    {
+      "repository": "thekovic/SED",
+      "repository_url": "https://github.com/thekovic/SED",
+      "branch": "ui-tweaks",
+      "head": "bc2c2b1aa0df221c7a6e885ce8810331b2b2aa41",
+      "base": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "merge_base": "bc2c2b1aa0df221c7a6e885ce8810331b2b2aa41",
+      "comparison_api_url": "https://api.github.com/repos/smlu/SED/compare/c3b6c0e59f192e96dc6df2daf698fb179e63603a...bc2c2b1aa0df221c7a6e885ce8810331b2b2aa41",
+      "status": "behind",
+      "ahead_by": 0,
+      "behind_by": 31,
+      "total_commits": 0,
+      "changed_file_count": 0,
+      "commits": [],
+      "files": [],
+      "coverage": "Ancestry comparison only; no unique branch commits; no checkout"
+    }
+  ],
+  "acquired": {
+    "repository": "https://github.com/davidagnome/SED",
+    "revision": "908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+    "archive_url": "https://codeload.github.com/davidagnome/SED/zip/908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+    "archive_bytes": 4237320,
+    "archive_sha256": "980c21252083b4afc608ee95f3e412688692db8512b0290490425d02f92a191f",
+    "local_archive": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\sources\\davidagnome-SED-908d53d.zip",
+    "local_source": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\sources\\davidagnome-SED\\SED-908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+    "license": "Root LICENSE GNU GPL version 3; GitHub SPDX GPL-3.0. Existing third-party notices still require review for redistribution.",
+    "all_files": 445,
+    "all_source_files": 310,
+    "all_physical_source_lines": 144758,
+    "dotnet_files": 217,
+    "dotnet_source_files": 202,
+    "dotnet_physical_source_lines": 28512,
+    "static_fact_attributes": 278,
+    "static_theory_attributes": 0,
+    "tests_executed": false,
+    "build_executed": false,
+    "releases_at_check": 0,
+    "github_actions_runs_at_check": 0
+  },
+  "patterns": {
+    "game_mode": "MotS|MysteriesOfTheSith|OpenJKDF2|InfernalMachine",
+    "archlighting": "ARCHLIGHTING",
+    "incompleteness": "TODO|FIXME|HACK|NotImplementedException|NotSupportedException",
+    "process_execution": "Process\\.Start|ProcessStartInfo|<Exec|DllImport|NativeLibrary\\.Load",
+    "writes": "WriteAllText|WriteAllBytes|File\\.Delete|Directory\\.Delete|File\\.Move",
+    "parser_defaults": "ElementAtOrDefault|TryParse|catch\\s*\\{",
+    "geometry_undo": "Snapshot|void Revert|void Restore|Adjoin|Renumber|Thrust|CollideBox"
+  },
+  "static_scan_records": 116,
+  "unresolved": "No runtime, Vulkan rendering, .NET restore/build, cross-platform launch, retail-level round trip, or test execution performed. Thekovic per reviewed through entire pinned GitHub patch; not downloaded as duplicate tree."
+}

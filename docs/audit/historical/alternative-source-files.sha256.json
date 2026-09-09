@@ -1,0 +1,5064 @@
+[
+  {
+    "path": "JED/3DO_IO.INC",
+    "sha256": "44af73cb954dac99c757cd47aad43d2cdf65c39554e64930bedfbf3d73a0fe1b",
+    "bytes": 16642,
+    "source_lines": 734
+  },
+  {
+    "path": "JED/ASC_IMPORT.INC",
+    "sha256": "cd34d139a708c5d7424ca7cec6c6461cf4101589d50df931bfc0c0dd1e6293ca",
+    "bytes": 3990,
+    "source_lines": 179
+  },
+  {
+    "path": "JED/CHANGES.TXT",
+    "sha256": "c775d76d8b237c9cc6ab325b465bc2bef0bab626b337d43b715500b7206dfb91",
+    "bytes": 3357
+  },
+  {
+    "path": "JED/COG_UTILS.PAS",
+    "sha256": "5f097867a78eeac5754df1b15bb74d715d759a7b6a99a3aec158fa45a1dd1d4c",
+    "bytes": 72,
+    "source_lines": 9
+  },
+  {
+    "path": "JED/CONS_CHECKER.DFM",
+    "sha256": "9337c44e74808d999d6f8293570f627c9c8e7dc24a226dc7a7c85a6285c567ff",
+    "bytes": 1393
+  },
+  {
+    "path": "JED/CONS_CHECKER.PAS",
+    "sha256": "878d0697c3f18727dc297422bcff85d9c558d1ec14abd43e0ba2d1857f3aea31",
+    "bytes": 11698,
+    "source_lines": 476
+  },
+  {
+    "path": "JED/CONTAINERS.PAS",
+    "sha256": "a8ded86b5a9c95729023c30f5df5a0f846c8947a6fdbc14a380d4efdbf07be24",
+    "bytes": 24400,
+    "source_lines": 874
+  },
+  {
+    "path": "JED/D3D_NPRENDER.PAS",
+    "sha256": "7195510b75fdc31b0b1c6d45f2659f6de8c4ed9581196eee7a016137051605e8",
+    "bytes": 18490,
+    "source_lines": 752
+  },
+  {
+    "path": "JED/D3D_PRENDER.PAS",
+    "sha256": "443f42c8a36088342d1f04b7361af732c7561586d9641dfef6b5333245d4c6f4",
+    "bytes": 36669,
+    "source_lines": 1502
+  },
+  {
+    "path": "JED/D3D_RENDER.PAS",
+    "sha256": "a86c490683e32b65f562554fd19dcb60e0e92a3c74fd06a84b5e7ffd7e75e3e8",
+    "bytes": 11711,
+    "source_lines": 458
+  },
+  {
+    "path": "JED/DF_IMPORT.INC",
+    "sha256": "67d7625944d378b9b5a9d99ba331f8ed438a6990307c110758177fc75e489502",
+    "bytes": 34438,
+    "source_lines": 1475
+  },
+  {
+    "path": "JED/DXTOOLS.PAS",
+    "sha256": "10de56b52501d3d1dc80585ab268aac87ddf5af16455ac399c04f8fb12444e54",
+    "bytes": 14609,
+    "source_lines": 224
+  },
+  {
+    "path": "JED/EPISODE.JK",
+    "sha256": "2711865bb671a4583cc4d9c47c6129b8e56087d5ba46349ea1d643c6a2391fb9",
+    "bytes": 448
+  },
+  {
+    "path": "JED/EXTERNAL.RES",
+    "sha256": "1b8090f2a785a07dde1d79c358e9f5bb2266eb8e5884e10dea17fd29d97d5239",
+    "bytes": 1088
+  },
+  {
+    "path": "JED/FIELDEDIT.PAS",
+    "sha256": "a36f71f5534f2cbc1f7c8c066178b58d9f6e50334e349f2a673fb4d48825a99c",
+    "bytes": 10823,
+    "source_lines": 497
+  },
+  {
+    "path": "JED/FILEDIALOGS.DFM",
+    "sha256": "a8b591c95fc83947d95dd738e9ee34296ec4db04237fb85b417314ed838cd829",
+    "bytes": 2005
+  },
+  {
+    "path": "JED/FILEDIALOGS.PAS",
+    "sha256": "50845bb89bc869f906d5b4e8d4a59e4998d07bb176e05d7d8da6d018f8d51791",
+    "bytes": 5772,
+    "source_lines": 239
+  },
+  {
+    "path": "JED/FILEOPERATIONS.PAS",
+    "sha256": "3776690c4d41a764075951ca11ee66c0f75fcb57852a6da1119fd8c57181595e",
+    "bytes": 19286,
+    "source_lines": 771
+  },
+  {
+    "path": "JED/FILES.DSK",
+    "sha256": "e806a18fade369e8394e88578df5d155cbcee51b4736e15522959953963b74e6",
+    "bytes": 582
+  },
+  {
+    "path": "JED/FILES.PAS",
+    "sha256": "60175789591a66797ff7a5b0bd3b5967e35e930fd5f9778e2e3c89addd5be555",
+    "bytes": 20177,
+    "source_lines": 922
+  },
+  {
+    "path": "JED/FILES_OLD.PAS",
+    "sha256": "6ce6f820962344acf1d3ec118bb6f03ff02c967ae9c6360a37765cedf5d2ecdb",
+    "bytes": 6744,
+    "source_lines": 327
+  },
+  {
+    "path": "JED/FLAGEDITOR.DFM",
+    "sha256": "61e50c595c1abd94a987de60f0cad57267c9ca25042847f2b6cd7265cd13989d",
+    "bytes": 3699
+  },
+  {
+    "path": "JED/FLAGEDITOR.PAS",
+    "sha256": "ea161772da2366e66a04ef8c23faef05c534d9040eeb52258f6ed202792c70d4",
+    "bytes": 8923,
+    "source_lines": 347
+  },
+  {
+    "path": "JED/GEOMETRY.PAS",
+    "sha256": "a004c9004419f9ff24b87c35bb320cc2bcdbd09da177362d70846cb0018552c5",
+    "bytes": 8061,
+    "source_lines": 393
+  },
+  {
+    "path": "JED/GEO_UTILS.PAS",
+    "sha256": "d740f12ff12dbb11ba4eb5ab968932d69a3f0d9b6b693fe17575619e619ef96f",
+    "bytes": 4781,
+    "source_lines": 216
+  },
+  {
+    "path": "JED/GL3DFX.PAS",
+    "sha256": "ced8a637c8511f813ea15f60f87c79dde645cf4b3a2a8b8f7851f71ae6810383",
+    "bytes": 69233,
+    "source_lines": 1710
+  },
+  {
+    "path": "JED/GLINC.TXT",
+    "sha256": "b80c612f4893fbbe9ea402c5caef0cedc3843f25bd02c28278f9ef4207b7077a",
+    "bytes": 364
+  },
+  {
+    "path": "JED/GLOBALVARS.PAS",
+    "sha256": "f198de81ade2574c5a7a493aefc6c9f1dc704333e7ba050bab946baa0d163511",
+    "bytes": 7406,
+    "source_lines": 293
+  },
+  {
+    "path": "JED/GLUNIT.PAS",
+    "sha256": "b229e4f803e4ef8d07ef1296446424d9009032bb58a0ec0cbfbc380634562c40",
+    "bytes": 36541,
+    "source_lines": 1180
+  },
+  {
+    "path": "JED/GRAPH_FILES.PAS",
+    "sha256": "b15985d44c9617bd336e6365b0b2387eabc20ce779e1dafa18f6c1240d167d37",
+    "bytes": 16659,
+    "source_lines": 744
+  },
+  {
+    "path": "JED/IMAGES.PAS",
+    "sha256": "3e8d5e3530fb680b46586b73dd49c4375376e785f8c20dc26beef9c1d1499da2",
+    "bytes": 4378,
+    "source_lines": 224
+  },
+  {
+    "path": "JED/ITEM_EDIT.DFM",
+    "sha256": "63736dfae4300d1824447ed79470360f0ca8cbb84fdee1926968f19f1768703b",
+    "bytes": 1658
+  },
+  {
+    "path": "JED/ITEM_EDIT.PAS",
+    "sha256": "db422c18fbf11c4ebe69f4c7990f089d64740ba84b861ba796113edd565a7a50",
+    "bytes": 30994,
+    "source_lines": 1223
+  },
+  {
+    "path": "JED/JDH_JDL.PAS",
+    "sha256": "e08534a702a0a7313a93beb161263d26c236c9e17dd793cb8593444ea0b4c311",
+    "bytes": 2257,
+    "source_lines": 116
+  },
+  {
+    "path": "JED/JED.DOF",
+    "sha256": "b4d594cde88b6d725e08cd62f410066934b8191b4293cbcb20cd927ca5dca443",
+    "bytes": 478
+  },
+  {
+    "path": "JED/JED.DPR",
+    "sha256": "ba25c511ea1690890bf4ae5a807f49de86c5d6ef06604f42c3afb0fd979ec41b",
+    "bytes": 4603
+  },
+  {
+    "path": "JED/JED.DSK",
+    "sha256": "7bb00d46c47a367ca627b47a0e7fd2ef545df0b4054595728c18410f7acc0bd8",
+    "bytes": 1047
+  },
+  {
+    "path": "JED/JED.RES",
+    "sha256": "1b61d08ebaf83fbe3ad806429c35bf3198a97559eb1f9d620c621473bb5b1f33",
+    "bytes": 1276
+  },
+  {
+    "path": "JED/JED1.ICO",
+    "sha256": "aeea26aae056009d1061d20574206e4347bbdf9341cd22583ff6c326192a7631",
+    "bytes": 766
+  },
+  {
+    "path": "JED/JEDHELP.GID",
+    "sha256": "8e25979df796ec30f1f757073a496c01866f9a7d453fb06726d9ab3eb0222be3",
+    "bytes": 8628
+  },
+  {
+    "path": "JED/JEDHELP.HLP",
+    "sha256": "31c48a6df3f93dd47da80a86a4f34cd5d1b16123477d20eec4ac9b9a8e05d938",
+    "bytes": 279681
+  },
+  {
+    "path": "JED/JEDTUTOR.GID",
+    "sha256": "df48b635bd7e4b13ca6ecfbdb2c329a6de306526b4c40b20276e9996c6dfab0c",
+    "bytes": 8628
+  },
+  {
+    "path": "JED/JEDTUTOR.HLP",
+    "sha256": "ab2729d8e184a1ffc219fc4f9df14a0682251254539832cf0347c199636f9ae7",
+    "bytes": 98710
+  },
+  {
+    "path": "JED/JEDTUTOR.JPS",
+    "sha256": "0d08aa12bb220f93af3c8023832194fa451c916d469f9251515fe07c32b9ba1b",
+    "bytes": 1350
+  },
+  {
+    "path": "JED/JED_ABOUT1.DFM",
+    "sha256": "e6a7ab0dc4952155b53ee8941639a8f9a922160c608851b2ea06e1d1ba8a0643",
+    "bytes": 27894
+  },
+  {
+    "path": "JED/JED_ABOUT1.PAS",
+    "sha256": "1e1e3ceda8a1b2609bde50172b321395f3946e32c38497f099c0d4ed5d1d8e60",
+    "bytes": 1851,
+    "source_lines": 88
+  },
+  {
+    "path": "JED/JED_COM.PAS",
+    "sha256": "7b25f9fb9d653e0a912dc295b82af92515a280c00e483b9c82a3999384c142f2",
+    "bytes": 68205,
+    "source_lines": 2499
+  },
+  {
+    "path": "JED/JED_MAIN.DFM",
+    "sha256": "0a583ae745fb769716d890a70c22a8c450dfe6e2a8306ad1a731e95202295573",
+    "bytes": 12855
+  },
+  {
+    "path": "JED/JED_MAIN.DSK",
+    "sha256": "ade6ef19ea3166ef5b10abb8c9bb969c8f64b4bb5a7f202ced91a015b3befb10",
+    "bytes": 871
+  },
+  {
+    "path": "JED/JED_MAIN.PAS",
+    "sha256": "3d78608ac902b82041bb5789a55fbe336606cbd73f889a071c23f552da3360bc",
+    "bytes": 185559,
+    "source_lines": 6922
+  },
+  {
+    "path": "JED/JED_OLE.PAS",
+    "sha256": "c87b24cbfa54c7a1cd8f61cff542a445f56d11407aeb108908f7c9dc3cd6ee18",
+    "bytes": 63507,
+    "source_lines": 2968
+  },
+  {
+    "path": "JED/JED_PLUGINS.H",
+    "sha256": "ce892a190b08b25a423b112ee1cfd37bf27d2c8d69592f4a90a8bfaad4d0efe8",
+    "bytes": 21382,
+    "source_lines": 601
+  },
+  {
+    "path": "JED/JED_PLUGINS.PAS",
+    "sha256": "ebed7d976e1996d501e3578ef32d11a723208ee9fe0c3c152a1da1aa14a6baa6",
+    "bytes": 28760,
+    "source_lines": 773
+  },
+  {
+    "path": "JED/JED_PLUGINS2_.PAS",
+    "sha256": "f5612be084a3bd52618de3e7a46d1af619d89b35b4ccef3a96a2e2ce11fb05b0",
+    "bytes": 22103,
+    "source_lines": 616
+  },
+  {
+    "path": "JED/JED_PLUGINS3.PAS",
+    "sha256": "a69e530c008750c7932c8a264188c739f1e50cfec7cc3e43721e4454dc28b924",
+    "bytes": 18985,
+    "source_lines": 615
+  },
+  {
+    "path": "JED/JLH_JLL.PAS",
+    "sha256": "c0f21c1e67d7ea24657363fb9dedae2a18d2f363e609cf5bad7359df6c999ce6",
+    "bytes": 2217,
+    "source_lines": 114
+  },
+  {
+    "path": "JED/J_LEVEL.PAS",
+    "sha256": "bc6680543a8af4adff85865dec8df17b310d5ccc244cbe3500826b51f6a1ddb0",
+    "bytes": 20489,
+    "source_lines": 990
+  },
+  {
+    "path": "JED/LEFT.BMP",
+    "sha256": "0a6212cc90f18c025933dfdd71e106028e75a8728121c4c000ed879b8b80169f",
+    "bytes": 246
+  },
+  {
+    "path": "JED/LEVEL_IO.INC",
+    "sha256": "aa097920ec97055bd05993ad8f6fe491327be7661b2d263b65638b3a358004b0",
+    "bytes": 26542,
+    "source_lines": 1207
+  },
+  {
+    "path": "JED/LEV_UTILS.PAS",
+    "sha256": "fc1059e673eaa6d218bbb6ca20ebc08ca807a483cac2325fe3287f3fe5764e65",
+    "bytes": 130684,
+    "source_lines": 5485
+  },
+  {
+    "path": "JED/LISTRES.PAS",
+    "sha256": "0dea59a41238e8ef8dfe8f09f752a560164bb37f3d88c94081855a5c8aeee9a8",
+    "bytes": 8606,
+    "source_lines": 499
+  },
+  {
+    "path": "JED/MASTER.TPL",
+    "sha256": "dc77e54c0c35390b908ce52a5f0c3e339e83558c955de8d76a4e5b10d271cc63",
+    "bytes": 131453
+  },
+  {
+    "path": "JED/MEMCHECK.PAS",
+    "sha256": "e69c0a33d846a357883b763359870fc6e85a76e80703f6179053c4278571fa64",
+    "bytes": 81679,
+    "source_lines": 2294
+  },
+  {
+    "path": "JED/MISC_UTILS.PAS",
+    "sha256": "5eb8470902b5b1a0418a5953c0f566a90632a5f80fbdbe392d1e67ba68eb92bb",
+    "bytes": 18399,
+    "source_lines": 747
+  },
+  {
+    "path": "JED/MOTS.TPL",
+    "sha256": "7b95838b8ca018a53c3f55909984659e87a70a40bbd8d6907796fb75f8f011f1",
+    "bytes": 144160
+  },
+  {
+    "path": "JED/OGL_PRENDER.PAS",
+    "sha256": "b853ef10594ff97427edeb15909042463412afa12c742217422e58ce0e0977f9",
+    "bytes": 11507,
+    "source_lines": 485
+  },
+  {
+    "path": "JED/OGL_RENDER.DFM",
+    "sha256": "b16da7d0003b35ec70b450a4fa0ee9da8e003c1a8cb6d8fe35e86186d9790f60",
+    "bytes": 512
+  },
+  {
+    "path": "JED/OGL_RENDER.PAS",
+    "sha256": "bac36bd984babddb53c413539f0e2325485059182d4616d66db65c15fa17bc47",
+    "bytes": 15324,
+    "source_lines": 635
+  },
+  {
+    "path": "JED/OLD_OGL_PRENDER.PAS",
+    "sha256": "bc1b618c0aa03401b1d8b5ab4ee9d8059218f1505fa8724318bb0aa57514085f",
+    "bytes": 20556,
+    "source_lines": 932
+  },
+  {
+    "path": "JED/OPENGL.PAS",
+    "sha256": "817883d61082edbf3886f9b1fce4dd46afbf1a22237ca5497ea4d4e4ccecf3cc",
+    "bytes": 76307,
+    "source_lines": 1829
+  },
+  {
+    "path": "JED/PJ3DO_IO.INC",
+    "sha256": "ab6304bcad3571e1e0b4bbe28116c720390bc50950dfceb653b6c82708f720ed",
+    "bytes": 7171,
+    "source_lines": 324
+  },
+  {
+    "path": "JED/PJGEOMETRY.PAS",
+    "sha256": "94581c3bee0d47f05c2bd849303df084723b5eabfb7ad2d6f55bc3e26fcc8c94",
+    "bytes": 6036,
+    "source_lines": 293
+  },
+  {
+    "path": "JED/PJKEY_IO.INC",
+    "sha256": "351a412f317e0d8fc040c8c9835b0fa06aa5f25351ccdddb694e801030ad92b1",
+    "bytes": 2822,
+    "source_lines": 125
+  },
+  {
+    "path": "JED/PREFAB.PAS",
+    "sha256": "4da3067bdad07f759f7eb8b62045994fd57b6ca74b6537f015629e539ca13eef",
+    "bytes": 5861,
+    "source_lines": 271
+  },
+  {
+    "path": "JED/PRENDER.PAS",
+    "sha256": "3512f0d9f18603faa0fbf6ceff5bddcd1e4218f57a965802a0fb1392222795bc",
+    "bytes": 23281,
+    "source_lines": 1064
+  },
+  {
+    "path": "JED/PREVIEW.PAS",
+    "sha256": "507bb31b8d6d360c22fc21e2879933ae6b1b109251ea7847ea626376e857901d",
+    "bytes": 5972,
+    "source_lines": 268
+  },
+  {
+    "path": "JED/PROGRESSDIALOG.DFM",
+    "sha256": "7e8f8eb620e7927a42d644792bd9c9ff6a65f91c06d6281fdd99f8123298c881",
+    "bytes": 430
+  },
+  {
+    "path": "JED/PROGRESSDIALOG.PAS",
+    "sha256": "3523d8e7c0aa15200b4ff2a77206d7f64b15ce8bb4883584db100767dbdcb435",
+    "bytes": 2291,
+    "source_lines": 107
+  },
+  {
+    "path": "JED/Q_SECTORS.DFM",
+    "sha256": "ab9a0ddb669d6a32e6d5992492ee39a93915e651137f32015a1cfe45ccae7e80",
+    "bytes": 5211
+  },
+  {
+    "path": "JED/Q_SECTORS.PAS",
+    "sha256": "fcb01d29bf3d50c2743d3ab74254a5a1eb5b5e67010e21f748269a9e782895f1",
+    "bytes": 4382,
+    "source_lines": 193
+  },
+  {
+    "path": "JED/Q_SURFS.DFM",
+    "sha256": "8bad94aab15e116335b7916be0e3c2570504487e75f102e94cb0efa661133f01",
+    "bytes": 5932
+  },
+  {
+    "path": "JED/Q_SURFS.PAS",
+    "sha256": "42415525116b660f60cb37c98b8026cbf001f9bf577cdc850b5dd9c29e4e46d0",
+    "bytes": 5719,
+    "source_lines": 249
+  },
+  {
+    "path": "JED/Q_THINGS.DFM",
+    "sha256": "f2f75a51a51c311d7d33dd4e877902385fad540c53110d63515ca167943f172a",
+    "bytes": 4608
+  },
+  {
+    "path": "JED/Q_THINGS.PAS",
+    "sha256": "ee8c27e2a4348e434c37e14c08b8ba1910f6ef0b876d9e32e05c3e4f27a19603",
+    "bytes": 3733,
+    "source_lines": 175
+  },
+  {
+    "path": "JED/Q_UTILS.PAS",
+    "sha256": "05e6de59b3d444055e6f58fded2b8f73f349d5bd97cb5e191d198409d79ce7b3",
+    "bytes": 9808,
+    "source_lines": 400
+  },
+  {
+    "path": "JED/README.md",
+    "sha256": "c87f6abe91b59a434f063bfe0e641a3eeaf6bae893ddd0d2e0ea3b5f520e3c79",
+    "bytes": 29921
+  },
+  {
+    "path": "JED/RENDER.PAS",
+    "sha256": "eadb9ad6acde7a3eef939cd657fb8637cf474072fe6c1591540f79638883f862",
+    "bytes": 11320,
+    "source_lines": 462
+  },
+  {
+    "path": "JED/RESOURCEPICKER.DFM",
+    "sha256": "cffd3b60c19ec1a715f346616821c140e8736303f925a8eda8c4f156431c9cad",
+    "bytes": 28338
+  },
+  {
+    "path": "JED/RESOURCEPICKER.PAS",
+    "sha256": "397ab6f7860df12a12aeb37161c2a966aa19516af94719ef8b4cfa7430d235e6",
+    "bytes": 31005,
+    "source_lines": 1187
+  },
+  {
+    "path": "JED/RIGHT.BMP",
+    "sha256": "50a84875d9e78c1cc121ac443e31a81237893483d2f4dce3dca76e46bcf7f416",
+    "bytes": 246
+  },
+  {
+    "path": "JED/SAVEJKL.INC",
+    "sha256": "c44d84c4e5e1e40463ea899b60b94ab6d9bea4c75b035ad7c34305ec249e3165",
+    "bytes": 21949,
+    "source_lines": 946
+  },
+  {
+    "path": "JED/SFT_PERSP_RENDER.PAS",
+    "sha256": "e95f9584591fd5eaa7ff253289ff8a00abc986c93eefb7191fa22bc569414c7f",
+    "bytes": 10751,
+    "source_lines": 494
+  },
+  {
+    "path": "JED/SFT_RENDER.PAS",
+    "sha256": "840025435e8f021341b9c9ddc7d80fc782cd2891c47de587885d127c66529738",
+    "bytes": 16781,
+    "source_lines": 738
+  },
+  {
+    "path": "JED/SPHERE.JED",
+    "sha256": "0f64749f3a0c374b83e0ea0ad359a3dc54563ea7bbfa2e2f51c32910cbdee833",
+    "bytes": 3253
+  },
+  {
+    "path": "JED/SURFACE.JED",
+    "sha256": "617a9b4498253be1107da0601ee1a2c37549be73f70b58c70ccc80401bb119f5",
+    "bytes": 32971
+  },
+  {
+    "path": "JED/TBAR_TOOLS.PAS",
+    "sha256": "f1c4f8519501c557236e6e8cbdb725fd683ecd70a2080275cf4da85f2f1f7fbf",
+    "bytes": 1370,
+    "source_lines": 74
+  },
+  {
+    "path": "JED/TDFX_OGL_PRENDER.PAS",
+    "sha256": "f1466caa31f2239a46d81693418c5ff8dad54a0c436612509e5c7726c1a5ea6c",
+    "bytes": 19118,
+    "source_lines": 851
+  },
+  {
+    "path": "JED/TDFX_PRENDER.PAS",
+    "sha256": "a95995122645f187c06392c01a30b044614b5b18eef269a146d2b788d8b1ddab",
+    "bytes": 14872,
+    "source_lines": 752
+  },
+  {
+    "path": "JED/THREEDVIEW.DFM",
+    "sha256": "c778da8cef4ae1baf71a94d832f00feab6a730379b2e96242e3ac7c0e0728007",
+    "bytes": 2490
+  },
+  {
+    "path": "JED/THREEDVIEW.PAS",
+    "sha256": "f8ce50de9d2ffd46dd4dc305fbb29b4fd627e2667264538bf4a27d25d5ec7913",
+    "bytes": 1029,
+    "source_lines": 53
+  },
+  {
+    "path": "JED/TMP_LOAD3DO.PAS",
+    "sha256": "2e13e1ead6e754999938aa6b5cf5204522517a77695521c667e5003e628407ee",
+    "bytes": 4394,
+    "source_lines": 211
+  },
+  {
+    "path": "JED/TOOLS.PAS",
+    "sha256": "e467ddf64defc41242f3233b103e35aba5247a25567abbdbd3d69633b3b2b403",
+    "bytes": 680,
+    "source_lines": 37
+  },
+  {
+    "path": "JED/UNIT1.DFM",
+    "sha256": "6d24c8916939bf81579857591ba9ea720718c3953977db657c489e181d2fc660",
+    "bytes": 588
+  },
+  {
+    "path": "JED/UNIT1.PAS",
+    "sha256": "2af4765c248238d258e981e7d8311077bea8dbb79b9d17d4deb3c14e533fbbca",
+    "bytes": 3712,
+    "source_lines": 172
+  },
+  {
+    "path": "JED/UNTITLED.JED",
+    "sha256": "b693bda035c106355c9aef282147b5ae0bf353028ac1bdad4b21d54b594c9b46",
+    "bytes": 1821
+  },
+  {
+    "path": "JED/UNTITLED1.JED",
+    "sha256": "44d5b25fd5bc9e397634ea8dd9b50263e422550ffc09186a1b67b54834037bf9",
+    "bytes": 876
+  },
+  {
+    "path": "JED/U_3DOFORM.DFM",
+    "sha256": "602f273ec6e42804ce6c18596841517104ceb62ba2eb30b65f42e31bf1f4c6a9",
+    "bytes": 2098
+  },
+  {
+    "path": "JED/U_3DOFORM.PAS",
+    "sha256": "a2649ea3dad13949ebaf3d23150e958133fdc127b34967dd1577b626e8ba3f6c",
+    "bytes": 10662,
+    "source_lines": 462
+  },
+  {
+    "path": "JED/U_3DOPREV.PAS",
+    "sha256": "0b48be464e6cd57692b1b8f40b54e5ace713deeb9682781957e1327ecd4f8657",
+    "bytes": 2061,
+    "source_lines": 113
+  },
+  {
+    "path": "JED/U_3DOS.PAS",
+    "sha256": "66ca7e50eb98854c70806a22c8e1878bebd98c6c02c1dcb895bcf11e231572dc",
+    "bytes": 6931,
+    "source_lines": 332
+  },
+  {
+    "path": "JED/U_ABOUT.DFM",
+    "sha256": "707c5af3a8f3c1101cfbd744c3c8dbbdb66a2284ec53689b2f3242ceec7e2068",
+    "bytes": 767
+  },
+  {
+    "path": "JED/U_ABOUT.PAS",
+    "sha256": "06f8a4dd99ad782c7419cb04ed0d37e4b256391456b808c3d4504cf4db563fd2",
+    "bytes": 367,
+    "source_lines": 26
+  },
+  {
+    "path": "JED/U_COGFORM.DFM",
+    "sha256": "aadb57a3aca148efdd9918d5d01fa2542ebddaef73586890aa63fefe8909d550",
+    "bytes": 1660
+  },
+  {
+    "path": "JED/U_COGFORM.PAS",
+    "sha256": "7d375d85208695186c01f4503a2a85cd759ab2d3a0e71727b4a39d98cd2a913b",
+    "bytes": 9903,
+    "source_lines": 435
+  },
+  {
+    "path": "JED/U_COGGEN.DFM",
+    "sha256": "8a98b292622b17b00a58abc18eda0d78efcbabbd45ad611f4136eeae5c7d1ff6",
+    "bytes": 2151
+  },
+  {
+    "path": "JED/U_COGGEN.PAS",
+    "sha256": "959f2cfd871bc8fab29f4335aa32bb12e2056ed49dc8997a0b44c795b49226e6",
+    "bytes": 5598,
+    "source_lines": 231
+  },
+  {
+    "path": "JED/U_COPYPASTE.PAS",
+    "sha256": "cb1a852df62c29ab737c681e708dd99715f46bff51824c9654945adf55ef6b44",
+    "bytes": 8531,
+    "source_lines": 416
+  },
+  {
+    "path": "JED/U_CSCENE.DFM",
+    "sha256": "760a4d11a72a6395b5848693411c4e935e09dd269114a81d49245b9046300ce7",
+    "bytes": 193172
+  },
+  {
+    "path": "JED/U_CSCENE.PAS",
+    "sha256": "8603d19a9fe4fc402f3359c75183064242f531360aaffdcaf3561b2287603e2a",
+    "bytes": 3225,
+    "source_lines": 135
+  },
+  {
+    "path": "JED/U_DFI.DFM",
+    "sha256": "0bdbba9fb9fb80f01f9dc7bfa6080c3094c644ad38c9d69f3a9b9b64b29fbdc8",
+    "bytes": 744
+  },
+  {
+    "path": "JED/U_DFI.PAS",
+    "sha256": "5e56afc6bdd7ab1e4ab8721574c840a962410dfcfdd6489848ac8a580f5f3a61",
+    "bytes": 760,
+    "source_lines": 39
+  },
+  {
+    "path": "JED/U_ERRORFORM.DFM",
+    "sha256": "dede4b194a7ba7663d82ca128e9c6e6bd97b388538f80a4d3601851a159ebd67",
+    "bytes": 805
+  },
+  {
+    "path": "JED/U_ERRORFORM.PAS",
+    "sha256": "52214d30be9d3604d0c2f4a70321deef6509e2c128600d7d746899bdf7bc1093",
+    "bytes": 1869,
+    "source_lines": 93
+  },
+  {
+    "path": "JED/U_LHEADER.DFM",
+    "sha256": "204718995290fef14849e64383bd64b26e9e01300e2c0a9f8a0c4c3a925e950b",
+    "bytes": 3753
+  },
+  {
+    "path": "JED/U_LHEADER.PAS",
+    "sha256": "bab4e549fc2023a2f787e9687f15e43b9e2980021fc16064ea868ddb8980448e",
+    "bytes": 3833,
+    "source_lines": 153
+  },
+  {
+    "path": "JED/U_MCOG.DFM",
+    "sha256": "3bda369a6402ba71e6e6cff1be0159ff7f6a2d5ab6ce67ce1cb2a97c86530e78",
+    "bytes": 5320
+  },
+  {
+    "path": "JED/U_MCOG.PAS",
+    "sha256": "88ba860cf390b455c3ead1ce48b74c5e10373712d90a8d8cb91036e51b0f56b3",
+    "bytes": 7540,
+    "source_lines": 190
+  },
+  {
+    "path": "JED/U_MEDIT.DFM",
+    "sha256": "8f3359e7a249caf98d6214b6321a9658635d76114b988fb082acf325d098b1b7",
+    "bytes": 3955
+  },
+  {
+    "path": "JED/U_MEDIT.PAS",
+    "sha256": "c1db90d5551c3cdf89d3f1eb361949da6af73ac0a74749d1b5308d4eaecc1505",
+    "bytes": 15711,
+    "source_lines": 719
+  },
+  {
+    "path": "JED/U_MSGFORM.DFM",
+    "sha256": "acda3aa76010d97df3b860342380d36464f52f0930e3d86566f4533770ab7b54",
+    "bytes": 546
+  },
+  {
+    "path": "JED/U_MSGFORM.PAS",
+    "sha256": "6df89e893269e4e8db0967b5bbb7c9f1f6b374a72147ec2392da7cb19e213967",
+    "bytes": 930,
+    "source_lines": 51
+  },
+  {
+    "path": "JED/U_MULTISEL.PAS",
+    "sha256": "094887a53f351a0532c83b5b6f72643ae6dd778b653d1952a2fb37188e9d6ae8",
+    "bytes": 5906,
+    "source_lines": 282
+  },
+  {
+    "path": "JED/U_OPTIONS.DFM",
+    "sha256": "6644c3c95f39bdc93ad533fe3907cb1d5a1e2f021c7eaa5ea8ace3f396b21f01",
+    "bytes": 6602
+  },
+  {
+    "path": "JED/U_OPTIONS.PAS",
+    "sha256": "819c7d8034eedb085dc165ed070a9b17749504ea41cd0eb352a69db1d3da50ab",
+    "bytes": 29194,
+    "source_lines": 922
+  },
+  {
+    "path": "JED/U_PJ3DOS.PAS",
+    "sha256": "2cd9a5a75e534f97ab0f164f3dc5360ffb02e7ed7d74a4b73d149a4288df8ef0",
+    "bytes": 7451,
+    "source_lines": 371
+  },
+  {
+    "path": "JED/U_PJKEY.PAS",
+    "sha256": "6c284a2a887b7dfc6d2801331198dbf73ed541629c09d7fa5d09e1e45e07dde4",
+    "bytes": 4504,
+    "source_lines": 220
+  },
+  {
+    "path": "JED/U_PREVIEW.DFM",
+    "sha256": "efaa5b060b40a314b77506b476ef42d8816784890aa471f4b1fb004230e00d81",
+    "bytes": 1152
+  },
+  {
+    "path": "JED/U_PREVIEW.PAS",
+    "sha256": "bb34eb992c14f2d8f8bd80aa5dd88c45180bf93a63864168c4ce39a3a18049da",
+    "bytes": 19020,
+    "source_lines": 707
+  },
+  {
+    "path": "JED/U_SCFEDIT.DFM",
+    "sha256": "d7cb9ba51a1b5f08d38fa273739bc86685c9ea56b3ebbb3c025faba673166a64",
+    "bytes": 591
+  },
+  {
+    "path": "JED/U_SCFEDIT.PAS",
+    "sha256": "9c32646176a634136216f439aa318c9998c7a8ecc27ec61b16eae7b45c72142f",
+    "bytes": 2250,
+    "source_lines": 98
+  },
+  {
+    "path": "JED/U_STREDIT.DFM",
+    "sha256": "da96a964a6c0eb296e234e8ca3ab86e7fd14d36a63835a0ab5baeb27ce1bb31a",
+    "bytes": 879
+  },
+  {
+    "path": "JED/U_STREDIT.PAS",
+    "sha256": "d2179b7bd216bfc199c835255e5fc6ad35cd0d720cf8a6acda6cfe940fc05c2f",
+    "bytes": 1867,
+    "source_lines": 91
+  },
+  {
+    "path": "JED/U_TBAR.DFM",
+    "sha256": "c72e827ef2ebf8f6a100dd35c173df4245002d0da01aaa052fe9fb25884b4a86",
+    "bytes": 5071
+  },
+  {
+    "path": "JED/U_TBAR.PAS",
+    "sha256": "1eaa9166bffba77b49a6505cea1f1b98acf57b3839d70944a98e184c2a303d0a",
+    "bytes": 15588,
+    "source_lines": 644
+  },
+  {
+    "path": "JED/U_TEMPLATES.PAS",
+    "sha256": "526776ed7e8f3b08396d999b1e3f2add5d635e7110b186c776e363e34df50d13",
+    "bytes": 5808,
+    "source_lines": 277
+  },
+  {
+    "path": "JED/U_TOOLS.DFM",
+    "sha256": "07fa379b3b614a7b015b8e744a076f2f9f075ec3fcf93059f9d10f4a37810c22",
+    "bytes": 4791
+  },
+  {
+    "path": "JED/U_TOOLS.PAS",
+    "sha256": "87b8a1a36262a07a5a61690c6f9376b695c78d7cac9a8ac8a98ab67314ce4c61",
+    "bytes": 9439,
+    "source_lines": 381
+  },
+  {
+    "path": "JED/U_TPLCREATE.DFM",
+    "sha256": "bb64d07d37cd1e16495f2e6370c8a1e7b23b418f4bd7dc70950d43ef67f9b2bc",
+    "bytes": 1994
+  },
+  {
+    "path": "JED/U_TPLCREATE.PAS",
+    "sha256": "6b7f53f752e83e3efc3d82939d56963512d5c8b3c12e03608038a19a2b171b6c",
+    "bytes": 6034,
+    "source_lines": 266
+  },
+  {
+    "path": "JED/U_TPLEDIT.DFM",
+    "sha256": "a68104160d6f54e4e6fc640958d34d9109cd3eb69a2745c5d5c425e89f3bb6fe",
+    "bytes": 625
+  },
+  {
+    "path": "JED/U_TPLEDIT.PAS",
+    "sha256": "c1f4eb8d7e4304fa6d811160b65811caf72c59dbe7a53594866c705f5f865b42",
+    "bytes": 408,
+    "source_lines": 27
+  },
+  {
+    "path": "JED/U_UNDO.PAS",
+    "sha256": "1ec3fb898f4c332abbd30acbc1f4067252584ab367b440e977cd2978643550f8",
+    "bytes": 24913,
+    "source_lines": 1194
+  },
+  {
+    "path": "JED/VALUES.PAS",
+    "sha256": "e1171a831be8b085564408a4e4fc38da50ed863136d67a060cd087a9997a0bc1",
+    "bytes": 12453,
+    "source_lines": 513
+  },
+  {
+    "path": "JED/VER_INFO.RC",
+    "sha256": "565293e2b7a9709f49cddf5ae51bd48a833cdc23806bc1bea1dbd38dd7d06828",
+    "bytes": 740
+  },
+  {
+    "path": "JED/VER_INFO.RES",
+    "sha256": "27b92790cdda31354b0a6baad9e9434499886d0f7ed81a771aa3d415c45045ec",
+    "bytes": 952
+  },
+  {
+    "path": "NJED/.gitignore",
+    "sha256": "d68434b05ca73fe180307f0c3890a4705f17c6e3e7454f0a73647998178e43ed",
+    "bytes": 323
+  },
+  {
+    "path": "NJED/3do_io.inc",
+    "sha256": "b827796e1111bb8304ccbffa0e4c41f1b3799ae5e5e8e768349a217da26bcb74",
+    "bytes": 17390,
+    "source_lines": 758
+  },
+  {
+    "path": "NJED/3do_io.inc.orig",
+    "sha256": "21c7db4b1963e33a1fbdbbac8e6bff3c72e0f1a68f28376f4e6fa443f46d1dc1",
+    "bytes": 17391
+  },
+  {
+    "path": "NJED/AniSaber.res",
+    "sha256": "dd7c7b28347ec31a9e6d99296a22360f88807fd45f068feaeefe443b5c6aadec",
+    "bytes": 30280
+  },
+  {
+    "path": "NJED/Cog_utils.pas",
+    "sha256": "5f097867a78eeac5754df1b15bb74d715d759a7b6a99a3aec158fa45a1dd1d4c",
+    "bytes": 72,
+    "source_lines": 9
+  },
+  {
+    "path": "NJED/Cog_utils.pas.orig",
+    "sha256": "5f097867a78eeac5754df1b15bb74d715d759a7b6a99a3aec158fa45a1dd1d4c",
+    "bytes": 72
+  },
+  {
+    "path": "NJED/Cons_checker.dfm",
+    "sha256": "ede930eb0c610f9831f5a2eee195ff211c9a4244f45af0c6e428a7dda6d45700",
+    "bytes": 1498
+  },
+  {
+    "path": "NJED/Cons_checker.pas",
+    "sha256": "9be16be5e7a6ddc3fb01f49e86ed0c368f1e0727d6c28712f85812f47514dad4",
+    "bytes": 11705,
+    "source_lines": 476
+  },
+  {
+    "path": "NJED/Containers.pas",
+    "sha256": "d0417e46967aaf5fec62874e7ba0708b0b188ad4efdbfdcc9c6075cbd9e9af22",
+    "bytes": 24607,
+    "source_lines": 877
+  },
+  {
+    "path": "NJED/D3D_PRender.pas",
+    "sha256": "d038b4846d03fc6ded07420081a435e430fdccdfe725c2fb914e1cb47af3d26f",
+    "bytes": 37359,
+    "source_lines": 1535
+  },
+  {
+    "path": "NJED/D3D_Render.pas",
+    "sha256": "a86c490683e32b65f562554fd19dcb60e0e92a3c74fd06a84b5e7ffd7e75e3e8",
+    "bytes": 11711,
+    "source_lines": 458
+  },
+  {
+    "path": "NJED/DF_import.inc",
+    "sha256": "67d7625944d378b9b5a9d99ba331f8ed438a6990307c110758177fc75e489502",
+    "bytes": 34438,
+    "source_lines": 1475
+  },
+  {
+    "path": "NJED/FieldEdit.pas",
+    "sha256": "a36f71f5534f2cbc1f7c8c066178b58d9f6e50334e349f2a673fb4d48825a99c",
+    "bytes": 10823,
+    "source_lines": 497
+  },
+  {
+    "path": "NJED/FileDialogs.dfm",
+    "sha256": "a8b591c95fc83947d95dd738e9ee34296ec4db04237fb85b417314ed838cd829",
+    "bytes": 2005
+  },
+  {
+    "path": "NJED/FileDialogs.pas",
+    "sha256": "50845bb89bc869f906d5b4e8d4a59e4998d07bb176e05d7d8da6d018f8d51791",
+    "bytes": 5772,
+    "source_lines": 239
+  },
+  {
+    "path": "NJED/FileOperations.pas",
+    "sha256": "0db1d8ceed3b067ab926cd4f86f98b783a0b742c814b4931af48d0de805c20f7",
+    "bytes": 19343,
+    "source_lines": 772
+  },
+  {
+    "path": "NJED/Files.pas",
+    "sha256": "b552ae762d314229f41aa6e7fe6075132700980ae5344b0f17122f7922fcb4bd",
+    "bytes": 20361,
+    "source_lines": 924
+  },
+  {
+    "path": "NJED/Files_old.pas",
+    "sha256": "6ce6f820962344acf1d3ec118bb6f03ff02c967ae9c6360a37765cedf5d2ecdb",
+    "bytes": 6744,
+    "source_lines": 327
+  },
+  {
+    "path": "NJED/FlagEditor.dfm",
+    "sha256": "b3597a4451594d0c1edd711b3beeb6aca17f92c811aa2321130683e8f851181e",
+    "bytes": 3762
+  },
+  {
+    "path": "NJED/FlagEditor.pas",
+    "sha256": "a8a69feea6eee7b809fd58a2b1ca251d73a150ac090c9ee863ab31073f9415be",
+    "bytes": 9062,
+    "source_lines": 349
+  },
+  {
+    "path": "NJED/GLunit.pas",
+    "sha256": "b229e4f803e4ef8d07ef1296446424d9009032bb58a0ec0cbfbc380634562c40",
+    "bytes": 36541,
+    "source_lines": 1180
+  },
+  {
+    "path": "NJED/GameImageList.pas",
+    "sha256": "b1b58a1f1b435d6e0eaf03a7f93e9a845e64ef891960307544e676bd295d8f8e",
+    "bytes": 1579,
+    "source_lines": 92
+  },
+  {
+    "path": "NJED/Geometry.pas",
+    "sha256": "a004c9004419f9ff24b87c35bb320cc2bcdbd09da177362d70846cb0018552c5",
+    "bytes": 8061,
+    "source_lines": 393
+  },
+  {
+    "path": "NJED/Gl3dfx.pas",
+    "sha256": "ced8a637c8511f813ea15f60f87c79dde645cf4b3a2a8b8f7851f71ae6810383",
+    "bytes": 69233,
+    "source_lines": 1710
+  },
+  {
+    "path": "NJED/GlobalVars.pas",
+    "sha256": "702d91ba8ac74bd46395e0cfa958d5e78756d1f21ed479cef47c62471ebf62f8",
+    "bytes": 7555,
+    "source_lines": 298
+  },
+  {
+    "path": "NJED/Images.pas",
+    "sha256": "43b1b7a32282354ae23b0d4aac6c5c51ce566b8dc460ad9c6f86da6a17186db9",
+    "bytes": 6516,
+    "source_lines": 317
+  },
+  {
+    "path": "NJED/Item_edit.dfm",
+    "sha256": "fed2ea9b7c920e420269d85c35ec01a1dab9db961770a89e7297d70eb28a0255",
+    "bytes": 2280
+  },
+  {
+    "path": "NJED/Item_edit.pas",
+    "sha256": "a206b9d9bac27c0df029eef77295b20a901b80c6314dc03afe8c35048f1ba7b5",
+    "bytes": 31640,
+    "source_lines": 1250
+  },
+  {
+    "path": "NJED/JED_COM.pas",
+    "sha256": "b0097b171f9302f1c928746741063f61893dbaf5b9711bdc953fc686debd7dbe",
+    "bytes": 68256,
+    "source_lines": 2500
+  },
+  {
+    "path": "NJED/JED_OLE.pas",
+    "sha256": "9a7b4b4413d662f30e091e5de59065025ba8a348a043364eba992ee310a5b884",
+    "bytes": 63534,
+    "source_lines": 2968
+  },
+  {
+    "path": "NJED/J_level.pas",
+    "sha256": "48f19519960763d2d643bcafeadee5ddca38491a085883d99fb5140115910403",
+    "bytes": 20576,
+    "source_lines": 993
+  },
+  {
+    "path": "NJED/Jed.bdsproj.local",
+    "sha256": "31c1c103b8fe83597117e3a522cd6549a6ce8b7a533ef35a83b9a2af2f77a4ca",
+    "bytes": 62
+  },
+  {
+    "path": "NJED/Jed.cfg",
+    "sha256": "c640b484659032309e46996a17dbb7e8c24a86d0590f878e96a5635f05597b89",
+    "bytes": 489
+  },
+  {
+    "path": "NJED/Jed.dpr",
+    "sha256": "ba25c511ea1690890bf4ae5a807f49de86c5d6ef06604f42c3afb0fd979ec41b",
+    "bytes": 4603
+  },
+  {
+    "path": "NJED/Jed.res",
+    "sha256": "2014f954bb4d078bd814765c96691cba35d9d55dc1c0ff3c32bc2301fbb027a5",
+    "bytes": 1276
+  },
+  {
+    "path": "NJED/Jed_Main.dfm",
+    "sha256": "b6a6b6f97145e35536725eabe9e72523f08a5e50e25be33fe9a8baa1beb7534a",
+    "bytes": 12528
+  },
+  {
+    "path": "NJED/Jed_Main.pas",
+    "sha256": "4468475a00504f3c476ff0ce3333c2b801960ccf54f677564def3147e7163e9e",
+    "bytes": 193678,
+    "source_lines": 7238
+  },
+  {
+    "path": "NJED/Jed_Main.pasbak",
+    "sha256": "ed3906c73ac5f30eebdde2fc7779654e979c166f9a1cfd7a700f0efc408faca5",
+    "bytes": 193413
+  },
+  {
+    "path": "NJED/Jed_about1.dfm",
+    "sha256": "ff595d41c688114d4f531b4dee0a782b4173365c0a3da013af1a1c8b37e2a00e",
+    "bytes": 27940
+  },
+  {
+    "path": "NJED/Jed_about1.pas",
+    "sha256": "e2c7134f86c84b57e021b416d4196b7cb01f47dbc8e120c1fa6ee2c9bb3249c5",
+    "bytes": 1829,
+    "source_lines": 87
+  },
+  {
+    "path": "NJED/ListRes.pas",
+    "sha256": "0dea59a41238e8ef8dfe8f09f752a560164bb37f3d88c94081855a5c8aeee9a8",
+    "bytes": 8606,
+    "source_lines": 499
+  },
+  {
+    "path": "NJED/MAINICON.ico",
+    "sha256": "f246e068f53422c0a4dc93d9a5be9ed77442b904d29b4fa1de42abd181464770",
+    "bytes": 766
+  },
+  {
+    "path": "NJED/MatThumbNails.dfm",
+    "sha256": "ba8a2028766015ce492b60922fede2318b2f58f231f40ea7ec673aa69f7a2ac5",
+    "bytes": 1536
+  },
+  {
+    "path": "NJED/MatThumbNails.pas",
+    "sha256": "dfe7c61b3daec0781aadc7fd81956229e27049bb16c50825f02110efda59c1a5",
+    "bytes": 4811,
+    "source_lines": 195
+  },
+  {
+    "path": "NJED/NJED.txt",
+    "sha256": "580c6088cff878ad1a0d30f7807d2175b13c0b312af0b17527b780f6cf225d2d",
+    "bytes": 3625
+  },
+  {
+    "path": "NJED/NJed.bdsproj.local",
+    "sha256": "fdb72eff9f2a44c1e1560f412828b7e05e1d7d396a54804b3ce52bc1d425e7bb",
+    "bytes": 3416
+  },
+  {
+    "path": "NJED/NJed.cfg",
+    "sha256": "98f4c3a3a02400d7313d58d5a6e9bbc083f7fc99baad322b2e01da43852b367c",
+    "bytes": 494
+  },
+  {
+    "path": "NJED/NJed.dpr",
+    "sha256": "c63354ccbe877a231cef275fc4f5db82e7f174ea0de4229f7fc7dee4c831447a",
+    "bytes": 5935
+  },
+  {
+    "path": "NJED/NJed.dproj",
+    "sha256": "a4dd39a5854b83803e0582cd9daafdd3c5bce5ca8afa1adbfc489e6a0157ebb5",
+    "bytes": 60902
+  },
+  {
+    "path": "NJED/NJed.dproj.local",
+    "sha256": "ea90c7385580063414ed486fdcde3be40bde2662154f9ab47efb27fc924a817c",
+    "bytes": 8584
+  },
+  {
+    "path": "NJED/NJed.dres",
+    "sha256": "054b82c584d0def9c84d0084389166411d9030a501804e0afb14531dfbf577bb",
+    "bytes": 432
+  },
+  {
+    "path": "NJED/NJed.exe.manifest",
+    "sha256": "97e847ffbd17e93c18b16f55f7ed22b0a1b676fcbccb3dbc7ff3a25997a9cf6b",
+    "bytes": 349
+  },
+  {
+    "path": "NJED/NJed.identcache",
+    "sha256": "e9f2a4a28bf98c18618c77fa35c91911a7346ea3083ce7972bdcb6192a7dfb2b",
+    "bytes": 8118
+  },
+  {
+    "path": "NJED/NJed.otares",
+    "sha256": "c00de5bbf75219a8bee6f14bb349a27011f0ceb0224eb123f2daab3922aa3545",
+    "bytes": 30680
+  },
+  {
+    "path": "NJED/NJed.res",
+    "sha256": "c9bc26590ccb15c53e6a487d9034c4dd57ac08341bd2d474d87dcff02ba4bbe1",
+    "bytes": 3296
+  },
+  {
+    "path": "NJED/NJed.rsm",
+    "sha256": "ce338b958f52c3a51d94d30a9674553b94a554f72bc22873347002bc149c352d",
+    "bytes": 24645806
+  },
+  {
+    "path": "NJED/NJed1.res",
+    "sha256": "1e11d947b07e737a1c57efd67bf76f32a69b71a27f2dcd0de417841108a03337",
+    "bytes": 416
+  },
+  {
+    "path": "NJED/NJedResource.rc",
+    "sha256": "e832a3e1ea61c7566ee857f49926daa04a8f4ea65b30128eb1d41e2da244f904",
+    "bytes": 26
+  },
+  {
+    "path": "NJED/NJed_Icon.ico",
+    "sha256": "aeea26aae056009d1061d20574206e4347bbdf9341cd22583ff6c326192a7631",
+    "bytes": 766
+  },
+  {
+    "path": "NJED/NJed_project.tvsconfig",
+    "sha256": "171597ae23c0ca0dc6f86712ed68ec4c2bcd06e5df9fd574e986a1306a6c0956",
+    "bytes": 72
+  },
+  {
+    "path": "NJED/OBJ_export.dfm",
+    "sha256": "322d00441e9c47c4dbc7e2d9c4973af0c17633376dc0b64b2fe5a320a8aa59fb",
+    "bytes": 968
+  },
+  {
+    "path": "NJED/OBJ_export.pas",
+    "sha256": "764be74ef77454669884c5e734e55fa0c3eeeb1a7877d56fc526f8b7737323a4",
+    "bytes": 1077,
+    "source_lines": 56
+  },
+  {
+    "path": "NJED/OGL_PRender.pas",
+    "sha256": "814555a23c69cbed013e7d10dea707834840300f882322f38a15a11cbc9b8027",
+    "bytes": 15507,
+    "source_lines": 657
+  },
+  {
+    "path": "NJED/OGL_render.dfm",
+    "sha256": "3af1f6e3d39e047668949504584505716aa05ea0a7417a0ac265bf7fb43a4bf0",
+    "bytes": 555
+  },
+  {
+    "path": "NJED/OGL_render.pas",
+    "sha256": "dfdee9f2fada38722e0de96c66590e7b9243dfabfa00e9c3a2864776b7234f5b",
+    "bytes": 19756,
+    "source_lines": 831
+  },
+  {
+    "path": "NJED/PRender.pas",
+    "sha256": "525015dfb6faf996c0c0addc237bec541eb0c0e3e0af2df25470f50210fe5563",
+    "bytes": 23998,
+    "source_lines": 1083
+  },
+  {
+    "path": "NJED/Prefab.pas",
+    "sha256": "a031695dd9a2894d64ed5f888758a551ec13ad53ef527b86bcab88eac8d406d9",
+    "bytes": 5948,
+    "source_lines": 271
+  },
+  {
+    "path": "NJED/Preview.pas",
+    "sha256": "1837415aded82659582698314d21b94b04fda0b4b28204eb5c2e93b05666543e",
+    "bytes": 6151,
+    "source_lines": 280
+  },
+  {
+    "path": "NJED/ProgressDialog.dfm",
+    "sha256": "7e8f8eb620e7927a42d644792bd9c9ff6a65f91c06d6281fdd99f8123298c881",
+    "bytes": 430
+  },
+  {
+    "path": "NJED/ProgressDialog.pas",
+    "sha256": "3523d8e7c0aa15200b4ff2a77206d7f64b15ce8bb4883584db100767dbdcb435",
+    "bytes": 2291,
+    "source_lines": 107
+  },
+  {
+    "path": "NJED/Q_Sectors.dfm",
+    "sha256": "ab9a0ddb669d6a32e6d5992492ee39a93915e651137f32015a1cfe45ccae7e80",
+    "bytes": 5211
+  },
+  {
+    "path": "NJED/Q_Sectors.pas",
+    "sha256": "fcb01d29bf3d50c2743d3ab74254a5a1eb5b5e67010e21f748269a9e782895f1",
+    "bytes": 4382,
+    "source_lines": 193
+  },
+  {
+    "path": "NJED/Q_Utils.pas",
+    "sha256": "05e6de59b3d444055e6f58fded2b8f73f349d5bd97cb5e191d198409d79ce7b3",
+    "bytes": 9808,
+    "source_lines": 400
+  },
+  {
+    "path": "NJED/Q_surfs.dfm",
+    "sha256": "8bad94aab15e116335b7916be0e3c2570504487e75f102e94cb0efa661133f01",
+    "bytes": 5932
+  },
+  {
+    "path": "NJED/Q_surfs.pas",
+    "sha256": "42415525116b660f60cb37c98b8026cbf001f9bf577cdc850b5dd9c29e4e46d0",
+    "bytes": 5719,
+    "source_lines": 249
+  },
+  {
+    "path": "NJED/Q_things.dfm",
+    "sha256": "f2f75a51a51c311d7d33dd4e877902385fad540c53110d63515ca167943f172a",
+    "bytes": 4608
+  },
+  {
+    "path": "NJED/Q_things.pas",
+    "sha256": "ee8c27e2a4348e434c37e14c08b8ba1910f6ef0b876d9e32e05c3e4f27a19603",
+    "bytes": 3733,
+    "source_lines": 175
+  },
+  {
+    "path": "NJED/RED_LIGHTSABER.ani",
+    "sha256": "0c0c76f5daa8b0b135c879066df30c77105c3d4dfcdba4be6e16d11fdae4918d",
+    "bytes": 30186
+  },
+  {
+    "path": "NJED/Render.pas",
+    "sha256": "7f029ca9d0aa0170dea99a2171958acdec7ff464cb1fc2a5824e86c1e18ead70",
+    "bytes": 11725,
+    "source_lines": 486
+  },
+  {
+    "path": "NJED/ResourcePicker.dfm",
+    "sha256": "08ed1437a6c8dc0c9d84a47e61e2ef1bdbc44f691fdaefe6361ae8956f65b160",
+    "bytes": 20256
+  },
+  {
+    "path": "NJED/ResourcePicker.pas",
+    "sha256": "c81f62e916101ef04b04bbae3049278f8c8994f61ce820e08b60aa6a7370f522",
+    "bytes": 32143,
+    "source_lines": 1231
+  },
+  {
+    "path": "NJED/SABER.cur",
+    "sha256": "cec2db0048455d941ba41bc96e81fcac2f7c3847559bbb3a8021c2b6e6fd588b",
+    "bytes": 326
+  },
+  {
+    "path": "NJED/Savejkl.inc",
+    "sha256": "31f0e743bd4cc3eee913e0ce5adcf7d901505afa9e160be79fe561c73a3835bb",
+    "bytes": 22250,
+    "source_lines": 947
+  },
+  {
+    "path": "NJED/TDFX_OGL_PRender.pas",
+    "sha256": "f1466caa31f2239a46d81693418c5ff8dad54a0c436612509e5c7726c1a5ea6c",
+    "bytes": 19118,
+    "source_lines": 851
+  },
+  {
+    "path": "NJED/TDFX_PRender.pas",
+    "sha256": "a95995122645f187c06392c01a30b044614b5b18eef269a146d2b788d8b1ddab",
+    "bytes": 14872,
+    "source_lines": 752
+  },
+  {
+    "path": "NJED/ThreeDView.dfm",
+    "sha256": "c778da8cef4ae1baf71a94d832f00feab6a730379b2e96242e3ac7c0e0728007",
+    "bytes": 2490
+  },
+  {
+    "path": "NJED/ThreeDView.pas",
+    "sha256": "f8ce50de9d2ffd46dd4dc305fbb29b4fd627e2667264538bf4a27d25d5ec7913",
+    "bytes": 1029,
+    "source_lines": 53
+  },
+  {
+    "path": "NJED/Tools.pas",
+    "sha256": "e467ddf64defc41242f3233b103e35aba5247a25567abbdbd3d69633b3b2b403",
+    "bytes": 680,
+    "source_lines": 37
+  },
+  {
+    "path": "NJED/UV_utils.pas",
+    "sha256": "70278b343a5e119c04bce835d1f27d75544376d167becf0ad0264de61d2ceb6e",
+    "bytes": 3203,
+    "source_lines": 131
+  },
+  {
+    "path": "NJED/U_3doprev.pas",
+    "sha256": "5b7e29debad678bf071671efe63882f5ac1650f53beeb2b2adb73f0e4c8c511e",
+    "bytes": 2762,
+    "source_lines": 144
+  },
+  {
+    "path": "NJED/U_About.dfm",
+    "sha256": "707c5af3a8f3c1101cfbd744c3c8dbbdb66a2284ec53689b2f3242ceec7e2068",
+    "bytes": 767
+  },
+  {
+    "path": "NJED/U_About.pas",
+    "sha256": "06f8a4dd99ad782c7419cb04ed0d37e4b256391456b808c3d4504cf4db563fd2",
+    "bytes": 367,
+    "source_lines": 26
+  },
+  {
+    "path": "NJED/U_CogForm.dfm",
+    "sha256": "15acd6609d35be3b5b23eec49c81772a1ac1b61f7dcb3adad24f2bec7face4b9",
+    "bytes": 1735
+  },
+  {
+    "path": "NJED/U_CogForm.pas",
+    "sha256": "17eb1241f3c9e56fa900af57b4c10b052f417b778154ce7620296a97dda64ed7",
+    "bytes": 9991,
+    "source_lines": 445
+  },
+  {
+    "path": "NJED/U_MatToBmpThread.pas",
+    "sha256": "5de0dbede70341f6d815d22d61b61b7b456a52df43088f11da2c4baa992d2a96",
+    "bytes": 2327,
+    "source_lines": 101
+  },
+  {
+    "path": "NJED/U_Medit.dfm",
+    "sha256": "8f3359e7a249caf98d6214b6321a9658635d76114b988fb082acf325d098b1b7",
+    "bytes": 3955
+  },
+  {
+    "path": "NJED/U_Medit.pas",
+    "sha256": "ed81333ebb7a3ffd949ed8384b200e5de82dd3106cfabf41443486430c8de62f",
+    "bytes": 15782,
+    "source_lines": 719
+  },
+  {
+    "path": "NJED/U_ObjImportOptions.dfm",
+    "sha256": "695ec22e35e16ec7f0a3ba3bbb2c4d4beaf4ebc3fe0a427c22d1f98a8790fa6f",
+    "bytes": 1722
+  },
+  {
+    "path": "NJED/U_ObjImportOptions.pas",
+    "sha256": "c0018ed807c6b2c4e276d8a7e4c17b862a8dd7bffa89ef4cf0d3b1ca9ba649d8",
+    "bytes": 1741,
+    "source_lines": 74
+  },
+  {
+    "path": "NJED/U_Options.dfm",
+    "sha256": "467fcf6fd8466627dd718c03e89a15b8fc9f469cbc7742492f00245d51c908a5",
+    "bytes": 7154
+  },
+  {
+    "path": "NJED/U_Options.pas",
+    "sha256": "d3803b50f157b0b5559dbf964debe6d89383dfc4680b561aae552b0b75b54244",
+    "bytes": 29989,
+    "source_lines": 944
+  },
+  {
+    "path": "NJED/U_Preview.dfm",
+    "sha256": "67defa77e8e6530d0abf9bce9727cc54d824d7bfdc35d679b949210a83c23d50",
+    "bytes": 2493
+  },
+  {
+    "path": "NJED/U_Preview.pas",
+    "sha256": "d4d0bf50b99f4ba4daed9fd4e2fc6baf1e06d322196a4e332e0ca2d35bc5c093",
+    "bytes": 28392,
+    "source_lines": 1052
+  },
+  {
+    "path": "NJED/U_SCFEdit.dfm",
+    "sha256": "d7cb9ba51a1b5f08d38fa273739bc86685c9ea56b3ebbb3c025faba673166a64",
+    "bytes": 591
+  },
+  {
+    "path": "NJED/U_SCFEdit.pas",
+    "sha256": "9c32646176a634136216f439aa318c9998c7a8ecc27ec61b16eae7b45c72142f",
+    "bytes": 2250,
+    "source_lines": 98
+  },
+  {
+    "path": "NJED/U_SurfaceTools.dfm",
+    "sha256": "a31520a0c6a7924ef5575334ce76748f78da448e147a10e0e85abcfb5be598dd",
+    "bytes": 4072
+  },
+  {
+    "path": "NJED/U_SurfaceTools.pas",
+    "sha256": "f341282c1c80e3863ac4c5a179c99a6033e04677924ac9a44ccfbf6b55a74b95",
+    "bytes": 3010,
+    "source_lines": 104
+  },
+  {
+    "path": "NJED/U_SurfaceToolspas.dfm",
+    "sha256": "9d98b3f6377ea26040bb137ac57938492d84cb711b7b97e1636416eff2da8bd0",
+    "bytes": 3797
+  },
+  {
+    "path": "NJED/U_SurfaceToolspas.pas",
+    "sha256": "538d32bb0e8f128fc61da0c1e07d65f8b6911f0b9614d5743781dd8af9efdc41",
+    "bytes": 828,
+    "source_lines": 42
+  },
+  {
+    "path": "NJED/U_Tools.dfm",
+    "sha256": "07fa379b3b614a7b015b8e744a076f2f9f075ec3fcf93059f9d10f4a37810c22",
+    "bytes": 4791
+  },
+  {
+    "path": "NJED/U_Tools.pas",
+    "sha256": "87b8a1a36262a07a5a61690c6f9376b695c78d7cac9a8ac8a98ab67314ce4c61",
+    "bytes": 9439,
+    "source_lines": 381
+  },
+  {
+    "path": "NJED/U_VertexLight_edit.dfm",
+    "sha256": "5d3d6157efa09d87f90f1e0e9fcde5ddd5d7582846b4cb241b0469d8aeec9741",
+    "bytes": 1439
+  },
+  {
+    "path": "NJED/U_VertexLight_edit.pas",
+    "sha256": "db9740fdad1dd9d9cf3d88fffd2a7790bad519743bc312d9c14ba319751dcf2d",
+    "bytes": 3257,
+    "source_lines": 120
+  },
+  {
+    "path": "NJED/U_lheader.dfm",
+    "sha256": "ce2d96ec03eac87e4c3345aa4478caed5553a4157bbe5fdd11ce20dfce6b6445",
+    "bytes": 4498
+  },
+  {
+    "path": "NJED/U_lheader.pas",
+    "sha256": "ebdf4e25c7b281b89b42d8fe3a4f9b64358d0a88fc60f3ced23c280ada3b76cd",
+    "bytes": 4287,
+    "source_lines": 169
+  },
+  {
+    "path": "NJED/U_mcog.dfm",
+    "sha256": "3bda369a6402ba71e6e6cff1be0159ff7f6a2d5ab6ce67ce1cb2a97c86530e78",
+    "bytes": 5320
+  },
+  {
+    "path": "NJED/U_mcog.pas",
+    "sha256": "88ba860cf390b455c3ead1ce48b74c5e10373712d90a8d8cb91036e51b0f56b3",
+    "bytes": 7540,
+    "source_lines": 190
+  },
+  {
+    "path": "NJED/U_msgForm.dfm",
+    "sha256": "acda3aa76010d97df3b860342380d36464f52f0930e3d86566f4533770ab7b54",
+    "bytes": 546
+  },
+  {
+    "path": "NJED/U_msgForm.pas",
+    "sha256": "6df89e893269e4e8db0967b5bbb7c9f1f6b374a72147ec2392da7cb19e213967",
+    "bytes": 930,
+    "source_lines": 51
+  },
+  {
+    "path": "NJED/U_tbar.dfm",
+    "sha256": "71df36c617951a9fa47e1d7e2def7139875d6489bd9da422600909b2e65c3704",
+    "bytes": 5174
+  },
+  {
+    "path": "NJED/U_tbar.pas",
+    "sha256": "f60ddd843e526f1a6698ea07ef8db4a5931690ae22fe257fcf1755cbba8cc59d",
+    "bytes": 15652,
+    "source_lines": 645
+  },
+  {
+    "path": "NJED/U_tplcreate.dfm",
+    "sha256": "e765b8043f1060195eac0b3a72a905b9b7dd16ce5301582e0e89518e7b0859ae",
+    "bytes": 3208
+  },
+  {
+    "path": "NJED/U_tplcreate.pas",
+    "sha256": "6b7f53f752e83e3efc3d82939d56963512d5c8b3c12e03608038a19a2b171b6c",
+    "bytes": 6034,
+    "source_lines": 266
+  },
+  {
+    "path": "NJED/U_uvedit.dfm",
+    "sha256": "cf6ed01d0722fa8a8b548d9831aac3aa8bf0357c7027b584d0fb1d33c98d2715",
+    "bytes": 2618
+  },
+  {
+    "path": "NJED/U_uvedit.pas",
+    "sha256": "57ab300f6c2617f2563c065f33de9c00b27cdaef4c63ea083cdb1b6b25329773",
+    "bytes": 22368,
+    "source_lines": 806
+  },
+  {
+    "path": "NJED/Unit1.dfm",
+    "sha256": "6d24c8916939bf81579857591ba9ea720718c3953977db657c489e181d2fc660",
+    "bytes": 588
+  },
+  {
+    "path": "NJED/Unit1.pas",
+    "sha256": "2af4765c248238d258e981e7d8311077bea8dbb79b9d17d4deb3c14e533fbbca",
+    "bytes": 3712,
+    "source_lines": 172
+  },
+  {
+    "path": "NJED/asc_import.inc",
+    "sha256": "cd34d139a708c5d7424ca7cec6c6461cf4101589d50df931bfc0c0dd1e6293ca",
+    "bytes": 3990,
+    "source_lines": 179
+  },
+  {
+    "path": "NJED/asc_import.inc.orig",
+    "sha256": "cd34d139a708c5d7424ca7cec6c6461cf4101589d50df931bfc0c0dd1e6293ca",
+    "bytes": 3990
+  },
+  {
+    "path": "NJED/d3d_NPRender.pas",
+    "sha256": "b4ab5b25d66a5bd1ae6ca8d739e1d6683e6f542c8bbff484f8e96c9fa33d9861",
+    "bytes": 18658,
+    "source_lines": 756
+  },
+  {
+    "path": "NJED/data/df2jk.lst",
+    "sha256": "0c3062370bb46ce76f4444d605138e08d14c63af9b9636a0e4949ad03a7da788",
+    "bytes": 1503
+  },
+  {
+    "path": "NJED/data/ijim.tpl",
+    "sha256": "b99edda9d8c68267336105e32aebc29b7cc0d0aa65ae497ed0d3caaa786258bf",
+    "bytes": 283636
+  },
+  {
+    "path": "NJED/data/master.tpl",
+    "sha256": "313f61caa50040063196a3f3bfb730f52456fad73339d2acb51d6244d728aca6",
+    "bytes": 132640
+  },
+  {
+    "path": "NJED/data/mats.jlh",
+    "sha256": "9727076272399cc0359b97dd549019b2b833ef725c48b50a2a7a657d53e99b3e",
+    "bytes": 646
+  },
+  {
+    "path": "NJED/data/mats.jll",
+    "sha256": "cdd8c87bdc3068d0d23b95bfe1fe04f61a877a803d934a98bc763554e17f48e8",
+    "bytes": 782
+  },
+  {
+    "path": "NJED/data/mots.tpl",
+    "sha256": "3df024e4d54fef4b802cc227362e46d70464080b4effe8a570cd7c06ba104094",
+    "bytes": 146598
+  },
+  {
+    "path": "NJED/data/mtpls.jlh",
+    "sha256": "e043f548eb25c207fe6b4f8f1d1c88e28067766db45d196575ac6bf29ba2bdbc",
+    "bytes": 1092
+  },
+  {
+    "path": "NJED/data/mtpls.jll",
+    "sha256": "c2048c848b34b49c11d137e3b8d2bbe339be406cffe5cf610775d25ca11864da",
+    "bytes": 6466
+  },
+  {
+    "path": "NJED/data/shapes.tpl",
+    "sha256": "e3682e0d6b90c2989248a2534ccb8e19901491b85c38fd9dec6da88b10366778",
+    "bytes": 4621
+  },
+  {
+    "path": "NJED/data/tpls.jlh",
+    "sha256": "e38831e59230f112539f2af071919a0b2c30879743d429157326b9ef38c38f6d",
+    "bytes": 958
+  },
+  {
+    "path": "NJED/data/tpls.jll",
+    "sha256": "76b93af2ef9e73656effa73846fe2414971a9763c9e45f36431dc87b34250cc1",
+    "bytes": 4359
+  },
+  {
+    "path": "NJED/dglOpenGL.pas",
+    "sha256": "470f2f625c31ded02e51766e9a8703cffb661e74e5036ad33871eceea058ecaf",
+    "bytes": 1122248,
+    "source_lines": 20731
+  },
+  {
+    "path": "NJED/geo_utils.pas",
+    "sha256": "d740f12ff12dbb11ba4eb5ab968932d69a3f0d9b6b693fe17575619e619ef96f",
+    "bytes": 4781,
+    "source_lines": 216
+  },
+  {
+    "path": "NJED/graph_files.pas",
+    "sha256": "abec6b5e933c8302f06d6bce537083a485ba2a868f70702909d2603a8575a0e0",
+    "bytes": 17081,
+    "source_lines": 751
+  },
+  {
+    "path": "NJED/image.bmp",
+    "sha256": "52ab261c8033873fb74cf7f4f4841cde7b1dc1f5be3f6baf3036c1aeae91483b",
+    "bytes": 4632054
+  },
+  {
+    "path": "NJED/image.png",
+    "sha256": "da36a36f09757ba3d4b350a0db1baa76aaad0f7fcaf8267702ae506cc0a8e870",
+    "bytes": 2325238
+  },
+  {
+    "path": "NJED/jdh_jdl.pas",
+    "sha256": "e08534a702a0a7313a93beb161263d26c236c9e17dd793cb8593444ea0b4c311",
+    "bytes": 2257,
+    "source_lines": 116
+  },
+  {
+    "path": "NJED/jed_plugins.pas",
+    "sha256": "ebed7d976e1996d501e3578ef32d11a723208ee9fe0c3c152a1da1aa14a6baa6",
+    "bytes": 28760,
+    "source_lines": 773
+  },
+  {
+    "path": "NJED/jed_plugins2_.pas",
+    "sha256": "f5612be084a3bd52618de3e7a46d1af619d89b35b4ccef3a96a2e2ce11fb05b0",
+    "bytes": 22103,
+    "source_lines": 616
+  },
+  {
+    "path": "NJED/jed_plugins3.pas",
+    "sha256": "a69e530c008750c7932c8a264188c739f1e50cfec7cc3e43721e4454dc28b924",
+    "bytes": 18985,
+    "source_lines": 615
+  },
+  {
+    "path": "NJED/jlh_jll.pas",
+    "sha256": "c0f21c1e67d7ea24657363fb9dedae2a18d2f363e609cf5bad7359df6c999ce6",
+    "bytes": 2217,
+    "source_lines": 114
+  },
+  {
+    "path": "NJED/lev_utils.pas",
+    "sha256": "469cbe84c11ff33b3b4bf960b235839de945ed9aabc0fe89b3b5560b048ce954",
+    "bytes": 166125,
+    "source_lines": 6656
+  },
+  {
+    "path": "NJED/level_io.inc",
+    "sha256": "31aadea8c5ac7580a522a14d62efbfb7494a3833169e0d6c82f23b2f31507b64",
+    "bytes": 26770,
+    "source_lines": 1207
+  },
+  {
+    "path": "NJED/misc_utils.pas",
+    "sha256": "bd9cb38c2ec7af8684ce2cb5de44ffbfb626921342e018c435fa52242458e6ff",
+    "bytes": 19113,
+    "source_lines": 766
+  },
+  {
+    "path": "NJED/notes.txt",
+    "sha256": "30bceae7e3168e52ca75baf2200f433782e45cd92888044fe24b0c0c3f57aa07",
+    "bytes": 9526
+  },
+  {
+    "path": "NJED/obj_import.inc",
+    "sha256": "24d4d7bb0b58abcfd0aafc543a9685659832c49d8f17637e17517dad0da13fec",
+    "bytes": 9879,
+    "source_lines": 432
+  },
+  {
+    "path": "NJED/old OGL_PRender.pas",
+    "sha256": "bc1b618c0aa03401b1d8b5ab4ee9d8059218f1505fa8724318bb0aa57514085f",
+    "bytes": 20556,
+    "source_lines": 932
+  },
+  {
+    "path": "NJED/pj3do_io.inc",
+    "sha256": "7faac5dd063c1018f9b0a9ce7b72526926f1f2f5e3ea033f4888fdec1bed6128",
+    "bytes": 7210,
+    "source_lines": 328
+  },
+  {
+    "path": "NJED/pjGeometry.pas",
+    "sha256": "94581c3bee0d47f05c2bd849303df084723b5eabfb7ad2d6f55bc3e26fcc8c94",
+    "bytes": 6036,
+    "source_lines": 293
+  },
+  {
+    "path": "NJED/pjkey_io.inc",
+    "sha256": "9441dbb86b72e60e7e2c8ffcab03b2873d73d050d131006f3783023a6b18377f",
+    "bytes": 2856,
+    "source_lines": 127
+  },
+  {
+    "path": "NJED/sed.ini",
+    "sha256": "f15242aed0c319f0b0d6d59ea76f511d37952a86bcd560ba5e55d0cc553e7ec9",
+    "bytes": 1579
+  },
+  {
+    "path": "NJED/sft_persp_render.pas",
+    "sha256": "e95f9584591fd5eaa7ff253289ff8a00abc986c93eefb7191fa22bc569414c7f",
+    "bytes": 10751,
+    "source_lines": 494
+  },
+  {
+    "path": "NJED/sft_render.pas",
+    "sha256": "840025435e8f021341b9c9ddc7d80fc782cd2891c47de587885d127c66529738",
+    "bytes": 16781,
+    "source_lines": 738
+  },
+  {
+    "path": "NJED/tbar_tools.pas",
+    "sha256": "f1c4f8519501c557236e6e8cbdb725fd683ecd70a2080275cf4da85f2f1f7fbf",
+    "bytes": 1370,
+    "source_lines": 74
+  },
+  {
+    "path": "NJED/tmp_load3do.pas",
+    "sha256": "2e13e1ead6e754999938aa6b5cf5204522517a77695521c667e5003e628407ee",
+    "bytes": 4394,
+    "source_lines": 211
+  },
+  {
+    "path": "NJED/u_3doform.dfm",
+    "sha256": "602f273ec6e42804ce6c18596841517104ceb62ba2eb30b65f42e31bf1f4c6a9",
+    "bytes": 2098
+  },
+  {
+    "path": "NJED/u_3doform.pas",
+    "sha256": "a2649ea3dad13949ebaf3d23150e958133fdc127b34967dd1577b626e8ba3f6c",
+    "bytes": 10662,
+    "source_lines": 462
+  },
+  {
+    "path": "NJED/u_3dos.pas",
+    "sha256": "218691155dcbcb292627123a77c562083a5f8d34be99c6ebf0043042bb517582",
+    "bytes": 7017,
+    "source_lines": 333
+  },
+  {
+    "path": "NJED/u_DFI.dfm",
+    "sha256": "0bdbba9fb9fb80f01f9dc7bfa6080c3094c644ad38c9d69f3a9b9b64b29fbdc8",
+    "bytes": 744
+  },
+  {
+    "path": "NJED/u_DFI.pas",
+    "sha256": "5e56afc6bdd7ab1e4ab8721574c840a962410dfcfdd6489848ac8a580f5f3a61",
+    "bytes": 760,
+    "source_lines": 39
+  },
+  {
+    "path": "NJED/u_StrEdit.dfm",
+    "sha256": "da96a964a6c0eb296e234e8ca3ab86e7fd14d36a63835a0ab5baeb27ce1bb31a",
+    "bytes": 879
+  },
+  {
+    "path": "NJED/u_StrEdit.pas",
+    "sha256": "d2179b7bd216bfc199c835255e5fc6ad35cd0d720cf8a6acda6cfe940fc05c2f",
+    "bytes": 1867,
+    "source_lines": 91
+  },
+  {
+    "path": "NJED/u_coggen.dfm",
+    "sha256": "8a98b292622b17b00a58abc18eda0d78efcbabbd45ad611f4136eeae5c7d1ff6",
+    "bytes": 2151
+  },
+  {
+    "path": "NJED/u_coggen.pas",
+    "sha256": "959f2cfd871bc8fab29f4335aa32bb12e2056ed49dc8997a0b44c795b49226e6",
+    "bytes": 5598,
+    "source_lines": 231
+  },
+  {
+    "path": "NJED/u_copypaste.pas",
+    "sha256": "a3659cdac35204537784fbe44fdbcf967e0c16758dd38bcb3f60a468e1051160",
+    "bytes": 8539,
+    "source_lines": 416
+  },
+  {
+    "path": "NJED/u_cscene.dfm",
+    "sha256": "760a4d11a72a6395b5848693411c4e935e09dd269114a81d49245b9046300ce7",
+    "bytes": 193172
+  },
+  {
+    "path": "NJED/u_cscene.pas",
+    "sha256": "8603d19a9fe4fc402f3359c75183064242f531360aaffdcaf3561b2287603e2a",
+    "bytes": 3225,
+    "source_lines": 135
+  },
+  {
+    "path": "NJED/u_errorform.dfm",
+    "sha256": "dede4b194a7ba7663d82ca128e9c6e6bd97b388538f80a4d3601851a159ebd67",
+    "bytes": 805
+  },
+  {
+    "path": "NJED/u_errorform.pas",
+    "sha256": "52214d30be9d3604d0c2f4a70321deef6509e2c128600d7d746899bdf7bc1093",
+    "bytes": 1869,
+    "source_lines": 93
+  },
+  {
+    "path": "NJED/u_multisel.pas",
+    "sha256": "094887a53f351a0532c83b5b6f72643ae6dd778b653d1952a2fb37188e9d6ae8",
+    "bytes": 5906,
+    "source_lines": 282
+  },
+  {
+    "path": "NJED/u_pj3dos.pas",
+    "sha256": "41021e73a7bc1862af8bb3d779bf2cfc6c983f5da75612724f73d4d75a976aab",
+    "bytes": 7459,
+    "source_lines": 371
+  },
+  {
+    "path": "NJED/u_pjkey.pas",
+    "sha256": "2fba08024dfdadb785be7878a46930f31d985e8449abd35ee05375e18a37cc76",
+    "bytes": 4513,
+    "source_lines": 220
+  },
+  {
+    "path": "NJED/u_templates.pas",
+    "sha256": "f9f330f46e86ff752970cf6d44e923a9a82e50975dc5c7434b33b672474ecba9",
+    "bytes": 5821,
+    "source_lines": 277
+  },
+  {
+    "path": "NJED/u_tpledit.dfm",
+    "sha256": "a68104160d6f54e4e6fc640958d34d9109cd3eb69a2745c5d5c425e89f3bb6fe",
+    "bytes": 625
+  },
+  {
+    "path": "NJED/u_tpledit.pas",
+    "sha256": "c1f4eb8d7e4304fa6d811160b65811caf72c59dbe7a53594866c705f5f865b42",
+    "bytes": 408,
+    "source_lines": 27
+  },
+  {
+    "path": "NJED/u_undo.pas",
+    "sha256": "f20560d00125821a9dc90f37cb35f7bdc1aeeea81b8f4ef7f9f137df01bcb8ba",
+    "bytes": 25250,
+    "source_lines": 1209
+  },
+  {
+    "path": "NJED/values.pas",
+    "sha256": "e1171a831be8b085564408a4e4fc38da50ed863136d67a060cd087a9997a0bc1",
+    "bytes": 12453,
+    "source_lines": 513
+  },
+  {
+    "path": "NJED/ver_info.RES",
+    "sha256": "27b92790cdda31354b0a6baad9e9434499886d0f7ed81a771aa3d415c45045ec",
+    "bytes": 952
+  },
+  {
+    "path": "jedlib/.gitignore",
+    "sha256": "38217bcf2c73ed5e586fbe03772761b783e844839812d340726769d06d879b0b",
+    "bytes": 299
+  },
+  {
+    "path": "jedlib/.project",
+    "sha256": "c09b8510683de40f8f979e2725349e38d11552f2b1cfd008828e1a0d1d8b8708",
+    "bytes": 386
+  },
+  {
+    "path": "jedlib/.settings/org.eclipse.core.resources.prefs",
+    "sha256": "1a5b17d8a429f89e30d0d5fc6e12e81d37ea8f6f3f4a206383f4af8564292ac0",
+    "bytes": 57
+  },
+  {
+    "path": "jedlib/.settings/org.eclipse.m2e.core.prefs",
+    "sha256": "773c6d111354b495e68035a89eddbe5881224fea04a237d27ed5ca138835ffd7",
+    "bytes": 90
+  },
+  {
+    "path": "jedlib/LICENSE",
+    "sha256": "7d2368a6047fa46bd7d6a6ea6333460d2aaebec3fadbc2e7e06f6852eb070590",
+    "bytes": 1090
+  },
+  {
+    "path": "jedlib/README.md",
+    "sha256": "ff5dce36cc41d26ff4db1e039e004487d670d58b1db2b843d83107af778ec426",
+    "bytes": 325
+  },
+  {
+    "path": "jedlib/automation/.classpath",
+    "sha256": "8e8a6f8bcf2b5c2a1f4e772fc27a41757071c01522ae8a4b376f3498d5171244",
+    "bytes": 1066
+  },
+  {
+    "path": "jedlib/automation/.project",
+    "sha256": "e930cba778323618b43368c9caf48095af71c81e4e0810aea3de39bd3ab2723b",
+    "bytes": 569
+  },
+  {
+    "path": "jedlib/automation/.settings/org.eclipse.core.resources.prefs",
+    "sha256": "ece9eb730b2048a96307d8b1ecc199fc7510188cca75e34f28ae96967c419f00",
+    "bytes": 88
+  },
+  {
+    "path": "jedlib/automation/.settings/org.eclipse.jdt.core.prefs",
+    "sha256": "70f6f310c85ad09bf0ac18af451043ed1a011a5b9af65ccafd862f64cad26d9c",
+    "bytes": 429
+  },
+  {
+    "path": "jedlib/automation/.settings/org.eclipse.m2e.core.prefs",
+    "sha256": "773c6d111354b495e68035a89eddbe5881224fea04a237d27ed5ca138835ffd7",
+    "bytes": 90
+  },
+  {
+    "path": "jedlib/automation/pom.xml",
+    "sha256": "b50f292f311657ce0bd8883a7a58a42e2b10a93014db10a59f40cbf1bb7f7d2d",
+    "bytes": 874
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Axes.java",
+    "sha256": "775bb4b1e852db481fdbb0930ca48f4df9a239ddcd293de1686de47365bdd9dc",
+    "bytes": 1988,
+    "source_lines": 106
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/BoundingBox.java",
+    "sha256": "5bcff75283cb9640d341ce80cc3c883ef6f95535b09e3522ef7a256d2378e56b",
+    "bytes": 1838,
+    "source_lines": 78
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Cog.java",
+    "sha256": "840d18e24f592190ecc22b44e0330b5044e2dce34a4a4824a679e7bd6186fdc6",
+    "bytes": 4962,
+    "source_lines": 255
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/JedApp.java",
+    "sha256": "b16284ca51dfa6057fcd1ded8231ed55ea52fffae3096e7c27a79975f9b30eaa",
+    "bytes": 50816,
+    "source_lines": 2456
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/JedConstants.java",
+    "sha256": "ae4ff8167dc590730aabbb35daf3f2bcbaa944c8e01c4941eb37b5f846426074",
+    "bytes": 3560,
+    "source_lines": 183
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Level.java",
+    "sha256": "33b7bb27d60c3307dc98ff5fe0c7af26db0f4826bbaefb2989715ce9d28edd13",
+    "bytes": 7043,
+    "source_lines": 363
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Light.java",
+    "sha256": "443e48ef6214c0c0eb32f26ae1135083cb806f6e154fb6694cca391074b848d5",
+    "bytes": 7321,
+    "source_lines": 378
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/LightIntensity.java",
+    "sha256": "26f9b0396e8494d026ea4db2c3535fc704f60f1173cb3a422a33419549740d35",
+    "bytes": 1429,
+    "source_lines": 74
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/OleObject.java",
+    "sha256": "5ee6a3c39c33890efebdf52fd7c060ef1dc2c1c51ef471204a49bf1553438bf8",
+    "bytes": 6740,
+    "source_lines": 229
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Orientation.java",
+    "sha256": "bbaa8b24b3c6f5773bca9095629b4f2bb96d6ad6413347a6e8652e12d9df4019",
+    "bytes": 1937,
+    "source_lines": 99
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Sector.java",
+    "sha256": "42454d19305d8e9260472ab57f2c94a9eabe5ad1a573b2eece7bc0c9cc167e31",
+    "bytes": 10985,
+    "source_lines": 564
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/SectorSurface.java",
+    "sha256": "30cf502a903c9469636d8541598eb7a7c69e6898aa826411a54a505f37892b12",
+    "bytes": 1468,
+    "source_lines": 73
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/SectorSurfaceEdge.java",
+    "sha256": "7f989b49d17cd618c624f3635469bb3ccbcf36659a8c6bf2e4c53194b0701e75",
+    "bytes": 1945,
+    "source_lines": 97
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/SectorVertex.java",
+    "sha256": "fd5e8487b1b0d7c61c0451922173ed397987f7adb35dc0b4642659635455e945",
+    "bytes": 1445,
+    "source_lines": 73
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Surface.java",
+    "sha256": "818aef40f93870ef0aa90234de7d5c1adfbe8ea967a5961cd73641e5f295adcd",
+    "bytes": 18267,
+    "source_lines": 900
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/SurfaceFlags.java",
+    "sha256": "72fc53d929bc237fcdcb6d19e6a683e015fddc0695f3965b571808d2e3db69b7",
+    "bytes": 2016,
+    "source_lines": 97
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/SurfaceModes.java",
+    "sha256": "0481810d62f93772208a76be3191c817772ecae03907ecf13c64eae7d9d8e202",
+    "bytes": 1938,
+    "source_lines": 97
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Templates.java",
+    "sha256": "e28b32d4d4288d7f1cb06a29ca561fd2ee25a314b5f5da3083c3ca1e8f2d6d22",
+    "bytes": 6446,
+    "source_lines": 297
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Thing.java",
+    "sha256": "474645a6348dfedcd9e1f63c4c5c00608a625dfe0155ba79715320283bf03d0a",
+    "bytes": 8973,
+    "source_lines": 456
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/ThingFrame.java",
+    "sha256": "14f9b2b71d4a71cf66f39f3d25ee4a9772b2f2eab8183313db6721c2cf0f3dc4",
+    "bytes": 1398,
+    "source_lines": 73
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/ThingProperty.java",
+    "sha256": "71f836946cc74a1088ee44f54b91972f1fdfa7c4a36be403c7dc5ae85b787594",
+    "bytes": 1583,
+    "source_lines": 81
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Tint.java",
+    "sha256": "40fc7665ef431fd8865320ccde4b157fec7e2a005cdd6c1c4ec4e5476c93514e",
+    "bytes": 1709,
+    "source_lines": 97
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/UV.java",
+    "sha256": "c2481cd983e637fb0f70e30ad770e93f057536f790ba098e2578ff0c88eb6289",
+    "bytes": 1134,
+    "source_lines": 73
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/Vector.java",
+    "sha256": "8881b0b11c182a360eea2e23ba35db86a48248bf916dd444297c60b55673dba4",
+    "bytes": 1494,
+    "source_lines": 96
+  },
+  {
+    "path": "jedlib/automation/src/main/java/net/jkhub/jedlib/automation/package-info.java",
+    "sha256": "cdd78ff1af38fa28f1eed6ca8c1c9bf4e8072149089ec41816e4e75c38a5564d",
+    "bytes": 117,
+    "source_lines": 4
+  },
+  {
+    "path": "jedlib/core/.classpath",
+    "sha256": "8e8a6f8bcf2b5c2a1f4e772fc27a41757071c01522ae8a4b376f3498d5171244",
+    "bytes": 1066
+  },
+  {
+    "path": "jedlib/core/.project",
+    "sha256": "f2becd5fd914870432acaa2655e329153154dc800c3633ae0e52df8d6bdce47b",
+    "bytes": 563
+  },
+  {
+    "path": "jedlib/core/.settings/org.eclipse.core.resources.prefs",
+    "sha256": "1a5b17d8a429f89e30d0d5fc6e12e81d37ea8f6f3f4a206383f4af8564292ac0",
+    "bytes": 57
+  },
+  {
+    "path": "jedlib/core/.settings/org.eclipse.jdt.core.prefs",
+    "sha256": "70f6f310c85ad09bf0ac18af451043ed1a011a5b9af65ccafd862f64cad26d9c",
+    "bytes": 429
+  },
+  {
+    "path": "jedlib/core/.settings/org.eclipse.m2e.core.prefs",
+    "sha256": "773c6d111354b495e68035a89eddbe5881224fea04a237d27ed5ca138835ffd7",
+    "bytes": 90
+  },
+  {
+    "path": "jedlib/core/pom.xml",
+    "sha256": "1eb9d21f2110749f39bf4dae9f29c1a3d727eedb8940b6d41ccbe31178dc794b",
+    "bytes": 611
+  },
+  {
+    "path": "jedlib/pom.xml",
+    "sha256": "db8a758d2da149751c201b62c1cc36d48e384bfbfa5ab70324784cbc21b4fe01",
+    "bytes": 3940
+  },
+  {
+    "path": "JKL2OBJ/.gitignore",
+    "sha256": "8bc9ce65401073d905cdb09d2033f6dfa74855e640a1a31aa90e81ec4d410f88",
+    "bytes": 701
+  },
+  {
+    "path": "JKL2OBJ/Convert.js",
+    "sha256": "e76632227d368d31aa77a772c35569df4a06db40a99a65b83fd818db51028aeb",
+    "bytes": 5818,
+    "source_lines": 248
+  },
+  {
+    "path": "JKL2OBJ/LICENSE",
+    "sha256": "85bdad3fc802e00164ed87dfb8f4adbe46c7b734e2c0286395bb4a8f2c74a361",
+    "bytes": 1089
+  },
+  {
+    "path": "JKL2OBJ/MATParser.js",
+    "sha256": "cd63540747efa6e6d24b5dd4c0ffb9daa6597a1c288f4306516050f4a1b67dda",
+    "bytes": 3594,
+    "source_lines": 164
+  },
+  {
+    "path": "JKL2OBJ/Parser.js",
+    "sha256": "7dd10d9127f5fa8b3b2b9d445a3bad6266bc540626c5881532116c0c9762067e",
+    "bytes": 1528,
+    "source_lines": 80
+  },
+  {
+    "path": "JKL2OBJ/README.md",
+    "sha256": "51fd8d26f32c1c3471b09f7b9f70164ba995d88e433307a65ab84154adbbf356",
+    "bytes": 66
+  },
+  {
+    "path": "JKL2OBJ/package.json",
+    "sha256": "92137bb6ba316a87f73609018f9ac94ab719641d3eda37602f40edf25c55d32f",
+    "bytes": 237
+  },
+  {
+    "path": "go-jk/.gitattributes",
+    "sha256": "a4806f50a9fc06e80a30a7535c26bfec16a133e7a0e8e173985fa091cd5f7a3f",
+    "bytes": 150
+  },
+  {
+    "path": "go-jk/.github/workflows/go.yml",
+    "sha256": "bad7484cd62dd6ee168819640bf4f590a6a27408615ccfad07ed9e41ca3f2afd",
+    "bytes": 707
+  },
+  {
+    "path": "go-jk/.gitignore",
+    "sha256": "a7800f45e33e5a0a708b04ed828b9f8610e5e79194caa9c40eff6a458b8e7b20",
+    "bytes": 310
+  },
+  {
+    "path": "go-jk/.vscode/tasks.json",
+    "sha256": "41048f201972bd84a758793849ca9cdb16d02c33bdc20b2dcfbd680546bbef25",
+    "bytes": 411
+  },
+  {
+    "path": "go-jk/README.md",
+    "sha256": "34660e4219f2d602122bafa2f96be04fc7f05c6a28889ad08e2b56a813861d8a",
+    "bytes": 442
+  },
+  {
+    "path": "go-jk/_jkspecs/3do.htm",
+    "sha256": "95e294a3d52b509ea496f71fb5f390ecb5bee30c83c4ad6deca818dd312aeaa0",
+    "bytes": 9267
+  },
+  {
+    "path": "go-jk/_jkspecs/README.md",
+    "sha256": "2fe6643fac182aa0d1e9fb5d658baadceaafea1feefecac921f22bef825da4f1",
+    "bytes": 108
+  },
+  {
+    "path": "go-jk/_jkspecs/ai.htm",
+    "sha256": "2dd75b0a3c39a2de97a5cdab1e1b224c3297e93ba57fe7777ee5f8ddc0f30044",
+    "bytes": 3821
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_blind.htm",
+    "sha256": "4d0c958a589ab27466235aa23df5b748c464f4346fe896979084cc1681af2f21",
+    "bytes": 1633
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_circl.htm",
+    "sha256": "8dfc5d1d8b6f903a6b46ec8d9d1e5b76c35a48434d28ad46123c99e3980e3b02",
+    "bytes": 1428
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_dodge.htm",
+    "sha256": "d35834a9c3bfcab7d68c7576fe9b9d7283f121e4fa4b327305849f9a7670d80a",
+    "bytes": 987
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_flee.htm",
+    "sha256": "f921ab18652316154bd65392e348638fd945014f705d18c58174cb3c7bd1a2f1",
+    "bytes": 1197
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_follo.htm",
+    "sha256": "47227ca33477327315bb6982f14d26d49b121bd58ccdc3a33732581856d41500",
+    "bytes": 1275
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_force.htm",
+    "sha256": "1d75733d75078e7bb8853a2dc463c14dbe2d978d9b3bf7b3cfe8ff892cd39ed3",
+    "bytes": 1896
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_hitan.htm",
+    "sha256": "e3c8189477b2a2ac9a2df9dd583ed79d8ed7bd0550a00c4546eed1dc6bd14c79",
+    "bytes": 965
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_jump.htm",
+    "sha256": "50760eed45f101a3af81bea35074815b836ba96693bafd2b0d9cd7b9b5381851",
+    "bytes": 1012
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_leap.htm",
+    "sha256": "b6b360471c87f1a295700a73f98dd8dbb4834878c3c2f9240a0eb828657c2726",
+    "bytes": 1270
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_liste.htm",
+    "sha256": "6ac67a654a87deccb60cbb1c11754f05861910d41112983174630d5c92e652ad",
+    "bytes": 985
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_lobfi.htm",
+    "sha256": "f8ead17f4448f99fee5fd37e767b5d76517d49062de0609bf732ff2e8b336930",
+    "bytes": 1375
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_look1.htm",
+    "sha256": "ad583075f76d02a7fc2b46234ce9e1ebeefdbeb10fdf12f17b3968ac1b9e98e6",
+    "bytes": 1048
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_lookf.htm",
+    "sha256": "ef1505cca5fc598313e3323a409a7646ad3432e8cfe1db84f4c595bc2e40e967",
+    "bytes": 1023
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_menu.htm",
+    "sha256": "0ead09510f2eed2ee2d4b81d256d7419a110d35cfb37606ac588eb88f952758f",
+    "bytes": 2015
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_opend.htm",
+    "sha256": "824f2bc7521e7573cb5114ff1b46fb457993bb02b4a818f1176fe349cf58d3a7",
+    "bytes": 538
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_prima.htm",
+    "sha256": "5cea1b49af2d7a5e757e9356d54918f6295bece6afb6d9eb8180e5fa9dc81a4f",
+    "bytes": 1718
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_rando.htm",
+    "sha256": "d5e5d5be5fe767565959a6a87e4714a18c3dc9627149c2a7b0cec258c2f410fa",
+    "bytes": 945
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_retre.htm",
+    "sha256": "05df6c70d6f270c2889447d9efadacac663fc571257466c58656984d381e5595",
+    "bytes": 1179
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_retur.htm",
+    "sha256": "fdd0a67ed63a47abbc1a940a52b23bb827b97c5165a3897c7fa7273062729ac5",
+    "bytes": 573
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_roam.htm",
+    "sha256": "2b42b0828c3e5570ef1465973da5b2bb8961bf1dbb91ed78d89d6121a01d08df",
+    "bytes": 1037
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_saber.htm",
+    "sha256": "bc63b8bb6113254a093096ebd899008cac09b233afec65ab55d056c60be21b9a",
+    "bytes": 1652
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_sense.htm",
+    "sha256": "7f29c38ae4fbb04f0a392ac49f28b7b8a0712a377c746858b5cc9f19bca9c890",
+    "bytes": 1166
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_speci.htm",
+    "sha256": "ebf2b2466bb6540099debae1bdf750a071210cd869dc2f79cdfb871bd9c40f8f",
+    "bytes": 1290
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_talk.htm",
+    "sha256": "e1e29f7df13dfd4f9d91171b44634cd49fce918b82f53ca8a3b7285e6096da92",
+    "bytes": 1122
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_turre.htm",
+    "sha256": "fd842ae8af2bf70a3266de301fbf693685c660177aa8594649b15862c96918ff",
+    "bytes": 1566
+  },
+  {
+    "path": "go-jk/_jkspecs/ai_withd.htm",
+    "sha256": "44f3422755a5d9edc5010167e56c1304c4a74764dcd734eb53bfa99de77df4ad",
+    "bytes": 982
+  },
+  {
+    "path": "go-jk/_jkspecs/bm.htm",
+    "sha256": "f5055a6df8abfe6c68acf619668f2a0832d2227c0622ceb03c07d39bfa18a150",
+    "bytes": 4506
+  },
+  {
+    "path": "go-jk/_jkspecs/cmp.htm",
+    "sha256": "98262304182d4d4fe16900781e6299c377142b9b096dd3316724d42ca6800784",
+    "bytes": 1894
+  },
+  {
+    "path": "go-jk/_jkspecs/cog.htm",
+    "sha256": "43a14bde7a49aeea3e3d6340c2356bd0979a732550ef2c962200fb5fbf0ade13",
+    "bytes": 15440
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_actor.htm",
+    "sha256": "88845dcbaf31687b21dead255e217104a6eacda50a5916c5ff4169b320d07fb4",
+    "bytes": 7117
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_bins.htm",
+    "sha256": "b10ee62d3e2d23020dd71c6271b9a451aa4577d374b7415f56a00113f508faaa",
+    "bytes": 11072
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_flags.htm",
+    "sha256": "e0daa71c7cebe63a58964ea3377dddae043ddee34573cef63272b317fbc6b912",
+    "bytes": 20442
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_inventory.htm",
+    "sha256": "2723c4fa7fb43a2f8c1a522da0a3adcdc530ec475256372aea86def5c7919d3d",
+    "bytes": 4777
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_keys.htm",
+    "sha256": "b890d6da2845eab028a321dde9f1a3c04605f68646374697a7064adcf0c39246",
+    "bytes": 3431
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_menu.htm",
+    "sha256": "95270d721728386e556bc1e2a6a13e40512c1a470f1a366babd271a14fe27532",
+    "bytes": 2049
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_message.htm",
+    "sha256": "2aaa1345c874f9bd98139f93e9c6e0db503bc58a1f2cfb46aa625dbcf08437f3",
+    "bytes": 7023
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_mots.htm",
+    "sha256": "2c7286da0d679baca33956b51490809c431cf568f83aef5b0ad5972aba691e50",
+    "bytes": 23105
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_multi.htm",
+    "sha256": "4a28f4886886b04c9185401e15813ca34523a7647fd8af4836466624fda65a6d",
+    "bytes": 11068
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_output.htm",
+    "sha256": "a1427d0791bc83e57d7ae51a968cb65c2e585006ca9e5170d0b026f732b277aa",
+    "bytes": 5334
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_player.htm",
+    "sha256": "022fee882eebc3a7fe4d16235664018482bf5060e97187cf2038b0688c1d0b60",
+    "bytes": 2475
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_sector.htm",
+    "sha256": "8884937279452b4bb0b8fdf9ca96af5f8f78910e28aaa7fc305ae3142364f0e6",
+    "bytes": 7109
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_sound.htm",
+    "sha256": "262240c531de792004201e8fbfea5fcd59428331236f26f58f7970b38bbe6c53",
+    "bytes": 4783
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_special_eff.htm",
+    "sha256": "a3b45ab41e1d6885f6b44477ba32ea98cf8ed9ad63d198f390977b9a96c8c15f",
+    "bytes": 8715
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_strings.htm",
+    "sha256": "5744a45070ca88fc1b07d82c6e221eb26cbcd53a1838e939124bb4ddca7ca89f",
+    "bytes": 4111
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_surface.htm",
+    "sha256": "ff1a3019ecd633607090e820d766c614db86fde4e1adc6d6691750299e282f64",
+    "bytes": 10102
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_sym_ex.htm",
+    "sha256": "4bb4be285829c060fa9c1c40deb072323360e82a9b67617888f7912572823137",
+    "bytes": 10291
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_system.htm",
+    "sha256": "52edef80635f26ab2c5f9763ff807a23bd3e4a902bb498f6c67d28b75da36f19",
+    "bytes": 19380
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_thing.htm",
+    "sha256": "9f177e7871622cc5af368e95db98abf454efbc235d58c9f1dfd0838fcd8204e5",
+    "bytes": 27396
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_vector.htm",
+    "sha256": "da090c5ab7c92697da4e6a391e59c9a2c37e37655c9857c9c089fb9777a170e4",
+    "bytes": 3259
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_weapon.htm",
+    "sha256": "746dc46fc4ed3073d471593c416c573215c4faeb66e63c3ae9146cb60a7996aa",
+    "bytes": 5002
+  },
+  {
+    "path": "go-jk/_jkspecs/cog_world.htm",
+    "sha256": "4d6824d2681b52b2a6491c1fb7dd57adde1b09071a46079afef10c143220fa5f",
+    "bytes": 3201
+  },
+  {
+    "path": "go-jk/_jkspecs/command.htm",
+    "sha256": "36b9e2e7ee39f98d72b2f48027303b240d8ffe1061d6497a366e77ff18c9fa06",
+    "bytes": 3060
+  },
+  {
+    "path": "go-jk/_jkspecs/console.htm",
+    "sha256": "df5c9048dbe3d2139ef6cebb3fe9ecde4fb1990b35844caed1764c24c7dce468",
+    "bytes": 3932
+  },
+  {
+    "path": "go-jk/_jkspecs/credits.htm",
+    "sha256": "765e508436258bd4ffa10469e5ba25659f0083ab860cc4c1dcd39a17904c299a",
+    "bytes": 3517
+  },
+  {
+    "path": "go-jk/_jkspecs/dat.htm",
+    "sha256": "ba3e9d5adb906e79e6154ce2c1db5a5abeeb329c55107eafe52754d267316c6a",
+    "bytes": 3802
+  },
+  {
+    "path": "go-jk/_jkspecs/episode.htm",
+    "sha256": "d73c2249f698e37623853ca580367a471f9260c36db1f4ef47360d7a00e45cd1",
+    "bytes": 3956
+  },
+  {
+    "path": "go-jk/_jkspecs/gob.htm",
+    "sha256": "78832dd0c948ca01d26014cec79c776b40e5b941cfd285773ac68fe8340526d6",
+    "bytes": 1665
+  },
+  {
+    "path": "go-jk/_jkspecs/index.htm",
+    "sha256": "45a39817bf0019a0b871c01e982ad85676dd16f2a25ccee4e107604fe9792e30",
+    "bytes": 742
+  },
+  {
+    "path": "go-jk/_jkspecs/index.html",
+    "sha256": "c54716cbb54c598612427dfd71e66b6f55ea01b7160d43623f6755ff03fc78eb",
+    "bytes": 402
+  },
+  {
+    "path": "go-jk/_jkspecs/info.htm",
+    "sha256": "1cff4c4978693dc872aa54833cd5e8ab249d6d5c62c252559117884c7473bb2c",
+    "bytes": 924
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl.htm",
+    "sha256": "ac6e67e38795d7e1a410437fbcf06d9102fa79603d5025e6947777ec391cbefb",
+    "bytes": 21838
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_menu.htm",
+    "sha256": "0cf8cca80865f88b55883bd50d1fca14536ab5a9a415bae4803590d2f9bdb6bc",
+    "bytes": 2118
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_actor.htm",
+    "sha256": "444ab5ed77a81db4a04a11ebc71d86230eb70e886aab1ff8198f470255f0566f",
+    "bytes": 4252
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_explosion.htm",
+    "sha256": "bae7462335bbf989ea287921c65f822c17173f2726924c433135971d5eb88283",
+    "bytes": 2693
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_item.htm",
+    "sha256": "8c27fc10243ea48f1fb536d3ffedbb638d59463d66346739e52a1d938d2c9704",
+    "bytes": 1075
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_particle.htm",
+    "sha256": "d9b8b6272f62a47bb53a319f1fbde799ac74a80fe3129e7e8a7b923c35872956",
+    "bytes": 2476
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_path.htm",
+    "sha256": "70969403aa88a71f65d9a030a44fccb158af25cec6198ae825497a3ba244baf3",
+    "bytes": 952
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_physics.htm",
+    "sha256": "acd854aae71675998f1b9e02c6cd3927fb59c5951da10120d4e5e49431ebc516",
+    "bytes": 2825
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_t_weapon.htm",
+    "sha256": "6f0b36d5968a4f6bf28b4145bb7d6e1b7f542ab5c35caab6278fef22d7f70ea0",
+    "bytes": 3334
+  },
+  {
+    "path": "go-jk/_jkspecs/jkl_template.htm",
+    "sha256": "3cc5f9f788190b235b00710da65e4de8119de4798d0d8dabff2210c2952fec4f",
+    "bytes": 9302
+  },
+  {
+    "path": "go-jk/_jkspecs/key.htm",
+    "sha256": "ec137f0b0a8ac7d8682c1bdb0a32b7f0e22978d1a71af7806ca054e92d24fc41",
+    "bytes": 4311
+  },
+  {
+    "path": "go-jk/_jkspecs/mat.htm",
+    "sha256": "9465608dd55038727c1c0f81b579e9e15b4c6fd838b81ffe8a6791e712e64fa1",
+    "bytes": 3946
+  },
+  {
+    "path": "go-jk/_jkspecs/menu.htm",
+    "sha256": "c4c89935e3f17eff3e33d2466b4116e518abe839787c85172baff02f4367ba24",
+    "bytes": 1728
+  },
+  {
+    "path": "go-jk/_jkspecs/new.htm",
+    "sha256": "5adb3ebccd066b43506c33af127b94ebfa02c58c33a3355b777a2a1e16d588f8",
+    "bytes": 1213
+  },
+  {
+    "path": "go-jk/_jkspecs/par.htm",
+    "sha256": "bfd899766fbc9ef39025856e97c819d66c7c9ef5c1e2df600c1b5511fb3ebae4",
+    "bytes": 1886
+  },
+  {
+    "path": "go-jk/_jkspecs/pup.htm",
+    "sha256": "80f0c975c2a3e16cf05026a2094e12b26fea751a37b3decece2c8fb069b9b587",
+    "bytes": 3327
+  },
+  {
+    "path": "go-jk/_jkspecs/resmanage.htm",
+    "sha256": "2875df9d1cf6047ddfadb4d351524d02b19144d594c9e2926b82637603ff15c5",
+    "bytes": 2297
+  },
+  {
+    "path": "go-jk/_jkspecs/sft.htm",
+    "sha256": "e2ebdfd14cf53b04bec027dc6fa5083aa30bbfd395523febe1b41b45fab82836",
+    "bytes": 1895
+  },
+  {
+    "path": "go-jk/_jkspecs/snd.htm",
+    "sha256": "4fb39af7f77bdf3be7c80d21bbc1c8482bdee431997ab40706b0b528d22c0aaa",
+    "bytes": 1448
+  },
+  {
+    "path": "go-jk/_jkspecs/spr.htm",
+    "sha256": "8702bf6d29c51ef9c7f0d07a090eef2c87212e22afb629b8b92ce9d7df4fcd13",
+    "bytes": 1892
+  },
+  {
+    "path": "go-jk/_jkspecs/uni.htm",
+    "sha256": "1dee007fd850e9aaf2367a4851792236dfb902b623bf8e6ec532590f66450142",
+    "bytes": 4330
+  },
+  {
+    "path": "go-jk/_jkspecs/wav.htm",
+    "sha256": "a8a210b4256335ea63b45c736ce6a441ee3e8720ab0e7c415ad873057778ee93",
+    "bytes": 491
+  },
+  {
+    "path": "go-jk/_jkspecs/welcome.htm",
+    "sha256": "ab3fd468bbf45d583e7d681f91e8a6379ac30768e6be792a9705c3d87f269614",
+    "bytes": 3836
+  },
+  {
+    "path": "go-jk/_testfiles/3do/00crte6x6.3do",
+    "sha256": "279982ee5df023d8f8068ed9c210f4608b0f597c8151c85367723baba8b823cf",
+    "bytes": 5941
+  },
+  {
+    "path": "go-jk/_testfiles/3do/bryv.3do",
+    "sha256": "97fee774da01e15d7d019f53a9653c0d69ccd9b113fc921bf7c4403ee1202b7e",
+    "bytes": 32719
+  },
+  {
+    "path": "go-jk/_testfiles/3do/conv.3do",
+    "sha256": "48e4c0d2ee2605dc728e009a32740ce6f54b41561708570415554035dd955a2c",
+    "bytes": 32510
+  },
+  {
+    "path": "go-jk/_testfiles/3do/r2x1.3do",
+    "sha256": "4c67411c1beded0ad49aca751b4cbd954fa7d9f48732c091dbf3f520153a3a03",
+    "bytes": 4275
+  },
+  {
+    "path": "go-jk/_testfiles/3do/rystr.3do",
+    "sha256": "629e05e043259ec864ba623a494eb5e2c46b0429c52e639dbcb372d3573331b5",
+    "bytes": 237078
+  },
+  {
+    "path": "go-jk/_testfiles/3do/statpole.3do",
+    "sha256": "c4b85706ea78ffd53d28ab03c6a5bb8698e08e50b3ed19d1bd0aa7d9d758e22f",
+    "bytes": 22485
+  },
+  {
+    "path": "go-jk/_testfiles/8twalk.key",
+    "sha256": "79726b83e5d1d461488af1cb126ee5929f98dd8b39f418b8eebb7734ff1b0628",
+    "bytes": 40289
+  },
+  {
+    "path": "go-jk/_testfiles/force_heal.cog",
+    "sha256": "ad43aeee9a12a2d876502b196534e334179f2cf8918a2f1e05be4a721c00cb31",
+    "bytes": 2663
+  },
+  {
+    "path": "go-jk/_testfiles/jkl/01narshadda.jkl",
+    "sha256": "bd138ec5ae500940d0b7a914084eb62201a531e014983827b4b2c8828a2dd933",
+    "bytes": 1508035
+  },
+  {
+    "path": "go-jk/_testfiles/jkl/08escape88.jkl",
+    "sha256": "dbb44d3112f50226b9e92622f09e9f7d22507d56dcdd20f61186a22024480558",
+    "bytes": 1737534
+  },
+  {
+    "path": "go-jk/_testfiles/jkl/m_boss15.jkl",
+    "sha256": "1f8502deba0220a3f39a2a3fb2f638ecf71b214f127b74d47ac482194e907458",
+    "bytes": 323132
+  },
+  {
+    "path": "go-jk/_testfiles/ryidleg.key",
+    "sha256": "b88108c5466e7521216609d3a3a5d3bc8e4a522a349443d0661a400d5e920975",
+    "bytes": 64099
+  },
+  {
+    "path": "go-jk/_testfiles/rystr.pup",
+    "sha256": "a50841074e4968c8c4cde7464de3c11df7aba4f9ebd30b47933729654e037b2a",
+    "bytes": 1828
+  },
+  {
+    "path": "go-jk/camera/camera.go",
+    "sha256": "3dd7dbf1aca78d7a9b60747499d8ebc8a15c111807fecc8013c7a3947cdedb7d",
+    "bytes": 2542,
+    "source_lines": 93
+  },
+  {
+    "path": "go-jk/convert/3do2obj.go",
+    "sha256": "816a270458107d36bac63ff763fb98c552f9db640b062a099481b0c1dd62d0d0",
+    "bytes": 1049,
+    "source_lines": 51
+  },
+  {
+    "path": "go-jk/go.mod",
+    "sha256": "bc80fd8b23e7e2c828f1a336930c7bfab3dfae7420f400b1250ccb9eef9739f1",
+    "bytes": 428
+  },
+  {
+    "path": "go-jk/go.sum",
+    "sha256": "998a1b8eba1919cbcd5cb497d394d352467e5f5800270342148f9e5fae1134af",
+    "bytes": 1586
+  },
+  {
+    "path": "go-jk/input.go",
+    "sha256": "3bcbd6d0f93ef9947ddbd4ce2a03524140e1b5a695ccc6f0bc8b5c9224ce6b9d",
+    "bytes": 2207,
+    "source_lines": 89
+  },
+  {
+    "path": "go-jk/jk/gob.go",
+    "sha256": "4949b96f6fec591ec144fbb49179809a62a756bd781d8e822dacbc4849dde272",
+    "bytes": 2157,
+    "source_lines": 110
+  },
+  {
+    "path": "go-jk/jk/jkparsers/3doLineParser.go",
+    "sha256": "c33dc091293bc3c3d98e82ba4f4c2c1d84bee36cac13328491312b183720ad98",
+    "bytes": 7674,
+    "source_lines": 319
+  },
+  {
+    "path": "go-jk/jk/jkparsers/3doRegexParser.go",
+    "sha256": "d097c7c1d4032be37d658e74507f8a5fa837d106101c7e2c88e46c3dc47a6bb1",
+    "bytes": 7699,
+    "source_lines": 264
+  },
+  {
+    "path": "go-jk/jk/jkparsers/bmParser.go",
+    "sha256": "f5fd22a8d54fec22a4a71cb8199b9a2ac9fbd329d78df5a3671c80c04d3cf44e",
+    "bytes": 1692,
+    "source_lines": 75
+  },
+  {
+    "path": "go-jk/jk/jkparsers/cmpParser.go",
+    "sha256": "abe089ca4051aca8023dcd15d0a55283cc0f80e215d5961fd639152b7bc10b53",
+    "bytes": 383,
+    "source_lines": 20
+  },
+  {
+    "path": "go-jk/jk/jkparsers/jklLineParser.go",
+    "sha256": "ec01887ae7b28d28037e407a40a9634e638950e0aad1f755b0482a0b89a5f3c6",
+    "bytes": 9713,
+    "source_lines": 408
+  },
+  {
+    "path": "go-jk/jk/jkparsers/jklRegexParser.go",
+    "sha256": "cceceaf8609a0d14eecaea7da78b32400160d180aad02ae7397a6b18383e74b4",
+    "bytes": 8589,
+    "source_lines": 294
+  },
+  {
+    "path": "go-jk/jk/jkparsers/jkparser.go",
+    "sha256": "0f63b68cd0ab8463bad28d80f42cf2526acac861a666009844a0b913fd5ad285",
+    "bytes": 693,
+    "source_lines": 28
+  },
+  {
+    "path": "go-jk/jk/jkparsers/keyLineParser.go",
+    "sha256": "3fd27bb36be72346b7d4ada60c2a8a2de2bbe0dd059c574a75f9144aba974282",
+    "bytes": 3723,
+    "source_lines": 161
+  },
+  {
+    "path": "go-jk/jk/jkparsers/matParser.go",
+    "sha256": "50f950ad2a6c72d3a38ae7908cfdee24302d3a0376691a3f6d81ed6858037d16",
+    "bytes": 1353,
+    "source_lines": 52
+  },
+  {
+    "path": "go-jk/jk/jkparsers/pupLineParser.go",
+    "sha256": "950e35f28809e6518d712694859856dddf25617c530a8a75ee462195c6cdf94e",
+    "bytes": 2238,
+    "source_lines": 105
+  },
+  {
+    "path": "go-jk/jk/jkparsers/sftParser.go",
+    "sha256": "69f94af5ac12c9a14784bd0c59f8a1e75e5925bab890e2b4f1a4a7efff866202",
+    "bytes": 1517,
+    "source_lines": 66
+  },
+  {
+    "path": "go-jk/jk/jkparsers/util.go",
+    "sha256": "98a8ce1f7fced65ae004e23bcf5104ef28507ad46e3d8db58d2a1c79878a9bcb",
+    "bytes": 1089,
+    "source_lines": 51
+  },
+  {
+    "path": "go-jk/jk/jktypes/3do.go",
+    "sha256": "b3d22f6641b7c367d9345b17544ac306d7c5b20d8ea7fead8d699b6cd4c20ad8",
+    "bytes": 857,
+    "source_lines": 47
+  },
+  {
+    "path": "go-jk/jk/jktypes/bm.go",
+    "sha256": "831e02655520c2e508a0941c377ff385f55d7f9b3949678857af0432f2fb6f7c",
+    "bytes": 764,
+    "source_lines": 41
+  },
+  {
+    "path": "go-jk/jk/jktypes/cmp.go",
+    "sha256": "ce3b1a13f6b0ed9a9aab0d1a4c5880ec7699128be73723f9684eeebe0176ad32",
+    "bytes": 275,
+    "source_lines": 19
+  },
+  {
+    "path": "go-jk/jk/jktypes/jkl.go",
+    "sha256": "c1bcf7dc6fc151264701f5c9ed1f056dec6c2280ec025b3df4cd708d1f36afb7",
+    "bytes": 949,
+    "source_lines": 46
+  },
+  {
+    "path": "go-jk/jk/jktypes/key.go",
+    "sha256": "de71bd679cdc2c4aa416611c4dc99c55148546a0983c3ed656fb8776d6b79dbf",
+    "bytes": 696,
+    "source_lines": 36
+  },
+  {
+    "path": "go-jk/jk/jktypes/mat.go",
+    "sha256": "01f3b3c7b873007c1daaffe26a534f765e42bb83c108f777f38e480a90f1ffff",
+    "bytes": 737,
+    "source_lines": 43
+  },
+  {
+    "path": "go-jk/jk/jktypes/pup.go",
+    "sha256": "9151d1c497e4a0115257bd2082de8257a6c5a1f36080a2f775502a444e17a636",
+    "bytes": 348,
+    "source_lines": 25
+  },
+  {
+    "path": "go-jk/jk/jktypes/sft.go",
+    "sha256": "6cd80134d7ef6e33b124e207460fa70fb1b1d57c130e4ab984ef39bc9d815275",
+    "bytes": 402,
+    "source_lines": 25
+  },
+  {
+    "path": "go-jk/jk/loader.go",
+    "sha256": "66a5dec527dbd1b0f9c76b4a6e716452f0a1a4f2e576e94b088e114a85503f97",
+    "bytes": 1472,
+    "source_lines": 68
+  },
+  {
+    "path": "go-jk/main.go",
+    "sha256": "88aae14bb82d5f298f4e274b6121d44798ecf9fc18735508767b6fcc40a2a406",
+    "bytes": 2511,
+    "source_lines": 86
+  },
+  {
+    "path": "go-jk/makefile",
+    "sha256": "3af8acad0c0d227996248dd92fc85b7a213ac9e39512ebb15988adde48b6617f",
+    "bytes": 201
+  },
+  {
+    "path": "go-jk/menu/binddata.go",
+    "sha256": "95792dea2502f0131e92b06ba961c3c296f0144476f4099c3594891989d001f0",
+    "bytes": 1254056,
+    "source_lines": 260
+  },
+  {
+    "path": "go-jk/opengl/3do_renderer.go",
+    "sha256": "75fbb146a1a1fa9eb4ff1ba7c4f225a92d0fca1b6dc1be8cc9ad87663c22385f",
+    "bytes": 6503,
+    "source_lines": 210
+  },
+  {
+    "path": "go-jk/opengl/bm_renderer.go",
+    "sha256": "742394faf476d3dd00de602d4291a7790168f95dab3a3e98804792b494f9c137",
+    "bytes": 2804,
+    "source_lines": 103
+  },
+  {
+    "path": "go-jk/opengl/level_renderer.go",
+    "sha256": "9e68cdf50fb97fe98791ba7c60aa2698f9b5b9f44824e95910200765588dac6b",
+    "bytes": 4216,
+    "source_lines": 144
+  },
+  {
+    "path": "go-jk/opengl/opengl.go",
+    "sha256": "95fb6093c78eb2bf060e024db9e06375bb89f245a1ee88ad370a019da71f47c0",
+    "bytes": 2393,
+    "source_lines": 76
+  },
+  {
+    "path": "go-jk/opengl/renderer.go",
+    "sha256": "97360c01af94bbac323d2dd045ec04407547b421c5af87a2a695d7ce09035240",
+    "bytes": 92,
+    "source_lines": 6
+  },
+  {
+    "path": "go-jk/opengl/shader.go",
+    "sha256": "010e6ba33d46b55e5bee8136c4abd0df30b7b90b3dd92190c638aa019f40ae62",
+    "bytes": 2811,
+    "source_lines": 107
+  },
+  {
+    "path": "go-jk/opengl/texture.go",
+    "sha256": "81fd0dd4ed43bc1c4535ed06d7b863c26530eb61511df39d3d190c84f34439c4",
+    "bytes": 790,
+    "source_lines": 25
+  },
+  {
+    "path": "go-jk/opengl/vao.go",
+    "sha256": "7db0f4b5a8c7eb570ef401f54e801855bfce5edbd45976847be798974d2ca147",
+    "bytes": 887,
+    "source_lines": 35
+  },
+  {
+    "path": "go-jk/scene/bmscene.go",
+    "sha256": "c3a8102dc5b34b3e0b3a5566099d714c34c6e9133b3af69df15d2fa845011588",
+    "bytes": 1997,
+    "source_lines": 67
+  },
+  {
+    "path": "go-jk/scene/jk3doscene.go",
+    "sha256": "c2a1db2b95b454b8e39d8fdef139595f06cadaa243f73a73a5c6579bc018e8c7",
+    "bytes": 1654,
+    "source_lines": 57
+  },
+  {
+    "path": "go-jk/scene/jklscene.go",
+    "sha256": "2b87b585b327d156806038c6b14fa45e4fc0a91a481aaf7e0eaad4c9bec642fd",
+    "bytes": 2045,
+    "source_lines": 74
+  },
+  {
+    "path": "go-jk/scene/mainmenuscene.go",
+    "sha256": "3f6dd8171e25dc8429f302d918a839a13fcfe427e63bb74c6a01381adb80e79b",
+    "bytes": 4957,
+    "source_lines": 179
+  },
+  {
+    "path": "go-jk/scene/scene.go",
+    "sha256": "198543b71009631379bf543cf1be877d8e8a678497557485c32e010778fade5d",
+    "bytes": 75,
+    "source_lines": 7
+  },
+  {
+    "path": "go-jk/scene/scene_manager.go",
+    "sha256": "c01cf663598757b629024798579caf825969b2bccba617d6d27c1033e3383203",
+    "bytes": 991,
+    "source_lines": 59
+  },
+  {
+    "path": "go-jk/scene/sftscene.go",
+    "sha256": "b6cf8a08b9a15f78401430ecbde171625a6ba4d8917f888e73e1f07d93ebbe0b",
+    "bytes": 1680,
+    "source_lines": 55
+  },
+  {
+    "path": "go-jk/screenshots/01.png",
+    "sha256": "e60c0a65bc64ffd399c6e7ae2de17eb1ad499ed6a23ef6497a1d57634f3973f6",
+    "bytes": 1190008
+  },
+  {
+    "path": "go-jk/screenshots/02.png",
+    "sha256": "154d2832797868ea76a8c6b2c41281ba4862ee55ef6e6fc7ffe40989b7bd6ee7",
+    "bytes": 1133357
+  },
+  {
+    "path": "go-jk/shaders/fragment.glsl",
+    "sha256": "33149248a981fad458debed4f67a22be786c40acdd010990e364015b1a96732e",
+    "bytes": 1455
+  },
+  {
+    "path": "go-jk/shaders/gui_fragment.glsl",
+    "sha256": "f0a318b63acb0ff26203b53fff9e2a51dd836e7465f39444723ef65dd3e1c6b6",
+    "bytes": 253
+  },
+  {
+    "path": "go-jk/shaders/gui_vertex.glsl",
+    "sha256": "f7b8ce59753e540ae198e20d25e3fc59676a7aa9e3499a74bdfe89f0ca206f9d",
+    "bytes": 242
+  },
+  {
+    "path": "go-jk/shaders/vertex.glsl",
+    "sha256": "4701c77c476aef8f7ccaad807b92da375121e09c8336148f2c93771e69c6d956",
+    "bytes": 604
+  },
+  {
+    "path": "go-jk/testGeo.go",
+    "sha256": "b395c971eb40ddf6851684f5617e817dbb3199868a95146c0197a8a036e01a88",
+    "bytes": 1703,
+    "source_lines": 52
+  },
+  {
+    "path": "go-jk/testparsers.go",
+    "sha256": "267aa966a43b9b985ecb112583f2f10069a6bcbf9e1ce63672ba5b9d52bd3d9e",
+    "bytes": 1603,
+    "source_lines": 64
+  },
+  {
+    "path": "jediknight2blender/.gitignore",
+    "sha256": "5966d179939a4a93eb168e0a0ea3bb56ecc50e67c58a5f36bcbe8bedb37189f6",
+    "bytes": 1814
+  },
+  {
+    "path": "jediknight2blender/.vscode/settings.json",
+    "sha256": "d3a474965fc4134d2bfedc0bd9058dbbd96ab3ff285cbdcb725ad481704b2cf0",
+    "bytes": 244
+  },
+  {
+    "path": "jediknight2blender/README.md",
+    "sha256": "9ec907f30d7590ea0671469b122932ca6dbd6d1346a68db93a0deae4ece6d13c",
+    "bytes": 1387
+  },
+  {
+    "path": "jediknight2blender/__init__.py",
+    "sha256": "3cbf018aa9f28b016d791ba84caee7828feea8f7dcfb9bfc58f378cf2be59fd1",
+    "bytes": 21435,
+    "source_lines": 652
+  },
+  {
+    "path": "jediknight2blender/import_3do.py",
+    "sha256": "7b7bfa0f894df415d0dd9cbff0f1ee5c9a4c110d9ae235a2a12273eed0d221f8",
+    "bytes": 17846,
+    "source_lines": 512
+  },
+  {
+    "path": "jediknight2blender/import_bm.py",
+    "sha256": "f2130cb39a4ec0e0bb0c3bac67926eb8fca75604f2e90799965547d37ea456a8",
+    "bytes": 3833,
+    "source_lines": 103
+  },
+  {
+    "path": "jediknight2blender/import_cmp.py",
+    "sha256": "6d9dea6ad014f5b0772029546801339b1bb7fd995797241fe2a273d11599a6c2",
+    "bytes": 703,
+    "source_lines": 31
+  },
+  {
+    "path": "jediknight2blender/import_gob.py",
+    "sha256": "1f7a885d060d2e5aeafc20e982d5547cb0a22f96879683ddcbb817e38e1dce2f",
+    "bytes": 2608,
+    "source_lines": 82
+  },
+  {
+    "path": "jediknight2blender/import_jkl.py",
+    "sha256": "abd80bb614c76fef7c9d69f7486024d91f4f4c84583ca2dd12fda64175744434",
+    "bytes": 28025,
+    "source_lines": 622
+  },
+  {
+    "path": "jediknight2blender/import_mat.py",
+    "sha256": "b5de38b6351156b8f9d937f48f33c59d11d79b3d3cc9417277b150137a582308",
+    "bytes": 13640,
+    "source_lines": 293
+  },
+  {
+    "path": "jediknight2blender/import_sft.py",
+    "sha256": "a8757981ba665c80a06d65e72cf39dd004ad6f50d7aba6fb6dfa6fe5b9b98798",
+    "bytes": 4495,
+    "source_lines": 123
+  },
+  {
+    "path": "jediknight2blender/jk_flags.py",
+    "sha256": "c14a473b3423915ac74cc7e407cbc3ab9ad18d31fb75bd6240eb9ca0e7b2c50a",
+    "bytes": 371,
+    "source_lines": 19
+  },
+  {
+    "path": "jediknight2blender/jk_parse.py",
+    "sha256": "1a15c18c1b279cb3f673b66fd7af8c6da9419e594397b6299b7277f03078aa74",
+    "bytes": 1636,
+    "source_lines": 35
+  },
+  {
+    "path": "jediknight2blender/jkl2blender_preferences.png",
+    "sha256": "90a59f46864487d771c23dbe9284e33bcfcaebf03889d86379fa2d5d7534ad9b",
+    "bytes": 106266
+  },
+  {
+    "path": "jediknight2blender/jkl2blender_titleImage.png",
+    "sha256": "8ee915225e16b0965c8ddfd640881834b19e399d352b3e6ac28373335ccb2b91",
+    "bytes": 884693
+  },
+  {
+    "path": "jediknight2blender/materials/materials.blend",
+    "sha256": "e1d65b7d29cef994f69d527ff7a0b48e8f628ce54b964232d6a94206e2e2a41a",
+    "bytes": 1006244
+  },
+  {
+    "path": "blender-sith/.gitignore",
+    "sha256": "f6eef1c96b345e36430c4f4a57bfcff83f947d8e6d44c98485e4ea08596a2bd5",
+    "bytes": 1435
+  },
+  {
+    "path": "blender-sith/LICENSE",
+    "sha256": "3237699d9e6781c85877365abd9493ca132a0fd31f43e1a3278b8e75f3654af4",
+    "bytes": 33094
+  },
+  {
+    "path": "blender-sith/README.md",
+    "sha256": "b67b093de841f4c2a600a752bbdc61a6454c4521da1771d42430be71dabee3c6",
+    "bytes": 5143
+  },
+  {
+    "path": "blender-sith/USAGE.md",
+    "sha256": "f6d99b487a71d14b29e166831bf32b85306cb94858c08810b16037633ac8c564",
+    "bytes": 5869
+  },
+  {
+    "path": "blender-sith/demo/3dofp.png",
+    "sha256": "4a1c607b0cc5c90a3cbf86dbad98fa2670cef5e9b5a3569f0dde8f925eb9cd10",
+    "bytes": 1011375
+  },
+  {
+    "path": "blender-sith/demo/aetfa.png",
+    "sha256": "557185fe0c1f9e448d00315f887a973518ad59da833aa0f62e90689094d2dcc6",
+    "bytes": 215139
+  },
+  {
+    "path": "blender-sith/demo/aetsm.png",
+    "sha256": "db274107d2a2f0b1bf914c67ff7f6d0147d066273832d144a42648fd950f3e5b",
+    "bytes": 438540
+  },
+  {
+    "path": "blender-sith/demo/blsthbn.png",
+    "sha256": "7b9415d1e999815dfb2354dde222f66f6df4486cb5da0bad5f646eca1c3190ac",
+    "bytes": 11659795
+  },
+  {
+    "path": "blender-sith/demo/blsthbn_sm.png",
+    "sha256": "e6bad021d0be6f1c1bfd2a46a3a192b69834445ab2a7c81a4e3cc91da8c577e6",
+    "bytes": 784967
+  },
+  {
+    "path": "blender-sith/demo/chop.png",
+    "sha256": "6354d7f1295489df70ab0c3eac9608cdcebbcac8eefc6c2b41b8e546c1a4f521",
+    "bytes": 271401
+  },
+  {
+    "path": "blender-sith/demo/comcar.png",
+    "sha256": "33be827ff01a692ce24755e6ca503a9a441e9d28a2cb4df7a82b734729d713c4",
+    "bytes": 407816
+  },
+  {
+    "path": "blender-sith/demo/ekopt.png",
+    "sha256": "6f74e9026041af176ae80302913ad6d338f66f818e3e516558eccba73fe802b6",
+    "bytes": 11079
+  },
+  {
+    "path": "blender-sith/demo/eopt.png",
+    "sha256": "ef6bd4bf22e17d5b7a84799643bcfac1238768cff4bbc745e2830da04dcba819",
+    "bytes": 13232
+  },
+  {
+    "path": "blender-sith/demo/eopt2.png",
+    "sha256": "f54d27a4ddd4c70021d0d16098ceff75bb8abe9f353bbad82d7d9d12adeaf42a",
+    "bytes": 18235
+  },
+  {
+    "path": "blender-sith/demo/eva.png",
+    "sha256": "6d644bc797392d0138cabec2561336e049d3f5ff3535353077ab122bc59dd8f3",
+    "bytes": 594200
+  },
+  {
+    "path": "blender-sith/demo/gif/diswim.gif",
+    "sha256": "604ec6fb9548d536e940e2a158081e7892d406af2fb2ccb9dff118470eabf300",
+    "bytes": 1641932
+  },
+  {
+    "path": "blender-sith/demo/gif/in_actlow.gif",
+    "sha256": "155c2d1e7d1885f8f1863613380f9756f4f45f30dd791650a297a8fa8a16fb2f",
+    "bytes": 218119
+  },
+  {
+    "path": "blender-sith/demo/gif/in_hat.gif",
+    "sha256": "b3711c2351014c360d07c40acc9f47c05ff2be162c7222ed7cf8ae3fe49ab2cd",
+    "bytes": 187450
+  },
+  {
+    "path": "blender-sith/demo/gif/in_hat2.gif",
+    "sha256": "9272579417216ecd259b625ce770f788be199c0fcbe5dbb570eed1fdb2899cb1",
+    "bytes": 2941727
+  },
+  {
+    "path": "blender-sith/demo/gif/in_jump_fwd.gif",
+    "sha256": "23deed0d2dc7e270bd25cf812aeb991d435b1cbaecd9080316025b198f9d5ebb",
+    "bytes": 480978
+  },
+  {
+    "path": "blender-sith/demo/gif/in_run.gif",
+    "sha256": "19ffe9e8fc8154278c9d22ec982e5d7f3ae3834c62d37c068a1e1a6455126066",
+    "bytes": 728160
+  },
+  {
+    "path": "blender-sith/demo/gif/in_run_fwd.gif",
+    "sha256": "7241ec3fa178ca1ed0c26beff58c605ffef02db98fa6571461414873c5a4e05a",
+    "bytes": 992569
+  },
+  {
+    "path": "blender-sith/demo/gif/kych.gif",
+    "sha256": "7864d735dddf986eb0a808d904ca68c8de8251c166fb31d3422d5a5085188ae5",
+    "bytes": 634528
+  },
+  {
+    "path": "blender-sith/demo/gif/kych2.gif",
+    "sha256": "86399329c4927245aefb4e7902d09c585343600fbf4a75359ede4d454bc3c025",
+    "bytes": 4738377
+  },
+  {
+    "path": "blender-sith/demo/gif/so_cap.gif",
+    "sha256": "102d605161e4d7b2d60428e9c56ccb79535f122c05e69e6a95f8133308d0ad18",
+    "bytes": 432348
+  },
+  {
+    "path": "blender-sith/demo/gif/so_dropland.gif",
+    "sha256": "e4edc099919b827e8e2aea86f2e9bf21089e16f15acef7e6200d1a98d539047e",
+    "bytes": 637411
+  },
+  {
+    "path": "blender-sith/demo/gif/so_exam.gif",
+    "sha256": "992b24e729016350ccbdbbc687816b6a4d79043d9dd3132187aac3832e5bc336",
+    "bytes": 262879
+  },
+  {
+    "path": "blender-sith/demo/gif/so_pp.gif",
+    "sha256": "f5703a3e42425777f88d62f7e860ca1059a60728ef9e10c6c80c3620395ba4c1",
+    "bytes": 409806
+  },
+  {
+    "path": "blender-sith/demo/gif/so_run.gif",
+    "sha256": "97b3d464ffdfe1d9134d5ca3b9f68d6349f9909ad342f24284fe1435a52e543e",
+    "bytes": 255090
+  },
+  {
+    "path": "blender-sith/demo/gif/so_spin.gif",
+    "sha256": "5e247b89d696737cfced74e4ac9558d88e0fe26d7c4c1c8230c3b6d9ecec756c",
+    "bytes": 1421572
+  },
+  {
+    "path": "blender-sith/demo/gif/so_startl.gif",
+    "sha256": "3d09b95644106efaf5c9ccc5112bc33a3d50f8f7a1a3a2c8fc6e1c68a5ab9f24",
+    "bytes": 218473
+  },
+  {
+    "path": "blender-sith/demo/gif/so_str.gif",
+    "sha256": "1ae98e98db2baa0eac030136c8c0aa8c02493531bf36fa91cb8f3dc5f6524beb",
+    "bytes": 319240
+  },
+  {
+    "path": "blender-sith/demo/gif/tu_ma.gif",
+    "sha256": "ff1955b7b6ec33eeff4ee7cf780590e8ba8fc5c2287f761229d9f3eeaf37226a",
+    "bytes": 270513
+  },
+  {
+    "path": "blender-sith/demo/gif/tu_wlk.gif",
+    "sha256": "fee1c9f3ed95dd096bdb8bd9678745a027753fef5bbe6e1c3c0b077eeb8cc7cb",
+    "bytes": 953587
+  },
+  {
+    "path": "blender-sith/demo/gif/vo_knw.gif",
+    "sha256": "c8f45d9a48027bc9e10f3f0891a7e43958a7dc6ad9a2aaf6e69b08d9c45bd6a1",
+    "bytes": 1329462
+  },
+  {
+    "path": "blender-sith/demo/gif/vo_lnd.gif",
+    "sha256": "9c1ca66ad8db6d4dc1b9ec129b72217efaba03e0265a451570cf65200cf2ed1c",
+    "bytes": 183775
+  },
+  {
+    "path": "blender-sith/demo/ikopt.png",
+    "sha256": "d68d8e54a9697211e19a172e8af76a72058a5dc736aaf2e12586a23f93e2cfb4",
+    "bytes": 9293
+  },
+  {
+    "path": "blender-sith/demo/imopt.png",
+    "sha256": "5adf848f1df541d079128f54f5135cb7d3c1a2f4df29d5cc6c246bd9dd6a1d74",
+    "bytes": 8283
+  },
+  {
+    "path": "blender-sith/demo/inmcar.png",
+    "sha256": "c879baf95a3f91da5f49a19e5cbaa9517e7bcec42fc38aa0228171ec0e7421f2",
+    "bytes": 345435
+  },
+  {
+    "path": "blender-sith/demo/invo.png",
+    "sha256": "d81ca75c836d99005edede00ec144124d726a5f5ee60e335433c8609ca1e1651",
+    "bytes": 353438
+  },
+  {
+    "path": "blender-sith/demo/inwh.png",
+    "sha256": "038a3ebb0f55b03157f71ee0ee55f216f00c37dca1c4bf84b35e94c62e736ce1",
+    "bytes": 415176
+  },
+  {
+    "path": "blender-sith/demo/iopt.png",
+    "sha256": "cb57ca4b0f6d550c59d997f965c77026bc5af1d856833aa6d201d76b668f3b33",
+    "bytes": 38022
+  },
+  {
+    "path": "blender-sith/demo/manny.png",
+    "sha256": "158b394b0f00c43fa03d6811341a4d1c610f32f7e0ea1b56c9bb2f2c1d6d717c",
+    "bytes": 694454
+  },
+  {
+    "path": "blender-sith/demo/nubrb.png",
+    "sha256": "c2d83e1bf33956c8011f62199e13aeabf6057141cdc1d9ecffca697a482f5cd0",
+    "bytes": 511598
+  },
+  {
+    "path": "blender-sith/demo/o3dop.png",
+    "sha256": "a3c30e9a747c648a0a47868da2f8466b3eb488a18216765b3505ced64bfc562a",
+    "bytes": 524520
+  },
+  {
+    "path": "blender-sith/demo/olvstat.png",
+    "sha256": "48beb07c73d771edb667e91658cd60235bf6ce25ea166900c592826c11dce745",
+    "bytes": 421167
+  },
+  {
+    "path": "blender-sith/demo/pyrsrk.png",
+    "sha256": "c874ba1aac35969c60c52175edf187654e880b3fbd2e5bbd24338e752a142ccb",
+    "bytes": 457446
+  },
+  {
+    "path": "blender-sith/demo/salva.png",
+    "sha256": "116b7405d596635e01098489bad9be6bff8cf6095c4852f210d66af7da2a31b3",
+    "bytes": 505534
+  },
+  {
+    "path": "blender-sith/demo/sheol.png",
+    "sha256": "22e0fa22e94e68869484375b46288fdaf342f800b1158b76b61674e817c55614",
+    "bytes": 261012
+  },
+  {
+    "path": "blender-sith/demo/so.png",
+    "sha256": "c879baf95a3f91da5f49a19e5cbaa9517e7bcec42fc38aa0228171ec0e7421f2",
+    "bytes": 345435
+  },
+  {
+    "path": "blender-sith/demo/solking.png",
+    "sha256": "f713deed3bf016887d8e7ffcdba9afddbf1b06d3556a40fcad837dacc4e598da",
+    "bytes": 335403
+  },
+  {
+    "path": "blender-sith/demo/solstatue.png",
+    "sha256": "a588408e8134e47854ee66cb5f9dc48eb2c5e6adf72fe321763c5547f09c1882",
+    "bytes": 275181
+  },
+  {
+    "path": "blender-sith/demo/tu.png",
+    "sha256": "038ddce6b1af4a5f102fe74163fc658d7e991bf161ad825a654b87652fa477f1",
+    "bytes": 238161
+  },
+  {
+    "path": "blender-sith/demo/vo.png",
+    "sha256": "427befb739da8c32eb22756b0da558f863182cb5dff4c13218d422bb1fd2164b",
+    "bytes": 339110
+  },
+  {
+    "path": "blender-sith/scripts/make_addon.sh",
+    "sha256": "f8c8e54e9052bc69f79a55f921235766ffcb0e70b05fe879221b481ae7f86850",
+    "bytes": 964
+  },
+  {
+    "path": "blender-sith/sith/__init__.py",
+    "sha256": "0b5eed6dec1d238e7131233ca8c3f3d473f616260b013615689786466a45f434",
+    "bytes": 41141,
+    "source_lines": 938
+  },
+  {
+    "path": "blender-sith/sith/blender_manifest.toml",
+    "sha256": "63671f626524f974a5eb09e7cc2b65cd49b95c1d6417c8b37b8bdda614d67610",
+    "bytes": 532
+  },
+  {
+    "path": "blender-sith/sith/key/__init__.py",
+    "sha256": "06871eb1d753e0b5168364ee63fc5add462c8306bd79c91dcb297a169d530863",
+    "bytes": 1091,
+    "source_lines": 40
+  },
+  {
+    "path": "blender-sith/sith/key/key.py",
+    "sha256": "0b1cdef1fa64ed3cf339682ccc9d5d657a6ea5d3591af71c7e2f5c851a288cb6",
+    "bytes": 7193,
+    "source_lines": 263
+  },
+  {
+    "path": "blender-sith/sith/key/keyExporter.py",
+    "sha256": "09db0308d0db0a79d163941483f0d048a35974651d889771e0793f7fe7342541",
+    "bytes": 9448,
+    "source_lines": 213
+  },
+  {
+    "path": "blender-sith/sith/key/keyImporter.py",
+    "sha256": "62992b7946663dcfa194203b6bff1cfa72f717937dbcd665367cf1478c942bb0",
+    "bytes": 7770,
+    "source_lines": 205
+  },
+  {
+    "path": "blender-sith/sith/key/keyLoader.py",
+    "sha256": "68195cb6ade68555dd30dfa0a263843d3117603dc0b2740554ac248580d20ce2",
+    "bytes": 3879,
+    "source_lines": 116
+  },
+  {
+    "path": "blender-sith/sith/key/keyWriter.py",
+    "sha256": "bfd7c9da57c4f14231dea51dc9ef7f18983a6dd80f749eab8882dc229b30aab4",
+    "bytes": 3567,
+    "source_lines": 95
+  },
+  {
+    "path": "blender-sith/sith/material/__init__.py",
+    "sha256": "11aef334f9eb66981d7ffc66ab115d5252de0f4a7d2629ca6b915aa7b6341a2d",
+    "bytes": 873,
+    "source_lines": 28
+  },
+  {
+    "path": "blender-sith/sith/material/cmp.py",
+    "sha256": "a1ce15fddd0467a2b34288cf3cae65253ec4cdc5fbddb7c48a091583a2fa023c",
+    "bytes": 2248,
+    "source_lines": 66
+  },
+  {
+    "path": "blender-sith/sith/material/mat.py",
+    "sha256": "c54447f3e3870541152f5c5438ec29ec9cc86956e8e2794d6701010280e49efa",
+    "bytes": 13365,
+    "source_lines": 364
+  },
+  {
+    "path": "blender-sith/sith/model/__init__.py",
+    "sha256": "9e473b428fa9de93e6ac0742fa37cee79464daea36137f129ca08db2e74687c8",
+    "bytes": 1324,
+    "source_lines": 51
+  },
+  {
+    "path": "blender-sith/sith/model/model3do.py",
+    "sha256": "095f4a33a92c9b027dbe82a737ec820ce429e0e6991c9cfbdab6b843d5bf4286",
+    "bytes": 16027,
+    "source_lines": 553
+  },
+  {
+    "path": "blender-sith/sith/model/model3doExporter.py",
+    "sha256": "f099c1259b8a54f1fa5f610ffb1c2c383fbe75201ff6fba473c8e8b9774b826b",
+    "bytes": 15084,
+    "source_lines": 368
+  },
+  {
+    "path": "blender-sith/sith/model/model3doImporter.py",
+    "sha256": "0f3b2c0a1d42c4fdcece7645a542d819c721c5a8813ebdd6a89015a6d98c60e8",
+    "bytes": 10365,
+    "source_lines": 250
+  },
+  {
+    "path": "blender-sith/sith/model/model3doLoader.py",
+    "sha256": "af0a36478abecd359ebad684b686edd620b2fdcb9fba87e5e8bdf3c15078385d",
+    "bytes": 9907,
+    "source_lines": 250
+  },
+  {
+    "path": "blender-sith/sith/model/model3doWriter.py",
+    "sha256": "a61c27c3050d091df2f2b31a77d3edfa44a2e4a2f9bb6c0dbe02af325f330c85",
+    "bytes": 8707,
+    "source_lines": 239
+  },
+  {
+    "path": "blender-sith/sith/model/utils.py",
+    "sha256": "dbeb24b9e70f96f65b80082b400a1e8235a682835309a74bb77980e6f720ab48",
+    "bytes": 14946,
+    "source_lines": 351
+  },
+  {
+    "path": "blender-sith/sith/text/serutils.py",
+    "sha256": "34a9bf70182023cc4974faac12d3f5d4141988909f558ca2df1b730c13c73ceb",
+    "bytes": 1500,
+    "source_lines": 44
+  },
+  {
+    "path": "blender-sith/sith/text/tokenizer.py",
+    "sha256": "c2a5e448f2498fe8226e0fa59700585c9b39c3291096d2cd39ae710b8ce4b80d",
+    "bytes": 14178,
+    "source_lines": 448
+  },
+  {
+    "path": "blender-sith/sith/types/__init__.py",
+    "sha256": "06a12d199537b99d8526256ed01524d6307675748fd0fa5bd852f51b4c3c4c47",
+    "bytes": 1003,
+    "source_lines": 34
+  },
+  {
+    "path": "blender-sith/sith/types/benchmark.py",
+    "sha256": "b5c1dba73b194aa437b4e33c0fbafe895365f8b526afc5b350487f1be03bbcb1",
+    "bytes": 1151,
+    "source_lines": 30
+  },
+  {
+    "path": "blender-sith/sith/types/enum.py",
+    "sha256": "746ad835b169edf34fd6eb8841658b36adbd149f5bb8cd11de7adeeb48120356",
+    "bytes": 1307,
+    "source_lines": 40
+  },
+  {
+    "path": "blender-sith/sith/types/props.py",
+    "sha256": "d1de2aebd22857c05acf45bcafc59fe9e3f6cb2be6a159aca4d5ff1e192f5c1c",
+    "bytes": 1793,
+    "source_lines": 48
+  },
+  {
+    "path": "blender-sith/sith/types/vector.py",
+    "sha256": "626d26df3af1bb7f1bc26342ba896bae4259e6a110d50515d22e65ff31b7fe8d",
+    "bytes": 1247,
+    "source_lines": 41
+  },
+  {
+    "path": "blender-sith/sith/utils.py",
+    "sha256": "05247a20c8904d8fd2cf0a6c850cbea5f2e8bd12e71bbe15eee128dbc894ee03",
+    "bytes": 8411,
+    "source_lines": 246
+  },
+  {
+    "path": "Matt/Colormap.cs",
+    "sha256": "4f52bd05e203c714d7b4f6302cc47642b6712832e852c2c3c6af3e803f538015",
+    "bytes": 5363,
+    "source_lines": 175
+  },
+  {
+    "path": "Matt/GOB.cs",
+    "sha256": "94e5f97602f22578b9264360c7c9554a65e0e0ad7904dc09159028309ac28147",
+    "bytes": 4459,
+    "source_lines": 159
+  },
+  {
+    "path": "Matt/INIFile.cs",
+    "sha256": "542d5275154bb57b231f76751389617d554dc1a0242cb1729e7612190e7f4c3c",
+    "bytes": 2012,
+    "source_lines": 58
+  },
+  {
+    "path": "Matt/LICENSE",
+    "sha256": "230184f60bae2feaf244f10a8bac053c8ff33a183bcc365b4d8b876d2b7f4809",
+    "bytes": 35823
+  },
+  {
+    "path": "Matt/Material.cs",
+    "sha256": "edb0ba2fab6f325f8836e68b5186fc7dfaedf5db9aecaa4540317220028af7f3",
+    "bytes": 19649,
+    "source_lines": 509
+  },
+  {
+    "path": "Matt/Matt.Designer.cs",
+    "sha256": "36f170351e83b15157dcebe455e5a3d3ec3fa030308c8287aa3ee9f0884cadd8",
+    "bytes": 20838,
+    "source_lines": 401
+  },
+  {
+    "path": "Matt/Matt.cs",
+    "sha256": "244c2ea7456a29d78ee7ec56e41275a7d8ab3cf9411a95734f0939b4c73a35f5",
+    "bytes": 36280,
+    "source_lines": 1057
+  },
+  {
+    "path": "Matt/Matt.csproj",
+    "sha256": "682bed6b8f54838e6c4b1a305109e7885b22707754e5ba9ebe7951b4d62789c6",
+    "bytes": 3872
+  },
+  {
+    "path": "Matt/Matt.resx",
+    "sha256": "4363cd7d5b8671c72442ce1a1bfc10d64ebd24b2d718b54bd4fcd025e4967298",
+    "bytes": 5817
+  },
+  {
+    "path": "Matt/Matt.sln",
+    "sha256": "0f369a6a1ce895c9eac7bab494c7aec2ea6a095daf0fa76edde6e90c287f4998",
+    "bytes": 1105
+  },
+  {
+    "path": "Matt/PictureBoxMaterial.cs",
+    "sha256": "a6de8b5fe36733a98e45657ed064063b513c4572eae8348f23afd6253f7c113e",
+    "bytes": 662,
+    "source_lines": 25
+  },
+  {
+    "path": "Matt/Program.cs",
+    "sha256": "d986063123604d4089032a483a219950a74c8ba41dd2de6ec81e7a58d7508379",
+    "bytes": 875,
+    "source_lines": 37
+  },
+  {
+    "path": "Matt/Properties/AssemblyInfo.cs",
+    "sha256": "2e5dec10f439871287f346c268b9bab142d23d30f4f2daf6a7fec899be53e7ab",
+    "bytes": 1415,
+    "source_lines": 36
+  },
+  {
+    "path": "Matt/Properties/Resources.Designer.cs",
+    "sha256": "28392d86579bda871334f4fcbc29f3621afc16569ec77c80574497b106771019",
+    "bytes": 2838,
+    "source_lines": 71
+  },
+  {
+    "path": "Matt/Properties/Resources.resx",
+    "sha256": "66b5ebd1b0fc73f041ba669ce2184f6f471d5e3524efa34ca31233e9f5395262",
+    "bytes": 5612
+  },
+  {
+    "path": "Matt/Properties/Settings.Designer.cs",
+    "sha256": "b5bcb46831461de32261b7f587d277dfcfa2ef42263bae713111c67d784d6ab5",
+    "bytes": 1091,
+    "source_lines": 30
+  },
+  {
+    "path": "Matt/Properties/Settings.settings",
+    "sha256": "f6a4290723520caddd934b8800319c7ca6cc7eeab647059ec89b7a13b1513265",
+    "bytes": 249
+  },
+  {
+    "path": "Matt/README.md",
+    "sha256": "8f81f6674dbfbffe6e58e27de98a5b09a1f42d62dd73a2a57b024380057830be",
+    "bytes": 4519
+  },
+  {
+    "path": "Matt/images/matt.png",
+    "sha256": "aa9d9d218c76ec1844f5b9edda2235d99e742b7291f392ed7505a9b5947ba207",
+    "bytes": 172850
+  },
+  {
+    "path": "Matt/mat spec.txt",
+    "sha256": "4cdb59f57ac607e2f153e07c97f76b2f5634b8c799ad2be980b74c88785786ad",
+    "bytes": 3358
+  },
+  {
+    "path": "smlu-jediknight2blender/.gitignore",
+    "sha256": "f3c3afc0a89d9651c1b4e521f8b8e4343ba5a8bafb2fe45b80614f4bc189f293",
+    "bytes": 1784
+  },
+  {
+    "path": "smlu-jediknight2blender/.vscode/settings.json",
+    "sha256": "d3a474965fc4134d2bfedc0bd9058dbbd96ab3ff285cbdcb725ad481704b2cf0",
+    "bytes": 244
+  },
+  {
+    "path": "smlu-jediknight2blender/README.md",
+    "sha256": "9ec907f30d7590ea0671469b122932ca6dbd6d1346a68db93a0deae4ece6d13c",
+    "bytes": 1387
+  },
+  {
+    "path": "smlu-jediknight2blender/__init__.py",
+    "sha256": "28b148800ebb21f0e08d4b2babdd95038ca69080ac489b37b0950e2acbccc156",
+    "bytes": 20238,
+    "source_lines": 614
+  },
+  {
+    "path": "smlu-jediknight2blender/import_3do.py",
+    "sha256": "9dfd4de0bdd18cbd9d1177fb8bfe640a1023fd0f8b7a050ffc8747246e001299",
+    "bytes": 17853,
+    "source_lines": 512
+  },
+  {
+    "path": "smlu-jediknight2blender/import_bm.py",
+    "sha256": "f2130cb39a4ec0e0bb0c3bac67926eb8fca75604f2e90799965547d37ea456a8",
+    "bytes": 3833,
+    "source_lines": 103
+  },
+  {
+    "path": "smlu-jediknight2blender/import_cmp.py",
+    "sha256": "6d9dea6ad014f5b0772029546801339b1bb7fd995797241fe2a273d11599a6c2",
+    "bytes": 703,
+    "source_lines": 31
+  },
+  {
+    "path": "smlu-jediknight2blender/import_gob.py",
+    "sha256": "1f7a885d060d2e5aeafc20e982d5547cb0a22f96879683ddcbb817e38e1dce2f",
+    "bytes": 2608,
+    "source_lines": 82
+  },
+  {
+    "path": "smlu-jediknight2blender/import_jkl.py",
+    "sha256": "d1fc898bde593a960cab95cb2197505c01f67789215cc7a8eaeb9181eccc6984",
+    "bytes": 28039,
+    "source_lines": 625
+  },
+  {
+    "path": "smlu-jediknight2blender/import_mat.py",
+    "sha256": "b5de38b6351156b8f9d937f48f33c59d11d79b3d3cc9417277b150137a582308",
+    "bytes": 13640,
+    "source_lines": 293
+  },
+  {
+    "path": "smlu-jediknight2blender/import_sft.py",
+    "sha256": "a8757981ba665c80a06d65e72cf39dd004ad6f50d7aba6fb6dfa6fe5b9b98798",
+    "bytes": 4495,
+    "source_lines": 123
+  },
+  {
+    "path": "smlu-jediknight2blender/jk_flags.py",
+    "sha256": "c14a473b3423915ac74cc7e407cbc3ab9ad18d31fb75bd6240eb9ca0e7b2c50a",
+    "bytes": 371,
+    "source_lines": 19
+  },
+  {
+    "path": "smlu-jediknight2blender/jkl2blender_preferences.png",
+    "sha256": "90a59f46864487d771c23dbe9284e33bcfcaebf03889d86379fa2d5d7534ad9b",
+    "bytes": 106266
+  },
+  {
+    "path": "smlu-jediknight2blender/jkl2blender_titleImage.png",
+    "sha256": "8ee915225e16b0965c8ddfd640881834b19e399d352b3e6ac28373335ccb2b91",
+    "bytes": 884693
+  },
+  {
+    "path": "smlu-jediknight2blender/jkl_vscode.code-workspace",
+    "sha256": "bd61b55b401154376cd82267b6bcec3074016a3e17088d1d5c3c6f819d8cc5ff",
+    "bytes": 230
+  },
+  {
+    "path": "smlu-jediknight2blender/materials/materials.blend",
+    "sha256": "e1d65b7d29cef994f69d527ff7a0b48e8f628ce54b964232d6a94206e2e2a41a",
+    "bytes": 1006244
+  },
+  {
+    "path": "smlu-jediknight2blender/parse.py",
+    "sha256": "0e11564ad4e4097db315723bd308369f19a29c687a00be9b1a62fb1a075185b2",
+    "bytes": 39,
+    "source_lines": 5
+  },
+  {
+    "path": "Jed0951_source.zip",
+    "sha256": "9879302ec0d5118451a0e6c2cccc5a22443231aa9622cf3a641d910bc06fcf83",
+    "bytes": 466915
+  },
+  {
+    "path": "JED0951/3do_io.inc",
+    "sha256": "44af73cb954dac99c757cd47aad43d2cdf65c39554e64930bedfbf3d73a0fe1b",
+    "bytes": 16642,
+    "source_lines": 734
+  },
+  {
+    "path": "JED0951/asc_import.inc",
+    "sha256": "cd34d139a708c5d7424ca7cec6c6461cf4101589d50df931bfc0c0dd1e6293ca",
+    "bytes": 3990,
+    "source_lines": 179
+  },
+  {
+    "path": "JED0951/Cog_utils.pas",
+    "sha256": "5f097867a78eeac5754df1b15bb74d715d759a7b6a99a3aec158fa45a1dd1d4c",
+    "bytes": 72,
+    "source_lines": 9
+  },
+  {
+    "path": "JED0951/Cons_checker.dfm",
+    "sha256": "9337c44e74808d999d6f8293570f627c9c8e7dc24a226dc7a7c85a6285c567ff",
+    "bytes": 1393
+  },
+  {
+    "path": "JED0951/Cons_checker.pas",
+    "sha256": "878d0697c3f18727dc297422bcff85d9c558d1ec14abd43e0ba2d1857f3aea31",
+    "bytes": 11698,
+    "source_lines": 476
+  },
+  {
+    "path": "JED0951/Containers.pas",
+    "sha256": "a8ded86b5a9c95729023c30f5df5a0f846c8947a6fdbc14a380d4efdbf07be24",
+    "bytes": 24400,
+    "source_lines": 874
+  },
+  {
+    "path": "JED0951/d3d_NPRender.pas",
+    "sha256": "54b958519fd4af0633cda1ddacd06c07b8bea89530206d38c05d01cc16f6a7f7",
+    "bytes": 18504,
+    "source_lines": 752
+  },
+  {
+    "path": "JED0951/D3D_PRender.pas",
+    "sha256": "03387c490ede388c402df64b0a98dff8c8b8964ecc68c28dedf317a6166ffed4",
+    "bytes": 36677,
+    "source_lines": 1502
+  },
+  {
+    "path": "JED0951/D3D_Render.pas",
+    "sha256": "a86c490683e32b65f562554fd19dcb60e0e92a3c74fd06a84b5e7ffd7e75e3e8",
+    "bytes": 11711,
+    "source_lines": 458
+  },
+  {
+    "path": "JED0951/DF_import.inc",
+    "sha256": "67d7625944d378b9b5a9d99ba331f8ed438a6990307c110758177fc75e489502",
+    "bytes": 34438,
+    "source_lines": 1475
+  },
+  {
+    "path": "JED0951/dxtools.pas",
+    "sha256": "10de56b52501d3d1dc80585ab268aac87ddf5af16455ac399c04f8fb12444e54",
+    "bytes": 14609,
+    "source_lines": 224
+  },
+  {
+    "path": "JED0951/FieldEdit.pas",
+    "sha256": "a36f71f5534f2cbc1f7c8c066178b58d9f6e50334e349f2a673fb4d48825a99c",
+    "bytes": 10823,
+    "source_lines": 497
+  },
+  {
+    "path": "JED0951/FileDialogs.dfm",
+    "sha256": "a8b591c95fc83947d95dd738e9ee34296ec4db04237fb85b417314ed838cd829",
+    "bytes": 2005
+  },
+  {
+    "path": "JED0951/FileDialogs.pas",
+    "sha256": "50845bb89bc869f906d5b4e8d4a59e4998d07bb176e05d7d8da6d018f8d51791",
+    "bytes": 5772,
+    "source_lines": 239
+  },
+  {
+    "path": "JED0951/FileOperations.pas",
+    "sha256": "3776690c4d41a764075951ca11ee66c0f75fcb57852a6da1119fd8c57181595e",
+    "bytes": 19286,
+    "source_lines": 771
+  },
+  {
+    "path": "JED0951/Files_old.pas",
+    "sha256": "6ce6f820962344acf1d3ec118bb6f03ff02c967ae9c6360a37765cedf5d2ecdb",
+    "bytes": 6744,
+    "source_lines": 327
+  },
+  {
+    "path": "JED0951/Files.pas",
+    "sha256": "60175789591a66797ff7a5b0bd3b5967e35e930fd5f9778e2e3c89addd5be555",
+    "bytes": 20177,
+    "source_lines": 922
+  },
+  {
+    "path": "JED0951/FlagEditor.dfm",
+    "sha256": "61e50c595c1abd94a987de60f0cad57267c9ca25042847f2b6cd7265cd13989d",
+    "bytes": 3699
+  },
+  {
+    "path": "JED0951/FlagEditor.pas",
+    "sha256": "ea161772da2366e66a04ef8c23faef05c534d9040eeb52258f6ed202792c70d4",
+    "bytes": 8923,
+    "source_lines": 347
+  },
+  {
+    "path": "JED0951/geo_utils.pas",
+    "sha256": "d740f12ff12dbb11ba4eb5ab968932d69a3f0d9b6b693fe17575619e619ef96f",
+    "bytes": 4781,
+    "source_lines": 216
+  },
+  {
+    "path": "JED0951/Geometry.pas",
+    "sha256": "a004c9004419f9ff24b87c35bb320cc2bcdbd09da177362d70846cb0018552c5",
+    "bytes": 8061,
+    "source_lines": 393
+  },
+  {
+    "path": "JED0951/Gl3dfx.pas",
+    "sha256": "ced8a637c8511f813ea15f60f87c79dde645cf4b3a2a8b8f7851f71ae6810383",
+    "bytes": 69233,
+    "source_lines": 1710
+  },
+  {
+    "path": "JED0951/GlobalVars.pas",
+    "sha256": "f198de81ade2574c5a7a493aefc6c9f1dc704333e7ba050bab946baa0d163511",
+    "bytes": 7406,
+    "source_lines": 293
+  },
+  {
+    "path": "JED0951/GLunit.pas",
+    "sha256": "b229e4f803e4ef8d07ef1296446424d9009032bb58a0ec0cbfbc380634562c40",
+    "bytes": 36541,
+    "source_lines": 1180
+  },
+  {
+    "path": "JED0951/graph_files.pas",
+    "sha256": "b15985d44c9617bd336e6365b0b2387eabc20ce779e1dafa18f6c1240d167d37",
+    "bytes": 16659,
+    "source_lines": 744
+  },
+  {
+    "path": "JED0951/Images.pas",
+    "sha256": "3e8d5e3530fb680b46586b73dd49c4375376e785f8c20dc26beef9c1d1499da2",
+    "bytes": 4378,
+    "source_lines": 224
+  },
+  {
+    "path": "JED0951/Item_edit.dfm",
+    "sha256": "63736dfae4300d1824447ed79470360f0ca8cbb84fdee1926968f19f1768703b",
+    "bytes": 1658
+  },
+  {
+    "path": "JED0951/Item_edit.pas",
+    "sha256": "db422c18fbf11c4ebe69f4c7990f089d64740ba84b861ba796113edd565a7a50",
+    "bytes": 30994,
+    "source_lines": 1223
+  },
+  {
+    "path": "JED0951/J_level.pas",
+    "sha256": "bc6680543a8af4adff85865dec8df17b310d5ccc244cbe3500826b51f6a1ddb0",
+    "bytes": 20489,
+    "source_lines": 990
+  },
+  {
+    "path": "JED0951/jdh_jdl.pas",
+    "sha256": "e08534a702a0a7313a93beb161263d26c236c9e17dd793cb8593444ea0b4c311",
+    "bytes": 2257,
+    "source_lines": 116
+  },
+  {
+    "path": "JED0951/Jed_about1.dfm",
+    "sha256": "e6a7ab0dc4952155b53ee8941639a8f9a922160c608851b2ea06e1d1ba8a0643",
+    "bytes": 27894
+  },
+  {
+    "path": "JED0951/Jed_about1.pas",
+    "sha256": "1e1e3ceda8a1b2609bde50172b321395f3946e32c38497f099c0d4ed5d1d8e60",
+    "bytes": 1851,
+    "source_lines": 88
+  },
+  {
+    "path": "JED0951/JED_COM.pas",
+    "sha256": "867b2608bea2187b769ca455563ad89205833d4de06276d4491deb970d85c9af",
+    "bytes": 68228,
+    "source_lines": 2500
+  },
+  {
+    "path": "JED0951/Jed_Main.dfm",
+    "sha256": "0a583ae745fb769716d890a70c22a8c450dfe6e2a8306ad1a731e95202295573",
+    "bytes": 12855
+  },
+  {
+    "path": "JED0951/Jed_Main.pas",
+    "sha256": "3d78608ac902b82041bb5789a55fbe336606cbd73f889a071c23f552da3360bc",
+    "bytes": 185559,
+    "source_lines": 6922
+  },
+  {
+    "path": "JED0951/JED_OLE.pas",
+    "sha256": "af9ee7a0a3223b6d7e3d6199008eff043f83c5712ce4c21d5c349e0b72627d66",
+    "bytes": 63514,
+    "source_lines": 2968
+  },
+  {
+    "path": "JED0951/jed_plugins.pas",
+    "sha256": "ebed7d976e1996d501e3578ef32d11a723208ee9fe0c3c152a1da1aa14a6baa6",
+    "bytes": 28760,
+    "source_lines": 773
+  },
+  {
+    "path": "JED0951/jed_plugins2_.pas",
+    "sha256": "f5612be084a3bd52618de3e7a46d1af619d89b35b4ccef3a96a2e2ce11fb05b0",
+    "bytes": 22103,
+    "source_lines": 616
+  },
+  {
+    "path": "JED0951/jed_plugins3.pas",
+    "sha256": "a69e530c008750c7932c8a264188c739f1e50cfec7cc3e43721e4454dc28b924",
+    "bytes": 18985,
+    "source_lines": 615
+  },
+  {
+    "path": "JED0951/Jed.dof",
+    "sha256": "e57ee2da696305d0d03dbc72a0cf601af4cb73cf4a62ef7b145e6fd79361f038",
+    "bytes": 483
+  },
+  {
+    "path": "JED0951/Jed.dpr",
+    "sha256": "ba25c511ea1690890bf4ae5a807f49de86c5d6ef06604f42c3afb0fd979ec41b",
+    "bytes": 4603
+  },
+  {
+    "path": "JED0951/Jed.res",
+    "sha256": "88c47f00a3eddad9ea462fe52fc44b57c636ed47d699302b3dc6782b7b33e099",
+    "bytes": 876
+  },
+  {
+    "path": "JED0951/jlh_jll.pas",
+    "sha256": "c0f21c1e67d7ea24657363fb9dedae2a18d2f363e609cf5bad7359df6c999ce6",
+    "bytes": 2217,
+    "source_lines": 114
+  },
+  {
+    "path": "JED0951/lev_utils.pas",
+    "sha256": "fc1059e673eaa6d218bbb6ca20ebc08ca807a483cac2325fe3287f3fe5764e65",
+    "bytes": 130684,
+    "source_lines": 5485
+  },
+  {
+    "path": "JED0951/level_io.inc",
+    "sha256": "aa097920ec97055bd05993ad8f6fe491327be7661b2d263b65638b3a358004b0",
+    "bytes": 26542,
+    "source_lines": 1207
+  },
+  {
+    "path": "JED0951/ListRes.pas",
+    "sha256": "0dea59a41238e8ef8dfe8f09f752a560164bb37f3d88c94081855a5c8aeee9a8",
+    "bytes": 8606,
+    "source_lines": 499
+  },
+  {
+    "path": "JED0951/MemCheck.pas",
+    "sha256": "e69c0a33d846a357883b763359870fc6e85a76e80703f6179053c4278571fa64",
+    "bytes": 81679,
+    "source_lines": 2294
+  },
+  {
+    "path": "JED0951/misc_utils.pas",
+    "sha256": "5eb8470902b5b1a0418a5953c0f566a90632a5f80fbdbe392d1e67ba68eb92bb",
+    "bytes": 18399,
+    "source_lines": 747
+  },
+  {
+    "path": "JED0951/OGL_PRender.pas",
+    "sha256": "c817278d2eac01d3b718774880d2635b5654e8464474db5ce5fe10e18af73362",
+    "bytes": 11515,
+    "source_lines": 485
+  },
+  {
+    "path": "JED0951/OGL_render.dfm",
+    "sha256": "b16da7d0003b35ec70b450a4fa0ee9da8e003c1a8cb6d8fe35e86186d9790f60",
+    "bytes": 512
+  },
+  {
+    "path": "JED0951/OGL_render.pas",
+    "sha256": "bac36bd984babddb53c413539f0e2325485059182d4616d66db65c15fa17bc47",
+    "bytes": 15324,
+    "source_lines": 635
+  },
+  {
+    "path": "JED0951/old OGL_PRender.pas",
+    "sha256": "bc1b618c0aa03401b1d8b5ab4ee9d8059218f1505fa8724318bb0aa57514085f",
+    "bytes": 20556,
+    "source_lines": 932
+  },
+  {
+    "path": "JED0951/OPENGL.PAS",
+    "sha256": "817883d61082edbf3886f9b1fce4dd46afbf1a22237ca5497ea4d4e4ccecf3cc",
+    "bytes": 76307,
+    "source_lines": 1829
+  },
+  {
+    "path": "JED0951/pj3do_io.inc",
+    "sha256": "ab6304bcad3571e1e0b4bbe28116c720390bc50950dfceb653b6c82708f720ed",
+    "bytes": 7171,
+    "source_lines": 324
+  },
+  {
+    "path": "JED0951/pjGeometry.pas",
+    "sha256": "94581c3bee0d47f05c2bd849303df084723b5eabfb7ad2d6f55bc3e26fcc8c94",
+    "bytes": 6036,
+    "source_lines": 293
+  },
+  {
+    "path": "JED0951/pjkey_io.inc",
+    "sha256": "351a412f317e0d8fc040c8c9835b0fa06aa5f25351ccdddb694e801030ad92b1",
+    "bytes": 2822,
+    "source_lines": 125
+  },
+  {
+    "path": "JED0951/Prefab.pas",
+    "sha256": "4da3067bdad07f759f7eb8b62045994fd57b6ca74b6537f015629e539ca13eef",
+    "bytes": 5861,
+    "source_lines": 271
+  },
+  {
+    "path": "JED0951/PRender.pas",
+    "sha256": "3512f0d9f18603faa0fbf6ceff5bddcd1e4218f57a965802a0fb1392222795bc",
+    "bytes": 23281,
+    "source_lines": 1064
+  },
+  {
+    "path": "JED0951/Preview.pas",
+    "sha256": "507bb31b8d6d360c22fc21e2879933ae6b1b109251ea7847ea626376e857901d",
+    "bytes": 5972,
+    "source_lines": 268
+  },
+  {
+    "path": "JED0951/ProgressDialog.dfm",
+    "sha256": "7e8f8eb620e7927a42d644792bd9c9ff6a65f91c06d6281fdd99f8123298c881",
+    "bytes": 430
+  },
+  {
+    "path": "JED0951/ProgressDialog.pas",
+    "sha256": "3523d8e7c0aa15200b4ff2a77206d7f64b15ce8bb4883584db100767dbdcb435",
+    "bytes": 2291,
+    "source_lines": 107
+  },
+  {
+    "path": "JED0951/Q_Sectors.dfm",
+    "sha256": "ab9a0ddb669d6a32e6d5992492ee39a93915e651137f32015a1cfe45ccae7e80",
+    "bytes": 5211
+  },
+  {
+    "path": "JED0951/Q_Sectors.pas",
+    "sha256": "fcb01d29bf3d50c2743d3ab74254a5a1eb5b5e67010e21f748269a9e782895f1",
+    "bytes": 4382,
+    "source_lines": 193
+  },
+  {
+    "path": "JED0951/Q_surfs.dfm",
+    "sha256": "8bad94aab15e116335b7916be0e3c2570504487e75f102e94cb0efa661133f01",
+    "bytes": 5932
+  },
+  {
+    "path": "JED0951/Q_surfs.pas",
+    "sha256": "42415525116b660f60cb37c98b8026cbf001f9bf577cdc850b5dd9c29e4e46d0",
+    "bytes": 5719,
+    "source_lines": 249
+  },
+  {
+    "path": "JED0951/Q_things.dfm",
+    "sha256": "f2f75a51a51c311d7d33dd4e877902385fad540c53110d63515ca167943f172a",
+    "bytes": 4608
+  },
+  {
+    "path": "JED0951/Q_things.pas",
+    "sha256": "ee8c27e2a4348e434c37e14c08b8ba1910f6ef0b876d9e32e05c3e4f27a19603",
+    "bytes": 3733,
+    "source_lines": 175
+  },
+  {
+    "path": "JED0951/Q_Utils.pas",
+    "sha256": "05e6de59b3d444055e6f58fded2b8f73f349d5bd97cb5e191d198409d79ce7b3",
+    "bytes": 9808,
+    "source_lines": 400
+  },
+  {
+    "path": "JED0951/Render.pas",
+    "sha256": "eadb9ad6acde7a3eef939cd657fb8637cf474072fe6c1591540f79638883f862",
+    "bytes": 11320,
+    "source_lines": 462
+  },
+  {
+    "path": "JED0951/ResourcePicker.dfm",
+    "sha256": "cffd3b60c19ec1a715f346616821c140e8736303f925a8eda8c4f156431c9cad",
+    "bytes": 28338
+  },
+  {
+    "path": "JED0951/ResourcePicker.pas",
+    "sha256": "397ab6f7860df12a12aeb37161c2a966aa19516af94719ef8b4cfa7430d235e6",
+    "bytes": 31005,
+    "source_lines": 1187
+  },
+  {
+    "path": "JED0951/Savejkl.inc",
+    "sha256": "c44d84c4e5e1e40463ea899b60b94ab6d9bea4c75b035ad7c34305ec249e3165",
+    "bytes": 21949,
+    "source_lines": 946
+  },
+  {
+    "path": "JED0951/sft_persp_render.pas",
+    "sha256": "e95f9584591fd5eaa7ff253289ff8a00abc986c93eefb7191fa22bc569414c7f",
+    "bytes": 10751,
+    "source_lines": 494
+  },
+  {
+    "path": "JED0951/sft_render.pas",
+    "sha256": "840025435e8f021341b9c9ddc7d80fc782cd2891c47de587885d127c66529738",
+    "bytes": 16781,
+    "source_lines": 738
+  },
+  {
+    "path": "JED0951/tbar_tools.pas",
+    "sha256": "f1c4f8519501c557236e6e8cbdb725fd683ecd70a2080275cf4da85f2f1f7fbf",
+    "bytes": 1370,
+    "source_lines": 74
+  },
+  {
+    "path": "JED0951/TDFX_OGL_PRender.pas",
+    "sha256": "f1466caa31f2239a46d81693418c5ff8dad54a0c436612509e5c7726c1a5ea6c",
+    "bytes": 19118,
+    "source_lines": 851
+  },
+  {
+    "path": "JED0951/TDFX_PRender.pas",
+    "sha256": "a95995122645f187c06392c01a30b044614b5b18eef269a146d2b788d8b1ddab",
+    "bytes": 14872,
+    "source_lines": 752
+  },
+  {
+    "path": "JED0951/ThreeDView.dfm",
+    "sha256": "c778da8cef4ae1baf71a94d832f00feab6a730379b2e96242e3ac7c0e0728007",
+    "bytes": 2490
+  },
+  {
+    "path": "JED0951/ThreeDView.pas",
+    "sha256": "f8ce50de9d2ffd46dd4dc305fbb29b4fd627e2667264538bf4a27d25d5ec7913",
+    "bytes": 1029,
+    "source_lines": 53
+  },
+  {
+    "path": "JED0951/tmp_load3do.pas",
+    "sha256": "2e13e1ead6e754999938aa6b5cf5204522517a77695521c667e5003e628407ee",
+    "bytes": 4394,
+    "source_lines": 211
+  },
+  {
+    "path": "JED0951/Tools.pas",
+    "sha256": "e467ddf64defc41242f3233b103e35aba5247a25567abbdbd3d69633b3b2b403",
+    "bytes": 680,
+    "source_lines": 37
+  },
+  {
+    "path": "JED0951/u_3doform.dfm",
+    "sha256": "602f273ec6e42804ce6c18596841517104ceb62ba2eb30b65f42e31bf1f4c6a9",
+    "bytes": 2098
+  },
+  {
+    "path": "JED0951/u_3doform.pas",
+    "sha256": "a2649ea3dad13949ebaf3d23150e958133fdc127b34967dd1577b626e8ba3f6c",
+    "bytes": 10662,
+    "source_lines": 462
+  },
+  {
+    "path": "JED0951/U_3doprev.pas",
+    "sha256": "0b48be464e6cd57692b1b8f40b54e5ace713deeb9682781957e1327ecd4f8657",
+    "bytes": 2061,
+    "source_lines": 113
+  },
+  {
+    "path": "JED0951/u_3dos.pas",
+    "sha256": "66ca7e50eb98854c70806a22c8e1878bebd98c6c02c1dcb895bcf11e231572dc",
+    "bytes": 6931,
+    "source_lines": 332
+  },
+  {
+    "path": "JED0951/U_About.dfm",
+    "sha256": "707c5af3a8f3c1101cfbd744c3c8dbbdb66a2284ec53689b2f3242ceec7e2068",
+    "bytes": 767
+  },
+  {
+    "path": "JED0951/U_About.pas",
+    "sha256": "06f8a4dd99ad782c7419cb04ed0d37e4b256391456b808c3d4504cf4db563fd2",
+    "bytes": 367,
+    "source_lines": 26
+  },
+  {
+    "path": "JED0951/U_CogForm.dfm",
+    "sha256": "aadb57a3aca148efdd9918d5d01fa2542ebddaef73586890aa63fefe8909d550",
+    "bytes": 1660
+  },
+  {
+    "path": "JED0951/U_CogForm.pas",
+    "sha256": "7d375d85208695186c01f4503a2a85cd759ab2d3a0e71727b4a39d98cd2a913b",
+    "bytes": 9903,
+    "source_lines": 435
+  },
+  {
+    "path": "JED0951/u_coggen.dfm",
+    "sha256": "8a98b292622b17b00a58abc18eda0d78efcbabbd45ad611f4136eeae5c7d1ff6",
+    "bytes": 2151
+  },
+  {
+    "path": "JED0951/u_coggen.pas",
+    "sha256": "959f2cfd871bc8fab29f4335aa32bb12e2056ed49dc8997a0b44c795b49226e6",
+    "bytes": 5598,
+    "source_lines": 231
+  },
+  {
+    "path": "JED0951/u_copypaste.pas",
+    "sha256": "cb1a852df62c29ab737c681e708dd99715f46bff51824c9654945adf55ef6b44",
+    "bytes": 8531,
+    "source_lines": 416
+  },
+  {
+    "path": "JED0951/u_cscene.dfm",
+    "sha256": "760a4d11a72a6395b5848693411c4e935e09dd269114a81d49245b9046300ce7",
+    "bytes": 193172
+  },
+  {
+    "path": "JED0951/u_cscene.pas",
+    "sha256": "8603d19a9fe4fc402f3359c75183064242f531360aaffdcaf3561b2287603e2a",
+    "bytes": 3225,
+    "source_lines": 135
+  },
+  {
+    "path": "JED0951/u_DFI.dfm",
+    "sha256": "0bdbba9fb9fb80f01f9dc7bfa6080c3094c644ad38c9d69f3a9b9b64b29fbdc8",
+    "bytes": 744
+  },
+  {
+    "path": "JED0951/u_DFI.pas",
+    "sha256": "5e56afc6bdd7ab1e4ab8721574c840a962410dfcfdd6489848ac8a580f5f3a61",
+    "bytes": 760,
+    "source_lines": 39
+  },
+  {
+    "path": "JED0951/u_errorform.dfm",
+    "sha256": "dede4b194a7ba7663d82ca128e9c6e6bd97b388538f80a4d3601851a159ebd67",
+    "bytes": 805
+  },
+  {
+    "path": "JED0951/u_errorform.pas",
+    "sha256": "52214d30be9d3604d0c2f4a70321deef6509e2c128600d7d746899bdf7bc1093",
+    "bytes": 1869,
+    "source_lines": 93
+  },
+  {
+    "path": "JED0951/U_lheader.dfm",
+    "sha256": "204718995290fef14849e64383bd64b26e9e01300e2c0a9f8a0c4c3a925e950b",
+    "bytes": 3753
+  },
+  {
+    "path": "JED0951/U_lheader.pas",
+    "sha256": "bab4e549fc2023a2f787e9687f15e43b9e2980021fc16064ea868ddb8980448e",
+    "bytes": 3833,
+    "source_lines": 153
+  },
+  {
+    "path": "JED0951/U_mcog.dfm",
+    "sha256": "3bda369a6402ba71e6e6cff1be0159ff7f6a2d5ab6ce67ce1cb2a97c86530e78",
+    "bytes": 5320
+  },
+  {
+    "path": "JED0951/U_mcog.pas",
+    "sha256": "88ba860cf390b455c3ead1ce48b74c5e10373712d90a8d8cb91036e51b0f56b3",
+    "bytes": 7540,
+    "source_lines": 190
+  },
+  {
+    "path": "JED0951/U_Medit.dfm",
+    "sha256": "8f3359e7a249caf98d6214b6321a9658635d76114b988fb082acf325d098b1b7",
+    "bytes": 3955
+  },
+  {
+    "path": "JED0951/U_Medit.pas",
+    "sha256": "c1db90d5551c3cdf89d3f1eb361949da6af73ac0a74749d1b5308d4eaecc1505",
+    "bytes": 15711,
+    "source_lines": 719
+  },
+  {
+    "path": "JED0951/U_msgForm.dfm",
+    "sha256": "acda3aa76010d97df3b860342380d36464f52f0930e3d86566f4533770ab7b54",
+    "bytes": 546
+  },
+  {
+    "path": "JED0951/U_msgForm.pas",
+    "sha256": "6df89e893269e4e8db0967b5bbb7c9f1f6b374a72147ec2392da7cb19e213967",
+    "bytes": 930,
+    "source_lines": 51
+  },
+  {
+    "path": "JED0951/u_multisel.pas",
+    "sha256": "094887a53f351a0532c83b5b6f72643ae6dd778b653d1952a2fb37188e9d6ae8",
+    "bytes": 5906,
+    "source_lines": 282
+  },
+  {
+    "path": "JED0951/U_Options.dfm",
+    "sha256": "6644c3c95f39bdc93ad533fe3907cb1d5a1e2f021c7eaa5ea8ace3f396b21f01",
+    "bytes": 6602
+  },
+  {
+    "path": "JED0951/U_Options.pas",
+    "sha256": "819c7d8034eedb085dc165ed070a9b17749504ea41cd0eb352a69db1d3da50ab",
+    "bytes": 29194,
+    "source_lines": 922
+  },
+  {
+    "path": "JED0951/u_pj3dos.pas",
+    "sha256": "2cd9a5a75e534f97ab0f164f3dc5360ffb02e7ed7d74a4b73d149a4288df8ef0",
+    "bytes": 7451,
+    "source_lines": 371
+  },
+  {
+    "path": "JED0951/u_pjkey.pas",
+    "sha256": "6c284a2a887b7dfc6d2801331198dbf73ed541629c09d7fa5d09e1e45e07dde4",
+    "bytes": 4504,
+    "source_lines": 220
+  },
+  {
+    "path": "JED0951/U_Preview.dfm",
+    "sha256": "efaa5b060b40a314b77506b476ef42d8816784890aa471f4b1fb004230e00d81",
+    "bytes": 1152
+  },
+  {
+    "path": "JED0951/U_Preview.pas",
+    "sha256": "bb34eb992c14f2d8f8bd80aa5dd88c45180bf93a63864168c4ce39a3a18049da",
+    "bytes": 19020,
+    "source_lines": 707
+  },
+  {
+    "path": "JED0951/U_SCFEdit.dfm",
+    "sha256": "d7cb9ba51a1b5f08d38fa273739bc86685c9ea56b3ebbb3c025faba673166a64",
+    "bytes": 591
+  },
+  {
+    "path": "JED0951/U_SCFEdit.pas",
+    "sha256": "9c32646176a634136216f439aa318c9998c7a8ecc27ec61b16eae7b45c72142f",
+    "bytes": 2250,
+    "source_lines": 98
+  },
+  {
+    "path": "JED0951/u_StrEdit.dfm",
+    "sha256": "da96a964a6c0eb296e234e8ca3ab86e7fd14d36a63835a0ab5baeb27ce1bb31a",
+    "bytes": 879
+  },
+  {
+    "path": "JED0951/u_StrEdit.pas",
+    "sha256": "d2179b7bd216bfc199c835255e5fc6ad35cd0d720cf8a6acda6cfe940fc05c2f",
+    "bytes": 1867,
+    "source_lines": 91
+  },
+  {
+    "path": "JED0951/U_tbar.dfm",
+    "sha256": "c72e827ef2ebf8f6a100dd35c173df4245002d0da01aaa052fe9fb25884b4a86",
+    "bytes": 5071
+  },
+  {
+    "path": "JED0951/U_tbar.pas",
+    "sha256": "1eaa9166bffba77b49a6505cea1f1b98acf57b3839d70944a98e184c2a303d0a",
+    "bytes": 15588,
+    "source_lines": 644
+  },
+  {
+    "path": "JED0951/u_templates.pas",
+    "sha256": "526776ed7e8f3b08396d999b1e3f2add5d635e7110b186c776e363e34df50d13",
+    "bytes": 5808,
+    "source_lines": 277
+  },
+  {
+    "path": "JED0951/U_Tools.dfm",
+    "sha256": "07fa379b3b614a7b015b8e744a076f2f9f075ec3fcf93059f9d10f4a37810c22",
+    "bytes": 4791
+  },
+  {
+    "path": "JED0951/U_Tools.pas",
+    "sha256": "87b8a1a36262a07a5a61690c6f9376b695c78d7cac9a8ac8a98ab67314ce4c61",
+    "bytes": 9439,
+    "source_lines": 381
+  },
+  {
+    "path": "JED0951/U_tplcreate.dfm",
+    "sha256": "bb64d07d37cd1e16495f2e6370c8a1e7b23b418f4bd7dc70950d43ef67f9b2bc",
+    "bytes": 1994
+  },
+  {
+    "path": "JED0951/U_tplcreate.pas",
+    "sha256": "6b7f53f752e83e3efc3d82939d56963512d5c8b3c12e03608038a19a2b171b6c",
+    "bytes": 6034,
+    "source_lines": 266
+  },
+  {
+    "path": "JED0951/u_tpledit.dfm",
+    "sha256": "a68104160d6f54e4e6fc640958d34d9109cd3eb69a2745c5d5c425e89f3bb6fe",
+    "bytes": 625
+  },
+  {
+    "path": "JED0951/u_tpledit.pas",
+    "sha256": "c1f4eb8d7e4304fa6d811160b65811caf72c59dbe7a53594866c705f5f865b42",
+    "bytes": 408,
+    "source_lines": 27
+  },
+  {
+    "path": "JED0951/u_undo.pas",
+    "sha256": "1ec3fb898f4c332abbd30acbc1f4067252584ab367b440e977cd2978643550f8",
+    "bytes": 24913,
+    "source_lines": 1194
+  },
+  {
+    "path": "JED0951/Unit1.dfm",
+    "sha256": "6d24c8916939bf81579857591ba9ea720718c3953977db657c489e181d2fc660",
+    "bytes": 588
+  },
+  {
+    "path": "JED0951/Unit1.pas",
+    "sha256": "2af4765c248238d258e981e7d8311077bea8dbb79b9d17d4deb3c14e533fbbca",
+    "bytes": 3712,
+    "source_lines": 172
+  },
+  {
+    "path": "JED0951/values.pas",
+    "sha256": "e1171a831be8b085564408a4e4fc38da50ed863136d67a060cd087a9997a0bc1",
+    "bytes": 12453,
+    "source_lines": 513
+  },
+  {
+    "path": "JED0951/ver_info.RES",
+    "sha256": "27b92790cdda31354b0a6baad9e9434499886d0f7ed81a771aa3d415c45045ec",
+    "bytes": 952
+  },
+  {
+    "path": "NED.zip",
+    "sha256": "b8bde6e00f79f4082417c571b29419e52ac72e23c0655ff81721b1d7ca908285",
+    "bytes": 507866
+  },
+  {
+    "path": "NED/CogForm.cs",
+    "sha256": "cdb26d70c31b54696613985aa98a41895c6ce38c0d2ec21d61bb94d96a64f6d4",
+    "bytes": 21404,
+    "source_lines": 674
+  },
+  {
+    "path": "NED/CogForm.Designer.cs",
+    "sha256": "5b304369bfeff1b38e8637a66737afa16030a78428391b856c83051f05721efb",
+    "bytes": 17324,
+    "source_lines": 321
+  },
+  {
+    "path": "NED/CogForm.resx",
+    "sha256": "168354c778ba2dad59170134fd9ec1665b85d2344989c410cf8a9e3cb4d90ff7",
+    "bytes": 6747
+  },
+  {
+    "path": "NED/CogGenerator.cs",
+    "sha256": "883752236536080cdd3808de1b36e8465399374598de394da9bf0b14ffcebaf8",
+    "bytes": 2838,
+    "source_lines": 107
+  },
+  {
+    "path": "NED/CogGenerator.Designer.cs",
+    "sha256": "1d89e1f23e9fbbebe93f543122d92a59d1ea5c8b2a9976b10da7cb8d4e503479",
+    "bytes": 14617,
+    "source_lines": 330
+  },
+  {
+    "path": "NED/CogGenerator.resx",
+    "sha256": "1f72959f9da6138fa8b58f74f6021f686068806ecf57409926d12f71c652dec4",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/ConsistencyChecker.cs",
+    "sha256": "48e2b1c6cec2d720d8431eacfa6bff76b29c651b44c88f1040950433aa84d055",
+    "bytes": 17238,
+    "source_lines": 494
+  },
+  {
+    "path": "NED/ConsistencyChecker.Designer.cs",
+    "sha256": "350e0e6def26e0ece5ac683aaf2e029682667bb7365c6c0fabf349343ce4a001",
+    "bytes": 4785,
+    "source_lines": 104
+  },
+  {
+    "path": "NED/ConsistencyChecker.resx",
+    "sha256": "4363cd7d5b8671c72442ce1a1bfc10d64ebd24b2d718b54bd4fcd025e4967298",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/Containers.cs",
+    "sha256": "f06b53b673493bb6872e6c8862813fb99cfcfa2baf2665943809194f7f105fed",
+    "bytes": 8241,
+    "source_lines": 275
+  },
+  {
+    "path": "NED/EpisodeEdit.cs",
+    "sha256": "aa6d201419b3fc5b972fe6c7cc1b232d8d9d257b0b21444cd079ce3b95f3ab2c",
+    "bytes": 18414,
+    "source_lines": 562
+  },
+  {
+    "path": "NED/EpisodeEdit.Designer.cs",
+    "sha256": "1975c07330c32269c765d24e02b5270f455054344eeec5c7e22f003fcd362bc5",
+    "bytes": 28946,
+    "source_lines": 621
+  },
+  {
+    "path": "NED/EpisodeEdit.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/FileDialogs.cs",
+    "sha256": "6854e8f44832041b80ce9541712cea1e8bcf81c5c49146429a5479aec08a6906",
+    "bytes": 1106,
+    "source_lines": 39
+  },
+  {
+    "path": "NED/FileOperations.cs",
+    "sha256": "3001bfb78ddd0fcd291ba64a2bc64b04a72a07d9795afaaf70503435a5e92a7d",
+    "bytes": 20817,
+    "source_lines": 609
+  },
+  {
+    "path": "NED/Files.cs",
+    "sha256": "8d4960a6b2eb06454739462387f387e71d7a3c9b26508758f5f77038a4f7062d",
+    "bytes": 14825,
+    "source_lines": 603
+  },
+  {
+    "path": "NED/FindUtils.cs",
+    "sha256": "f470cbe5cf3fe6bb76bcc303d03d4b86f9189b99f0ed8f40909d68ae8fe7b790",
+    "bytes": 2630,
+    "source_lines": 91
+  },
+  {
+    "path": "NED/FlagEdit.cs",
+    "sha256": "ac31981ea8f709b072028fbe20d4703f870a0de29965029befacbfee9e48ef1d",
+    "bytes": 9036,
+    "source_lines": 254
+  },
+  {
+    "path": "NED/FlagEdit.Designer.cs",
+    "sha256": "c92ccf9944bcb78b62595ceb84995556338f5b5e5ba5996c472f032868a81a7a",
+    "bytes": 25486,
+    "source_lines": 526
+  },
+  {
+    "path": "NED/FlagEdit.resx",
+    "sha256": "7c6015dd9ace31b7f0d9fca465261a5f7bcc45643509dc5fc7515a32e52b22dc",
+    "bytes": 6013
+  },
+  {
+    "path": "NED/Geometry.cs",
+    "sha256": "3f9508a9f9a362edafe9645cf02428a5a3794e48e8eeaa0fc794eff4ff023564",
+    "bytes": 8389,
+    "source_lines": 319
+  },
+  {
+    "path": "NED/GlobalVars.cs",
+    "sha256": "6b2c173cd1abe6293920cbe890001865a3bbfeeb768ec4ff7a40d811096cc2a2",
+    "bytes": 10269,
+    "source_lines": 354
+  },
+  {
+    "path": "NED/GroupFilters.cs",
+    "sha256": "d031796d81f063538139fa2034171c838a410476c8f404f83fac651f06cafe0d",
+    "bytes": 4878,
+    "source_lines": 158
+  },
+  {
+    "path": "NED/Import3DS.cs",
+    "sha256": "4fca2c52b6b56cc19a4874128e7fb9a3ac72c6396ec552a1d741dc4d5f3d3d7c",
+    "bytes": 880,
+    "source_lines": 32
+  },
+  {
+    "path": "NED/Import3DS.Designer.cs",
+    "sha256": "25a57ee62900157b6761cf10371c07cd6e0765340ff553eafee1385794a7e1e0",
+    "bytes": 6225,
+    "source_lines": 146
+  },
+  {
+    "path": "NED/Import3DS.resx",
+    "sha256": "a79b60a385d6274d3fef522a600d8e4cd02ee16744038414a82dffd3243ae9c0",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/ImportToMAT.cs",
+    "sha256": "bebb1561438a5a626177ad1233baf2a2a9b54a0798b55dda5888786a8fc5fe7c",
+    "bytes": 410,
+    "source_lines": 20
+  },
+  {
+    "path": "NED/ImportToMAT.Designer.cs",
+    "sha256": "8929c59184e6bbfa6d712b5f9ecc1916e2c563e4897871958b619984b0ed1404",
+    "bytes": 1668,
+    "source_lines": 48
+  },
+  {
+    "path": "NED/ImportToMAT.resx",
+    "sha256": "a79b60a385d6274d3fef522a600d8e4cd02ee16744038414a82dffd3243ae9c0",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/ItemEdit.cs",
+    "sha256": "1da6033a1f7c8225fc86f6c2ffea4245a7435c17852ca8d18ea940144adb886d",
+    "bytes": 48293,
+    "source_lines": 1553
+  },
+  {
+    "path": "NED/ItemEdit.Designer.cs",
+    "sha256": "f0e7b6f1ed1940b174a3fc0ecee7930079ac93ee557fc91f1cdeead47f2791e7",
+    "bytes": 11065,
+    "source_lines": 212
+  },
+  {
+    "path": "NED/ItemEdit.resx",
+    "sha256": "bee9673314da6e7e78b4c4493244cf41959b3e7c449263de59b2b607277cfae4",
+    "bytes": 6549
+  },
+  {
+    "path": "NED/JKLevel.cs",
+    "sha256": "792b492dc9aee96f36e19a3dc0e4d5d8df664c6318092ed486f736ff8ed1f594",
+    "bytes": 122110,
+    "source_lines": 3431
+  },
+  {
+    "path": "NED/LevelHeaderEditor.cs",
+    "sha256": "b91f7e8fa89914d0000f70bf5be5a66bef41cb4533c19b31deb63ad81ef59418",
+    "bytes": 3669,
+    "source_lines": 84
+  },
+  {
+    "path": "NED/LevelHeaderEditor.Designer.cs",
+    "sha256": "122ed8ec4e8675f0c5a17653471d5759f35c8a7b2461942356198af554ee3266",
+    "bytes": 19202,
+    "source_lines": 436
+  },
+  {
+    "path": "NED/LevelHeaderEditor.resx",
+    "sha256": "1f72959f9da6138fa8b58f74f6021f686068806ecf57409926d12f71c652dec4",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/ListRes.cs",
+    "sha256": "093038e8d4cc959196080243892fec62de5d922be10073617fc30c52a094565a",
+    "bytes": 9108,
+    "source_lines": 324
+  },
+  {
+    "path": "NED/MapSettings.cs",
+    "sha256": "9dcc40afbb9db740db748e224e095f8e0285417d7b9e4160fed5d4955d41dbf2",
+    "bytes": 10397,
+    "source_lines": 331
+  },
+  {
+    "path": "NED/MapSettings.Designer.cs",
+    "sha256": "59a8cc5b19058a134871c2ff8e16a5cae11db4ba192169649240096836a67757",
+    "bytes": 27884,
+    "source_lines": 665
+  },
+  {
+    "path": "NED/MapSettings.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/MaterialAttributeEditor.cs",
+    "sha256": "5c70fbb1a670ecf56dfcb08f7d3dc062b0502911ed5b67198df7d8a924bbe44f",
+    "bytes": 18846,
+    "source_lines": 581
+  },
+  {
+    "path": "NED/MaterialAttributeEditor.Designer.cs",
+    "sha256": "5787f362498247706fbb00cdcddb72f6b6f581b4c476752485d2087b519cd109",
+    "bytes": 10256,
+    "source_lines": 218
+  },
+  {
+    "path": "NED/MaterialAttributeEditor.resx",
+    "sha256": "1f72959f9da6138fa8b58f74f6021f686068806ecf57409926d12f71c652dec4",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/Model.cs",
+    "sha256": "0ca74593fd3b21d86cce874b8fac43ccd5161e6c27b571bfec0046a0cf9b072b",
+    "bytes": 35443,
+    "source_lines": 992
+  },
+  {
+    "path": "NED/ModelRenderControl.cs",
+    "sha256": "a5a4acbc2ab2cf25e013dbdab067be6126d878a352dbb6e3060cca5a90a3bed6",
+    "bytes": 2274,
+    "source_lines": 84
+  },
+  {
+    "path": "NED/ModelRenderControl.Designer.cs",
+    "sha256": "cbb6c43275c0707bdb3ded0f84473e3bbc1c6e851ff4b0507a5bb5bc056d843d",
+    "bytes": 1068,
+    "source_lines": 36
+  },
+  {
+    "path": "NED/MsgForm.cs",
+    "sha256": "ce8911196c9da415d15a36999dbdcb0242a51263c4914b5c93144cbbe590f864",
+    "bytes": 1008,
+    "source_lines": 43
+  },
+  {
+    "path": "NED/MsgForm.Designer.cs",
+    "sha256": "815d88604e3e13e5830aa6a75368f3996a9e42aa91eb07c2b7ac72a5b4ad988b",
+    "bytes": 2113,
+    "source_lines": 61
+  },
+  {
+    "path": "NED/MsgForm.resx",
+    "sha256": "4363cd7d5b8671c72442ce1a1bfc10d64ebd24b2d718b54bd4fcd025e4967298",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/MultiSel.cs",
+    "sha256": "af7facea61f0d6d2b5c5d80c7611aa647fdee76c177628ae7759c8f00d3c8734",
+    "bytes": 6123,
+    "source_lines": 269
+  },
+  {
+    "path": "NED/NedMain.cs",
+    "sha256": "7ca96f507dfdf5a2cec44cf52ec97a2b14809be9eaf3b907795d52510da65df0",
+    "bytes": 275081,
+    "source_lines": 7770
+  },
+  {
+    "path": "NED/NedMain.Designer.cs",
+    "sha256": "431dd9ac7d44c91b1b54d57cd0baf65a4f4262d2e4325ff22ec28062b8a6f7b8",
+    "bytes": 70973,
+    "source_lines": 1343
+  },
+  {
+    "path": "NED/NedMain.resx",
+    "sha256": "dcc6245746a7a68cfe2e7ada773f6151a70f573fffcceac30fac7989f7703d61",
+    "bytes": 68577
+  },
+  {
+    "path": "NED/OpenFromContainer.cs",
+    "sha256": "94e934979f28a6ddf8326ea2b55a9dfad6a886aae155cf4921b6eafe14f22663",
+    "bytes": 5770,
+    "source_lines": 190
+  },
+  {
+    "path": "NED/OpenFromContainer.Designer.cs",
+    "sha256": "2d4672b9c0af7255c9e39cf9bb34c1271f417c19e962bdaf0fb9c5092c171976",
+    "bytes": 8850,
+    "source_lines": 201
+  },
+  {
+    "path": "NED/OpenFromContainer.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/Options.cs",
+    "sha256": "6e4646c78e8546e9089ed896a6bfef66000a1cb142b396fc7c195a68e86a896e",
+    "bytes": 48193,
+    "source_lines": 1165
+  },
+  {
+    "path": "NED/Options.Designer.cs",
+    "sha256": "d6ef63a7e7e7e99945c47c92a59ec30ef5dd447c0b0f7dd66ea577b5fcd7c39e",
+    "bytes": 40707,
+    "source_lines": 795
+  },
+  {
+    "path": "NED/Options.resx",
+    "sha256": "6ba4d015c35f58e77c1e6f08b4c5b832ad2229c127819ca4325706273d95e77c",
+    "bytes": 58479
+  },
+  {
+    "path": "NED/Prefabs.cs",
+    "sha256": "3c0b02681f9d52e1af596ffc7043d527487baa96b91ead7089f0c1b1b628c6df",
+    "bytes": 9777,
+    "source_lines": 274
+  },
+  {
+    "path": "NED/Preview3D.cs",
+    "sha256": "3b41e554c8e592124c05d9cd3b1b9c5d96601d46e652f848220864189497b442",
+    "bytes": 25401,
+    "source_lines": 749
+  },
+  {
+    "path": "NED/Preview3D.Designer.cs",
+    "sha256": "c0bec6e55bde793ab1f4cc4d064a337e42a660693d09ccd643032b88c5ccecc6",
+    "bytes": 2172,
+    "source_lines": 59
+  },
+  {
+    "path": "NED/Preview3D.resx",
+    "sha256": "4363cd7d5b8671c72442ce1a1bfc10d64ebd24b2d718b54bd4fcd025e4967298",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/PreviewRenderControl.cs",
+    "sha256": "88d1e3d08fa7ae02827549054118c5589142d2164ab64ecb972a87c626119395",
+    "bytes": 3156,
+    "source_lines": 116
+  },
+  {
+    "path": "NED/PreviewRenderControl.Designer.cs",
+    "sha256": "3e004d8e573e36ad5967c261f751f8272e8ce26e44b9a73e2ec971dd0b29c8a7",
+    "bytes": 1070,
+    "source_lines": 36
+  },
+  {
+    "path": "NED/PreviewRenderer.cs",
+    "sha256": "c45b40466abdb853eff5a7f17a43e4d55d2d55213c2cfeca8b8c9257c1d86ad1",
+    "bytes": 31848,
+    "source_lines": 956
+  },
+  {
+    "path": "NED/ProgressDialog.cs",
+    "sha256": "4dc70df72edfc5308e31a703f17d13d4c6c0eeb5aba31337c75217be7784e3af",
+    "bytes": 2349,
+    "source_lines": 90
+  },
+  {
+    "path": "NED/ProgressDialog.Designer.cs",
+    "sha256": "7f869b01696a24b34f3ba4cd7a485df90d9e3466b1b342aa5ff249376008f1a2",
+    "bytes": 2877,
+    "source_lines": 73
+  },
+  {
+    "path": "NED/ProgressDialog.resx",
+    "sha256": "a79b60a385d6274d3fef522a600d8e4cd02ee16744038414a82dffd3243ae9c0",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/RenderControl.cs",
+    "sha256": "bd3a1e2b686c996ab33058cf2cc215d47d6cf4b6c17aea3722dbddd674cff46c",
+    "bytes": 3558,
+    "source_lines": 139
+  },
+  {
+    "path": "NED/RenderControl.Designer.cs",
+    "sha256": "dcf0deb84d1d920c2477250eac91aef5d98f5bb8bdeb514549d21be1198575d7",
+    "bytes": 1063,
+    "source_lines": 36
+  },
+  {
+    "path": "NED/Renderer.cs",
+    "sha256": "80fcf47f8bca4873231c7c64fa13c6df3f89a6c8319fff99154689bd0ba3bfd3",
+    "bytes": 20425,
+    "source_lines": 665
+  },
+  {
+    "path": "NED/ResPicker.cs",
+    "sha256": "16073e40772d7b8403b13cce0fdbb4269a9ac328a4605d0b75902557f7f8691b",
+    "bytes": 52758,
+    "source_lines": 1577
+  },
+  {
+    "path": "NED/ResPicker.Designer.cs",
+    "sha256": "e6c4d306571d6a0a70e227e1b63e6d18e27845698289ee3a80579db1d965341b",
+    "bytes": 14105,
+    "source_lines": 302
+  },
+  {
+    "path": "NED/ResPicker.resx",
+    "sha256": "a79b60a385d6274d3fef522a600d8e4cd02ee16744038414a82dffd3243ae9c0",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/SCFieldPicker.cs",
+    "sha256": "bbf8def53976eb1e8c7a73e74c755cded21646103e1b6dc719a0397734aa453a",
+    "bytes": 2885,
+    "source_lines": 115
+  },
+  {
+    "path": "NED/SCFieldPicker.Designer.cs",
+    "sha256": "55b7c5d9ec3079a846cd0373119fe850c60db55490ba62aa34ede872fc0c8ad5",
+    "bytes": 6365,
+    "source_lines": 159
+  },
+  {
+    "path": "NED/SCFieldPicker.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/StringsEditor.cs",
+    "sha256": "65417a3f32b2b032802faa83382c7e318a4780f0ee502a9583d5632babd3043f",
+    "bytes": 2724,
+    "source_lines": 98
+  },
+  {
+    "path": "NED/StringsEditor.Designer.cs",
+    "sha256": "3c8b3017b6fb0f2852bd0f237300f7b5aa84becfb099f991ddb3b12339a46507",
+    "bytes": 5443,
+    "source_lines": 133
+  },
+  {
+    "path": "NED/StringsEditor.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/SubForm.cs",
+    "sha256": "942df2789e6d51b43082660627541f5ab2dd8fd0bfb6fe96d317eb3a3773ee14",
+    "bytes": 842,
+    "source_lines": 39
+  },
+  {
+    "path": "NED/TemplateCreator.cs",
+    "sha256": "61e14f914071e058828818a399564d7195d090363ef8677815bde334da0a14a5",
+    "bytes": 8692,
+    "source_lines": 271
+  },
+  {
+    "path": "NED/TemplateCreator.Designer.cs",
+    "sha256": "58912e46119b6f92b1c5e8fe1b7f431c1491faf22edb56691ddb149eb67c4194",
+    "bytes": 14306,
+    "source_lines": 298
+  },
+  {
+    "path": "NED/TemplateCreator.resx",
+    "sha256": "a79b60a385d6274d3fef522a600d8e4cd02ee16744038414a82dffd3243ae9c0",
+    "bytes": 57769
+  },
+  {
+    "path": "NED/Templates.cs",
+    "sha256": "406b4e83bb166ca106b81a9f92b7dedba6aa33fc9054824f52fa98e9e3242951",
+    "bytes": 9617,
+    "source_lines": 275
+  },
+  {
+    "path": "NED/Tools.cs",
+    "sha256": "cf95b6795aa1a1c08da15272a081447ee1fb3aaad4a6cba10b128800abfb676a",
+    "bytes": 8618,
+    "source_lines": 257
+  },
+  {
+    "path": "NED/Tools.Designer.cs",
+    "sha256": "71c7cea6defe4731aeec6f9c1a5f27171b7175d9b9dab76818ecd6034eae940c",
+    "bytes": 33550,
+    "source_lines": 733
+  },
+  {
+    "path": "NED/Tools.resx",
+    "sha256": "4cf51261d272d11d237f625ac71b9e2a3659adffb83747143828bebf9f17e3f2",
+    "bytes": 6011
+  },
+  {
+    "path": "NED/Undo.cs",
+    "sha256": "695838dd73b01ebb150faf433461c9a4890d6c559e478277d0cee71fbb77f948",
+    "bytes": 18964,
+    "source_lines": 624
+  },
+  {
+    "path": "NED/UrqForm.cs",
+    "sha256": "d716917ab657018fc725164d7f95662da007336500dddf90d1275dd4a025ad60",
+    "bytes": 13034,
+    "source_lines": 396
+  },
+  {
+    "path": "NED/UrqForm.Designer.cs",
+    "sha256": "be35ee0fa7ef719ab42027cf36e42c6f71674d3a7556503cf01979b0acc37f31",
+    "bytes": 10543,
+    "source_lines": 235
+  },
+  {
+    "path": "NED/UrqForm.resx",
+    "sha256": "7263987e93baf4088e047f82d73a78d628e18bed376a1dad0797a8b87d64b068",
+    "bytes": 5817
+  },
+  {
+    "path": "NED/Utils.cs",
+    "sha256": "54776d0550a6f9ade70d26c1be672632f9ed474780d0a3e5d559fbcd387cf556",
+    "bytes": 127911,
+    "source_lines": 3743
+  },
+  {
+    "path": "NED/Values.cs",
+    "sha256": "f0e61c4868b17f8b6627cf8a8d1ebcb983874734b0f4856d75470821b5b8d0f5",
+    "bytes": 20235,
+    "source_lines": 639
+  },
+  {
+    "path": "ZED_2008-01-31.zip",
+    "sha256": "cd869935917aa900c48f13a56235e2f82209c426ebaea1fe2a765f5807e21b15",
+    "bytes": 511208
+  }
+]

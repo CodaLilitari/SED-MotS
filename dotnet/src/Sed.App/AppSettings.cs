@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Sed.Core.Model;
+using Sed.Formats.Launching;
 
 namespace Sed.App;
 
@@ -13,9 +14,13 @@ public sealed class AppSettings
     public string? JediKnightDir { get; set; }
     public string? MysteriesDir { get; set; }
     public string? InfernalMachineDir { get; set; }
+    public string? JediKnightTestExecutable { get; set; }
+    public string? MysteriesTestExecutable { get; set; }
+    public GameEngineProfile JediKnightTestEngine { get; set; } = GameEngineProfile.Auto;
+    public GameEngineProfile MysteriesTestEngine { get; set; } = GameEngineProfile.Auto;
 
     /// <summary>
-    /// Where "Save and Test" writes its GOB. Mirrors the original's ProjectDir —
+    /// Where "Save and Test" writes loose episode/JKL files and a GOB/GOO. ProjectDir is
     /// the directory the game's <c>-path</c> points at so the saved level is found.
     /// </summary>
     public string? ProjectDir { get; set; }
@@ -75,6 +80,11 @@ public sealed class AppSettings
         ProjectType.InfernalMachine => InfernalMachineDir,
         _ => JediKnightDir,
     };
+
+    public string? TestExecutableFor(ProjectType game) => game == ProjectType.MysteriesOfTheSith
+        ? MysteriesTestExecutable : JediKnightTestExecutable;
+    public GameEngineProfile TestEngineFor(ProjectType game) => game == ProjectType.MysteriesOfTheSith
+        ? MysteriesTestEngine : JediKnightTestEngine;
 
     public void SetDir(ProjectType game, string dir)
     {

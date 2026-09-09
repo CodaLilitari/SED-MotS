@@ -16,6 +16,12 @@ public sealed class Thing
     public double Pitch, Yaw, Roll;
 
     public int Layer;
+    /// <summary>Index into Level.ArchitecturalLighting, or -1 when unbound.</summary>
+    public int ArchLightingIndex = -1;
+    /// <summary>Resolved model name at import. A changed model requires a new lighting bake.</summary>
+    public string ArchLightingSourceModel = string.Empty;
+    /// <summary>Optional source-content baseline retained from a native project; resource-aware verification is separate.</summary>
+    public string ArchLightingSourceModelHash = string.Empty;
     public Sector? Sector;
     public Box BBox;
 
@@ -23,6 +29,8 @@ public sealed class Thing
 
     /// <summary>Template-derived key/value parameters (TTPLValues).</summary>
     public Dictionary<string, string> Values { get; } = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>Ordered imported parameter records, including repeated frame= entries.</summary>
+    public List<KeyValuePair<string, string>> SourceParameters { get; } = new();
 
     public ThingFlags Flags { get; set; }
 }

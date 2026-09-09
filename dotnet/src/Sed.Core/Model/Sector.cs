@@ -24,6 +24,13 @@ public sealed class Sector
     public List<Vertex> Vertices { get; } = new();
     public List<Surface> Surfaces { get; } = new();
     public Box CollideBox;
+    public bool HasCollideBox;
+    /// <summary>Optional authored engine bounds. Null means compute from current geometry.</summary>
+    public Box? BoundBox;
+    public Vec3? Center;
+    public double? Radius;
+    /// <summary>Original vertex positions used to retain authored bounds only while geometry is unchanged.</summary>
+    public Vec3[]? BoundsSourceVertices;
 
     public Sector(Level owner) => Level = owner;
 

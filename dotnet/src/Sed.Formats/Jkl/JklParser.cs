@@ -28,6 +28,7 @@ public static class JklParser
     {
         var doc = new JklDocument(SplitLines(text));
         doc.Level = Parse(new StringReader(text), doc);
+        JklWriter.CaptureBaseline(doc);
         return doc;
     }
 
@@ -38,32 +39,44 @@ public static class JklParser
         var level = new Level();
         var r = new JklReader(reader);
         var geo = new GeoData();
+        var seenSections = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         while (true)
         {
             r.SeekSection();
             if (r.Eof) break;
             var section = r.Section;
+            if (!seenSections.Add(section) && section is "HEADER" or "MATERIALS" or "GEORESOURCE" or
+                "SECTORS" or "TEMPLATES" or "THINGS" or "LIGHTS" or "COGS" or "LAYERS" or "ARCHLIGHTING")
+                throw new FormatException($"Duplicate modeled JKL section {section}.");
             r.EnterSection();
 
             switch (section)
             {
-                case "HEADER": LoadHeader(r, level); break;
+                case "HEADER": LoadHeader(r, level, doc); break;
                 case "MATERIALS": LoadMaterials(r, geo); break;
                 case "GEORESOURCE": LoadGeometry(r, level, geo, doc); break;
-                case "SECTORS": LoadSectors(r, level, geo); break;
-                case "TEMPLATES": LoadTemplates(r, level); break;
+                case "SECTORS": LoadSectors(r, level, geo, doc); break;
+                case "TEMPLATES": LoadTemplates(r, level, doc); break;
                 case "THINGS": LoadThings(r, level, doc); break;
                 case "LIGHTS": LoadLights(r, level); break;
                 case "COGS": LoadCogs(r, level); break;
                 case "LAYERS": LoadLayers(r, level); break;
+                case "ARCHLIGHTING": LoadArchitecturalLighting(r, level); break;
                 default: r.SkipToNextSection(); break;
             }
         }
 
         ResolveAdjoins(geo);
+        foreach (var surface in geo.SurfaceByGlobalIndex.Values) surface.Material = geo.GetMaterial(surface.MaterialIndex);
         if (doc is not null) doc.Materials.AddRange(geo.Materials);
         PostProcess(level);
+        foreach (var thing in level.Things)
+        {
+            if (thing.ArchLightingIndex < -1 || thing.ArchLightingIndex >= level.ArchitecturalLighting.Count)
+                throw new FormatException($"Thing {thing.Num} references missing architectural lighting object {thing.ArchLightingIndex}.");
+            if (thing.ArchLightingIndex >= 0) thing.ArchLightingSourceModel = level.GetThingModel(thing);
+        }
         return level;
     }
 
@@ -92,12 +105,12 @@ public static class JklParser
 
     // ---- HEADER ----
 
-    private static void LoadHeader(JklReader r, Level level)
+    private static void LoadHeader(JklReader r, Level level, JklDocument? doc)
     {
         while (r.Next() && !r.EndOfSection)
         {
             var t = JklReader.Tokens(r.Current);
-            if (t.Length < 2) continue;
+            if (t.Length < 2) { Unmodeled(doc, "HEADER", r.Current); continue; }
             var w0 = t[0];
 
             if (w0 == "VERSION")
@@ -109,7 +122,7 @@ public static class JklParser
             }
             else if (w0 == "WORLD" && t.Length >= 3 && t[1] == "GRAVITY")
                 level.Header.Gravity = (float)JklReader.ParseFloat(t[2]);
-            else if (w0 == "CEILING" && t.Length >= 3 && t[1] == "SKY" && t[2] == "Z")
+            else if (w0 == "CEILING" && t.Length >= 4 && t[1] == "SKY" && t[2] == "Z")
                 level.Header.CeilingSky.Height = (float)JklReader.ParseFloat(t[3]);
             else if (w0 == "CEILING" && t.Length >= 4 && t[1] == "SKY" && t[2] == "OFFSET")
             {
@@ -118,7 +131,7 @@ public static class JklParser
             }
             else if (w0 == "HORIZON" && t.Length >= 3 && t[1] == "DISTANCE")
                 level.Header.HorizonSky.Distance = (float)JklReader.ParseFloat(t[2]);
-            else if (w0 == "HORIZON" && t.Length >= 4 && t[1] == "PIXELS" && t[2] == "PER" && t[3] == "REV")
+            else if (w0 == "HORIZON" && t.Length >= 5 && t[1] == "PIXELS" && t[2] == "PER" && t[3] == "REV")
                 level.Header.HorizonSky.PixelsPerRev = (float)JklReader.ParseFloat(t[4]);
             else if (w0 == "HORIZON" && t.Length >= 4 && t[1] == "SKY" && t[2] == "OFFSET")
             {
@@ -135,9 +148,9 @@ public static class JklParser
                 for (int i = 0; i < 4; i++)
                     level.Header.LodDistances[i] = (float)JklReader.ParseFloat(t.ElementAtOrDefault(2 + i) ?? "0");
             }
-            else if (w0 == "PERSPECTIVE" && t.Length >= 2 && t[1] == "DISTANCE")
+            else if (w0 == "PERSPECTIVE" && t.Length >= 3 && t[1] == "DISTANCE")
                 level.Header.PerspectiveDistance = (float)JklReader.ParseFloat(t[2]);
-            else if (w0 == "GOURAUD" && t.Length >= 2 && t[1] == "DISTANCE")
+            else if (w0 == "GOURAUD" && t.Length >= 3 && t[1] == "DISTANCE")
                 level.Header.GouraudDistance = (float)JklReader.ParseFloat(t[2]);
             else if (w0 == "FOG" && t.Length >= 8)
             {
@@ -148,6 +161,7 @@ public static class JklParser
                 level.Header.Fog.Start = JklReader.ParseFloat(t.ElementAtOrDefault(6) ?? "0");
                 level.Header.Fog.End = JklReader.ParseFloat(t.ElementAtOrDefault(7) ?? "0");
             }
+            else Unmodeled(doc, "HEADER", r.Current);
         }
     }
 
@@ -175,22 +189,22 @@ public static class JklParser
         // Colormaps (absent for IJIM): "i: name.cmp"
         if (!ijim)
         {
-            r.Next();
+            RequireData(r);
             int nc = LastInt(r.Current);
             for (int i = 0; i < nc; i++)
             {
-                r.Next();
+                RequireData(r);
                 var name = JklReader.WordAt(JklReader.StripIndex(r.Current), 0);
                 if (name.Length > 0) level.ColorMaps.Add(name);
             }
         }
 
         // World vertices: "i: x y z"
-        r.Next();
+        RequireData(r);
         int nv = LastInt(r.Current);
         for (int i = 0; i < nv; i++)
         {
-            r.Next();
+            RequireData(r);
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
             var pos = new Vec3(
                 JklReader.ParseFloat(t.ElementAtOrDefault(0) ?? "0"),
@@ -201,11 +215,11 @@ public static class JklParser
         }
 
         // Texture vertices: "i: u v"
-        r.Next();
+        RequireData(r);
         int nt = LastInt(r.Current);
         for (int i = 0; i < nt; i++)
         {
-            r.Next();
+            RequireData(r);
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
             geo.TexVertices.Add(new Vec2(
                 JklReader.ParseFloat(t.ElementAtOrDefault(0) ?? "0"),
@@ -213,11 +227,11 @@ public static class JklParser
         }
 
         // Adjoins: "i: flags mirror"
-        r.Next();
+        RequireData(r);
         int na = LastInt(r.Current);
         for (int i = 0; i < na; i++)
         {
-            r.Next();
+            RequireData(r);
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
             geo.Adjoins.Add(new TempAdjoin
             {
@@ -227,18 +241,18 @@ public static class JklParser
         }
 
         // Surfaces.
-        r.Next();
+        RequireData(r);
         int ns = LastInt(r.Current);
         for (int i = 0; i < ns; i++)
         {
-            r.Next();
+            RequireData(r);
             var ts = ParseSurface(JklReader.StripIndex(r.Current), level.Header.Version, ijim, level);
             geo.Surfaces.Add(ts);
             if (ts.Adjoin >= 0 && ts.Adjoin < geo.Adjoins.Count) geo.Adjoins[ts.Adjoin].Surf = i;
         }
 
         // Normals: one line per surface — skip.
-        for (int i = 0; i < ns; i++) r.Next();
+        for (int i = 0; i < ns; i++) RequireData(r);
     }
 
     private static TempSurface ParseSurface(string line, int version, bool ijim, Level level)
@@ -247,9 +261,10 @@ public static class JklParser
         var t = JklReader.Tokens(line.Replace(',', ' '));
         var s = new TempSurface();
         int k = 0;
-        int Int() => JklReader.ParseInt(t.ElementAtOrDefault(k++) ?? "0");
-        long Hex() => JklReader.ParseHex(t.ElementAtOrDefault(k++) ?? "0");
-        double Flt() => JklReader.ParseFloat(t.ElementAtOrDefault(k++) ?? "0");
+        string Token() => k < t.Length ? t[k++] : throw new FormatException("Truncated JKL surface.");
+        int Int() => JklReader.ParseInt(Token());
+        long Hex() => JklReader.ParseHex(Token());
+        double Flt() => JklReader.ParseFloat(Token());
 
         s.Material = Int();
         s.SurfFlags = Hex();
@@ -273,6 +288,8 @@ public static class JklParser
         }
 
         int nvx = Int();
+        if (nvx < 3 || nvx > 512 || nvx > (t.Length - k) / 2)
+            throw new FormatException($"Invalid JKL surface vertex count {nvx}.");
         for (int j = 0; j < nvx; j++)
         {
             s.Vxs.Add(Int());
@@ -282,18 +299,24 @@ public static class JklParser
         // Remaining tokens are per-vertex light intensities.
         var il = new List<double>();
         while (k < t.Length) il.Add(Flt());
+        if (il.Any(value => value < -float.MaxValue || value > float.MaxValue))
+            throw new FormatException("Surface light component is outside the finite engine float range.");
 
-        if (il.Count > nvx)
+        int components = il.Count == nvx && !ijim ? 1 :
+            il.Count == nvx * (ijim ? 3 : 4) ? (ijim ? 3 : 4) : 0;
+        if (components == 0)
+            throw new FormatException($"Surface has {il.Count} light components for {nvx} vertices; expected {(ijim ? "3N" : "N or 4N")}.");
+        if (components > 1)
         {
             // MotS (version 1 with extra data) or IJIM: RGB(A) per vertex.
             if (version == 1) level.Kind = ProjectType.MysteriesOfTheSith;
             int off = 0;
             for (int j = 0; j < nvx; j++)
             {
-                if (version == 1) off++; // MotS leading alpha
-                float cr = (float)il.ElementAtOrDefault(off++);
-                float cg = (float)il.ElementAtOrDefault(off++);
-                float cb = (float)il.ElementAtOrDefault(off++);
+                s.MonoIntensities.Add(version == 1 ? (float)il[off++] : null);
+                float cr = (float)il[off++];
+                float cg = (float)il[off++];
+                float cb = (float)il[off++];
                 s.Intensities.Add(new ColorF(cr, cg, cb));
             }
         }
@@ -303,6 +326,7 @@ public static class JklParser
             {
                 float a = (float)il.ElementAtOrDefault(j);
                 s.Intensities.Add(new ColorF(a, a, a));
+                s.MonoIntensities.Add(null);
             }
         }
 
@@ -311,20 +335,20 @@ public static class JklParser
 
     // ---- SECTORS ----
 
-    private static void LoadSectors(JklReader r, Level level, GeoData geo)
+    private static void LoadSectors(JklReader r, Level level, GeoData geo, JklDocument? doc)
     {
         if (!r.Next()) return;
         int numSecs = LastInt(r.Current);
 
         for (int i = 0; i < numSecs; i++)
         {
-            if (!r.Next() || r.EndOfSection) break; // "SECTOR i"
+            RequireData(r); // "SECTOR i"
             var sector = level.NewSector();
             var globalToLocal = new Dictionary<int, Vertex>();
 
             while (true)
             {
-                if (!r.Next() || r.EndOfSection) break;
+                RequireData(r);
                 var t = JklReader.Tokens(r.Current);
                 var w = t[0];
 
@@ -338,7 +362,19 @@ public static class JklParser
                 if (w == "VERTICES")
                 {
                     int nvx = JklReader.ParseInt(t.ElementAtOrDefault(1) ?? "0");
-                    for (int j = 0; j < nvx; j++) r.Next();
+                    if (nvx < 0 || nvx > geo.Vertices.Count) throw new FormatException("Invalid sector vertex count.");
+                    for (int j = 0; j < nvx; j++)
+                    {
+                        RequireData(r);
+                        int index = JklReader.ParseInt(JklReader.StripIndex(r.Current));
+                        if ((uint)index >= (uint)geo.Vertices.Count) throw new FormatException("Sector references missing world vertex.");
+                        if (!globalToLocal.ContainsKey(index))
+                        {
+                            var vertex = sector.AddVertex(geo.Vertices[index]);
+                            vertex.SourceIndex = index;
+                            globalToLocal.Add(index, vertex);
+                        }
+                    }
                     continue;
                 }
                 if (w == "FLAGS") sector.Flags = JklReader.ParseHex(t.ElementAtOrDefault(1) ?? "0");
@@ -359,13 +395,26 @@ public static class JklParser
                     sector.Sound = t[1];
                     sector.SoundVolume = JklReader.ParseFloat(t[2]);
                 }
+                else if (w == "THRUST") sector.Thrust = ReadVector(t, 1);
+                else if (w is "COLLIDEBOX" or "BOUNDBOX")
+                {
+                    var box = new Box(ReadVector(t, 1), ReadVector(t, 4));
+                    if (w == "COLLIDEBOX") { sector.CollideBox = box; sector.HasCollideBox = true; }
+                    else sector.BoundBox = box;
+                }
+                else if (w == "CENTER") sector.Center = ReadVector(t, 1);
+                else if (w == "RADIUS" && t.Length == 2) sector.Radius = JklReader.ParseFloat(t[1]);
+                else Unmodeled(doc, "SECTORS", r.Current);
             }
+            sector.BoundsSourceVertices = sector.Vertices.Select(v => v.Position).ToArray();
         }
     }
 
     private static void BuildSectorSurfaces(Sector sector, GeoData geo, int bsurf, int nsurfs,
         Dictionary<int, Vertex> globalToLocal)
     {
+        if (bsurf < 0 || nsurfs < 0 || bsurf > geo.Surfaces.Count - nsurfs)
+            throw new FormatException("Sector references an invalid surface range.");
         for (int isurf = bsurf; isurf < bsurf + nsurfs; isurf++)
         {
             if ((uint)isurf >= (uint)geo.Surfaces.Count) continue;
@@ -386,7 +435,8 @@ public static class JklParser
                 int gidx = ts.Vxs[j];
                 if (!globalToLocal.TryGetValue(gidx, out var vertex))
                 {
-                    var pos = (uint)gidx < (uint)geo.Vertices.Count ? geo.Vertices[gidx] : Vec3.Zero;
+                    if ((uint)gidx >= (uint)geo.Vertices.Count) throw new FormatException("Surface references a missing world vertex.");
+                    var pos = geo.Vertices[gidx];
                     vertex = sector.AddVertex(pos);
                     vertex.SourceIndex = gidx;
                     globalToLocal[gidx] = vertex;
@@ -399,6 +449,7 @@ public static class JklParser
                     Vertex = vertex,
                     Uv = new TexVertex(uv.X, uv.Y),
                     Intensity = j < ts.Intensities.Count ? ts.Intensities[j] : ColorF.White,
+                    MonoIntensity = ts.MonoIntensities[j],
                 });
             }
         }
@@ -406,21 +457,26 @@ public static class JklParser
 
     // ---- TEMPLATES ----
 
-    private static void LoadTemplates(JklReader r, Level level)
+    private static void LoadTemplates(JklReader r, Level level, JklDocument? doc)
     {
         if (!r.Next()) return; // "World templates n"
         int n = LastInt(r.Current);
         for (int i = 0; i < n; i++)
         {
             if (!r.Next(upper: false) || r.EndOfSection) break;
-            var t = JklReader.Tokens(r.Current);
+            var t = JklReader.ParameterTokens(r.Current);
+            ReportLegacyParameters(t, r.LineNumber, doc);
             if (t.Length < 2 || t[0] is "#" or "//") continue;
 
             var tpl = new Template { Name = t[0], Parent = t[1], Order = level.Templates.Count };
             for (int p = 2; p < t.Length; p++)
             {
                 int eq = t[p].IndexOf('=');
-                if (eq > 0) tpl.Values[t[p][..eq]] = t[p][(eq + 1)..];
+                if (eq > 0)
+                {
+                    tpl.Values[t[p][..eq]] = t[p][(eq + 1)..];
+                    tpl.SourceParameters.Add(new(t[p][..eq], t[p][(eq + 1)..]));
+                }
             }
             level.Templates[tpl.Name] = tpl;
         }
@@ -433,10 +489,12 @@ public static class JklParser
         if (!r.Next()) return;
         if (doc is not null) doc.ThingsCountLine = r.LineNumber - 1;
         int n = LastInt(r.Current);
+        level.ThingCapacity = n;
         for (int i = 0; i < n; i++)
         {
             if (!r.Next(upper: false) || r.EndOfSection) break;
-            var t = JklReader.Tokens(r.Current);
+            var t = JklReader.ParameterTokens(r.Current);
+            ReportLegacyParameters(t, r.LineNumber, doc);
             if (t.Length < 10) continue;
 
             var thing = level.NewThing();
@@ -451,14 +509,32 @@ public static class JklParser
             thing.Roll = JklReader.ParseFloat(t[8]);
             int sec = JklReader.ParseInt(t[9]);
             if ((uint)sec < (uint)level.Sectors.Count) thing.Sector = level.Sectors[sec];
+            else if (sec != -1) throw new FormatException($"Thing {i} references missing sector {sec}.");
 
-            for (int p = 10; p < t.Length; p++)
+            int parameterStart = 10;
+            if (level.Header.Version == 1 && t.Length > 10 && !t[10].Contains('='))
+            {
+                thing.ArchLightingIndex = JklReader.ParseInt(t[10]);
+                level.Kind = ProjectType.MysteriesOfTheSith;
+                parameterStart++;
+            }
+            for (int p = parameterStart; p < t.Length; p++)
             {
                 int eq = t[p].IndexOf('=');
                 if (eq <= 0) continue;
                 thing.Values[t[p][..eq]] = t[p][(eq + 1)..];
+                thing.SourceParameters.Add(new(t[p][..eq], t[p][(eq + 1)..]));
             }
         }
+    }
+
+    private static void ReportLegacyParameters(string[] tokens, int lineNumber, JklDocument? document)
+    {
+        if (tokens.Length > 0 && JklReader.IsLegacyUnterminatedFrameToken(tokens[^1]))
+            document?.PreservationWarnings.Add($"Line {lineNumber}: a legacy final frame parameter has six finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's six-conversion parser.");
+        foreach (string token in tokens)
+            if (JklReader.IsLegacyUnterminatedEyeOffsetToken(token))
+                document?.PreservationWarnings.Add($"Line {lineNumber}: a legacy eyeoffset parameter has three finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's three-conversion parser; following parameters remain separate.");
     }
 
     // ---- LIGHTS ----
@@ -522,18 +598,21 @@ public static class JklParser
         int n = LastInt(r.Current);
         for (int i = 0; i < n; i++)
         {
-            if (!r.Next(upper: false) || r.EndOfSection) break;
-            level.Layers.Add(r.Current.Trim());
+            if (!r.Next(upper: false, preserveComment: true) || r.EndOfSection)
+                throw new FormatException("Truncated editor layers.");
+            level.Layers.Add(r.Current.TrimStart('#').Trim());
 
             // Sector indices line: "count:\tidx\tidx..."
             if (!r.Next() || r.EndOfSection) break;
             foreach (var idx in ParseIndexLine(r.Current))
                 if ((uint)idx < (uint)level.Sectors.Count) level.Sectors[idx].Layer = i;
+                else throw new FormatException("Layer references a missing sector.");
 
             // Thing indices line
             if (!r.Next() || r.EndOfSection) break;
             foreach (var idx in ParseIndexLine(r.Current))
                 if ((uint)idx < (uint)level.Things.Count) level.Things[idx].Layer = i;
+                else throw new FormatException("Layer references a missing thing.");
         }
 
         EnsureLayersExist(level);
@@ -542,8 +621,11 @@ public static class JklParser
     private static IEnumerable<int> ParseIndexLine(string line)
     {
         var colon = line.IndexOf(':');
+        if (colon < 0) throw new FormatException("Layer membership is missing its count.");
         var body = colon >= 0 ? line[(colon + 1)..] : line;
-        foreach (var t in JklReader.Tokens(body))
+        var tokens = JklReader.Tokens(body);
+        if (JklReader.ParseInt(line[..colon]) != tokens.Length) throw new FormatException("Layer membership count mismatch.");
+        foreach (var t in tokens)
             yield return JklReader.ParseInt(t);
     }
 
@@ -575,6 +657,36 @@ public static class JklParser
     private static int LastInt(string line)
     {
         var t = JklReader.Tokens(line);
-        return t.Length == 0 ? 0 : JklReader.ParseInt(t[^1]);
+        int count = t.Length == 0 ? 0 : JklReader.ParseInt(t[^1]);
+        return count is >= 0 and <= 1_000_000 ? count : throw new FormatException("JKL count is negative or exceeds the parser limit.");
+    }
+
+    private static void RequireData(JklReader r)
+    {
+        if (!r.Next() || r.EndOfSection) throw new FormatException($"Unexpected section end at line {r.LineNumber}.");
+    }
+
+    private static void Unmodeled(JklDocument? doc, string section, string line)
+    {
+        if (doc is null) return;
+        doc.SectionsWithUnmodeledFields.Add(section);
+        doc.PreservationWarnings.Add($"{section} contains an unmodeled field: {line}. Editing this section is refused to preserve it.");
+    }
+
+    private static Vec3 ReadVector(string[] tokens, int start)
+    {
+        if (tokens.Length < start + 3) throw new FormatException("Truncated sector vector or bounds.");
+        return new(JklReader.ParseFloat(tokens[start]), JklReader.ParseFloat(tokens[start + 1]), JklReader.ParseFloat(tokens[start + 2]));
+    }
+
+    private static void LoadArchitecturalLighting(JklReader r, Level level)
+    {
+        if (level.ArchitecturalLighting.Count != 0) throw new FormatException("Duplicate architectural lighting section.");
+        var lines = new List<string>();
+        while (r.Next(upper: false) && !r.EndOfSection) lines.Add(r.Current);
+        if (!r.Current.Equals("END", StringComparison.OrdinalIgnoreCase))
+            throw new FormatException("Architectural lighting section is missing END.");
+        level.ArchitecturalLighting.AddRange(ArchitecturalLightingFormat.Parse(lines));
+        level.Kind = ProjectType.MysteriesOfTheSith;
     }
 }

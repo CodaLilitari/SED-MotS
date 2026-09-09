@@ -12,7 +12,7 @@ public sealed class CreateThingCommand : IEditCommand
     public CreateThingCommand(Level level, Thing thing) { _level = level; Thing = thing; }
 
     public string Name => "Create thing";
-    public void Apply() { _level.Things.Add(Thing); _level.RenumberThings(); }
+    public void Apply() { Thing.Level = _level; _level.Things.Add(Thing); _level.RenumberThings(); }
     public void Revert() { _level.Things.Remove(Thing); _level.RenumberThings(); }
 }
 
@@ -195,7 +195,9 @@ public sealed class InsertSurfaceVertexCommand : IEditCommand
             {
                 Vertex = _newVertex,
                 Uv = new TexVertex((a.Uv.U + b.Uv.U) * 0.5, (a.Uv.V + b.Uv.V) * 0.5),
-                Intensity = a.Intensity,
+                Intensity = (a.Intensity + b.Intensity) * 0.5f,
+                MonoIntensity = a.MonoIntensity is null && b.MonoIntensity is null ? null :
+                    ((a.MonoIntensity ?? a.Intensity.R) + (b.MonoIntensity ?? b.Intensity.R)) * 0.5f,
             };
         }
         _sector.Vertices.Add(_newVertex);

@@ -21,6 +21,8 @@ public sealed class CalculateLightingCommand : IEditCommand
     private readonly List<Surface.Corner> _corners = new();
     private ColorF[]? _oldIntensities;
     private ColorF[]? _newIntensities;
+    private float?[]? _oldMono;
+    private float?[]? _newMono;
     private ColorF[]? _oldAmbients;
     private ColorF[]? _newAmbients;
 
@@ -28,7 +30,7 @@ public sealed class CalculateLightingCommand : IEditCommand
         LightingOptions? options = null)
     {
         _level = level;
-        _targets = (targets ?? level.Sectors).ToList();
+        _targets = (targets ?? level.Sectors).Distinct().ToList();
         _options = options ?? new LightingOptions();
     }
 
@@ -49,14 +51,16 @@ public sealed class CalculateLightingCommand : IEditCommand
 
         // Redo: replay the captured result rather than recomputing, so redo is
         // instant and cannot drift from what undo removed.
-        for (int i = 0; i < _corners.Count; i++) _corners[i].Intensity = _newIntensities[i];
+        for (int i = 0; i < _corners.Count; i++)
+        { _corners[i].Intensity = _newIntensities[i]; _corners[i].MonoIntensity = _newMono![i]; }
         for (int i = 0; i < _targets.Count; i++) _targets[i].Ambient = _newAmbients![i];
     }
 
     public void Revert()
     {
         if (_oldIntensities is null) return;
-        for (int i = 0; i < _corners.Count; i++) _corners[i].Intensity = _oldIntensities[i];
+        for (int i = 0; i < _corners.Count; i++)
+        { _corners[i].Intensity = _oldIntensities[i]; _corners[i].MonoIntensity = _oldMono![i]; }
         for (int i = 0; i < _targets.Count; i++) _targets[i].Ambient = _oldAmbients![i];
     }
 
@@ -70,11 +74,14 @@ public sealed class CalculateLightingCommand : IEditCommand
                     _corners.Add(c);
 
         _oldIntensities = _corners.Select(c => c.Intensity).ToArray();
+        _oldMono = _corners.Select(c => c.MonoIntensity).ToArray();
         _oldAmbients = _targets.Select(s => s.Ambient).ToArray();
 
-        Stats = LightCalculator.Calculate(_level, _targets, _options);
+        try { Stats = LightCalculator.Calculate(_level, _targets, _options); }
+        catch { Revert(); throw; }
 
         _newIntensities = _corners.Select(c => c.Intensity).ToArray();
+        _newMono = _corners.Select(c => c.MonoIntensity).ToArray();
         _newAmbients = _targets.Select(s => s.Ambient).ToArray();
     }
 }

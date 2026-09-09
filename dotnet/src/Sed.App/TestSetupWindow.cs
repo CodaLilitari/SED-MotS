@@ -3,123 +3,107 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Sed.Formats.Launching;
 
 namespace Sed.App;
 
-/// <summary>
-/// Configures "Save and Test" (mirror of the original's ProjectDir + test batch):
-/// where the test GOB is written, and — on macOS/Linux — the command that launches
-/// the game. Placeholders: {project} {gob} {game} {gameexe} {levelname}. Inside
-/// Wine/CrossOver, mac paths are Z:\&lt;mac path&gt;.
-/// </summary>
+/// <summary>Independent executable and engine profiles for JK and MotS.</summary>
 public sealed class TestSetupWindow : Window
 {
-    private readonly AppSettings _settings;
-    private readonly TextBox _projectDir;
-    private readonly TextBox _command;
-
     public TestSetupWindow(AppSettings settings)
     {
-        _settings = settings;
-
         Title = "Test Setup";
-        Width = 640;
-        Height = 380;
+        Width = 700;
+        Height = OperatingSystem.IsWindows() ? 500 : 640;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = new SolidColorBrush(Color.FromRgb(0x1e, 0x1e, 0x22));
-
-        _projectDir = InspectorPanel.TextField(settings.ProjectDir ?? string.Empty, _ => { });
-        _projectDir.Width = 420;
-
-        var browse = new Button { Content = "Browse…" };
-        browse.Click += async (_, _) =>
+        var stack = new StackPanel { Margin = new Thickness(12), Spacing = 8 };
+        var project = Field(settings.ProjectDir);
+        stack.Children.Add(Label("Test project folder"));
+        var projectRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+        projectRow.Children.Add(project);
+        var browseProject = new Button { Content = "Browse…" };
+        browseProject.Click += async (_, _) =>
         {
             var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-            {
-                Title = "Select the project folder (game's -path)",
-                AllowMultiple = false,
-            });
-            if (folders.FirstOrDefault() is { } folder)
-                _projectDir.Text = folder.Path.LocalPath;
+                { Title = "Select the test project folder", AllowMultiple = false });
+            if (folders.FirstOrDefault() is { } folder) project.Text = folder.Path.LocalPath;
         };
+        projectRow.Children.Add(browseProject);
+        stack.Children.Add(projectRow);
+        stack.Children.Add(Hint("Save and Test writes loose episode and level files here, plus a GOB or GOO archive. An existing episode definition must reference the level. Short paths without spaces work best."));
 
-        var projectRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 12, 12, 4) };
-        projectRow.Children.Add(new TextBlock
+        var jkExecutable = Field(settings.JediKnightTestExecutable);
+        var motsExecutable = Field(settings.MysteriesTestExecutable);
+        var jkEngine = Profile(settings.JediKnightTestEngine);
+        var motsEngine = Profile(settings.MysteriesTestEngine);
+        AddGame("Jedi Knight", jkExecutable, jkEngine);
+        AddGame("Mysteries of the Sith", motsExecutable, motsEngine);
+        stack.Children.Add(Hint("Automatic prefers OpenJKDF2, then the game's retail executable. Leave the executable blank to search the game folder. For a renamed executable, choose its engine explicitly. Testing opens the game's menus with your project loaded."));
+
+        TextBox? command = null;
+        if (!OperatingSystem.IsWindows())
         {
-            Text = "Project folder",
-            Width = 110,
-            VerticalAlignment = VerticalAlignment.Center,
-            FontSize = 12,
-        });
-        projectRow.Children.Add(_projectDir);
-        projectRow.Children.Add(browse);
+            stack.Children.Add(Label("Custom shell command (Wine / CrossOver)"));
+            command = Field(settings.TestCommand);
+            stack.Children.Add(command);
+            stack.Children.Add(Hint("Existing non-Windows command templates remain available: {project} {gob} {game} {gameexe} {levelname}. The Windows launcher uses executable profiles directly."));
+        }
 
-        var projectHint = new TextBlock
-        {
-            Text = "Where the test GOB is written. The game must be able to read this directory — " +
-                   "the original pointed the engine's -path at it.",
-            TextWrapping = TextWrapping.Wrap,
-            FontSize = 11,
-            Foreground = Brushes.Gray,
-            Margin = new Thickness(12, 0, 12, 8),
-        };
-
-        _command = InspectorPanel.TextField(settings.TestCommand ?? string.Empty, _ => { });
-        _command.Width = 500;
-
-        var commandRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 8, 12, 4) };
-        commandRow.Children.Add(new TextBlock
-        {
-            Text = "Launch command",
-            Width = 110,
-            VerticalAlignment = VerticalAlignment.Center,
-            FontSize = 12,
-        });
-        commandRow.Children.Add(_command);
-
-        var commandHint = new TextBlock
-        {
-            Text = "Windows: empty uses the original's generated test batch. macOS/Linux: a shell command " +
-                   "template. Placeholders: {project} {gob} {game} {gameexe} {levelname}. Example (Wine):\n" +
-                   "wine \"{gameexe}\" -devmode -dispstats -debug log -displayconfig -path \"{project}\"\n" +
-                   "Inside Wine the paths resolve as Z:\\<mac path>.",
-            TextWrapping = TextWrapping.Wrap,
-            FontSize = 11,
-            Foreground = Brushes.Gray,
-            Margin = new Thickness(12, 0, 12, 8),
-        };
-
-        var save = new Button { Content = "Save", Margin = new Thickness(0, 0, 6, 0) };
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(12), Spacing = 6 };
+        var save = new Button { Content = "Save" };
         save.Click += (_, _) =>
         {
-            var project = _projectDir.Text?.Trim() ?? string.Empty;
-            var command = _command.Text?.Trim() ?? string.Empty;
-            _settings.ProjectDir = project.Length > 0 ? project : null;
-            _settings.TestCommand = command.Length > 0 ? command : null;
-            _settings.Save();
+            settings.ProjectDir = Value(project);
+            settings.JediKnightTestExecutable = Value(jkExecutable);
+            settings.MysteriesTestExecutable = Value(motsExecutable);
+            settings.JediKnightTestEngine = (GameEngineProfile)jkEngine.SelectedIndex;
+            settings.MysteriesTestEngine = (GameEngineProfile)motsEngine.SelectedIndex;
+            if (command is not null) settings.TestCommand = Value(command);
+            settings.Save();
             Close();
         };
         var cancel = new Button { Content = "Cancel" };
         cancel.Click += (_, _) => Close();
-
-        var buttons = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Margin = new Thickness(12),
-        };
         buttons.Children.Add(save);
         buttons.Children.Add(cancel);
-
         var root = new DockPanel();
         DockPanel.SetDock(buttons, Dock.Bottom);
         root.Children.Add(buttons);
-        var stack = new StackPanel();
-        stack.Children.Add(projectRow);
-        stack.Children.Add(projectHint);
-        stack.Children.Add(commandRow);
-        stack.Children.Add(commandHint);
-        root.Children.Add(stack);
+        root.Children.Add(new ScrollViewer { Content = stack });
         Content = root;
+
+        void AddGame(string name, TextBox executable, ComboBox engine)
+        {
+            stack.Children.Add(Label(name));
+            var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+            row.Children.Add(executable);
+            var browse = new Button { Content = "Select EXE…" };
+            browse.Click += async (_, _) =>
+            {
+                var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Select " + name + " executable", AllowMultiple = false,
+                    FileTypeFilter = [new FilePickerFileType("Executable") { Patterns = ["*.exe"] }],
+                });
+                if (files.FirstOrDefault() is { } file) executable.Text = file.Path.LocalPath;
+            };
+            row.Children.Add(browse);
+            stack.Children.Add(row);
+            stack.Children.Add(engine);
+        }
     }
+
+    private static TextBox Field(string? text) => new() { Text = text ?? string.Empty, Width = 500 };
+    private static string? Value(TextBox field) => string.IsNullOrWhiteSpace(field.Text) ? null : field.Text.Trim();
+    private static ComboBox Profile(GameEngineProfile selected) => new()
+    {
+        ItemsSource = new[] { "Automatic (prefer OpenJKDF2)", "OpenJKDF2", "Retail" },
+        SelectedIndex = Enum.IsDefined(selected) ? (int)selected : 0, Width = 300,
+        HorizontalAlignment = HorizontalAlignment.Left,
+    };
+    private static TextBlock Label(string text) => new() { Text = text, FontSize = 12, FontWeight = FontWeight.Bold };
+    private static TextBlock Hint(string text) => new() { Text = text, TextWrapping = TextWrapping.Wrap,
+        FontSize = 11, Foreground = Brushes.Gray };
 }

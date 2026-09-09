@@ -66,6 +66,7 @@ public static class LightCalculator
                 foreach (var c in surf.Corners)
                 {
                     c.Intensity = ColorF.Black;
+                    c.MonoIntensity = 0;
                     vertexCount++;
                 }
 
@@ -110,6 +111,7 @@ public static class LightCalculator
                         corner.Intensity = rgb
                             ? corner.Intensity + light.Color * contribution
                             : Grey(Intensity(corner.Intensity) + contribution);
+                        corner.MonoIntensity = (corner.MonoIntensity ?? 0) + contribution;
                     }
                 }
             }

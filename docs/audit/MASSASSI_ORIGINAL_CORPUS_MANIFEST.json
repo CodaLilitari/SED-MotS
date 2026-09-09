@@ -1,0 +1,2134 @@
+{
+  "schemaVersion": 1,
+  "createdUtc": "2026-09-09T02:58:27.6322991Z",
+  "corpusKind": "Original public Massassi archives; separate from WBW conversions",
+  "selectionRule": "13 JKSP, 13 JKMP, 12 MotSSP, 12 MotSMP; within each category rating descending, downloads descending, file ID ascending; minimum 5 votes",
+  "totalSelected": 50,
+  "acquired": 50,
+  "duplicateHashGroups": [],
+  "executed": false,
+  "redistributionInEditorRelease": false,
+  "packages": [
+    {
+      "fileId": 328,
+      "title": "Chaos Eternal",
+      "author": "freddub",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 16,
+      "downloadsAtSelection": 10465,
+      "sourceUrl": "https://www.massassi.net/levels/files/328.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/328/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/chaosfor2.zip",
+      "contentType": "application/zip",
+      "originalFilename": "chaosfor2.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\328.zip",
+      "bytes": 1911687,
+      "sha256": "c4134bb218c0f34089598f255a97adf94b7a6c9f71d38a9cbe3612980c87cbe3",
+      "acquiredUtc": "2026-09-09T02:56:22.7578849Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "chaos.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "coopreadme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\328\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "Chaos.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\328\\document-2.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 423,
+      "title": "Duel Of The Fates S.E.",
+      "author": "Hoth Rebel",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 24,
+      "downloadsAtSelection": 18529,
+      "sourceUrl": "https://www.massassi.net/levels/files/423.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/423/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/fates2_jk.zip",
+      "contentType": "application/zip",
+      "originalFilename": "fates2_jk.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\423.zip",
+      "bytes": 759143,
+      "sha256": "25641359e15ce03e6911efa11f7fba1778200d7a358da512de3b00322b2a8270",
+      "acquiredUtc": "2026-09-09T02:56:19.7415817Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "DuelOfFates_SE.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "DOTF2-readit!!!.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\423\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "Important.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\423\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 428,
+      "title": "Drazen Isle",
+      "author": "Jeff Walters",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 143,
+      "downloadsAtSelection": 27709,
+      "sourceUrl": "https://www.massassi.net/levels/files/428.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/428/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/drazen.zip",
+      "contentType": "application/zip",
+      "originalFilename": "drazen.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\428.zip",
+      "bytes": 3193887,
+      "sha256": "d80d8386a91fe9f2b508010fee4f6358e0743454a476f71285b428501cc8c6f1",
+      "acquiredUtc": "2026-09-09T02:56:19.0322259Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "town.gob"
+      ],
+      "executableEntries": [],
+      "documents": [],
+      "readmeAvailability": "No text readme found by bounded extension/size scan.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 429,
+      "title": "Jedi Dojo",
+      "author": "Tee",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 16,
+      "downloadsAtSelection": 7663,
+      "sourceUrl": "https://www.massassi.net/levels/files/429.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/429/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/dojo.zip",
+      "contentType": "application/zip",
+      "originalFilename": "dojo.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\429.zip",
+      "bytes": 187892,
+      "sha256": "27f6a44f209cdc8fcebfe0fffd3230b2e7cbc1cf5982ef07133b10bdc70bc4da",
+      "acquiredUtc": "2026-09-09T02:56:24.5944534Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "dojo.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "Dojoreadme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\429\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 454,
+      "title": "Jawa Dwelling SE",
+      "author": "Red_0005",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 35,
+      "downloadsAtSelection": 13926,
+      "sourceUrl": "https://www.massassi.net/levels/files/454.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/454/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/jdwel_se.zip",
+      "contentType": "application/zip",
+      "originalFilename": "jdwel_se.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\454.zip",
+      "bytes": 520704,
+      "sha256": "ab387c944e559268f3528411bf58af4f6107ba806a62e9be51b11146e7e6db5b",
+      "acquiredUtc": "2026-09-09T02:56:20.5212075Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "jdwel_se.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "jdwel_se.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\454\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1270,
+      "title": "The Massassi Temple Level Pack 3",
+      "author": "Various",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-12-03",
+      "rating": 9.0,
+      "ratingVotes": 59,
+      "downloadsAtSelection": 11738,
+      "sourceUrl": "https://www.massassi.net/levels/files/1270.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1270/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/mlp3.zip",
+      "contentType": "application/zip",
+      "originalFilename": "mlp3.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\1270.zip",
+      "bytes": 5285660,
+      "sha256": "48a4e32e77be5d5e656eb1d222a937dd34ddbc9b8a9945da855fdfc5a2561bc1",
+      "acquiredUtc": "2026-09-09T02:56:21.7939294Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "mlp3.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "mlp3.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1270\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1839,
+      "title": "Area 21",
+      "author": "JeDak",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2001-12-14",
+      "rating": 9.0,
+      "ratingVotes": 72,
+      "downloadsAtSelection": 10392,
+      "sourceUrl": "https://www.massassi.net/levels/files/1839.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1839/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/area21.zip",
+      "contentType": "application/zip",
+      "originalFilename": "area21.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\1839.zip",
+      "bytes": 2222910,
+      "sha256": "a938f336cb08391db5f8caf4b9a46f5c7af47d0c8b127faae0ce1d3ceb36bf97",
+      "acquiredUtc": "2026-09-09T02:56:24.0453053Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "Area21.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "Area21 readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1839\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "Areas_ReadMe.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1839\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1877,
+      "title": "Reclusion",
+      "author": "Spiral",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-01-22",
+      "rating": 10.0,
+      "ratingVotes": 39,
+      "downloadsAtSelection": 3689,
+      "sourceUrl": "https://www.massassi.net/levels/files/1877.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1877/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/reclusion.zip",
+      "contentType": "application/zip",
+      "originalFilename": "reclusion.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\1877.zip",
+      "bytes": 5709005,
+      "sha256": "7dfa9bc7a1881d3ef7d98e18ef604052e5fac13b91d9033988289764ff5d0d3f",
+      "acquiredUtc": "2026-09-09T02:56:16.0748236Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "reclusion.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "reclusive.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1877\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1912,
+      "title": "Ode To A Jedi",
+      "author": "NJO_Aden_Lore",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-02-14",
+      "rating": 10.0,
+      "ratingVotes": 10,
+      "downloadsAtSelection": 805,
+      "sourceUrl": "https://www.massassi.net/levels/files/1912.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1912/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/ode.zip",
+      "contentType": "application/zip",
+      "originalFilename": "ode.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\1912.zip",
+      "bytes": 84548,
+      "sha256": "445b33cba586fd30cb85f40fbf4a8e68a8684cb947d009fe551e64b0ea6f9ca7",
+      "acquiredUtc": "2026-09-09T02:56:17.9359237Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "Ode.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1912\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1967,
+      "title": "Stories Untold Level Pack",
+      "author": "DSettahr",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-04-08",
+      "rating": 10.0,
+      "ratingVotes": 7,
+      "downloadsAtSelection": 1551,
+      "sourceUrl": "https://www.massassi.net/levels/files/1967.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1967/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/stunlvlpck.zip",
+      "contentType": "application/zip",
+      "originalFilename": "stunlvlpck.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\1967.zip",
+      "bytes": 374297,
+      "sha256": "392efcd3deceb1ef023bb20918d29b8047bd6f144065c49e27eadd744b0d6179",
+      "acquiredUtc": "2026-09-09T02:56:16.9281105Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "stunlvlpck.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "stunlvlpck.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\1967\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2635,
+      "title": "Rolling Game",
+      "author": "ID_Junkguy and ID_Matt",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2003-03-12",
+      "rating": 10.0,
+      "ratingVotes": 40,
+      "downloadsAtSelection": 1723,
+      "sourceUrl": "https://www.massassi.net/levels/files/2635.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2635/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/roll.zip",
+      "contentType": "application/zip",
+      "originalFilename": "roll.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\2635.zip",
+      "bytes": 1257501,
+      "sha256": "a69d94c4a1da6005cc608664906e944b40a8e23589d948157a036aaec7451092",
+      "acquiredUtc": "2026-09-09T02:56:16.5409137Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [
+        "roll.gob",
+        "rollmod.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "Information.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\2635\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\2635\\document-2.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2758,
+      "title": "WWE Raw",
+      "author": "TQB",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2003-08-12",
+      "rating": 10.0,
+      "ratingVotes": 11,
+      "downloadsAtSelection": 958,
+      "sourceUrl": "https://www.massassi.net/levels/files/2758.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2758/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/raw.zip",
+      "contentType": "application/zip",
+      "originalFilename": "raw.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\2758.zip",
+      "bytes": 27351322,
+      "sha256": "1ed0c9928ee0f1223127a577a75a5d94417376ce3cc932d9e1fa148eb39c7e9c",
+      "acquiredUtc": "2026-09-09T02:56:40.9057202Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [
+        "raw.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\2758\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2877,
+      "title": "Chester High School",
+      "author": "Spiral",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jkmp",
+      "mode": "multiplayer",
+      "addedDate": "2003-12-13",
+      "rating": 10.0,
+      "ratingVotes": 6,
+      "downloadsAtSelection": 1051,
+      "sourceUrl": "https://www.massassi.net/levels/files/2877.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2877/",
+      "listingUrl": "https://www.massassi.net/levels/jkmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jkmp/chs.zip",
+      "contentType": "application/zip",
+      "originalFilename": "chs.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jkmp\\2877.zip",
+      "bytes": 1438923,
+      "sha256": "9590285ee081e0d2112d970fcc768dc3c07873ce7c9eb57f5259fabd6396f5e9",
+      "acquiredUtc": "2026-09-09T02:56:17.4607707Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "CHS.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "CHS.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jkmp\\2877\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 4,
+      "title": "The New Empire",
+      "author": "Chris Swan",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 24,
+      "downloadsAtSelection": 8700,
+      "sourceUrl": "https://www.massassi.net/levels/files/4.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/4/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/tne1.zip",
+      "contentType": "application/zip",
+      "originalFilename": "tne1.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\4.zip",
+      "bytes": 3140622,
+      "sha256": "a341433bb3a0decaae69d6062eb8be9f957fa08de48e3b6b25116293f1e099cb",
+      "acquiredUtc": "2026-09-09T02:56:11.0113671Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [],
+      "executableEntries": [
+        "install.exe"
+      ],
+      "documents": [],
+      "readmeAvailability": "No text readme found by bounded extension/size scan.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 6,
+      "title": "Imperial Siege On Derra IV",
+      "author": "Ryan Bickhart",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 78,
+      "downloadsAtSelection": 13115,
+      "sourceUrl": "https://www.massassi.net/levels/files/6.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/6/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/impsiege1.zip",
+      "contentType": "application/zip",
+      "originalFilename": "impsiege1.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\6.zip",
+      "bytes": 3474545,
+      "sha256": "e7faa8fdb059224b006a6a1542d6b6583c638a3d925c5de25ce02ea4ee328932",
+      "acquiredUtc": "2026-09-09T02:56:09.7454100Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "impsiege.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "impsiege.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\6\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 13,
+      "title": "The Search for Leia",
+      "author": "Anthony Piggott",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 87,
+      "downloadsAtSelection": 11568,
+      "sourceUrl": "https://www.massassi.net/levels/files/13.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/13/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/leiasearch.zip",
+      "contentType": "application/zip",
+      "originalFilename": "leiasearch.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\13.zip",
+      "bytes": 2482054,
+      "sha256": "bcc50c334c45bb460a1cd23e9cc474dcd1f13ae1506039a9cbbe2cf0ae97bfa7",
+      "acquiredUtc": "2026-09-09T02:56:09.8375302Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [
+        "Leia.gob",
+        "Leiaxtra.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "Leiarun.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\13\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "Leia.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\13\\document-2.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 20,
+      "title": "Remnants of the Empire 3: Desert of Tatooine",
+      "author": "SavageX",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 8.0,
+      "ratingVotes": 37,
+      "downloadsAtSelection": 12138,
+      "sourceUrl": "https://www.massassi.net/levels/files/20.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/20/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/rote3.zip",
+      "contentType": "application/zip",
+      "originalFilename": "rote3.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\20.zip",
+      "bytes": 3440490,
+      "sha256": "f1783a34b23f3dd97a7a9b5a1fbcee44962ee3e35af7f4f434ba21f5eb332e02",
+      "acquiredUtc": "2026-09-09T02:56:14.4444566Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "rote.gob"
+      ],
+      "executableEntries": [
+        "rote.bat"
+      ],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\20\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 25,
+      "title": "Remnants of the Empire 2: Lost Base on Hoth",
+      "author": "SavageX",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 10,
+      "downloadsAtSelection": 9800,
+      "sourceUrl": "https://www.massassi.net/levels/files/25.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/25/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/rote.zip",
+      "contentType": "application/zip",
+      "originalFilename": "rote.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\25.zip",
+      "bytes": 2252433,
+      "sha256": "c10caabd5fee1803d5220d959d0b0341485eed8ebf8b42b9609a8ccfa457381e",
+      "acquiredUtc": "2026-09-09T02:56:09.4888386Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "rote.gob"
+      ],
+      "executableEntries": [
+        "rote.bat"
+      ],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\25\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1041,
+      "title": "WarZone 1 & 2",
+      "author": "Mark Jones/Tom Smallwood",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2000-08-11",
+      "rating": 8.0,
+      "ratingVotes": 29,
+      "downloadsAtSelection": 7108,
+      "sourceUrl": "https://www.massassi.net/levels/files/1041.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1041/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/warzone.zip",
+      "contentType": "application/zip",
+      "originalFilename": "warzone.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\1041.zip",
+      "bytes": 3478305,
+      "sha256": "c59d28079cadba9fa43e750301b8f399556a0bd1d1e3505da80eaeb79818995a",
+      "acquiredUtc": "2026-09-09T02:56:15.7129420Z",
+      "archiveEntryCount": 5,
+      "levelFiles": [
+        "warzone.gob",
+        "WZLoadScrn.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "WarZone Chapter 2.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1041\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "Warzone Chapter 1.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1041\\document-2.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "WZInstall.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1041\\document-3.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1332,
+      "title": "The New Empire Part 2",
+      "author": "Chris Swan",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2001-01-06",
+      "rating": 9.0,
+      "ratingVotes": 36,
+      "downloadsAtSelection": 6967,
+      "sourceUrl": "https://www.massassi.net/levels/files/1332.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1332/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/tne2.zip",
+      "contentType": "application/zip",
+      "originalFilename": "tne2.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\1332.zip",
+      "bytes": 8454330,
+      "sha256": "53e2f9609b8ef3926df3f510b935e4c39a720ccbba647c1e11ff385a7a99a46a",
+      "acquiredUtc": "2026-09-09T02:56:11.8850661Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [],
+      "executableEntries": [
+        "install.exe"
+      ],
+      "documents": [
+        {
+          "archivePath": "Read Before Installing.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1332\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1678,
+      "title": "Freedman Threat",
+      "author": "Julia \\ Michael / Lisa",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2001-09-13",
+      "rating": 9.0,
+      "ratingVotes": 10,
+      "downloadsAtSelection": 3990,
+      "sourceUrl": "https://www.massassi.net/levels/files/1678.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1678/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/freedman.zip",
+      "contentType": "application/zip",
+      "originalFilename": "freedman.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\1678.zip",
+      "bytes": 4195487,
+      "sha256": "103ca6481ab01c37acce7cbb38bc5451d78e52b9ee170b129dfee1824b15eb48",
+      "acquiredUtc": "2026-09-09T02:56:12.0885495Z",
+      "archiveEntryCount": 6,
+      "levelFiles": [
+        "bPrincess.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "bPrincess.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1678\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1837,
+      "title": "Life of a Merchant",
+      "author": "Wolfy",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2001-12-09",
+      "rating": 9.0,
+      "ratingVotes": 45,
+      "downloadsAtSelection": 8004,
+      "sourceUrl": "https://www.massassi.net/levels/files/1837.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1837/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/loam.zip",
+      "contentType": "application/zip",
+      "originalFilename": "loam.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\1837.zip",
+      "bytes": 4873230,
+      "sha256": "bdd869bd33f0e20c82d598aa5444c18f3ef06099adb2270f125fd78326c76a7e",
+      "acquiredUtc": "2026-09-09T02:56:11.4888956Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "life.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\1837\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2015,
+      "title": "Warzone Chapter 3",
+      "author": "Tom 'Magi' Smallwood",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2002-04-28",
+      "rating": 9.0,
+      "ratingVotes": 19,
+      "downloadsAtSelection": 3639,
+      "sourceUrl": "https://www.massassi.net/levels/files/2015.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2015/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/warzone3.zip",
+      "contentType": "application/zip",
+      "originalFilename": "warzone3.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\2015.zip",
+      "bytes": 3878672,
+      "sha256": "e6ddb39b87538fd76b38326ce0a0cf23df2dd0fdc8da5054a01be1b94e1a7a36",
+      "acquiredUtc": "2026-09-09T02:56:12.6494920Z",
+      "archiveEntryCount": 7,
+      "levelFiles": [
+        "WZ3.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "WZ3 readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "WZ3 spoiler - swimming pool.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "WZ3 spoiler - lava chasm.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-3.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "WZ3 spoiler - down the pit.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-4.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "WZ3 spoiler - crushing statue.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-5.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "WZ3 spoiler - cable car.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2015\\document-6.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2710,
+      "title": "Laboratory : Trailer",
+      "author": "Spiral",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2003-06-20",
+      "rating": 9.0,
+      "ratingVotes": 17,
+      "downloadsAtSelection": 1767,
+      "sourceUrl": "https://www.massassi.net/levels/files/2710.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2710/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/labtrailer.zip",
+      "contentType": "application/zip",
+      "originalFilename": "labtrailer.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\2710.zip",
+      "bytes": 10264598,
+      "sha256": "de66b1aeb321364254986ddc21ae13b7f2fe60d27ebf2d051270dbee1e1d6693",
+      "acquiredUtc": "2026-09-09T02:56:14.3545550Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "labtrailer.gob"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "labtrailer.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\2710\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 3119,
+      "title": "OPERATION NAR SHADDAA",
+      "author": "Daniel Larsen",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2011-01-21",
+      "rating": 9.0,
+      "ratingVotes": 5,
+      "downloadsAtSelection": 698,
+      "sourceUrl": "https://www.massassi.net/levels/files/3119.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/3119/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/ONS.zip",
+      "contentType": "application/zip",
+      "originalFilename": "ONS.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\3119.zip",
+      "bytes": 105106478,
+      "sha256": "0b6b720ac613e37cce40303d80dd52526df863dd6d776054bdc1cd10fcf38cb4",
+      "acquiredUtc": "2026-09-09T02:57:14.5085072Z",
+      "archiveEntryCount": 12,
+      "levelFiles": [
+        "OPERATION NAR SHADDAA/ONS.gob"
+      ],
+      "executableEntries": [
+        "OPERATION NAR SHADDAA/JKUnofficialPatch_2008/bspatch.exe",
+        "OPERATION NAR SHADDAA/JKUnofficialPatch_2008/JK-Extension.dll",
+        "OPERATION NAR SHADDAA/JKUnofficialPatch_2008/patcher.bat"
+      ],
+      "documents": [
+        {
+          "archivePath": "OPERATION NAR SHADDAA/Intro_Credits.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\3119\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "OPERATION NAR SHADDAA/JKUnofficialPatch_2008/JKUnofficialPatch_2008-01-16.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\3119\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        },
+        {
+          "archivePath": "OPERATION NAR SHADDAA/ONS_ readme file.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\3119\\document-3.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 3123,
+      "title": "TODOA",
+      "author": "FastGamerr",
+      "game": "Jedi Knight: Dark Forces II",
+      "category": "jksp",
+      "mode": "single player",
+      "addedDate": "2012-01-23",
+      "rating": 10.0,
+      "ratingVotes": 6,
+      "downloadsAtSelection": 1915,
+      "sourceUrl": "https://www.massassi.net/levels/files/3123.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/3123/",
+      "listingUrl": "https://www.massassi.net/levels/jksp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/jksp/TODOA.zip",
+      "contentType": "application/zip",
+      "originalFilename": "TODOA.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\jksp\\3123.zip",
+      "bytes": 316060085,
+      "sha256": "1e65d8bf11f9ebde4ccfa78e981ed7de05108815cc345eceeab16241929ebc29",
+      "acquiredUtc": "2026-09-09T02:58:27.6151990Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [],
+      "executableEntries": [
+        "TODOA.exe"
+      ],
+      "documents": [
+        {
+          "archivePath": "ReadMe.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\jksp\\3123\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 757,
+      "title": "Nar Shaddaa DM",
+      "author": "Winged Cat",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 8,
+      "downloadsAtSelection": 1574,
+      "sourceUrl": "https://www.massassi.net/levels/files/757.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/757/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/narshmp.zip",
+      "contentType": "application/zip",
+      "originalFilename": "narshmp.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\757.zip",
+      "bytes": 409347,
+      "sha256": "e2ef5fd890dc5cbea11fd37eb5db1e59c889626c47c52ee786a61f735e9f37c1",
+      "acquiredUtc": "2026-09-09T02:56:49.7682879Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "NarshMP.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "NarshMP.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\757\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 800,
+      "title": "Hoth Rebel Base",
+      "author": "Jason Adank",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 10.0,
+      "ratingVotes": 5,
+      "downloadsAtSelection": 4087,
+      "sourceUrl": "https://www.massassi.net/levels/files/800.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/800/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/rebelbase.zip",
+      "contentType": "application/zip",
+      "originalFilename": "rebelbase.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\800.zip",
+      "bytes": 1707605,
+      "sha256": "c25b964ce2191a2c7e86bef832fc0f5674622eb3b585facfa6ae41c85f0aee9e",
+      "acquiredUtc": "2026-09-09T02:56:45.7698067Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "Hoth Rebel Base.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\800\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 809,
+      "title": "Duel Of The Fates S.E.",
+      "author": "Hoth Rebel",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 9,
+      "downloadsAtSelection": 6062,
+      "sourceUrl": "https://www.massassi.net/levels/files/809.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/809/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/fates2_mots.zip",
+      "contentType": "application/zip",
+      "originalFilename": "fates2_mots.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\809.zip",
+      "bytes": 962115,
+      "sha256": "0a82e6dec1a7146f9e274ef37cc55a99f56724f50ed8524ccb6a17e26a58cc94",
+      "acquiredUtc": "2026-09-09T02:56:48.3134535Z",
+      "archiveEntryCount": 3,
+      "levelFiles": [
+        "DuelOfFates_SE.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "DOTF2-readme!!!.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\809\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "Important.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\809\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 812,
+      "title": "Baron Castle",
+      "author": "RED_XIIII",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-02",
+      "rating": 8.0,
+      "ratingVotes": 12,
+      "downloadsAtSelection": 3130,
+      "sourceUrl": "https://www.massassi.net/levels/files/812.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/812/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/castle.zip",
+      "contentType": "application/zip",
+      "originalFilename": "castle.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\812.zip",
+      "bytes": 1474121,
+      "sha256": "fbe06d2c8f1bc7b1f957446ffda5b93e8a9e238a85141d7a9e737155ee214c6d",
+      "acquiredUtc": "2026-09-09T02:56:52.8883424Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "castle.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "castle.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\812\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 869,
+      "title": "Red Manor",
+      "author": "Red_XIIII",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2000-06-04",
+      "rating": 9.0,
+      "ratingVotes": 5,
+      "downloadsAtSelection": 1769,
+      "sourceUrl": "https://www.massassi.net/levels/files/869.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/869/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/redmanor.zip",
+      "contentType": "application/zip",
+      "originalFilename": "redmanor.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\869.zip",
+      "bytes": 1970768,
+      "sha256": "3911a4d4864298bb390e137672cae5cee14e39493be941c0e10acb641c5e4edb",
+      "acquiredUtc": "2026-09-09T02:56:49.4920265Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "redmanor.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "redmanor.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\869\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1351,
+      "title": "Little House of Hazards",
+      "author": "adrenal_medulla",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2001-01-23",
+      "rating": 9.0,
+      "ratingVotes": 15,
+      "downloadsAtSelection": 1536,
+      "sourceUrl": "https://www.massassi.net/levels/files/1351.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1351/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/hazards.zip",
+      "contentType": "application/zip",
+      "originalFilename": "hazards.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\1351.zip",
+      "bytes": 325064,
+      "sha256": "914cbeadb4218819073837757cf9503b3450f4c8d9ad5e95f72d43cd82144292",
+      "acquiredUtc": "2026-09-09T02:56:50.6126784Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "hazards.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\1351\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1483,
+      "title": "HfTb Village",
+      "author": "HfTb_sidecut",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2001-05-10",
+      "rating": 9.0,
+      "ratingVotes": 6,
+      "downloadsAtSelection": 1012,
+      "sourceUrl": "https://www.massassi.net/levels/files/1483.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1483/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/hftb_village.zip",
+      "contentType": "application/zip",
+      "originalFilename": "hftb_village.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\1483.zip",
+      "bytes": 1666644,
+      "sha256": "ab912b5a3c2c470769cbdcbd89412edde0369d6f8510db7002835d5f175e8e9a",
+      "acquiredUtc": "2026-09-09T02:56:51.5291226Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "HfTb Village.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\1483\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1779,
+      "title": "Naboo",
+      "author": "Ortheza",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2001-11-04",
+      "rating": 9.0,
+      "ratingVotes": 11,
+      "downloadsAtSelection": 2104,
+      "sourceUrl": "https://www.massassi.net/levels/files/1779.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1779/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/naboo.zip",
+      "contentType": "application/zip",
+      "originalFilename": "naboo.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\1779.zip",
+      "bytes": 1166535,
+      "sha256": "1906bfa46a217ef9cffd5819b538de2557ca369191d7e978deffc2c327d3f88e",
+      "acquiredUtc": "2026-09-09T02:56:49.1314677Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "naboo.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "naboo.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\1779\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1907,
+      "title": "Castle Hill and Forest",
+      "author": "Ortheza",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-02-11",
+      "rating": 9.0,
+      "ratingVotes": 12,
+      "downloadsAtSelection": 1569,
+      "sourceUrl": "https://www.massassi.net/levels/files/1907.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1907/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/hnf.zip",
+      "contentType": "application/zip",
+      "originalFilename": "hnf.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\1907.zip",
+      "bytes": 852767,
+      "sha256": "734ed033cd00ab1da28777a17ed534ba962974870e0d4fca4df77c7b02b65a7b",
+      "acquiredUtc": "2026-09-09T02:56:50.3216347Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "hnf.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "hnf.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\1907\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2055,
+      "title": "Carbo SE",
+      "author": "Ortheza",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-05-11",
+      "rating": 9.0,
+      "ratingVotes": 8,
+      "downloadsAtSelection": 1256,
+      "sourceUrl": "https://www.massassi.net/levels/files/2055.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2055/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/Carbo_se.zip",
+      "contentType": "application/zip",
+      "originalFilename": "Carbo_se.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\2055.zip",
+      "bytes": 1137763,
+      "sha256": "74d83190d9b2c0752fced250d2ee80896b8122fcc98fc4499f88eb4871c1390a",
+      "acquiredUtc": "2026-09-09T02:56:51.1250453Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "Carbo_se.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "carbo_se.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\2055\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2252,
+      "title": "TPMTC's Mos Espa",
+      "author": "Darth J",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-06-30",
+      "rating": 10.0,
+      "ratingVotes": 17,
+      "downloadsAtSelection": 1540,
+      "sourceUrl": "https://www.massassi.net/levels/files/2252.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2252/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/tpmtc_mos_espa.zip",
+      "contentType": "application/zip",
+      "originalFilename": "tpmtc_mos_espa.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\2252.zip",
+      "bytes": 5139331,
+      "sha256": "6551716488088a1c4121e9e281da250c11d26511f8f799dab51e12cfc97159c5",
+      "acquiredUtc": "2026-09-09T02:56:47.4844805Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [
+        "MosEspa_TPMTC.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "Espa.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\2252\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2535,
+      "title": "Scream Multiplayer Beta 1.4",
+      "author": "Chris Swan",
+      "game": "Mysteries of the Sith",
+      "category": "motsmp",
+      "mode": "multiplayer",
+      "addedDate": "2002-12-29",
+      "rating": 9.0,
+      "ratingVotes": 7,
+      "downloadsAtSelection": 506,
+      "sourceUrl": "https://www.massassi.net/levels/files/2535.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2535/",
+      "listingUrl": "https://www.massassi.net/levels/motsmp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motsmp/ScreamMP.zip",
+      "contentType": "application/zip",
+      "originalFilename": "ScreamMP.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motsmp\\2535.zip",
+      "bytes": 9597025,
+      "sha256": "c8ced6b71e7c5921d4efdeadbaee3affb6d3206a45a6a397731c4da86cf3dbb7",
+      "acquiredUtc": "2026-09-09T02:56:52.7871277Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [],
+      "executableEntries": [
+        "Install.exe"
+      ],
+      "documents": [
+        {
+          "archivePath": "Read First.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motsmp\\2535\\document-1.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 711,
+      "title": "Leeza's Destiny 3.0",
+      "author": "SavageX",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2000-06-02",
+      "rating": 9.0,
+      "ratingVotes": 32,
+      "downloadsAtSelection": 4891,
+      "sourceUrl": "https://www.massassi.net/levels/files/711.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/711/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/leeza3.zip",
+      "contentType": "application/zip",
+      "originalFilename": "leeza3.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\711.zip",
+      "bytes": 8213332,
+      "sha256": "932d9acc9c0a32139a9fec1f33b1dc1855e8f0212fc9658d9467a968c58f91a8",
+      "acquiredUtc": "2026-09-09T02:56:38.3662797Z",
+      "archiveEntryCount": 1,
+      "levelFiles": [],
+      "executableEntries": [
+        "leeza3.exe"
+      ],
+      "documents": [],
+      "readmeAvailability": "No text readme found by bounded extension/size scan.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 983,
+      "title": "Birth of a Mercenary Chapter 3",
+      "author": "Anthony Piggott",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2000-07-18",
+      "rating": 9.0,
+      "ratingVotes": 39,
+      "downloadsAtSelection": 4762,
+      "sourceUrl": "https://www.massassi.net/levels/files/983.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/983/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/boam3.zip",
+      "contentType": "application/zip",
+      "originalFilename": "boam3.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\983.zip",
+      "bytes": 7397375,
+      "sha256": "40b645de02e762008fd1ce65483f32ca8ae6ea02a744e6f47333fcdeb825e4e0",
+      "acquiredUtc": "2026-09-09T02:56:41.8802539Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "BoaM3.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "BoaM3.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\983\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1279,
+      "title": "Tales of a Mercenary Chapter 1",
+      "author": "Anthony Piggott",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2000-12-06",
+      "rating": 9.0,
+      "ratingVotes": 47,
+      "downloadsAtSelection": 4833,
+      "sourceUrl": "https://www.massassi.net/levels/files/1279.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1279/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/toam1.zip",
+      "contentType": "application/zip",
+      "originalFilename": "toam1.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1279.zip",
+      "bytes": 6570144,
+      "sha256": "e19b8b13bbe34b1b3ff1097014ca29a11c9f3f7059ee53e65c1930f4c7a1de24",
+      "acquiredUtc": "2026-09-09T02:56:39.7104323Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "ToaM1.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "ToaM1.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1279\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1431,
+      "title": "Birth of a Mercenary SE",
+      "author": "Anthony Piggott",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2001-04-05",
+      "rating": 9.0,
+      "ratingVotes": 39,
+      "downloadsAtSelection": 5721,
+      "sourceUrl": "https://www.massassi.net/levels/files/1431.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1431/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/boamse.zip",
+      "contentType": "application/zip",
+      "originalFilename": "boamse.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1431.zip",
+      "bytes": 17936534,
+      "sha256": "3b8c4d61f798fdde24cdee8259e86f88c38d73779f007e781272b9aae9328541",
+      "acquiredUtc": "2026-09-09T02:56:37.0155186Z",
+      "archiveEntryCount": 1,
+      "levelFiles": [],
+      "executableEntries": [
+        "Install.exe"
+      ],
+      "documents": [],
+      "readmeAvailability": "No text readme found by bounded extension/size scan.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1638,
+      "title": "ToaM2 - BTM",
+      "author": "Anthony Piggott",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2001-08-14",
+      "rating": 9.0,
+      "ratingVotes": 39,
+      "downloadsAtSelection": 2463,
+      "sourceUrl": "https://www.massassi.net/levels/files/1638.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1638/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/t2btm.zip",
+      "contentType": "application/zip",
+      "originalFilename": "t2btm.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1638.zip",
+      "bytes": 2590256,
+      "sha256": "3e028ab7ee1d2bafdc39c7859bf660f47dc7bbfedc979131eda83b6ed5624bda",
+      "acquiredUtc": "2026-09-09T02:56:44.7746235Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "t2btm.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "T2BTM.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1638\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1680,
+      "title": "Tales of a Mercenary Chapter 2",
+      "author": "Anthony Piggott",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2001-09-15",
+      "rating": 9.0,
+      "ratingVotes": 48,
+      "downloadsAtSelection": 4139,
+      "sourceUrl": "https://www.massassi.net/levels/files/1680.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1680/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/toam2.zip",
+      "contentType": "application/zip",
+      "originalFilename": "toam2.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1680.zip",
+      "bytes": 7413376,
+      "sha256": "752b96e75d66eb07047a5da22b33804b7e59b55fc876b1448e4687bcfc2953d0",
+      "acquiredUtc": "2026-09-09T02:56:42.4549723Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "ToaM2.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "ToaM2.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1680\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1689,
+      "title": "Terror on Sigma 51-A: Special Edition",
+      "author": "David McHale",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2001-09-19",
+      "rating": 9.0,
+      "ratingVotes": 33,
+      "downloadsAtSelection": 2959,
+      "sourceUrl": "https://www.massassi.net/levels/files/1689.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1689/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/sigmase.zip",
+      "contentType": "application/zip",
+      "originalFilename": "sigmase.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1689.zip",
+      "bytes": 4857674,
+      "sha256": "e345221f20902ab1cd0a09af008b56e49d1568e89332ee63b27d1a6821c5a484",
+      "acquiredUtc": "2026-09-09T02:56:43.9370964Z",
+      "archiveEntryCount": 5,
+      "levelFiles": [
+        "Program Files/LucasArts/MotS/sigma/51A_RES.GOO",
+        "Program Files/LucasArts/MotS/sigma/51A.goo"
+      ],
+      "executableEntries": [
+        "Program Files/LucasArts/MotS/sigma.bat"
+      ],
+      "documents": [
+        {
+          "archivePath": "mission.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1689\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1689\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1878,
+      "title": "A Pirate's Tale Level 2",
+      "author": "Darth Vedder",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2002-01-22",
+      "rating": 9.0,
+      "ratingVotes": 9,
+      "downloadsAtSelection": 2415,
+      "sourceUrl": "https://www.massassi.net/levels/files/1878.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1878/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/apt2.zip",
+      "contentType": "application/zip",
+      "originalFilename": "apt2.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1878.zip",
+      "bytes": 14581758,
+      "sha256": "12b7f43d98d9be971eff18336d50168428980497fee1ff6e9dda683543ae465a",
+      "acquiredUtc": "2026-09-09T02:56:48.5393714Z",
+      "archiveEntryCount": 4,
+      "levelFiles": [
+        "apt2.goo"
+      ],
+      "executableEntries": [
+        "APT2.bat"
+      ],
+      "documents": [
+        {
+          "archivePath": "aPT2readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1878\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        },
+        {
+          "archivePath": "Howtoplay.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\1878\\document-2.txt",
+          "mentionsLicenseOrPermissions": false
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 1900,
+      "title": "Rebel Agent",
+      "author": "Matthew Surman",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2002-02-07",
+      "rating": 10.0,
+      "ratingVotes": 22,
+      "downloadsAtSelection": 3699,
+      "sourceUrl": "https://www.massassi.net/levels/files/1900.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/1900/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/rebelagent.zip",
+      "contentType": "application/zip",
+      "originalFilename": "rebelagent.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\1900.zip",
+      "bytes": 6588515,
+      "sha256": "33df48c526148cdb80be376c9d46ba656353614402ed3b08809f3ac27a72d931",
+      "acquiredUtc": "2026-09-09T02:56:27.3785616Z",
+      "archiveEntryCount": 1,
+      "levelFiles": [],
+      "executableEntries": [
+        "Rebel Agent.exe"
+      ],
+      "documents": [],
+      "readmeAvailability": "No text readme found by bounded extension/size scan.",
+      "licenseStatus": "No permission notice detected in inspected text; rights not assumed.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2311,
+      "title": "RoX TC: A City Under Siege",
+      "author": "Lord Tiberius Grismath",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2002-07-19",
+      "rating": 10.0,
+      "ratingVotes": 5,
+      "downloadsAtSelection": 1899,
+      "sourceUrl": "https://www.massassi.net/levels/files/2311.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2311/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/RoXl02.zip",
+      "contentType": "application/zip",
+      "originalFilename": "RoXl02.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\2311.zip",
+      "bytes": 25494572,
+      "sha256": "d0ce192239839bbefd4af262315f3884df570fe5b069551dc107f3b9e7fcb5dc",
+      "acquiredUtc": "2026-09-09T02:56:31.4905780Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "RoXl02.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "roxl02readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\2311\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2503,
+      "title": "Liberating Cloud City",
+      "author": "Donny Versiga (BSR)",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2002-12-07",
+      "rating": 9.0,
+      "ratingVotes": 30,
+      "downloadsAtSelection": 2499,
+      "sourceUrl": "https://www.massassi.net/levels/files/2503.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2503/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/LCC.zip",
+      "contentType": "application/zip",
+      "originalFilename": "LCC.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\2503.zip",
+      "bytes": 5007275,
+      "sha256": "6ade5e9862ecbbf0e72ad6227c3cbe51642aed95fe14a10fe6e229ee18ad07ea",
+      "acquiredUtc": "2026-09-09T02:56:43.7049197Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [],
+      "executableEntries": [
+        "InstallLCC.exe"
+      ],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\2503\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    },
+    {
+      "fileId": 2954,
+      "title": "Dawn of a Downfall",
+      "author": "Elmo",
+      "game": "Mysteries of the Sith",
+      "category": "motssp",
+      "mode": "single player",
+      "addedDate": "2004-05-11",
+      "rating": 10.0,
+      "ratingVotes": 8,
+      "downloadsAtSelection": 1505,
+      "sourceUrl": "https://www.massassi.net/levels/files/2954.shtml",
+      "downloadUrl": "https://www.massassi.net/levels/download/2954/",
+      "listingUrl": "https://www.massassi.net/levels/motssp/?sortby=rating&num=9999",
+      "selectionRule": "Per-category rating descending, then downloads descending, then file ID ascending; at least 5 rating votes.",
+      "directUrl": "https://www.massassi.net/media/levels/files/motssp/doad.zip",
+      "contentType": "application/zip",
+      "originalFilename": "doad.zip",
+      "localPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\packages\\motssp\\2954.zip",
+      "bytes": 3870130,
+      "sha256": "d044af3d3275e216c83bfd02c9936cd1ee97d9cccad314e3d00941eceda04627",
+      "acquiredUtc": "2026-09-09T02:56:32.6040961Z",
+      "archiveEntryCount": 2,
+      "levelFiles": [
+        "sbgl.goo"
+      ],
+      "executableEntries": [],
+      "documents": [
+        {
+          "archivePath": "readme.txt",
+          "inspectedTextPath": "C:\\Users\\Andrei\\Documents\\ChatGPT\\sed-editor-audit\\corpora\\massassi-originals-2026-09-09\\metadata\\motssp\\2954\\document-1.txt",
+          "mentionsLicenseOrPermissions": true
+        }
+      ],
+      "readmeAvailability": "Text documents retained separately for inspection; originals remain in ZIP.",
+      "licenseStatus": "Permission/copyright text present; no blanket reuse grant inferred.",
+      "status": "downloaded_and_zip_inspected",
+      "originalArchiveUnmodified": true,
+      "executed": false,
+      "wbwConversion": false
+    }
+  ]
+}

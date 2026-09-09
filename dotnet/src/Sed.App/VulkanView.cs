@@ -73,6 +73,7 @@ public sealed class VulkanView : Control
 
     private TextureLookup? _textures;
     private Func<string, ThreeDoModel?>? _models;
+    private HashSet<string> _sceneMaterialNames = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>Material names available for assignment (for cycling a surface's material).</summary>
     public List<string> Materials { get; set; } = new();
@@ -136,11 +137,14 @@ public sealed class VulkanView : Control
             _markerThings = models is not null
                 ? assembler.AddThings(level, models, Layers)
                 : level.Things.Where(Layers.IsVisible).ToList();
-            _renderer.SetScene(assembler.Build(), textures);
+            var scene = assembler.Build();
+            _renderer.SetScene(scene, textures);
+            _sceneMaterialNames = scene.Submeshes.Select(s => s.Material).ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
         else
         {
             _renderer.SetMesh(SceneBuilder.FromLevel(level));
+            _sceneMaterialNames.Clear();
             _markerThings = level.Things.ToList();
         }
 
@@ -181,13 +185,26 @@ public sealed class VulkanView : Control
     /// <summary>Rebuilds the rendered geometry from the (possibly edited) level, reusing textures.</summary>
     private void RebuildScene()
     {
-        if (_renderer is null || _level is null || _textures is null) return;
+        if (_renderer is null || _level is null) return;
+        if (_textures is null)
+        {
+            _renderer.SetMesh(SceneBuilder.FromLevel(_level, Layers.IsVisible));
+            _markerThings = _level.Things.Where(Layers.IsVisible).ToList();
+            return;
+        }
         var assembler = new SceneAssembler();
         assembler.AddLevel(_level, Layers);
         _markerThings = _models is not null
             ? assembler.AddThings(_level, _models, Layers)
             : _level.Things.Where(Layers.IsVisible).ToList();
-        _renderer.UpdateGeometry(assembler.Build());
+        var scene = assembler.Build();
+        var materialNames = scene.Submeshes.Select(s => s.Material).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (!_sceneMaterialNames.IsSupersetOf(materialNames))
+        {
+            _renderer.SetScene(scene, _textures);
+            _sceneMaterialNames = materialNames;
+        }
+        else _renderer.UpdateGeometry(scene);
     }
 
     private void OnHistoryChanged()
@@ -408,8 +425,12 @@ public sealed class VulkanView : Control
                 Template = sel.Template, Name = sel.Name, Sector = sel.Sector,
                 Position = sel.Position + new Vec3(_moveSpeed * 4, 0, 0),
                 Pitch = sel.Pitch, Yaw = sel.Yaw, Roll = sel.Roll,
+                Level = _level, Layer = sel.Layer, Flags = sel.Flags, BBox = sel.BBox,
+                ArchLightingIndex = sel.ArchLightingIndex, ArchLightingSourceModel = sel.ArchLightingSourceModel,
+                ArchLightingSourceModelHash = sel.ArchLightingSourceModelHash,
             };
             foreach (var (k, v) in sel.Values) t.Values[k] = v;
+            t.SourceParameters.AddRange(sel.SourceParameters);
         }
         else
         {
@@ -669,8 +690,15 @@ public sealed class VulkanView : Control
         var (normal, point) = GeometryOps.MidCleavePlane(s);
 
         int before = s.Sector.Surfaces.Count;
-        History.Do(new CleaveSurfaceCommand(s, normal, point));
+        var command = new CleaveSurfaceCommand(s, normal, point);
+        History.Do(command);
         _activeSector = s.Sector;
+
+        if (command.FailureReason is not null)
+        {
+            SelectionChanged?.Invoke("Cleave: " + command.FailureReason);
+            return;
+        }
 
         SelectionChanged?.Invoke(s.Sector.Surfaces.Count > before
             ? $"Cleaved surface {s.Num} into two — Ctrl+Z to undo"
@@ -874,6 +902,11 @@ public sealed class VulkanView : Control
             return;
         }
 
+        if (fragment.CompatibilityError(_level) is { } error)
+        {
+            SelectionChanged?.Invoke(error);
+            return;
+        }
         var bounds = fragment.Bounds;
         double width = bounds.Max.X - bounds.Min.X;
         var offset = new Vec3(width > 1e-6 ? width * 1.1 : System.Math.Max(0.5, _moveSpeed * 8), 0, 0);

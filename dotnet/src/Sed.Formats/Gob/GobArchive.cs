@@ -29,7 +29,8 @@ public sealed class GobArchive : IDisposable
     {
         _stream = stream;
         _ownsStream = ownsStream;
-        Entries = ReadDirectory(stream);
+        try { Entries = ReadDirectory(stream); }
+        catch { if (ownsStream) stream.Dispose(); throw; }
     }
 
     public static GobArchive Open(string path) =>
@@ -37,24 +38,32 @@ public sealed class GobArchive : IDisposable
 
     private static List<GobEntry> ReadDirectory(Stream s)
     {
+        if (!s.CanSeek || !s.CanRead || s.Length < 16)
+            throw new InvalidDataException("GOB input must be a readable, seekable stream with a complete header.");
         s.Seek(0, SeekOrigin.Begin);
         using var br = new BinaryReader(s, Encoding.ASCII, leaveOpen: true);
 
         var magic = br.ReadBytes(4);
-        if (magic.Length < 4 || magic[0] != (byte)'G' || magic[1] != (byte)'O' || magic[2] != (byte)'B')
+        if (magic.Length < 4 || magic[0] != (byte)'G' || magic[1] != (byte)'O' || magic[2] != (byte)'B' || magic[3] != (byte)' ')
             throw new InvalidDataException("Not a GOB archive (bad magic)");
 
-        _ = br.ReadUInt32();                 // version (0x14)
+        if (br.ReadUInt32() != 0x14) throw new InvalidDataException("Unsupported GOB version.");
         uint dirOffset = br.ReadUInt32();
+        if (dirOffset < 12 || dirOffset > s.Length - 4)
+            throw new InvalidDataException("GOB directory offset is outside the archive.");
 
         s.Seek(dirOffset, SeekOrigin.Begin);
         uint count = br.ReadUInt32();
+        if (count > 1_000_000 || (ulong)count * (NameLength + 8UL) > (ulong)(s.Length - s.Position))
+            throw new InvalidDataException("GOB directory count exceeds the available bytes or supported entry limit.");
 
         var entries = new List<GobEntry>((int)count);
         for (uint i = 0; i < count; i++)
         {
             uint offset = br.ReadUInt32();
             uint length = br.ReadUInt32();
+            if ((ulong)offset + length > (ulong)s.Length || length > int.MaxValue)
+                throw new InvalidDataException("GOB entry data is outside the archive or too large to read.");
             var nameBytes = br.ReadBytes(NameLength);
             int nul = Array.IndexOf(nameBytes, (byte)0);
             string name = Encoding.ASCII.GetString(nameBytes, 0, nul < 0 ? NameLength : nul);
@@ -79,13 +88,15 @@ public sealed class GobArchive : IDisposable
 
     public byte[] ReadBytes(GobEntry entry)
     {
+        if ((ulong)entry.Offset + entry.Length > (ulong)_stream.Length || entry.Length > int.MaxValue)
+            throw new InvalidDataException("GOB entry data is outside the current archive.");
         _stream.Seek(entry.Offset, SeekOrigin.Begin);
         var buffer = new byte[entry.Length];
         int read = 0;
         while (read < buffer.Length)
         {
             int n = _stream.Read(buffer, read, buffer.Length - read);
-            if (n == 0) break;
+            if (n == 0) throw new EndOfStreamException("GOB entry was truncated while reading.");
             read += n;
         }
         return buffer;

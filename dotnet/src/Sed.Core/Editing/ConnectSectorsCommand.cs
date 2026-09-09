@@ -70,8 +70,13 @@ public sealed class ConnectSectorsCommand : IEditCommand
         // Each sector is cleaved by the other's planes. The original object keeps
         // the piece inside every plane — the overlap — and the remainders split
         // off as new sectors.
-        CleaveBy(_b, _a);
-        CleaveBy(_a, _b);
+        if (!CleaveBy(_b, _a) || !CleaveBy(_a, _b))
+        {
+            Revert();
+            _steps.Clear();
+            PortalsCreated = 0;
+            return;
+        }
 
         var pieces = _level.Sectors.Except(before).ToList();
 
@@ -79,6 +84,12 @@ public sealed class ConnectSectorsCommand : IEditCommand
         // are still adjoined to its own cleave siblings; removing it frees those
         // siblings' faces so they can pair with `a` below. Running the adjoin pass
         // first would skip them as already-adjoined and leave one boundary open.
+        foreach (var thing in _level.Things.Where(t => t.Sector == _b))
+        {
+            var move = new SetThingSectorCommand(thing, _a);
+            move.Apply();
+            _steps.Add(move);
+        }
         var delete = new DeleteSectorCommand(_level, _b);
         delete.Apply();
         _steps.Add(delete);
@@ -106,7 +117,7 @@ public sealed class ConnectSectorsCommand : IEditCommand
     }
 
     /// <summary>Cleaves <paramref name="target"/> by every face plane of <paramref name="cutter"/>.</summary>
-    private void CleaveBy(Sector target, Sector cutter)
+    private bool CleaveBy(Sector target, Sector cutter)
     {
         foreach (var face in cutter.Surfaces.ToList())
         {
@@ -120,7 +131,13 @@ public sealed class ConnectSectorsCommand : IEditCommand
 
             // A plane that missed leaves nothing to undo, so don't record it.
             if (cleave.Succeeded) _steps!.Add(cleave);
+            else if (!cleave.PlaneMissed)
+            {
+                Failure = cleave.FailureReason ?? "A required sector cut could not be completed.";
+                return false;
+            }
         }
+        return true;
     }
 
     /// <summary>

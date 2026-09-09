@@ -32,12 +32,14 @@ public sealed class ConsistencyWindow : Window
     }
 
     private readonly Level _level;
+    private readonly Func<ConsistencyOptions?>? _options;
     private readonly ListBox _list;
     private readonly TextBlock _summary;
 
-    public ConsistencyWindow(Level level)
+    public ConsistencyWindow(Level level, Func<ConsistencyOptions?>? options = null)
     {
         _level = level;
+        _options = options;
         Title = "Consistency Check";
         Width = 520;
         Height = 460;
@@ -73,7 +75,7 @@ public sealed class ConsistencyWindow : Window
     /// <summary>Re-runs the check against the current state of the level.</summary>
     public void Run()
     {
-        var issues = ConsistencyChecker.Check(_level);
+        var issues = ConsistencyChecker.Check(_level, _options?.Invoke());
         var rows = issues.Select(i => new Row
         {
             Issue = i,

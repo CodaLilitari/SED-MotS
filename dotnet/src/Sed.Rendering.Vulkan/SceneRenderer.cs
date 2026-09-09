@@ -151,8 +151,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     /// <summary>Re-uploads geometry after an edit, reusing the loaded textures.</summary>
     public void UpdateGeometry(RenderScene scene)
     {
-        if (scene.Mesh.IsEmpty) return;
         DestroyGeometryBuffers();
+        if (scene.Mesh.IsEmpty) { _draws.Clear(); return; }
         UploadGeometry(scene);
         RebuildDraws(scene, flat: false);
     }
