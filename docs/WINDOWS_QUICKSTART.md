@@ -2,7 +2,7 @@
 
 Extract the complete `SED-MotS-…-win-x64.zip` into a writable folder and open `Sed.App.exe`. Keep its neighboring runtime files, `data`, `licenses` and `agent` folders together. The distribution includes .NET; Delphi, Ubuntu and WSL are not required.
 
-The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works without a graphics device or desktop window; the optional `snapshot` command uses offscreen Vulkan for diagnostic images. This is an unsigned development build. Exact file hashes are in `SHA256SUMS.txt`, and source provenance is in `PROVENANCE.json`.
+The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works without a graphics device or desktop window; the optional `snapshot` command uses offscreen Vulkan for diagnostic or textured, lit images. This is an unsigned development build. Exact file hashes are in `SHA256SUMS.txt`, and source provenance is in `PROVENANCE.json`.
 
 ## Open or create a level
 
@@ -11,7 +11,7 @@ The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works with
 3. Use File > New MotS level or New JK level for an editable room scaffold. It still needs materials, templates, a player start and an episode before gameplay testing.
 4. Edit through the 3D viewport, 2D map and property inspector. Both views share selection and undo history. Save an edited JKL to your own project folder.
 
-MotS's separate corner-light channels, architectural arrays and bindings survive supported edits. Moving a baked model keeps its old lighting; it does not calculate new architectural lighting. Replacing a same-name model file is not yet checked against its old geometry/hash. Template edits involving repeated keys are rejected if the single-value control cannot express the original list without ambiguity.
+MotS's separate corner-light channels, architectural arrays and bindings survive supported edits. Moving a baked model keeps its old lighting; it does not calculate new architectural lighting. Preview checks architectural model name and geometry counts, and checks a historical normalized model fingerprint when the native project supplies one. That protection does not yet extend to saving/exporting against changed resource files or to every model LOD; plain JKL does not carry the historical fingerprint. Template edits involving repeated keys are rejected if the single-value control cannot express the original list without ambiguity.
 
 The vertex inspector edits MotS's mono, red, green and blue channels independently. The thing inspector can explicitly unbind baked architectural lighting before changing a model. Both operations support undo. Clipboard transfers require matching game types and check layer, template and colormap dependencies before modifying the destination.
 
@@ -34,6 +34,8 @@ For Codex, the full distribution includes `.agents/skills/sed-mots/SKILL.md` and
 `--help` gives compact command discovery, and `schema <operation>` gives a focused patch schema. `query` reads current values and template candidates in bounded pages. JSON requests can arrive on stdin using `-`. `plan` checks edits without writing; passing its output hash to `apply` binds the new file to those reviewed bytes. Native projects also bind their imported template dependencies. `launch-plan` returns an engine invocation without launching it. See [AGENT_WORKFLOWS.md](AGENT_WORKFLOWS.md) for a complete read, plan, apply and readback example.
 
 The supplied `tools/Test-AgentDesign.ps1` demonstrates a connected room layout, material/UV assignment, readback and offscreen images using the installed executable. It uses fictional resource names to test registration, so its output is a geometry fixture rather than a playable episode. Run it with `-AgentPath` and a new `-OutputDirectory`; use `-SkipSnapshot` on a machine without Vulkan. The normal path never opens the editor or a game.
+
+For a lit preview, use `schema snapshot` and supply `mode: "lit"`, an explicit camera, and exact GOB/GOO paths with their SHA-256 values. The default `renderProfile: "openjk"` follows the accelerated engine's static lighting; `"palette"` is a separate CMP comparison profile. `lightingMode` selects game-default, mono or RGB world lighting, while ordinary models remain mono. Strict asset validation is on by default. `tools/Test-AgentLitSnapshot.ps1` demonstrates the complete process with synthetic assets. These are static previews: runtime lights, COG, animations and full retail transparency are still outside the tested behavior. See [MOTS_LIGHTING_STATUS.md](MOTS_LIGHTING_STATUS.md) for the tested features and remaining work.
 
 ## Source and notices
 
