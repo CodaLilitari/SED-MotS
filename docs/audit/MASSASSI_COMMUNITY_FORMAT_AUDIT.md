@@ -1,5 +1,7 @@
 # Original Massassi corpus format audit
 
+This is the earlier 94-document checkpoint. The later [research and corpus follow-up](RESEARCH_FOLLOWUP_20260909.md) records passive recovery of the seven remaining installer packages and the resulting 122-document audit, including the signed-zero UV preservation fix. The original evidence below is retained as a historical checkpoint.
+
 Recorded 2026-09-09T03:38:52.1215446Z. All **50 original ZIPs** matched acquisition sizes and SHA256 hashes. The verifier reached **94 JKL documents**, parsed **94**, and passed unchanged-text and forced modeled regeneration for **94**. There are **0 parse failures**, **0 roundtrip failures**, **0 container failures**, and **0 bounded skips**. There are **91 geometry documents**; resource-only/static JKLs are included in document totals but not represented as playable maps.
 
 The original acquisition is 13 JK single player, 13 JK multiplayer, 12 MotS single player, and 12 MotS multiplayer: category rating descending, downloads descending, ID ascending, minimum five votes. Fifty unchanged public ZIPs total 658,328,834 bytes; no WBW conversion paths were read. Packages can contain several levels, resource JKLs, or installers. Thus package count, document count, geometry count and successful compatibility checks are separate measures.

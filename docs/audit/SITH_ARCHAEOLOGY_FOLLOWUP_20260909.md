@@ -1,0 +1,39 @@
+# Sith and related tooling: focused archaeology supplement
+
+Recorded 2026-09-09. This supplements the earlier `notes/SITH_OFFICIAL_SOURCE_ARCHAEOLOGY.md`; it does not replace its completed source and document inventory. The strongest new result is a documented original **Phantom Menace** editor release. **No original JKDF2/MotS/LEIA/ModelX source archive or public Sith SDK was recovered in this follow-up.** That remains a bounded search result, not proof of absence.
+
+## 1. The substantiated Obi.exe release is for The Phantom Menace
+
+The archived release thread dates the BAP Map Tool and manual announcement to **February 18, 2015**. Alexrd hosts it and thanks Zanzibar; Zanzibar participates and describes the internal executable variants. His account identifies `netobi.exe` as a LAN experiment made after The Phantom Menace shipped, `Obiold.exe` as a driver-related variant, and `RobsObi.exe`/`BafObi.exe` as debugging variants. These are original-tool/development-build leads supported by attributed participant testimony. They concern **Big Ape's Phantom Menace**, not the Xbox game *Star Wars: Obi-Wan*. The announcement explicitly restricts its intended use to private activity and acknowledges proprietary LucasArts assets; this is not evidence of an authorized publisher SDK or a reusable source-code license. The preserved forum is a reconstruction from Wayback, which is a limitation on provenance. [Release discussion](https://lucasforumsarchive.com/thread/218324-download-bap-map-tool-obiexe-manual)
+
+A **May 23, 2022 ZenHAX post** preserves the complete original public MEGA share link. Its HTML supplies the actual URL, avoiding the truncated key in the older reconstructed forum. It discusses B3D and BAF export experiments but is community testimony, not a verified format specification. [ZenHAX post](https://zenhax.com/viewtopic.php%40t%3D16914.html)
+
+- [Original tool share](https://mega.nz/file/uZBxTTwY#bbxi4VQ3U0ymFgE0gucdmKs5qy8bE56pMgxaJjI8aBI)
+- [Original manual share](https://mega.co.nz/#!2ApAjYqK!3eVN6tCyHw__DJW2T8V_HLExwrTjmJAyqfofux-NsYw)
+
+The 2024 ModDB mirror lists `obi.zip`, **100,302,076 bytes**, and MD5 `09c7942b5d34454048bf7a2e44cf62da`. Those are publisher-listed metadata, **not independently verified archive hashes**. This worker's direct listing request returned HTTP 403; no ModDB CDN was requested or challenge bypassed. The original MEGA links were handed to the parent task, which reported that Chrome's site-safety policy blocked the BAP share before navigation. It also reported a separate blocked ModDB embedded download. **The BAP payload was not acquired**, and no MEGA endpoint, alternate browser, same-site manual share, or download workaround was attempted. [Mirror listing](https://www.moddb.com/games/star-wars-episode-i-the-phantom-menace/downloads/bap-map-tool)
+
+The separate current **ObiWanImporter** is a fan-made Xbox-to-Maya importer. Its pinned GitHub tree at `58f8a3f3d181c864982bc73df2c3597efdb97b4b` contains four documentation/configuration files and no implementation source. Its acquired portable ZIP contains five files, including a compiled Maya plugin; no source or explicit reusable-code license was found in that inventory. The README claims import features, not game export. Release test claims remain the author's claims; this worker did not run them. It therefore supplies no evidence of an original LucasArts tool/source leak. [Pinned repository](https://github.com/janglesworthy/ObiWanImporter/tree/58f8a3f3d181c864982bc73df2c3597efdb97b4b), [release](https://github.com/janglesworthy/ObiWanImporter/releases/tag/v0.1.1)
+
+## 2. ModelX reuse is documented; LEIA and ModelX recovery remain open
+
+The earlier **January-February 2015 developer discussion** adds useful detail beyond the DroidWorks postmortem: Zanzibar describes BAF as packaging ModelX-created model/animation data and extra sound-related information, and identifies B3D as Phantom Menace's proprietary block-geometry format rather than Blitz3D. On February 10 he reports recovering the level tool from an old drive copy but still being unable to find ModelX. This supports a shared asset-tool history; it does not establish that B3D or BAF can be read as JKL or ordinary JK 3DO files. It also separates the recovered BAP editor from the still-missing model tool. [Developer discussion](https://www.lucasforumsarchive.com/thread/218053-havent-been-here-in-a-long-time)
+
+The claim that Infernal Machine renamed LEIA to **Marcus** appears in a community account of a Discord discussion with Yves. The underlying developer statement or original Marcus artifact was not recovered here, so this remains a secondary lead. [Attribution-bearing discussion](https://www.reddit.com/r/jediknight/comments/1n0mr4p/leia_the_lucasarts_jedi_knight_level_editor/)
+
+The old `wilmunder.com/Arics_World/Games.html` lead currently returns unrelated WordPress/World of Warcraft material. Its HTTP-200 response was preserved as evidence of a stale link and was not treated as Aric Wilmunder's documentation archive. Refined Internet Archive software searches returned 15 Obi-Wan title hits, six BAP/Obi.exe-related hits, and 13 LEIA/ModelX-related hits; inspected titles were retail images, skins, compilations, or unrelated matches. They yielded no identified original editor/source package. These are catalog searches, not exhaustive inspections of every compilation disc.
+
+No original Xbox Obi-Wan source/SDK or identified prototype archive was recovered. A direct Hidden Palace page fetch and the migrated Mixnmojo developer-thread fetch were unavailable; these access gaps are recorded. The previous Infernal Machine N64 prototype finding remains distinct from PC Sith/Jones3D tools.
+
+## 3. An actual public SDK: Jedi Academy, with a different engine contract
+
+The mirrored **November 26, 2003 Jedi Academy SDK** was acquired unchanged: **6,521,947 bytes**, SHA256 `b6115f98d745cef4bbd33a41918d9b3cd910d54eb39b09fb9fccab2b0be56ebb`. Its outer ZIP contains a readme and self-extracting executable; Python's ZIP reader could inspect the embedded archive **without executing the program**. It contains **305 files, including 259 C/C++ source/header files**. The bundled readmes identify multiplayer `game`, `cgame`, and `ui` source, Visual C++ 7 projects, model/shader/effect tools, ICARUS tools, and scripts. This is Raven's later **idTech3/Jedi Academy** toolchain, not a Sith/JKDF2/MotS SDK. [Catalog and original readme](https://mrwonko.de/jk3files/Jedi%20Academy/Official%20Releases/Others/20909/)
+
+The embedded `Tools/JKA Game Source License.htm` is a limited-use Raven agreement. Its permitted-use section describes no-charge electronic redistribution with the agreement and creation of modifications for the full Jedi Academy game. This archive was not classified as GPL or as a source donor for our editor. Original notices and the full file inventory are retained beside the archive. No compiler or recovered executable was run.
+
+## Retained evidence and limits
+
+`SITH_ARCHAEOLOGY_FOLLOWUP_LEADS.json` records exact URLs, evidence types, pins, download hashes, inner-archive provenance, unresolved claims, and access results. All acquisitions remain under this external `research-followup-20260909/archaeology` directory; no editor/repository source or Git state was changed. Chrome is owned by the parent task; this worker used read-only web/HTTP and performed no browser UI control. No contacts, posts, logins, uploads, or access-control bypasses were performed.
+
+
+This metadata-only report is copied from the external research directory: C:\Users\Andrei\Documents\ChatGPT\sed-editor-audit\research-followup-20260909. Referenced local payloads, source snapshots, manifests, and scripts remain there; no recovered third-party file bodies are included in this repository.

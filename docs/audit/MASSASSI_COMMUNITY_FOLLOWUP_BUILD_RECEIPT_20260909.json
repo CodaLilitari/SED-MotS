@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-09-09T04:27:48.3579382Z",
+  "baseCommit": "5febeb351710730dd86ced1cc787bb07778cfffc",
+  "sourceState": "Reviewed source plus synthetic signed-zero UV regression before the packaging commit; source hashes identify the tested implementation.",
+  "sdk": "10.0.401",
+  "configuration": "Release",
+  "buildExitCode": 0,
+  "buildWarnings": 0,
+  "buildErrors": 0,
+  "auditExitCode": 0,
+  "formatAssemblySha256": "066c2ca24926e8e0fd1101a17667169f36bda340f890d259833351e5ed955830",
+  "verifierAssemblySha256": "ce1c4b8c0b80a7cfffeb1c37fccb317e974abbfbbc4175f898251039a1ab1258",
+  "sourceManifestSha256": "a85744ec3912e7bb920d264520cee6094c6260320e864de79348e7f8bfa6bc39",
+  "supplementalPayloadManifestSha256": "faf8cca59b9ca521a367afe5abfb65b4b733167d79a4e9c5f57708c3caef3d3c",
+  "sourceFiles": [
+    {
+      "relativePath": "dotnet/src/Sed.Formats/Jkl/GeoResourceWriter.cs",
+      "sha256": "648df7e6a93fbc8e2abcc37000bdfbfad243965c958dd4a1dd35cc7950d7166f"
+    },
+    {
+      "relativePath": "dotnet/tests/Sed.Core.Tests/JklNumericRoundTripTests.cs",
+      "sha256": "861f8b598e976ffe7266741ac6eebb7a20f457ca2931028713e22cc9a2fec9a6"
+    },
+    {
+      "relativePath": "dotnet/tools/Sed.CommunityAudit/Program.cs",
+      "sha256": "39bc30514065d964924a24b51fa8b822f463b0a62ccd9a044c1cf702c71c9b3d"
+    },
+    {
+      "relativePath": "dotnet/tools/Sed.CommunityAudit/Sed.CommunityAudit.csproj",
+      "sha256": "15903460b2be9c46d23c1c926732d359a8fe08bb485e98b35dbd76b40a63ee48"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "relativePath": "community-fixed-build.log",
+      "sha256": "6d52d08851181c1f4dd02eb5436b6dc7c6fb83b075e86d0bfde4c0b717d21e21"
+    },
+    {
+      "relativePath": "community-fixed-audit.log",
+      "sha256": "6f4873e553c2fafe77012a8faa673b7662f091abb6a5895338fe8a934a3618c0"
+    },
+    {
+      "relativePath": "COMMUNITY_FORMAT_FOLLOWUP.json",
+      "sha256": "b78a1793d6ff863cbd7a88b6d7044a032b4f4c2cd2c63e8c94698fca2e7ff521"
+    },
+    {
+      "relativePath": "COMMUNITY_FORMAT_FOLLOWUP_FIXED.json",
+      "sha256": "3132c1d5b65892042343e67b142bb7b0924ed7ef8d94d7fc6cedfbd0fd7f7c34"
+    },
+    {
+      "relativePath": "combined-payload-manifest.json",
+      "sha256": "faf8cca59b9ca521a367afe5abfb65b4b733167d79a4e9c5f57708c3caef3d3c"
+    },
+    {
+      "relativePath": "wrappers/payload-manifest.json",
+      "sha256": "c963071264fa73aadaf235e6eeb204e2ae1ea2edf18656120822080166ea2f8e"
+    },
+    {
+      "relativePath": "wrappers/negative-test-results.json",
+      "sha256": "cf5161c20a13440104b6fb5679ece14a79098db3d7e194f51fa1ec1ce862cd79"
+    },
+    {
+      "relativePath": "wrappers/post-recovery-verification.json",
+      "sha256": "deb3d3b657e629d0d6584d207b8f1c576d60d5f9915ca280a99c02080faf5e35"
+    },
+    {
+      "relativePath": "native-projects/manifest.json",
+      "sha256": "11a6b493c832b642f3eff7495bd099041f2f17aa90b3057024f9b2f778829410"
+    },
+    {
+      "relativePath": "archaeology/SITH_ARCHAEOLOGY_FOLLOWUP_LEADS.json",
+      "sha256": "83bfbdd7fd3c14e34e73042f95e9facdf3d74a3fa2f635a5fb17c407196e636c"
+    }
+  ],
+  "executedHistoricalPrograms": false,
+  "usedWbwConversions": false,
+  "launchedGame": false
+}

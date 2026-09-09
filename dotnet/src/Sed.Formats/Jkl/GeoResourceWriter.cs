@@ -25,9 +25,10 @@ internal static class GeoResourceWriter
             foreach (var v in sector.Vertices)
                 vertexGlobal[v] = Pool(vxList, vxKey, v);
 
-        // 2) Pool texture vertices (dedup by UV).
+        // 2) Pool texture vertices by their exact component bits. Numeric
+        // equality merges +0 and -0, losing an authored sign on regeneration.
         var txList = new List<Vec2>();
-        var txKey = new Dictionary<(double, double), int>();
+        var txKey = new Dictionary<(long, long), int>();
         var cornerTx = new Dictionary<Surface.Corner, int>();
         foreach (var sector in level.Sectors)
             foreach (var surf in sector.Surfaces)
@@ -167,9 +168,9 @@ internal static class GeoResourceWriter
         return index;
     }
 
-    private static int PoolUv(List<Vec2> list, Dictionary<(double, double), int> keys, TexVertex uv)
+    private static int PoolUv(List<Vec2> list, Dictionary<(long, long), int> keys, TexVertex uv)
     {
-        var k = (uv.U, uv.V);
+        var k = (BitConverter.DoubleToInt64Bits(uv.U), BitConverter.DoubleToInt64Bits(uv.V));
         if (keys.TryGetValue(k, out int idx)) return idx;
         idx = list.Count; list.Add(new Vec2(uv.U, uv.V)); keys[k] = idx; return idx;
     }

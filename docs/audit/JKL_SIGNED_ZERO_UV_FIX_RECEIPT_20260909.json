@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-09-09T04:28:02.6650572Z",
+  "baseCommit": "5febeb351710730dd86ced1cc787bb07778cfffc",
+  "change": "Preserve IEEE-754 signed-zero UV bits while retaining identical-bit UV pooling.",
+  "beforeRegression": {
+    "failed": 8,
+    "passed": 4,
+    "total": 12
+  },
+  "afterFocusedAndRelated": {
+    "failed": 0,
+    "passed": 61,
+    "skipped": 0
+  },
+  "actualLevel": {
+    "sourceSha256": "6b2393fa09650d8790612954c0970d47e2b088098ea83d3bb6e1f3efdf9fb520",
+    "oldMismatches": 9,
+    "fixedMismatches": 0,
+    "uvComponents": 20110
+  },
+  "sourceFixtureInRepository": false,
+  "authoredOrRegeneratedLevelWritten": false,
+  "gameOrGuiLaunched": false,
+  "files": [
+    {
+      "path": "dotnet/src/Sed.Formats/Jkl/GeoResourceWriter.cs",
+      "bytes": 9621,
+      "sha256": "648df7e6a93fbc8e2abcc37000bdfbfad243965c958dd4a1dd35cc7950d7166f"
+    },
+    {
+      "path": "dotnet/tests/Sed.Core.Tests/JklNumericRoundTripTests.cs",
+      "bytes": 4131,
+      "sha256": "861f8b598e976ffe7266741ac6eebb7a20f457ca2931028713e22cc9a2fec9a6"
+    },
+    {
+      "path": "build/numeric-roundtrip-tests/before-fix.trx",
+      "bytes": 35232,
+      "sha256": "c908859f14408942a9e431f0688b8939a4cdf3156a894135fbc0e87dd71f14ad"
+    },
+    {
+      "path": "build/numeric-roundtrip-tests/after-fix.trx",
+      "bytes": 88227,
+      "sha256": "14fe8a6d885e779051496b90fc54e4778448533a335d3c6cceffd64eff822901"
+    },
+    {
+      "path": "build/numeric-roundtrip-tests/probe-bridge.ps1",
+      "bytes": 3295,
+      "sha256": "bb5bf1507546332d53e80fc4ddc55ee87d7a7676d04c689de25f56291f435df6"
+    },
+    {
+      "path": "build/numeric-roundtrip-tests/bridge-before-fix.json",
+      "bytes": 955,
+      "sha256": "d6369a720cdba5867759a0684098e7d02036952c9df70e2fb8a957acabc5c947"
+    },
+    {
+      "path": "build/numeric-roundtrip-tests/bridge-after-fix.json",
+      "bytes": 956,
+      "sha256": "fca5b64e4a0b3aac389aa92e5632f3c3be8384886185d4bd05cfc2c19bf33359"
+    }
+  ]
+}

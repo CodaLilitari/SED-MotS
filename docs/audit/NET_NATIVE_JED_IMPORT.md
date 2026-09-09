@@ -4,6 +4,8 @@
 
 This is a source-derived importer for this GPL fork. The format evidence is the recovered SED/JED Pascal `LEVEL_IO.INC` native save/load implementation and the separately inspected NED `JKLevel.cs` `SaveToJED` implementation. NED writes a `NED` signature while using the `.jed` extension. No NED implementation code was copied. The archaeology inventory found no actual native project samples in the 50 community archives or 65 editor/plugin archives inspected; the tests below are original synthetic fixtures based on those writers, not a native community-project compatibility corpus.
 
+A later tutorial-focused recovery obtained two authored projects: Brian Lozier's JED 0.91 polygon prefab and Dino Delucchi's JED 0.85 MotS building. The packaged CLI successfully imported and converted both, with all 56 exposed sector detail records matching after conversion. Native layer visibility and the MotS light's independent white intensity remain reported limitations. See [the native-project follow-up](NATIVE_PROJECT_FOLLOWUP_20260909.md) for hashes, actual warning details and the limits of this two-project check. The authored fixtures and their derivatives remain outside the repository.
+
 ## Implemented coverage
 
 - Native `JED`, `SED` and `NED` signatures; source version text is reported. Structural validation follows the observed record layouts. Engine world versions other than JK/MotS version 1 are refused.
