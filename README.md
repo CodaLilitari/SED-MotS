@@ -1,6 +1,6 @@
 # SED MotS — Windows editor and agent tools
 
-This local development fork modernizes SED for Jedi Knight: Dark Forces II and Mysteries of the Sith. It uses C#, Avalonia and Vulkan, with a separate headless agent executable. The Windows distribution includes the .NET runtime: users do not need Delphi or an SDK.
+This development fork modernizes SED for Jedi Knight: Dark Forces II and Mysteries of the Sith. It uses C#, Avalonia and Vulkan, with a separate headless agent executable. The Windows distribution includes the .NET runtime: users do not need Delphi or an SDK.
 
 OpenJKDF2 is the primary compatibility target. Separate retail profiles are included. This is a development build, not a claim of complete original-editor parity or verified gameplay compatibility.
 
@@ -26,7 +26,7 @@ This is a GPLv3 source-derived fork based on [davidagnome/SED at 908d53d](https:
 
 Separate .NET dependency and Phosphor font notices are in [licenses/net](licenses/net). Original game data, downloaded community levels, historical editor executables and restricted archival material remain external research inputs. They are not bundled. Research findings do not establish a right to copy unpublished source into the editor.
 
-The local fork has not yet been published to GitHub. The original upstream release links below describe upstream releases, not this development build.
+The source is hosted in the private repository [andreipemberton/SED-MotS](https://github.com/andreipemberton/SED-MotS), on `codex/mots-dotnet`. GitHub rejected the normal fork request, so this is temporarily a standalone repository preserving the complete upstream commit ancestry. See [the GitHub handoff](docs/GITHUB_HANDOFF.md) for the source relationship and later fork-transfer procedure. The original upstream release links below describe upstream releases, not this development build.
 
 ## Historical upstream description
 
