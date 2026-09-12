@@ -1,7 +1,7 @@
 # LIGHT-01 — Independent source-light preservation
 
-State: implementation and executable acceptance gates passed; self-contained packaging pending. Updated 2026-09-12.
-Operative decisions: `DEC-20260912-01` through `DEC-20260912-04` in [WORK_LOG.md](WORK_LOG.md).
+State: complete. Packaged implementation commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`. Updated 2026-09-12.
+Operative decisions: `DEC-20260912-01` through `DEC-20260912-05` in [WORK_LOG.md](WORK_LOG.md).
 
 ## Bounded objective
 
@@ -34,6 +34,6 @@ Ordinary LIGHTS layouts remain unchanged. Additive `SED_SOURCE_LIGHTS` metadata 
 | Legacy compatibility | Existing supported fixture/bake behavior unchanged; ordinary LIGHTS layout retained; source loss clearly scoped | Passed: JK/MotS/Infernal Machine fallback and ordinary-layout fixtures; runtime/other-editor behavior unverified |
 | Former-behavior negative control | Reintroducing the old collapsing import/calculation behavior fails an independent regression | Passed: intended MotS failure, JK control pass, restored 2/2; receipt in `build/negativecontrol-source-light-20260912-02/` |
 | Integrated build/regression | Full Release build and appropriate test suite at recorded source state | Passed: 908/908, zero warnings/errors; `Release-98b4d3d157b74fcf972e2e42260284a1` |
-| Packaged CLI | Built distribution exercises query/schema/convert/plan/apply and output readback | Framework-dependent preflight passed 34 calls / 47 assertions; self-contained package not run |
+| Packaged CLI | Built distribution exercises query/schema/convert/plan/apply and output readback | Passed: self-contained `0.4.0-mots.7-dev`, 34 source-light calls / 47 assertions; all package workflows and 681-member distribution verification passed |
 
 Evidence basis, work status and verification scope are independent. A code review may establish a finding before tests run. Headless control tests are GUI implementation evidence; a native-window/manual usability review is separately not run unless recorded. Retain a source snapshot or patch/manifest with hashes including relevant new files, plus tested executable hashes. Close the app goal only after the required rows have evidence.

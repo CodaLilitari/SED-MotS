@@ -6,13 +6,13 @@ Updated: 2026-09-12. This is the short recovery entry point. Read this file, the
 
 Build a modern Windows JKDF2/MotS editor with a shared human and agent authoring model. OpenJKDF2/OpenMotS is the primary engine target; preserve retail compatibility where supported and report independent evidence for it.
 
-Active milestone: preserve independent native MotS source-light intent through import, shared editing, copy/undo, JKL save/reopen and independent surface-light calculation. Retain old single-intensity behavior. Do not claim a native-project writer: the current native path imports JED/SED/NED into a JKL document.
+Completed milestone LIGHT-01: preserve independent native MotS source-light intent through import, shared editing, copy/undo, JKL save/reopen and independent surface-light calculation. Retain old single-intensity behavior. Do not claim a native-project writer: the current native path imports JED/SED/NED into a JKL document.
 
-Active app goal: [LIGHT-01](LIGHT-01.md). Implementation and executable acceptance pass: 908 unit tests and 71 headless UI checks. The self-contained package is pending. Operative decisions are `DEC-20260912-01` through `DEC-20260912-04`. The acceptance record is authoritative rather than a competing copy of criteria inside the app goal.
+Completed acceptance record: [LIGHT-01](LIGHT-01.md). Implementation passed 908 unit tests and 71 headless UI checks. Self-contained Windows package `0.4.0-mots.7-dev` passed all four agent workflows (154 calls, 292 assertions) and 681-file distribution verification. Operative decisions are `DEC-20260912-01` through `DEC-20260912-05`. The acceptance record is authoritative rather than a competing copy of criteria inside the app goal.
 
-## Current source and ownership
+## Current source and completed ownership
 
-- Editor base: `9d1d3162a718423c864863b114a0f5b0b2fbd155`, branch `codex/mots-dotnet`.
+- Editor implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`, branch `codex/mots-dotnet`. Completion documentation follows in a separate commit. Previous implementation base was `9d1d316`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
 - Core model/editing/bake and tests: `model_hierarchy_preservation` subagent.
@@ -29,7 +29,7 @@ Active app goal: [LIGHT-01](LIGHT-01.md). Implementation and executable acceptan
 - Preserve ordinary JKL LIGHTS layouts. A versioned, strictly checked `SED_SOURCE_LIGHTS` section carries otherwise-lost authoring metadata, bound to the ordinary LIGHTS representation. Single-intensity files without extra metadata should not gain it gratuitously.
 - GUI and CLI use shared edit commands. Agent reads and plan/readback receipts must expose stored versus effective values. Unrelated edits must preserve metadata.
 
-## Completion evidence required
+## Acceptance evidence categories
 
 1. Exact supported source-light values survive native import, JKL generation, reopen and unrelated edits. Explicit/null/zero/equal states remain distinct.
 2. Independent channel calculation, old fallback behavior, metadata-only range behavior, clone/copy, and undo/redo pass targeted original fixtures.
@@ -50,11 +50,13 @@ Active app goal: [LIGHT-01](LIGHT-01.md). Implementation and executable acceptan
 
 ## Existing evidence and boundaries
 
-The previous Windows package is `0.4.0-mots.6-dev` at editor base `9d1d316`. Its historical evidence includes 801 unit tests, 111 packaged lit/resource assertions across 34 CLI calls, and 39 stock MotS levels / 2,353 ARCH bindings. The separate engine harness passed 1,185 checks. These counts do not describe the current unvalidated working changes.
+The previous Windows package is `0.4.0-mots.6-dev` at editor base `9d1d316`. Its historical evidence includes 801 unit tests, 111 packaged lit/resource assertions across 34 CLI calls, and 39 stock MotS levels / 2,353 ARCH bindings. The separate engine harness passed 1,185 checks. These counts belong to the previous checkpoint; the LIGHT-01 results above identify the new evidence. The stock/community corpus was not rerun for this milestone.
 
 One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mean absolute RGB difference and 97.59% of pixels within eight values in every channel. This is one static preview versus one timed OpenJK frame, not retail or gameplay parity. Hierarchy pivots, lower-LOD drawing, complete sky/depth/material behavior and deterministic simulation remain separate gaps.
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
+
+The current Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.7-dev-f6100fe/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `f6100fe`. See `DEC-20260912-05` for hashes and gate counts. No agents have outstanding implementation ownership for LIGHT-01.
 
 ## Recovery discipline
 
