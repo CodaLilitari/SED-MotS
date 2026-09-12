@@ -102,7 +102,7 @@ public sealed class SceneAssembler
             }
 
             var world = Mat4.Translate(thing.Position) * Mat4.FromPyr(thing.Pitch, thing.Yaw, thing.Roll);
-            bool levelGeometry = IsLevelGeometry(level, thing);
+            bool levelGeometry = ArchitectureBindingValidator.IsLevelGeometry(level, thing);
             var architecture = levelGeometry ? ResolveArchitecture(level, thing, model) : null;
             if (!levelGeometry && thing.ArchLightingIndex >= 0)
                 _diagnostics.Add($"Thing {level.Things.IndexOf(thing)} has an ARCHLIGHTING binding but lacks resolved thingflags 0x8; ordinary things use model base mono lighting.");
@@ -246,35 +246,21 @@ public sealed class SceneAssembler
     private int TextureClampMode(long flags) => _gameKind == ProjectType.InfernalMachine
         ? ((flags & FaceFlags.TexClampX) != 0 ? 1 : 0) | ((flags & FaceFlags.TexClampY) != 0 ? 2 : 0) : 0;
 
-    private static bool IsLevelGeometry(Level level, Thing thing)
-    {
-        string value = thing.Values.TryGetValue("thingflags", out var direct) ? direct : level.GetTemplateValue(thing.Template, "thingflags");
-        if (string.IsNullOrEmpty(value)) return false;
-        if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) value = value[2..];
-        if (!uint.TryParse(value, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out uint flags))
-            throw new FormatException("Thing has invalid hexadecimal thingflags.");
-        return (flags & 0x8) != 0;
-    }
-
     private ArchitecturalLightObject? ResolveArchitecture(Level level, Thing thing, ThreeDoModel model)
     {
         if (thing.ArchLightingIndex < 0) return null;
-        string? reason = null;
-        ArchitecturalLightObject? architecture = null;
-        if ((uint)thing.ArchLightingIndex >= (uint)level.ArchitecturalLighting.Count) reason = "missing ARCHLIGHTING object";
-        else
+        var topology = model.ArchitectureTopology;
+        if (topology is not null && (topology.Geosets.Count == 0
+            || !topology.Geosets[0].VertexCounts.SequenceEqual(model.Meshes.Select(m => m.Vertices.Count))))
         {
-            architecture = level.ArchitecturalLighting[thing.ArchLightingIndex];
-            if (!string.IsNullOrEmpty(thing.ArchLightingSourceModel) && !thing.ArchLightingSourceModel.Equals(level.GetThingModel(thing), StringComparison.OrdinalIgnoreCase))
-                reason = "model name changed since architectural binding";
-            else if (!string.IsNullOrEmpty(thing.ArchLightingSourceModelHash)
-                && !thing.ArchLightingSourceModelHash.Equals(model.ArchitectureContentHash, StringComparison.OrdinalIgnoreCase))
-                reason = "model content changed or its native architectural fingerprint cannot be verified";
-            else if (architecture.Meshes.Count != model.Meshes.Count || architecture.Meshes.Where((m, i) => m.Vertices.Count != model.Meshes[i].Vertices.Count).Any())
-                reason = "architectural mesh/vertex counts do not match model geoset zero";
+            _diagnostics.Add($"Thing {level.Things.IndexOf(thing)}: current model geometry differs from its captured topology; showing base/sector light without that binding.");
+            return null;
         }
-        if (reason is null) return architecture;
-        _diagnostics.Add($"Thing {level.Things.IndexOf(thing)}: {reason}; showing model base/sector light without that binding.");
+        var result = ArchitectureBindingValidator.Validate(level, thing,
+            new(level.GetThingModel(thing), model.Name, "", topology));
+        if (result.CanUseBinding) return level.ArchitecturalLighting[thing.ArchLightingIndex];
+        string reason = string.Join("; ", result.Diagnostics.Where(d => d.Code != ArchitectureDiagnosticCode.MissingHistoricalBaseline).Select(d => d.Message));
+        _diagnostics.Add($"Thing {level.Things.IndexOf(thing)}: {reason}; showing model base/sector light without that binding. {model.ArchitectureTopologyError}".TrimEnd());
         return null;
     }
 

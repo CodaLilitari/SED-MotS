@@ -59,6 +59,9 @@ public sealed class ThreeDoModel
     public double Version { get; set; }
     /// <summary>Windows Delphi native-project normalized model fingerprint, when source encoding is verifiable.</summary>
     public string? ArchitectureContentHash { get; set; }
+    /// <summary>All-LOD shape metadata captured from source; null is unverified, not a single-LOD assertion.</summary>
+    public ThreeDoTopology? ArchitectureTopology { get; set; }
+    public string? ArchitectureTopologyError { get; set; }
     public Vec3 InsertOffset { get; set; }
     public List<string> Materials { get; } = new();
     public List<Mesh3do> Meshes { get; } = new();

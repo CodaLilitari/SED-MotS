@@ -37,6 +37,7 @@ try
                 "query" => AgentQueries.Schema(), "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
                 "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
                 "snapshot" => AgentSnapshotRequest.Schema(),
+                "resources" => AgentWorkspace.ResourceRequestSchema(),
                 _ => AgentSchema.Patch(args[1]) };
             break;
         case "schema" when args.Length == 1:
@@ -61,8 +62,8 @@ try
         case "snapshot" when args.Length == 4:
             result = Sed.Agent.AgentSnapshotRunner.Run(args[1], ReadRequest(args[2]), args[3]);
             break;
-        case "validate" when args.Length == 2:
-            result = AgentWorkspace.Validate(args[1]);
+        case "validate" when args.Length is 2 or 3:
+            result = AgentWorkspace.Validate(args[1], args.Length == 3 ? ReadRequest(args[2]) : null);
             var validation = JsonSerializer.SerializeToElement(result, AgentWorkspace.JsonOptions);
             exitCode = validation.GetProperty("valid").GetBoolean() ? 0 : 3;
             break;
@@ -75,8 +76,8 @@ try
         case "new" when args.Length is 2 or 3:
             result = AgentWorkspace.Create(args[1], args.Length == 3 ? args[2] : "mots");
             break;
-        case "convert" when args.Length == 3:
-            result = AgentWorkspace.Commit(AgentWorkspace.ConvertDocument(args[1]), args[2]);
+        case "convert" when args.Length is 3 or 4 or 5:
+            result = AgentWorkspace.Commit(AgentWorkspace.ConvertDocument(args[1], args.Length >= 4 ? ReadRequest(args[3]) : null), args[2], args.Length == 5 ? args[4] : null);
             break;
         case "archive" when args.Length == 2:
             result = AgentWorkspace.InspectArchive(args[1]);
@@ -119,7 +120,8 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
-    "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview"];
+    "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
+    "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
     Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));

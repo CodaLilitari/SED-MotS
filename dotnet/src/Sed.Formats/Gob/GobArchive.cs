@@ -24,6 +24,8 @@ public sealed class GobArchive : IDisposable
     private readonly bool _ownsStream;
 
     public IReadOnlyList<GobEntry> Entries { get; }
+    /// <summary>Exact archive path when opened from disk; null for caller-owned streams.</summary>
+    public string? SourcePath { get; private init; }
 
     public GobArchive(Stream stream, bool ownsStream = false)
     {
@@ -33,8 +35,12 @@ public sealed class GobArchive : IDisposable
         catch { if (ownsStream) stream.Dispose(); throw; }
     }
 
-    public static GobArchive Open(string path) =>
-        new(new FileStream(path, FileMode.Open, FileAccess.Read), ownsStream: true);
+    public static GobArchive Open(string path)
+    {
+        string fullPath = Path.GetFullPath(path);
+        return new(new FileStream(fullPath, FileMode.Open, FileAccess.Read), ownsStream: true)
+        { SourcePath = fullPath };
+    }
 
     private static List<GobEntry> ReadDirectory(Stream s)
     {
@@ -84,6 +90,21 @@ public sealed class GobArchive : IDisposable
         return Entries.FirstOrDefault(e =>
             e.NormalizedName == norm || e.NormalizedName.EndsWith("/" + norm, StringComparison.Ordinal)
             || Path.GetFileName(e.NormalizedName) == norm);
+    }
+
+    /// <summary>
+    /// Finds an engine resource without silently choosing among ambiguous names.
+    /// Prefer its standard directory, then its exact archive path, then a unique basename.
+    /// Archive precedence belongs to the caller; duplicate matches are returned for refusal.
+    /// </summary>
+    public IReadOnlyList<GobEntry> FindResourceEntries(string name, string folder)
+    {
+        string normalized = name.Replace('\\', '/').ToLowerInvariant();
+        string directory = folder.Replace('\\', '/').Trim('/').ToLowerInvariant();
+        var matches = Entries.Where(e => e.NormalizedName == directory + "/" + normalized).ToArray();
+        if (matches.Length == 0) matches = Entries.Where(e => e.NormalizedName == normalized).ToArray();
+        if (matches.Length == 0) matches = Entries.Where(e => Path.GetFileName(e.NormalizedName) == normalized).ToArray();
+        return matches;
     }
 
     public byte[] ReadBytes(GobEntry entry)

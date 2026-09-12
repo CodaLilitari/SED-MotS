@@ -25,12 +25,14 @@ public static class AgentSnapshotRunner
         var mesh = new Mesh();
         using var resources = request.Mode == "lit" ? new SnapshotResources(request.ResourceArchives) : null;
         RenderScene? scene = null;
+        Sed.Formats.Resources.ArchitectureResourceValidationResult? architectureValidation = null;
         var renderWarnings = new List<string>();
         int omittedThings = level.Things.Count;
         int surfaceCount = 0, omittedPortals = 0, degenerateTriangles = 0;
         long triangleBudget = 0;
         if (resources is not null)
         {
+            architectureValidation = Sed.Formats.Resources.ArchitectureResourceValidation.Evaluate(level, resources.Capture);
             var assembler = new SceneAssembler(AgentSnapshotRequest.MaxTriangles);
             assembler.AddLevel(level);
             var unmodeled = assembler.AddThings(level, resources.Model);
@@ -50,7 +52,7 @@ public static class AgentSnapshotRunner
                 renderWarnings.Add($"{noModel.Count} things have no resolved 3DO model and are omitted (including invisible controllers); "
                     + $"first indices: {string.Join(", ", noModel.Take(32).Select(t => level.Things.IndexOf(t)))}.");
             // Missing models/materials, malformed ARCH bindings and unsupported assets cannot silently certify a lit image.
-            if (request.StrictAssets && (resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0))
+            if (request.StrictAssets && (architectureValidation.HasErrors || resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0))
                 throw new AgentRequestException("Lit snapshot asset validation failed: " + string.Join("; ", resources.Diagnostics.Concat(scene.Diagnostics).Take(12)));
             surfaceCount = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo != 0 && f.Corners.Count >= 3 && !string.IsNullOrEmpty(f.Material)));
             omittedPortals = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo == 0));
@@ -175,7 +177,8 @@ public static class AgentSnapshotRunner
             request.Mode, lightingMode = scene?.LightingMode.ToString().ToLowerInvariant(),
             renderProfile = scene is null ? null : request.RenderProfile,
             renderer = scene is null ? "Vulkan flat diagnostic geometry" : "Vulkan static lit scene", deviceName, guiLaunched = false,
-            resourceArchives = resources?.Archives ?? Array.Empty<object>(), usedResources = resources?.UsedResources ?? Array.Empty<object>(),
+            resourceArchives = resources?.Archives ?? [], usedResources = resources?.UsedResources ?? [],
+            resourceRevision = resources?.Capture.ResourceRevision, architectureValidation,
             counts = new { sectors = level.Sectors.Count, renderedSurfaces = surfaceCount, triangles = mesh.TriangleCount,
                 omittedPortalSurfaces = omittedPortals, skippedDegenerateTriangles = degenerateTriangles, omittedThings },
             nonBackgroundPixels, elapsedMilliseconds = timer.ElapsedMilliseconds,

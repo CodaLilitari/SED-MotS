@@ -6,6 +6,8 @@ Exercises static MotS lighting through the agent CLI, synthetic archives and Vul
 Builds original synthetic JKL, 8-bit MAT, full CMP and 3DO data in a new directory.
 Checks independent surface and architectural mono/RGB rendering, exact resource
 provenance, strict/permissive asset handling and refusal to replace existing PNGs.
+Also checks resource validation and reviewed plan/apply/convert using a separate
+closed synthetic room, including changed resources that leave output JKL unchanged.
 Starts only direct bounded agent processes, with no GUI, game, shell or network.
 Requires an agent build that supports lit snapshots and a working Vulkan device.
 #>
@@ -235,6 +237,182 @@ function Invoke-Snapshot([string]$Name, [string]$LevelPath, $Request) {
         width = $image.width; height = $image.height; counts = $result.counts; warnings = $result.warnings })
     return @{ result = $result; image = $image; path = $path }
 }
+function Invoke-ResourceWorkflow([string]$LevelText, [string]$ModelText, [Collections.IDictionary]$Entries) {
+    $resourceSchema = Invoke-Agent 'resource-schema' @('schema', 'resources')
+    $patchSchema = Invoke-Agent 'resource-patch-schema' @('schema', 'patch')
+    Confirm-Check 'resource and patch schemas expose explicit archives and reviewed revision' (
+        $resourceSchema.properties.Contains('resourceArchives') -and $resourceSchema.properties.Contains('resourceRevision') -and
+        $patchSchema.properties.Contains('resourceArchives') -and $patchSchema.properties.Contains('resourceRevision'))
+
+    # The lighting fixture is intentionally open. This independently authored
+    # closed box keeps its MAT/CMP, placed model and original ARCH arrays while
+    # supplying valid geometry for transactional export checks.
+    $closedGeometry = @'
+SECTION: GEORESOURCE
+World colormaps 1
+0: agent_lit.cmp
+World vertices 8
+0: -2 -2 0
+1: 2 -2 0
+2: 2 2 0
+3: -2 2 0
+4: -2 -2 3
+5: 2 -2 3
+6: 2 2 3
+7: -2 2 3
+World texture vertices 4
+0: 0 0
+1: 2 0
+2: 2 2
+3: 0 2
+World adjoins 0
+World surfaces 6
+'@
+    $faces = @(@(0, 1, 2, 3), @(7, 6, 5, 4), @(4, 5, 1, 0), @(5, 6, 2, 1), @(6, 7, 3, 2), @(7, 4, 0, 3))
+    $normals = @('0 0 1', '0 0 -1', '0 1 0', '-1 0 0', '0 -1 0', '1 0 0')
+    for ($i = 0; $i -lt $faces.Count; $i++) {
+        $pairs = (0..3 | ForEach-Object { '{0},{1}' -f $faces[$i][$_], $_ }) -join ' '
+        $closedGeometry += "`n${i}: 0 0x1000000 0x1 4 3 3 -1 0 4 $pairs 0.25 0.15 0.65 0.25 0.25 0.15 0.65 0.25 0.25 0.15 0.65 0.25 0.25 0.15 0.65 0.25"
+    }
+    for ($i = 0; $i -lt $normals.Count; $i++) { $closedGeometry += "`n${i}: $($normals[$i])" }
+    $closedGeometry += @'
+
+END
+SECTION: SECTORS
+World sectors 1
+SECTOR 0
+FLAGS 0
+AMBIENT LIGHT 0
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+VERTICES 8
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+SURFACES 0 6
+END
+
+'@
+    $geometryStart = $LevelText.IndexOf('SECTION: GEORESOURCE', [StringComparison]::Ordinal)
+    $modelsStart = $LevelText.IndexOf('SECTION: MODELS', [StringComparison]::Ordinal)
+    $closedText = $LevelText.Substring(0, $geometryStart) + $closedGeometry + $LevelText.Substring($modelsStart)
+    $closedPath = Join-Path $scratch 'agent_resource_room.jkl'
+    Write-NewBytes $closedPath $utf8.GetBytes($closedText)
+    $closedInspection = Invoke-Agent 'inspect-resource-room' @('inspect', $closedPath)
+    Confirm-Check 'transaction fixture retains the original ARCH binding in a closed room' (
+        $closedInspection.sectors[0].surfaces -eq 6 -and $closedInspection.things[0].archLightingIndex -eq 0)
+
+    # Only this newly generated private archive is intentionally replaced below.
+    # The original lighting archive and every document remain immutable.
+    $workflowArchive = Join-Path $scratch 'resource_workflow_mutable.gob'
+    Write-NewBytes $workflowArchive (New-SyntheticGob $Entries)
+    $originalArchiveHash = Get-Hash $workflowArchive
+    $resourceRequest = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256
+        sourceRevision = $closedInspection.sourceRevision; resourceArchives = @(@{ path = $workflowArchive; sha256 = $originalArchiveHash }) }
+    $validated = Invoke-Agent 'validate-current-architecture' @('validate', $closedPath, '-') (Convert-Request $resourceRequest)
+    Confirm-Check 'current resources validate all LODs and return a separate resource revision' (
+        $validated.valid -and $validated.architectureValidation.status -eq 'compatible-current-resources' -and
+        $validated.resourceRevision -match '^[0-9a-f]{64}$' -and $validated.architectureValidation.bindings.Count -eq 1)
+    $binding = $validated.architectureValidation.bindings[0]
+    Confirm-Check 'JKL topology compatibility does not invent a historical bake fingerprint' (
+        $binding.canUseBinding -and $binding.topologyCompatible -and -not $binding.historicalBaselineVerified -and
+        $binding.baselineStatus -eq 'Missing' -and @($binding.diagnostics | Where-Object code -EQ 'MissingHistoricalBaseline').Count -eq 1)
+    Confirm-Check 'resource validation identifies the exact model entry and raw hash' (
+        $validated.architectureValidation.usedResources.Count -eq 1 -and
+        $validated.architectureValidation.usedResources[0].sha256 -eq (Get-BytesHash $Entries['3do\agent_lit.3do']))
+
+    $patch = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256; sourceRevision = $closedInspection.sourceRevision
+        resourceArchives = $resourceRequest.resourceArchives; operations = @(@{ op = 'setThingName'; thing = 0; name = 'ReviewedPanel' }) }
+    $plan = Invoke-Agent 'plan-resource-edit' @('plan', $closedPath, '-') (Convert-Request $patch)
+    Confirm-Check 'plan binds the output hash and current resource revision independently' (
+        $plan.outputSha256 -match '^[0-9a-f]{64}$' -and $plan.outputSha256 -ne $closedInspection.inputSha256 -and
+        $plan.resourceRevision -eq $validated.resourceRevision -and $plan.architectureValidation.status -eq 'compatible-current-resources')
+    $patch.resourceRevision = $plan.resourceRevision
+    $appliedPath = Join-Path $scratch 'agent_resource_applied.jkl'
+    $applied = Invoke-Agent 'apply-reviewed-resources' @('apply', $closedPath, '-', $appliedPath, $plan.outputSha256) (Convert-Request $patch)
+    Confirm-Check 'apply writes precisely the reviewed output under the reviewed resource revision' (
+        (Get-Hash $appliedPath) -eq $plan.outputSha256 -and $applied.plan.resourceRevision -eq $plan.resourceRevision)
+    $appliedInspection = Invoke-Agent 'inspect-resource-edit' @('inspect', $appliedPath)
+    $originalArch = [regex]::Match($closedText, '(?is)SECTION:\s*ARCHLIGHTING\b.*?\bEND\b').Value -replace '\s+', ' '
+    $appliedArch = [regex]::Match([IO.File]::ReadAllText($appliedPath, $utf8), '(?is)SECTION:\s*ARCHLIGHTING\b.*?\bEND\b').Value -replace '\s+', ' '
+    Confirm-Check 'applied edit changes the name while retaining the architectural arrays and binding' (
+        $appliedInspection.things[0].name -eq 'ReviewedPanel' -and $appliedInspection.things[0].archLightingIndex -eq 0 -and
+        $appliedInspection.counts.architecturalObjects -eq $closedInspection.counts.architecturalObjects -and
+        $originalArch.Length -gt 0 -and $appliedArch -eq $originalArch)
+
+    # A no-op edit supplies the review hash for the same serializer used by
+    # convert. This exercises the CLI conversion gate on the original JKL input;
+    # native import fidelity remains a separate fixture/test responsibility.
+    $conversionPatch = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256; sourceRevision = $closedInspection.sourceRevision
+        resourceArchives = $resourceRequest.resourceArchives; resourceRevision = $plan.resourceRevision
+        operations = @(@{ op = 'setThingName'; thing = 0; name = 'SyntheticPanel' }) }
+    $conversionPlan = Invoke-Agent 'plan-resource-conversion' @('plan', $closedPath, '-') (Convert-Request $conversionPatch)
+    $resourceRequest.resourceRevision = $conversionPlan.resourceRevision
+    $convertedPath = Join-Path $scratch 'agent_resource_converted.jkl'
+    $converted = Invoke-Agent 'convert-reviewed-resources' @('convert', $closedPath, $convertedPath, '-', $conversionPlan.outputSha256) (Convert-Request $resourceRequest)
+    Confirm-Check 'conversion consumes the reviewed output and resource revisions' (
+        (Get-Hash $convertedPath) -eq $conversionPlan.outputSha256 -and $converted.plan.resourceRevision -eq $conversionPlan.resourceRevision)
+
+    $changedEntries = [ordered]@{}
+    foreach ($entry in $Entries.GetEnumerator()) { $changedEntries.Add($entry.Key, $entry.Value) }
+    $changedEntries['3do\agent_lit.3do'] = $utf8.GetBytes($ModelText.Replace('0.05', '0.10'))
+    [IO.File]::WriteAllBytes($workflowArchive, (New-SyntheticGob $changedEntries))
+    $changedArchiveHash = Get-Hash $workflowArchive
+    Confirm-Check 'negative fixture changes model content at the same archive path' ($changedArchiveHash -ne $originalArchiveHash)
+    $freshPatch = ConvertFrom-Json -InputObject (Convert-Request $patch) -AsHashtable -Depth 50
+    $freshPatch.resourceArchives[0].sha256 = $changedArchiveHash
+    $null = $freshPatch.Remove('resourceRevision')
+    $changedPlan = Invoke-Agent 'plan-changed-model-resources' @('plan', $closedPath, '-') (Convert-Request $freshPatch)
+    Confirm-Check 'same JKL output cannot hide changed model resource bytes' (
+        $changedPlan.outputSha256 -eq $plan.outputSha256 -and $changedPlan.resourceRevision -ne $plan.resourceRevision)
+    $freshPatch.resourceRevision = $plan.resourceRevision
+    $staleApplyPath = Join-Path $scratch 'must-not-write-old-resource-revision.jkl'
+    $stale = Invoke-Agent 'refuse-reviewed-resource-change' @('apply', $closedPath, '-', $staleApplyPath, $plan.outputSha256) (Convert-Request $freshPatch) 4
+    Confirm-Check 'fresh archive SHA with stale reviewed revision refuses apply despite matching output hash' (
+        -not (Test-Path -LiteralPath $staleApplyPath) -and $stale.error -eq 'conflict' -and $stale.message -match '(?i)resource revision')
+    $resourceRequest.resourceArchives[0].sha256 = $changedArchiveHash
+    $staleConvertPath = Join-Path $scratch 'must-not-convert-old-resource-revision.jkl'
+    $staleConvert = Invoke-Agent 'refuse-conversion-resource-change' @('convert', $closedPath, $staleConvertPath, '-', $conversionPlan.outputSha256) (Convert-Request $resourceRequest) 4
+    Confirm-Check 'conversion also refuses a stale resource revision without output' (
+        -not (Test-Path -LiteralPath $staleConvertPath) -and $staleConvert.error -eq 'conflict' -and $staleConvert.message -match '(?i)resource revision')
+
+    $missingModelEntries = [ordered]@{}
+    foreach ($entry in $Entries.GetEnumerator()) { if ($entry.Key -ne '3do\agent_lit.3do') { $missingModelEntries.Add($entry.Key, $entry.Value) } }
+    $missingModelArchive = Join-Path $scratch 'resource_workflow_missing_model.gob'
+    Write-NewBytes $missingModelArchive (New-SyntheticGob $missingModelEntries)
+    $wrongRequest = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256; sourceRevision = $closedInspection.sourceRevision
+        resourceArchives = @(@{ path = $missingModelArchive; sha256 = Get-Hash $missingModelArchive }) }
+    $wrongValidation = Invoke-Agent 'validate-missing-architecture-model' @('validate', $closedPath, '-') (Convert-Request $wrongRequest) 3
+    Confirm-Check 'missing ARCH model validation returns a typed failure' (-not $wrongValidation.valid -and
+        $wrongValidation.architectureValidation.status -eq 'invalid' -and
+        @($wrongValidation.architectureValidation.bindings[0].diagnostics | Where-Object code -EQ 'MissingModel').Count -gt 0)
+    $wrongPatch = ConvertFrom-Json -InputObject (Convert-Request $patch) -AsHashtable -Depth 50
+    $wrongPatch.resourceArchives = $wrongRequest.resourceArchives
+    $null = $wrongPatch.Remove('resourceRevision')
+    $wrongApplyPath = Join-Path $scratch 'must-not-apply-missing-architecture-model.jkl'
+    $null = Invoke-Agent 'refuse-apply-missing-architecture-model' @('apply', $closedPath, '-', $wrongApplyPath, $plan.outputSha256) (Convert-Request $wrongPatch) 3
+    $wrongConvertPath = Join-Path $scratch 'must-not-convert-missing-architecture-model.jkl'
+    $null = Invoke-Agent 'refuse-convert-missing-architecture-model' @('convert', $closedPath, $wrongConvertPath, '-') (Convert-Request $wrongRequest) 3
+    Confirm-Check 'wrong model resources leave no apply or conversion output' (-not (Test-Path -LiteralPath $wrongApplyPath) -and -not (Test-Path -LiteralPath $wrongConvertPath))
+
+    foreach ($path in @($closedPath, $workflowArchive, $missingModelArchive)) {
+        $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length })
+    }
+    foreach ($path in @($appliedPath, $convertedPath)) {
+        $receipt.outputs.Add(@{ name = 'resource-workflow-jkl'; path = $path; sha256 = Get-Hash $path; kind = 'jkl' })
+    }
+    $receipt.resourceWorkflow = [ordered]@{ archivePath = $workflowArchive; intentionallyMutatedSyntheticArchive = $true
+        originalArchiveSha256 = $originalArchiveHash; finalArchiveSha256 = $changedArchiveHash
+        originalResourceRevision = $plan.resourceRevision; changedResourceRevision = $changedPlan.resourceRevision
+        unchangedOutputSha256 = $plan.outputSha256; historicalBaselineStatus = $binding.baselineStatus
+        convertedSourceFormat = 'JKL'; nativeImportCoverage = 'Separate tests; this workflow exercises shared resource and conversion gates.' }
+}
 
 try {
     $version = Invoke-Agent 'version' @('--version'); $receipt.agentVersion = $version.version
@@ -454,6 +632,7 @@ END
     Confirm-Check 'diagnostic still omits things and reports flat geometry' ($diagnostic.result.counts.omittedThings -eq 1 -and $diagnostic.result.renderer -match '(?i)diagnostic')
     Confirm-Check 'diagnostic does not consume resources or a lit mode' ($diagnostic.result.resourceArchives.Count -eq 0 -and
         $diagnostic.result.usedResources.Count -eq 0 -and $null -eq $diagnostic.result.lightingMode -and $diagnostic.result.counts.triangles -eq 2)
+    Invoke-ResourceWorkflow $levelText $modelText $entries
     foreach ($fixture in $receipt.fixtures) { Confirm-Check 'input fixture remains byte-identical' ((Get-Hash $fixture.path) -eq $fixture.sha256) }
     $receipt.status = 'passed'
 }

@@ -11,7 +11,7 @@ The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works with
 3. Use File > New MotS level or New JK level for an editable room scaffold. It still needs materials, templates, a player start and an episode before gameplay testing.
 4. Edit through the 3D viewport, 2D map and property inspector. Both views share selection and undo history. Save an edited JKL to your own project folder.
 
-MotS's separate corner-light channels, architectural arrays and bindings survive supported edits. Moving a baked model keeps its old lighting; it does not calculate new architectural lighting. Preview checks architectural model name and geometry counts, and checks a historical normalized model fingerprint when the native project supplies one. That protection does not yet extend to saving/exporting against changed resource files or to every model LOD; plain JKL does not carry the historical fingerprint. Template edits involving repeated keys are rejected if the single-value control cannot express the original list without ambiguity.
+MotS's separate corner-light channels, architectural arrays and bindings survive supported edits. Moving a baked model keeps its old lighting; it does not calculate new architectural lighting. Preview and explicit exports check model names, every LOD's array coverage, and the historical normalized model fingerprint when a native project supplies one. Plain JKL does not carry that historical fingerprint, so current compatibility is reported separately from original bake identity. Save As and GOB/GOO export require configured archives when architectural bindings are present and refuse incompatible bindings. Recovery, autosave and backup remain available for unresolved projects. Template edits involving repeated keys are rejected if the single-value control cannot express the original list without ambiguity.
 
 The vertex inspector edits MotS's mono, red, green and blue channels independently. The thing inspector can explicitly unbind baked architectural lighting before changing a model. Both operations support undo. Clipboard transfers require matching game types and check layer, template and colormap dependencies before modifying the destination.
 
@@ -23,7 +23,7 @@ Choose a short project folder with ASCII characters and no spaces, for example `
 
 Save and Test writes a loose `episode.jk` and `jkl/<name>.jkl`, plus a GOB or MotS GOO. An existing episode that does not reference the selected level is left in place and the operation reports the mismatch. The executable runs from its game folder. For OpenJKDF2, `resource/jk_.cd` must be present so its installation helper does not redirect the working directory.
 
-The validation and launch-contract checks do not constitute a campaign or multiplayer playtest. No game was launched during the development audit. Retain original sources and test exports in the intended engine before distributing a finished level.
+The validation and launch-contract checks do not constitute a campaign or multiplayer playtest. Export checks the current editor archives; loose files and other runtime overrides may change which resources the engine resolves. Retain original sources and test exports in the intended engine before distributing a finished level.
 
 ## Use an AI agent
 
@@ -32,6 +32,8 @@ Point the assistant or script at `agent/sed-agent.exe` and [AGENT_PROTOCOL.md](A
 For Codex, the full distribution includes `.agents/skills/sed-mots/SKILL.md` and `AGENTS.md`. Open the distribution/source folder as the project, or copy the skill into your level project's `.agents/skills` folder and give Codex the exact path to your installed agent executable. The skill needs no MCP server or global configuration change. It discovers supported commands from the selected build.
 
 `--help` gives compact command discovery, and `schema <operation>` gives a focused patch schema. `query` reads current values and template candidates in bounded pages. JSON requests can arrive on stdin using `-`. `plan` checks edits without writing; passing its output hash to `apply` binds the new file to those reviewed bytes. Native projects also bind their imported template dependencies. `launch-plan` returns an engine invocation without launching it. See [AGENT_WORKFLOWS.md](AGENT_WORKFLOWS.md) for a complete read, plan, apply and readback example.
+
+For architectural model validation, add exact archive paths and hashes as `resourceArchives` in the patch, or use `schema resources` with `validate`/`convert`. Copy the reviewed plan's `resourceRevision` into the patch before applying it. That separate check catches changed model bytes even when the JKL output would be identical. Results distinguish usable current topology from a matching historical model baseline; missing historical information remains unknown. Resource-free edits remain available with an explicitly unverified ARCH result.
 
 The supplied `tools/Test-AgentDesign.ps1` demonstrates a connected room layout, material/UV assignment, readback and offscreen images using the installed executable. It uses fictional resource names to test registration, so its output is a geometry fixture rather than a playable episode. Run it with `-AgentPath` and a new `-OutputDirectory`; use `-SkipSnapshot` on a machine without Vulkan. The normal path never opens the editor or a game.
 

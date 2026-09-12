@@ -53,6 +53,7 @@ public sealed class SceneLightingTests
             mesh.Faces.Add(face);
             model.Meshes.Add(mesh);
         }
+        model.ArchitectureTopology = new(2.2, [new(model.Meshes.Select(m => m.Vertices.Count).ToArray())], null);
         return model;
     }
 

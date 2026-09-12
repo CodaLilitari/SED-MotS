@@ -4,6 +4,8 @@ This follows the September 9 development package. OpenJKDF2 remains the primary
 target. Engine source was rechecked at `5fa4644d03080fef69d7137eaa2c8f295c47bd63`;
 this editor work does not change that newer engine commit.
 
+This is the transparency/preservation checkpoint. The subsequent [resource-aware ARCH implementation](ARCH_RESOURCE_VALIDATION_DESIGN.md) adds all-LOD validation, reviewed resource revisions and guarded agent/GUI export; its validation totals supersede the numbers below. Hidden engine capture is separately versioned in the engine repository.
+
 ## Implemented
 
 - Corrected effective accelerated translucency from 90/255 to **165/255 opacity**.

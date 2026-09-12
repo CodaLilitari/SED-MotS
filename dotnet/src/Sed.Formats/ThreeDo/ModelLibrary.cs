@@ -23,9 +23,11 @@ public sealed class ModelLibrary
         {
             foreach (var gob in _archives)
             {
-                var entry = gob.Find(name);
-                if (entry is null) continue;
-                model = ThreeDoParser.Parse(gob.ReadText(entry));
+                var matches = gob.FindResourceEntries(name, "3do");
+                if (matches.Count == 0) continue;
+                if (matches.Count != 1)
+                    throw new InvalidDataException($"Ambiguous model resource '{name}'.");
+                model = ThreeDoParser.Parse(gob.ReadText(matches[0]));
                 break;
             }
         }

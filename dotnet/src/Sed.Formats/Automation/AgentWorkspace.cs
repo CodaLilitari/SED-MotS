@@ -8,6 +8,7 @@ using Sed.Core.Validation;
 using Sed.Formats.Jkl;
 using Sed.Formats.Jed;
 using Sed.Formats.Gob;
+using Sed.Formats.Resources;
 
 namespace Sed.Formats.Automation;
 
@@ -33,6 +34,8 @@ public sealed record PreparedAgentEdit(string InputPath, string InputSha256, str
 {
     public string? SourceRevision { get; init; }
     public IReadOnlyList<AgentInputDependency> Dependencies { get; init; } = Array.Empty<AgentInputDependency>();
+    internal AgentResourceCapture? ResourceCapture { get; init; }
+    public string? ResourceRevision => ResourceCapture?.Revision;
 }
 
 /// <summary>
@@ -172,22 +175,33 @@ public static partial class AgentWorkspace
         };
     }
 
-    public static object Validate(string path)
+    public static object Validate(string path, string? resourceRequestText = null)
     {
         var snapshot = LoadWithProvenance(path);
         var doc = snapshot.Document; var hash = snapshot.InputSha256;
+        var options = ParseExportResources(resourceRequestText, snapshot);
+        using var resources = options is null ? null : new ExplicitArchiveResources(options.Archives);
+        var architecture = ArchitectureResourceValidation.Evaluate(doc.Level, resources);
+        CheckResourceRevision(options, architecture.ResourceRevision);
+        resources?.VerifyUnchanged();
+        EnsureInputsUnchanged(path, hash, snapshot.Dependencies);
         var issues = ConsistencyChecker.Check(doc.Level);
         return new { schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies,
-            valid = issues.All(i => i.Severity != IssueSeverity.Error), issues = DescribeIssues(issues),
+            valid = issues.All(i => i.Severity != IssueSeverity.Error) && !architecture.HasErrors, issues = DescribeIssues(issues),
+            resourceRevision = architecture.ResourceRevision, architectureValidation = architecture,
             preservationWarnings = doc.PreservationWarnings };
     }
 
-    public static PreparedAgentEdit ConvertDocument(string path)
+    public static PreparedAgentEdit ConvertDocument(string path, string? resourceRequestText = null)
     {
         var snapshot = LoadWithProvenance(path);
         var doc = snapshot.Document; var hash = snapshot.InputSha256;
-        string output = JklWriter.Build(doc);
+        var options = ParseExportResources(resourceRequestText, snapshot);
+        using var resources = options is null ? null : new ExplicitArchiveResources(options.Archives);
+        var exported = ResourceValidatedExport.Prepare(doc, resources);
+        string output = exported.OutputText;
+        CheckResourceRevision(options, exported.Validation.ResourceRevision);
         var reopened = JklParser.ParseDocument(output);
         var issues = ConsistencyChecker.Check(reopened.Level);
         if (issues.Any(i => i.Severity == IssueSeverity.Error))
@@ -196,9 +210,11 @@ public static partial class AgentWorkspace
         {
             schemaVersion = 1, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies, outputSha256 = Hash(Encoding.UTF8.GetBytes(output)), counts = Counts(reopened.Level),
+            resourceRevision = exported.Validation.ResourceRevision, architectureValidation = exported.Validation,
             preservationWarnings = doc.PreservationWarnings, issues = DescribeIssues(issues),
             note = "Legacy conversion uses the recorded importer coverage. Editor-only and unsupported records can produce warnings; this is not a gameplay test.",
-        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies };
+        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,
+            ResourceCapture = CaptureResources(options, exported.Validation, output) };
     }
 
     public static object InspectArchive(string path)
@@ -230,7 +246,7 @@ public static partial class AgentWorkspace
             throw new AgentRequestException("Patch exceeds the 1 MiB request limit.");
         using var request = JsonDocument.Parse(requestText, new JsonDocumentOptions { MaxDepth = 16 });
         var root = request.RootElement;
-        FieldsWithOptional(root, ["sourceRevision"], "schemaVersion", "inputSha256", "operations");
+        FieldsWithOptional(root, ["sourceRevision", "resourceArchives", "resourceRevision"], "schemaVersion", "inputSha256", "operations");
         if (Integer(root, "schemaVersion") != SchemaVersion) throw new AgentRequestException("Unsupported patch schemaVersion.");
         var expected = String(root, "inputSha256");
         if (expected.Length != 64 || expected.Any(c => !Uri.IsHexDigit(c)))
@@ -252,6 +268,8 @@ public static partial class AgentWorkspace
         var operations = root.GetProperty("operations");
         if (operations.ValueKind != JsonValueKind.Array || operations.GetArrayLength() is < 1 or > MaxOperations)
             throw new AgentRequestException("operations must contain between 1 and 1000 operations.");
+        var resourceOptions = ParseResourceOptions(root);
+        using var resources = resourceOptions is null ? null : new ExplicitArchiveResources(resourceOptions.Archives);
 
         var before = Counts(doc.Level);
         var history = new EditHistory();
@@ -283,7 +301,9 @@ public static partial class AgentWorkspace
         var issues = ConsistencyChecker.Check(doc.Level);
         if (issues.Any(i => i.Severity == IssueSeverity.Error))
             throw new AgentValidationException("The proposed edits do not pass level validation. No file was written.", DescribeIssues(issues));
-        var text = JklWriter.Build(doc);
+        var exported = ResourceValidatedExport.Prepare(doc, resources);
+        var text = exported.OutputText;
+        CheckResourceRevision(resourceOptions, exported.Validation.ResourceRevision);
         var reopened = JklParser.ParseDocument(text);
         var roundTripIssues = ConsistencyChecker.Check(reopened.Level);
         if (roundTripIssues.Any(i => i.Severity == IssueSeverity.Error))
@@ -308,10 +328,12 @@ public static partial class AgentWorkspace
         {
             schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies, outputSha256 = outputHash,
+            resourceRevision = exported.Validation.ResourceRevision, architectureValidation = exported.Validation,
             before, after = Counts(reopened.Level), changes = effects, issues = DescribeIssues(roundTripIssues),
             preservationWarnings = doc.PreservationWarnings,
-            note = "Planning uses the same Core editing commands as the GUI. It validates structure, not gameplay or resource availability. Moved models may require relighting.",
-        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies };
+            note = "Planning uses the GUI's Core commands. Explicit archives add current all-LOD architectural model validation; missing historical baselines remain unknown. Other asset closure and gameplay are not tested. Moved models may require relighting.",
+        }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,
+            ResourceCapture = CaptureResources(resourceOptions, exported.Validation, text) };
     }
 
     public static object Commit(PreparedAgentEdit edit, string outputPath)
@@ -319,7 +341,11 @@ public static partial class AgentWorkspace
         // Output creation is deliberately no-clobber. An agent can produce a
         // reviewable result without overwriting the user's original project.
         EnsureInputsUnchanged(edit.InputPath, edit.InputSha256, edit.Dependencies);
-        WriteNew(outputPath, edit.OutputText);
+        using var resources = ReopenCapturedResources(edit);
+        WriteNewBytes(outputPath, new UTF8Encoding(false).GetBytes(edit.OutputText), () => {
+            EnsureInputsUnchanged(edit.InputPath, edit.InputSha256, edit.Dependencies);
+            resources?.VerifyUnchanged();
+        });
         return new { schemaVersion = SchemaVersion, written = Path.GetFullPath(outputPath), plan = edit.Report };
     }
 
@@ -343,7 +369,7 @@ public static partial class AgentWorkspace
     private static void WriteNew(string path, string text)
         => WriteNewBytes(path, new UTF8Encoding(false).GetBytes(text));
 
-    private static void WriteNewBytes(string path, byte[] bytes)
+    private static void WriteNewBytes(string path, byte[] bytes, Action? beforePromote = null)
     {
         path = Path.GetFullPath(path);
         if (!string.Equals(Path.GetExtension(path), ".jkl", StringComparison.OrdinalIgnoreCase))
@@ -359,6 +385,7 @@ public static partial class AgentWorkspace
                 stream.Write(bytes);
                 stream.Flush(true);
             }
+            beforePromote?.Invoke();
             File.Move(temporary, path, overwrite: false);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }

@@ -1,138 +1,54 @@
 # Resource-aware architectural lighting validation
 
-Status: **planned, not implemented**. Source review completed 2026-09-12 against
-editor commit `9de27d3d967752bfc0898603c2c8aa325f53ee04` and engine commit
-`5fa4644d03080fef69d7137eaa2c8f295c47bd63`. Concurrent editor rendering and hierarchy
-changes are outside this review. No engine was launched. No user input or new
-software installation is currently needed to implement this design.
+Implemented in the C# editor and agent on 2026-09-12. The engine's hidden rendered capture is a separate source change in OpenJKDF2-MotS-Fixes. Neither feature establishes retail pixel parity or calculates a new lighting bake.
 
-## Problem and existing protection
+## Shared capture and validation
 
-A MotS thing's `ArchLightingIndex` addresses per-mesh mono/RGB arrays. A same-name
-3DO can change its contents or lower-detail geometry while leaving that index
-unchanged. Export currently cannot establish that those arrays still fit the
-resolved resource.
+[ExplicitArchiveResources](../dotnet/src/Sed.Formats/Resources/ExplicitArchiveResources.cs) now owns the archive capture previously private to snapshots. Inputs are explicit absolute paths and SHA256 hashes, with first-archive precedence, bounded input/decoded bytes, ambiguous-name refusal, cached entries, raw entry receipts and held-handle plus named-path rechecks. No installation or loose-directory discovery occurs. The snapshot class is a rendering adapter over this provider.
 
-- [AgentWorkspace](../dotnet/src/Sed.Formats/Automation/AgentWorkspace.cs) binds
-  native `sourceRevision` to the project and the content, role and existence of
-  its bundled/companion template inputs. Plan executes shared Core commands on
-  an isolated document, serializes and reparses it, checks operation readback,
-  and retains input dependencies for no-overwrite commit. Resource archives are
-  not inputs to plan/apply or conversion.
-- [JklWriter](../dotnet/src/Sed.Formats/Jkl/JklWriter.cs) checks architectural
-  index bounds and imported/current model-name equality when generating things.
-  It cannot verify external model content or topology.
-- [SnapshotResources](../dotnet/tools/Sed.Agent/SnapshotResources.cs) already
-  accepts explicit archive paths and SHA256s, applies declared archive order,
-  refuses ambiguous resources, bounds decoded input, records used entry hashes,
-  and rechecks both open handles and current named paths before PNG promotion.
-  It is currently internal to the CLI and includes rendering-specific adapters.
-- [SceneAssembler](../dotnet/src/Sed.Rendering/SceneAssembler.cs) checks an
-  available native normalized model fingerprint and exact geoset-zero mesh and
-  vertex counts for preview. [ThreeDoParser](../dotnet/src/Sed.Formats/ThreeDo/ThreeDoParser.cs)
-  currently loads geoset zero; full lower-LOD metadata is unavailable.
+[GobArchive.FindResourceEntries](../dotnet/src/Sed.Formats/Gob/GobArchive.cs) supplies shared folder/exact-name/unique-basename resolution. The GUI model library and verified exports use the same selection rule. File-opened archives retain their absolute source path; anonymous stream archives cannot claim file provenance.
 
-These checks are valuable but do not constitute resource-aware export safety or
-an architectural-lighting authoring workflow. The agent can clear a binding;
-it cannot yet author or explicitly establish a new binding baseline.
+[ThreeDoTopologyReader](../dotnet/src/Sed.Formats/ThreeDo/ThreeDoTopologyReader.cs) captures every declared JK/MotS geometry set without rendering lower LODs. It checks ordered geometry/mesh declarations, complete vertex/UV/face/normal tables, referenced array bounds and aggregate budgets. The limit is four geosets. Data-row numeric labels are ignored as in rdModel3: physical row order defines the slot. This matters for stock crt6-1.3do, whose normal rows repeat a printed label. Original synthetic tests cover that behavior; retail source text is not committed.
 
-## Shared resource and validation contract
+[ArchitectureBindingValidator](../dotnet/src/Sed.Formats/ThreeDo/ArchitectureBindingValidator.cs) is side-effect-free. It checks the bound thing, resolved instance/template flags, model names, optional normalized native fingerprint and topology:
+- Geoset zero must match all stored ARCH mesh and vertex counts exactly.
+- Later geosets may consume a prefix of those mesh and vertex arrays.
+- Missing topology cannot authorize a binding.
+- Missing historical baselines remain unknown even when current topology fits.
+- Unsupported normalized text is distinct from a demonstrated content mismatch.
 
-Extract archive capture/resolution into `Sed.Formats`, leaving texture conversion
-in the renderer/CLI adapter. The shared resource provider should expose bounded
-resource bytes, model identity/topology, used-resource receipts and an unchanged
-check. Keep explicit paths, hashes, first-archive precedence and current resource
-budgets. Do not discover installations or recursively scan directories.
+Typed diagnostics, current topology compatibility, binding usability and historical-baseline verification are separate result fields. The normalized historical fingerprint is distinct from the raw resource hash. Existing ASCII/line-length normalization limits remain in force.
 
-Add a bounded all-LOD topology reader without requiring lower-LOD rendering.
-Validate declared geometry-set/mesh/vertex counts, header ordering, duplicates,
-truncation and aggregate budgets. The separate Delphi fork's
-`src/ARCHLIGHTING_IO.INC` and `src/ArchitecturalLighting.pas` supply the reviewed
-behavior: geoset zero matches the architectural arrays exactly; each later LOD
-may use a prefix of the available mesh and vertex slots. Current engine
-`src/Engine/sithRender.c`, in `sithRender_DrawLevelGeometryThing`, likewise checks
-all LOD array accesses before binding. JK/MotS models support at most four
-geometry sets in that engine path.
+The preview uses the same validator. It still renders geoset zero and the rest pose; the additional metadata does not add lower-LOD rendering. Incompatible bindings produce a diagnosed base-light fallback in permissive previews and refusal in strict snapshots.
 
-A shared, side-effect-free validator should accept the level/thing, resolved
-model name, normalized fingerprint, all-LOD shapes and resource identity. Return
-typed per-thing diagnostics for:
+## Agent transactions and GUI exports
 
-- Missing architectural object or model; changed model name; ineligible thing
-  flags after template and instance resolution.
-- Missing historical baseline, unsupported fingerprint normalization, or changed
-  model content under the same name.
-- Geoset-zero mismatch or a lower LOD requiring more mesh/vertex slots than the
-  stored arrays provide.
+[ResourceValidatedExport](../dotnet/src/Sed.Formats/Resources/ResourceValidatedExport.cs) validates the live document before JKL serialization loses native fingerprint provenance. Its document revision includes both serialized data and native per-thing architectural source metadata.
 
-Preview and export should use this validator rather than independent checks.
-Topology coverage prevents invalid array access; it does not prove that a lower
-LOD's vertex order was sensibly authored or that the original bake was correct.
+[AgentWorkspace](../dotnet/src/Sed.Formats/Automation/AgentWorkspace.cs) and [AgentResources](../dotnet/src/Sed.Formats/Automation/AgentResources.cs) add optional explicit resource archives to plan/apply/validate/convert. Native sourceRevision retains its document/template meaning. A separate resourceRevision binds ordered archives, used entry identities/hashes and validator version.
 
-## Planning, applying and exporting
+A reviewed apply copies the plan's resourceRevision into the request and supplies its output hash. Changed resource bytes can leave JKL text identical; the independent revision detects that case. Without the optional expected revision, the command performs fresh validation without asserting that an earlier resource result was reviewed.
 
-Extend the versioned edit/conversion contract with an explicit resource manifest
-and a separate `resourceRevision`. Keep `sourceRevision` for the document and
-template dependencies; resource identity should not silently change its meaning.
-The resource revision and receipt should bind archive order/hashes, used model
-entry identities/hashes, and the validator version.
+Prepared edits retain an internal immutable resource capture and exact output hash. Commit rejects replaced output text, reopens and verifies archives, resolves the same model requests and checks resource revision. After staging/flushing the new file, it rechecks source/template and resource dependencies immediately before no-overwrite promotion. Windows read handles prevent archive writes while open; hashing alone cannot eliminate every final path race on all filesystems.
 
-Plan resolves and validates against captured resources and includes the exact
-validation result in the reviewed output receipt. Apply recomputes the plan with
-the same manifest and rejects changed resources or an unexpected reviewed output
-hash. Commit checks captured dependencies again immediately before promoting a
-new file. GUI export must consume a result bound to the exact current document
-and resource state, not a persistent boolean saying validation once passed.
+Resource-free operations remain available and report unverified-no-resources when ARCH bindings exist. Invalid or unverified arrays are not silently erased.
 
-Do not make old resource-free operations claim this new guarantee. Distinguish
-structural preservation from verified-resource export in capabilities and
-receipts. An unsafe or unverified binding must remain available in the working
-document for diagnosis; do not silently erase arrays or substitute another model.
-An explicit clear/rebind operation can produce a reviewed export after the
-diagnostic is understood.
+[GuiResourceExport](../dotnet/src/Sed.App/GuiResourceExport.cs) and MainWindow route Save As, GOB/GOO export and Save and Test through the same live-document validation. All batch files are staged before promotion. Fresh document/resource state and destination identities are checked before each replacement; a later failure attempts rollback while preserving external subsequent edits and reporting retained backups. Each replacement is atomic; a batch is not a filesystem transaction.
 
-## Historical provenance and authoring
+Recovery, autosave and backup remain available for unresolved projects. GUI validation covers the current editor archives. The engine may additionally resolve loose files and other runtime overrides; Save and Test does not certify that complete resource search.
 
-An imported JKL has no historical normalized model fingerprint. Resolving a model
-today can establish current topology compatibility; it cannot prove which model
-was used for the original bake. Report that state separately from a native
-project whose stored baseline fingerprint matches.
+## Validation evidence
 
-The existing normalized fingerprint is not the raw resource SHA256. Reuse
-[ArchitectureModelFingerprint](../dotnet/src/Sed.Formats/ThreeDo/ArchitectureModelFingerprint.cs)
-and preserve its unsupported-encoding/line-length result rather than guessing a
-Windows text conversion. Raw entry hashes remain separate receipt fields.
+The full Release build passed 801 unit tests with zero warnings/errors. Focused original fixtures cover all-LOD overflow and prefixes, malformed/truncated tables, historical baseline distinctions, same-name changed bytes, stale reviewed revisions, missing/ambiguous models, unchanged input and stored arrays on refusal, prepared-output replacement, GUI staging, target conflicts and guarded rollback.
 
-A future shared Core `bindThingArchitecture` command should explicitly establish
-a new authoring baseline from resolved resources, retain all four lighting
-channels and support undo. It must not label a newly captured baseline as
-recovered historical evidence. Moving/rotating a thing can preserve topology
-while making world-space lighting stale; report the need for rebaking separately.
-Binding validation itself does not calculate new lighting.
+The end-to-end synthetic lit/resource workflow passed 111 assertions across 34 direct agent calls, including reviewed apply/conversion, complete ARCH section preservation, changed resource bytes with unchanged planned JKL, and refused missing-model exports.
 
-## Acceptance cases
+The original-stock corpus checks passed for all 39 MotS levels: 2,353 bound things, 172 unique archive/model entry identities, no topology/resource/flag failures. All historical baselines correctly remain Missing. A strict Rebel Base offscreen snapshot validated all 83 bindings and retained the previous image hash. These are structural/current-resource and static-rendering checks, not engine gameplay or retail comparison.
 
-Use original synthetic fixtures for a valid geoset zero with overflowing LOD1;
-valid lower-LOD prefixes; changed model text under the same name; missing or
-unsupported historical fingerprints; ambiguous archive entries; archive changes
-between plan/apply and before output promotion; changed companion templates;
-explicit rebind/undo; and failure paths preserving original arrays and producing
-no output. Exercise the same validator through preview and export.
+Local receipts are generated under ignored build directories. The checked-in synthetic tests and command workflow can be rerun without game assets; stock checks require separately owned original archives.
 
-## Background engine comparison is separate work
+## Remaining authoring and renderer work
 
-The inspected engine supports automatic episode/map startup and a hidden
-bootstrap window for `-headless`. Its `src/Win95/Window.c` subsequently frees
-renderer resources and destroys the GL context/window in headless mode. That
-mode cannot supply a rendered comparison frame. The timer-driven autoscreenshot
-in `src/Main/jkGame.c` is guarded by `RDRASTER_SOFTWARE_RENDERER` and captures the
-presented player view; it is not an explicit matched-camera capture interface.
-Recognized `-fixed` and `-record` flags still have commented implementation bodies.
+An explicit shared bind/rebind command, full independent mono/RGB rebaking and historical-baseline authoring remain future work. The current clearThingArchitecture command removes a binding while retaining its arrays. Validation does not prove sensible vertex correspondence or that the bake remains correct after moving/rotating an object.
 
-The narrow next engine feature is a hidden rendered capture mode that retains
-its graphics context, suppresses window showing/focus, loads an explicit isolated
-session, applies declared camera and visual settings, captures on the render
-thread, writes an image and build/content/camera receipt without overwriting,
-then exits. A full gameplay controller or MCP bridge is unnecessary for this
-first comparison feature. Actual retail comparison may later need a brief retail
-run if no private capture route works; that does not block the source work above.
+Lower-LOD rendering, runtime dynamic lighting, pivot-aware rendering, exact sky projection/depth and complete material/renderer parity remain separate tasks. Preserve the distinction between model-array safety, static preview, hidden engine capture and retail comparison.

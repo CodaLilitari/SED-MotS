@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Sed.Core.Math;
 using Sed.Core.Model;
+using Sed.Formats.Resources;
 
 namespace Sed.Formats.Automation;
 
@@ -47,9 +48,7 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
                 ["renderProfile"] = new { type = "string", @enum = new[] { "openjk", "palette" }, @default = "openjk",
                     description = "openjk uses palette times scalar for textured mono; palette uses CMP light rows. Neither profile establishes retail pixel parity." },
                 ["strictAssets"] = new { type = "boolean", @default = true },
-                ["resourceArchives"] = new { type = "array", minItems = 1, maxItems = 16, items = new {
-                    type = "object", additionalProperties = false, required = new[] { "path", "sha256" },
-                    properties = new Dictionary<string, object> { ["path"] = new { type = "string", minLength = 1 }, ["sha256"] = Hash() } } },
+                ["resourceArchives"] = ResourceManifest.Schema(),
             },
         };
     }
@@ -135,24 +134,7 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
         var archives = new List<SnapshotArchive>();
         if (root.TryGetProperty("resourceArchives", out var archiveArray))
         {
-            if (archiveArray.ValueKind != JsonValueKind.Array || archiveArray.GetArrayLength() is < 1 or > 16)
-                throw new AgentRequestException("resourceArchives must contain 1 through 16 explicit archives.");
-            foreach (var entry in archiveArray.EnumerateArray())
-            {
-                if (entry.ValueKind != JsonValueKind.Object || entry.EnumerateObject().Count() != 2
-                    || !entry.TryGetProperty("path", out var pathValue) || pathValue.ValueKind != JsonValueKind.String
-                    || !entry.TryGetProperty("sha256", out var hashValue) || hashValue.ValueKind != JsonValueKind.String)
-                    throw new AgentRequestException("Each resource archive requires only path and sha256.");
-                string path = pathValue.GetString()!, hash = hashValue.GetString()!;
-                if (string.IsNullOrWhiteSpace(path) || !Path.IsPathFullyQualified(path))
-                    throw new AgentRequestException("Resource archive paths must be explicit absolute paths.");
-                path = Path.GetFullPath(path);
-                if (hash.Length != 64 || hash.Any(c => !Uri.IsHexDigit(c)))
-                    throw new AgentRequestException("Resource archive sha256 must contain 64 hex digits.");
-                if (archives.Any(a => a.Path.Equals(path, StringComparison.OrdinalIgnoreCase)))
-                    throw new AgentRequestException("Duplicate resource archive path.");
-                archives.Add(new(path, hash.ToLowerInvariant()));
-            }
+            archives.AddRange(ResourceManifest.Parse(archiveArray).Select(a => new SnapshotArchive(a.Path, a.Sha256)));
         }
         if (mode == "lit" && archives.Count == 0) throw new AgentRequestException("Lit snapshots require resourceArchives with explicit paths and SHA256 hashes.");
         if (mode == "diagnostic" && (archives.Count > 0 || seen.Contains("lightingMode") || seen.Contains("renderProfile") || seen.Contains("strictAssets")))
@@ -190,4 +172,4 @@ public sealed record AgentSnapshotRequest(string InputSha256, string? SourceRevi
         && (surface.Geo == 0 || string.IsNullOrWhiteSpace(surface.Material));
 }
 
-public sealed record SnapshotArchive(string Path, string Sha256);
+public sealed record SnapshotArchive(string Path, string Sha256) : ResourceArchiveRequest(Path, Sha256);

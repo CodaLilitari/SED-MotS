@@ -12,6 +12,7 @@ using Sed.Formats.Gob;
 using Sed.Formats.Jkl;
 using Sed.Formats.Launching;
 using Sed.Formats.Material;
+using Sed.Formats.Resources;
 using Sed.Rendering;
 
 namespace Sed.App;
@@ -531,6 +532,7 @@ public class MainWindow : Window
     private async void SaveAs()
     {
         if (_currentDoc is null) { _status.Text = "No level loaded to save."; return; }
+        var document = _currentDoc;
 
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
@@ -543,12 +545,17 @@ public class MainWindow : Window
             },
         });
         if (file is null) return;
+        if (!ReferenceEquals(document, _currentDoc)) { _status.Text = "The open document changed. Choose Save As again for the current document."; return; }
 
         try
         {
-            JklWriter.Save(_currentDoc, file.Path.LocalPath);
+            using var resources = CaptureExportResources(document);
+            string revision = ResourceValidatedExport.DocumentRevision(document);
+            var prepared = ResourceValidatedExport.Prepare(document, resources);
+            GuiResourceExport.Write([GuiResourceExport.Text(file.Path.LocalPath, prepared.OutputText)],
+                GuiResourceExport.FreshnessGuard(document, revision, resources));
             RememberDocumentBaseline();
-            _status.Text = $"Saved → {file.Name}";
+            _status.Text = $"Saved → {file.Name}. Architectural lighting in current archives: {prepared.Validation.Status}.";
         }
         catch (Exception ex)
         {
@@ -562,6 +569,8 @@ public class MainWindow : Window
     private async void SaveGob()
     {
         if (_currentDoc is null) { _status.Text = "No level loaded to save."; return; }
+        var document = _currentDoc;
+        string currentLevelName = _levelName;
 
         bool mots = _currentDoc.Level.Kind == ProjectType.MysteriesOfTheSith;
         string extension = mots ? "goo" : "gob";
@@ -577,20 +586,26 @@ public class MainWindow : Window
             },
         });
         if (file is null) return;
+        if (!ReferenceEquals(document, _currentDoc)) { _status.Text = "The open document changed. Choose Save as GOB again for the current document."; return; }
 
         try
         {
             var path = file.Path.LocalPath;
-            var entryName = TestEpisode.SafeLevelName(_levelName);
-            var jkl = JklWriter.Build(_currentDoc);
-            if (_currentDoc.Level.Kind == ProjectType.InfernalMachine)
-                GobWriter.Build(path, new[] { ($"jkl\\{entryName}.jkl", System.Text.Encoding.ASCII.GetBytes(jkl)) });
+            var entryName = TestEpisode.SafeLevelName(currentLevelName);
+            using var resources = CaptureExportResources(document);
+            string revision = ResourceValidatedExport.DocumentRevision(document);
+            var prepared = ResourceValidatedExport.Prepare(document, resources);
+            var verify = GuiResourceExport.FreshnessGuard(document, revision, resources);
+            if (document.Level.Kind == ProjectType.InfernalMachine)
+                GuiResourceExport.Write([new GuiExportOutput(path, temporary =>
+                    GobWriter.Build(temporary, new[] { ($"jkl\\{entryName}.jkl", System.Text.Encoding.ASCII.GetBytes(prepared.OutputText)) }))], verify);
             else
             {
-                var package = TestEpisode.Build(_currentDoc.Level.Kind, entryName + ".jkl", jkl);
-                GobWriter.Build(path, package.Entries.Select(e => (e.Name, e.Data)));
+                var package = TestEpisode.Build(document.Level.Kind, entryName + ".jkl", prepared.OutputText);
+                GuiResourceExport.Write([new GuiExportOutput(path, temporary =>
+                    GobWriter.Build(temporary, package.Entries.Select(e => (e.Name, e.Data))))], verify);
             }
-            _status.Text = $"Saved → {file.Name}  (jkl\\{entryName}.jkl)";
+            _status.Text = $"Saved → {file.Name}  (jkl\\{entryName}.jkl). Architectural lighting in current archives: {prepared.Validation.Status}.";
         }
         catch (Exception ex)
         {
@@ -625,8 +640,11 @@ public class MainWindow : Window
             var levelName = TestEpisode.SafeLevelName(_levelName);
             var episodePath = Path.Combine(projectDir, "episode.jk");
             var existingEpisode = File.Exists(episodePath) ? File.ReadAllText(episodePath) : null;
-            var jkl = JklWriter.Build(_currentDoc);
-            var package = TestEpisode.Build(game, levelName + ".jkl", jkl, existingEpisode);
+            using var resources = CaptureExportResources(_currentDoc);
+            string revision = ResourceValidatedExport.DocumentRevision(_currentDoc);
+            var prepared = ResourceValidatedExport.Prepare(_currentDoc, resources);
+            var verify = GuiResourceExport.FreshnessGuard(_currentDoc, revision, resources);
+            var package = TestEpisode.Build(game, levelName + ".jkl", prepared.OutputText, existingEpisode);
             var gobPath = Path.Combine(projectDir, $"Test_{levelName}{package.ArchiveExtension}");
             GameLaunchPlan? plan = OperatingSystem.IsWindows() ? GameLauncher.PrepareLaunch(new LaunchRequest(
                 game, gameDir, projectDir, package.LevelFileName, _settings.TestExecutableFor(game), _settings.TestEngineFor(game))) : null;
@@ -635,21 +653,30 @@ public class MainWindow : Window
                 throw new InvalidOperationException("Configure a non-Windows launch command in Game > Test Setup.");
 
             // -path loads loose resources; a GOB merely sitting in this folder is insufficient.
+            var outputs = new List<GuiExportOutput>();
             foreach (var entry in package.Entries)
             {
                 if (existingEpisode is not null && entry.Name == "episode.jk") continue;
                 var destination = Path.Combine(projectDir, entry.Name.Replace('\\', Path.DirectorySeparatorChar));
-                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-                File.WriteAllBytes(destination, entry.Data);
+                outputs.Add(GuiResourceExport.Bytes(destination, entry.Data));
             }
-            GobWriter.Build(gobPath, package.Entries.Select(e => (e.Name, e.Data)));
+            outputs.Add(new GuiExportOutput(gobPath, temporary => GobWriter.Build(temporary, package.Entries.Select(e => (e.Name, e.Data)))));
+            GuiResourceExport.Write(outputs, verify);
+            verify();
             LaunchTest(plan, command, gameDir);
-            _status.Text = $"Saved {Path.GetFileName(gobPath)} and loose test files; select the test episode in the game menus.";
+            _status.Text = $"Saved {Path.GetFileName(gobPath)} and loose test files; select the test episode in the game menus. Architectural lighting in current archives: {prepared.Validation.Status}. Runtime resource overrides are unverified.";
         }
         catch (Exception ex)
         {
             _status.Text = $"Save-and-test failed: {ex.Message}";
         }
+    }
+
+    private ExplicitArchiveResources? CaptureExportResources(JklDocument document)
+    {
+        if (!document.Level.Things.Any(thing => thing.ArchLightingIndex >= 0)) return null;
+        return GuiResourceExport.CaptureResources(_materialArchives)
+            ?? throw new InvalidOperationException("Configure the game's resource archives before exporting architectural lighting. Recovery and backup remain available.");
     }
 
     private static void LaunchTest(GameLaunchPlan? plan, string? command, string gameDir)

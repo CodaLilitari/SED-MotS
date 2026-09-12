@@ -1,3 +1,5 @@
+using Sed.Formats.Resources;
+
 namespace Sed.Formats.Automation;
 
 /// <summary>JSON Schema for constructing the exact version-one patch protocol.</summary>
@@ -51,6 +53,9 @@ public static class AgentSchema
                 ["inputSha256"] = new { type = "string", pattern = "^[0-9a-fA-F]{64}$" },
                 ["sourceRevision"] = new { type = "string", pattern = "^[0-9a-fA-F]{64}$",
                     description = "Required for native JED/SED/NED inputs; copy from inspect or query. Binds template dependencies as well as source bytes." },
+                ["resourceArchives"] = ResourceManifest.Schema(),
+                ["resourceRevision"] = new { type = "string", pattern = "^[0-9a-fA-F]{64}$",
+                    description = "Requires resourceArchives. Copy the reviewed plan's resourceRevision to bind current model validation separately from document identity." },
                 ["operations"] = new { type = "array", minItems = 1, maxItems = AgentWorkspace.MaxOperations,
                     items = new { oneOf = variants } },
             },

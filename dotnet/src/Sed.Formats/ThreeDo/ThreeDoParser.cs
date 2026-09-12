@@ -16,6 +16,8 @@ public static class ThreeDoParser
     {
         var model = Parse(new StringReader(text));
         model.ArchitectureContentHash = ArchitectureModelFingerprint.Compute(text);
+        try { model.ArchitectureTopology = ThreeDoTopologyReader.Read(text); }
+        catch (FormatException error) { model.ArchitectureTopologyError = error.Message; }
         return model;
     }
 
