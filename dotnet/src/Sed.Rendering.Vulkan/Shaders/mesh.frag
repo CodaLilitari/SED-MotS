@@ -70,7 +70,7 @@ void main()
     bool rgbMode = (pc.lightingMode & 1u) != 0u;
     uint lightMode = (pc.lightingMode >> 8u) & 255u;
     int idx = int(texture(matTex, uv).r * 255.0 + 0.5);
-    if (pc.alpha < 0.999 && idx == 0) discard;
+    if ((pc.alpha < 0.999 || (pc.lightingMode & 8u) != 0u) && idx == 0) discard;
 
     vec3 rgb;
     vec2 paletteUv = vec2((float(idx) + 0.5) / 256.0, 0.5);

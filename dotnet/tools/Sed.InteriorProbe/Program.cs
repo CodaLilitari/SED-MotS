@@ -41,7 +41,7 @@ var unmodeled = assembler.AddThings(level, modelLib.Get);
 var scene = assembler.Build();
 Console.WriteLine($"  things with models: {level.Things.Count - unmodeled.Count}/{level.Things.Count}, " +
                   $"submeshes={scene.Submeshes.Count}, tris={scene.Mesh.Indices.Count / 3}");
-IndexedTexture? Lookup(string m) { var t = library.GetIndexed(m); return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices) : null; }
+IndexedTexture? Lookup(string m) { var t = library.GetIndexed(m); return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey) : null; }
 
 const uint W = 720, H = 540;
 using var ctx = VulkanContext.Create("SED Interior");

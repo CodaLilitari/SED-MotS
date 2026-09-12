@@ -1,5 +1,7 @@
 # MotS lighting implementation checkpoint — 2026-09-09
 
+Historical checkpoint. The [September 12 continuation](MOTS_RENDERING_CONTINUATION_20260912.md) supersedes its transparency-opacity assumption and closes additional cutout, ordering, depth-routing and 3DO preservation gaps. The validation numbers below belong to the September 9 build.
+
 This checkpoint upgrades the shared C# editor/agent renderer and includes a
 separate local OpenJKDF2 engine repair. It is a development build with static
 lighting evidence, not a claim of complete retail visual or gameplay parity.

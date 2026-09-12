@@ -49,7 +49,7 @@ IndexedTexture? Lookup(string m)
 {
     total++;
     var t = library.GetIndexed(m);
-    if (t is { } r) { ok++; return new IndexedTexture(r.Width, r.Height, r.Indices); }
+    if (t is { } r) { ok++; return new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey); }
     return null;
 }
 

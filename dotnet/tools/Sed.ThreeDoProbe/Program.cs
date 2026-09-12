@@ -30,7 +30,7 @@ var scene = assembler.Build();
 Console.WriteLine($"  submeshes={scene.Submeshes.Count}, tris={scene.Mesh.Indices.Count / 3}");
 if (scene.Mesh.IsEmpty) { Console.Error.WriteLine("empty model mesh"); return 3; }
 
-IndexedTexture? Lookup(string m) { var t = library.GetIndexed(m); return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices) : null; }
+IndexedTexture? Lookup(string m) { var t = library.GetIndexed(m); return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey) : null; }
 
 // Frame the model.
 var box = Box.Empty;

@@ -7,6 +7,21 @@ namespace Sed.Core.Tests;
 
 public sealed class SceneLightingTests
 {
+    [Fact]
+    public void AdjoinStateSplitsOtherwiseIdenticalMaterialBatches()
+    {
+        var (level, sector, surface) = World();
+        var second = sector.NewSurface();
+        second.Material = surface.Material;
+        second.SurfFlags = surface.SurfFlags;
+        foreach (var corner in surface.Corners) second.Corners.Add(corner);
+        second.Adjoin = surface;
+        var scene = Surfaces(level);
+        Assert.Equal(2, scene.Submeshes.Count);
+        Assert.Single(scene.Submeshes, s => s.Adjoined);
+        Assert.Single(scene.Submeshes, s => !s.Adjoined);
+    }
+
     private const long MotsRgb = 0x1000000;
 
     private static (Level Level, Sector Sector, Surface Surface) World(ProjectType kind = ProjectType.MysteriesOfTheSith)

@@ -181,10 +181,10 @@ public static class ThreeDoWriter
 
             var hn = model.Nodes[i];
             W(string.Format(CultureInfo.InvariantCulture,
-                "{0,2}:     0x0    0x1    {1,2}     {2,2}      {3,2}     {4,2}       {5,2}     {6:0.000000} {7:0.000000} {8:0.000000}  {9:0.000000} {10:0.000000} {11:0.000000} 0.000000 0.000000 0.000000 {12}",
+                "{0,2}:     0x{16:x}    0x{17:x}    {1,2}     {2,2}      {3,2}     {4,2}       {5,2}     {6:G17} {7:G17} {8:G17}  {9:G17} {10:G17} {11:G17} {12:G17} {13:G17} {14:G17} {15}",
                 i, hn.Mesh, hn.Parent, k, v, nc,
                 hn.Offset.X, hn.Offset.Y, hn.Offset.Z, hn.Pitch, hn.Yaw, hn.Roll,
-                NodeName(model, hn)));
+                hn.Pivot.X, hn.Pivot.Y, hn.Pivot.Z, NodeName(model, hn), hn.Flags, hn.Type));
         }
 
         return sb.ToString();
@@ -192,9 +192,16 @@ public static class ThreeDoWriter
 
     private static string NodeName(ThreeDoModel model, HierarchyNode hn)
     {
-        if ((uint)hn.Mesh < (uint)model.Meshes.Count && model.Meshes[hn.Mesh].Name.Length > 0)
-            return model.Meshes[hn.Mesh].Name;
-        return $"$$DUMMY";
+        string name;
+        if (hn.Name.Length > 0)
+            name = hn.Name;
+        else if ((uint)hn.Mesh < (uint)model.Meshes.Count && model.Meshes[hn.Mesh].Name.Length > 0)
+            name = model.Meshes[hn.Mesh].Name;
+        else
+            name = "$$DUMMY";
+        if (name.Any(c => char.IsWhiteSpace(c) || char.IsControl(c) || c == '#'))
+            throw new FormatException("3DO hierarchy names must be single tokens without comments or control characters.");
+        return name;
     }
 
     /// <summary>Writes the model to <paramref name="path"/>.</summary>

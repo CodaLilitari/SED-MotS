@@ -13,7 +13,7 @@ namespace Sed.Rendering;
 /// </summary>
 public sealed class SceneAssembler
 {
-    private readonly record struct Batch(string Material, string Colormap, bool Translucent, int SkyMode, int ClampMode, int LightMode, bool UseMonochromeLighting);
+    private readonly record struct Batch(string Material, string Colormap, bool Translucent, int SkyMode, int ClampMode, int LightMode, bool UseMonochromeLighting, bool Adjoined);
     private readonly Dictionary<Batch, Mesh> _byBatch = new();
     private readonly List<string> _diagnostics = new();
     private RenderLightingMode _lightingMode;
@@ -36,13 +36,13 @@ public sealed class SceneAssembler
         _triangles++;
     }
 
-    private Mesh For(string material, bool translucent, int skyMode = 0, int clampMode = 0, string colormap = "", int lightMode = 3, bool mono = false)
+    private Mesh For(string material, bool translucent, int skyMode = 0, int clampMode = 0, string colormap = "", int lightMode = 3, bool mono = false, bool adjoined = false)
     {
         // Levels declare the same material under different casings — 01narshadda
         // has seven such pairs (01wgril1.mat / 01WGRIL1.mat). Material lookup is
         // case-insensitive, so keying the batch case-sensitively would upload the
         // same texture twice and add a redundant draw call per pair.
-        var key = new Batch(material.ToLowerInvariant(), colormap.ToLowerInvariant(), translucent, skyMode, clampMode, lightMode, mono);
+        var key = new Batch(material.ToLowerInvariant(), colormap.ToLowerInvariant(), translucent, skyMode, clampMode, lightMode, mono, adjoined);
         if (!_byBatch.TryGetValue(key, out var mesh))
             _byBatch[key] = mesh = new Mesh();
         return mesh;
@@ -69,7 +69,8 @@ public sealed class SceneAssembler
                         : (surface.SurfFlags & Surface.SfSkyHorizon) != 0 ? 2 : 0;
             // Texture addressing is per-draw state, so clamp flags split the batch.
             int clampMode = TextureClampMode(surface.FaceFlags);
-            var mesh = For(surface.Material, surface.IsTranslucent, skyMode, clampMode, ColormapName(level, sector), surface.IsSky ? 0 : surface.Light);
+            var mesh = For(surface.Material, surface.IsTranslucent, skyMode, clampMode, ColormapName(level, sector), surface.IsSky ? 0 : surface.Light,
+                adjoined: surface.Adjoin is not null);
             var c0 = surface.Corners[0];
             for (int i = 1; i + 1 < surface.Corners.Count; i++)
                 Triangle(mesh, SurfVertex(c0, n, surface, sector), SurfVertex(surface.Corners[i], n, surface, sector), SurfVertex(surface.Corners[i + 1], n, surface, sector));
@@ -230,6 +231,7 @@ public sealed class SceneAssembler
                 IndexOffset = indexOffset,
                 IndexCount = mesh.Indices.Count,
                 Translucent = batch.Translucent,
+                Adjoined = batch.Adjoined,
                 SkyMode = batch.SkyMode,
                 ClampMode = batch.ClampMode,
                 LightMode = batch.LightMode,

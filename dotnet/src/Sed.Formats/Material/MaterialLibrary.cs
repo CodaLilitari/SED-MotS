@@ -6,7 +6,8 @@ namespace Sed.Formats.Material;
 public readonly record struct ResolvedTexture(int Width, int Height, byte[] Rgba);
 
 /// <summary>8-bit palette-indexed pixels for a resolved material.</summary>
-public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices, bool IsSolid = false);
+public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices, bool IsSolid = false,
+    bool HasColorKey = false);
 
 /// <summary>
 /// Resolves JKL material names (e.g. "wall01.mat") to RGBA textures by locating
@@ -102,7 +103,7 @@ public sealed class MaterialLibrary
                 var mat = MatFile.Read(gob.ReadBytes(entry));
                 result = mat.IsColor
                     ? new IndexedMaterial(1, 1, new[] { (byte)(mat.ColorIndex & 0xFF) }, IsSolid: true)
-                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices);
+                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey);
                 break;
             }
         }

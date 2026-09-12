@@ -99,7 +99,8 @@ internal sealed class SnapshotResources : IDisposable
             var bytes = Read(name, "mat");
             if (bytes is null) return _textures[name] = null;
             var mat = MatFile.Read(bytes);
-            return _textures[name] = mat.IsColor ? new IndexedTexture(1, 1, [(byte)mat.ColorIndex], IsSolid: true) : new(mat.Width, mat.Height, mat.Indices);
+            return _textures[name] = mat.IsColor ? new IndexedTexture(1, 1, [(byte)mat.ColorIndex], IsSolid: true)
+                : new(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey);
         }
         catch (Exception error) when (error is IOException or FormatException or ArgumentException or OverflowException)
         { Diagnostics.Add($"MAT '{name}': {error.Message}"); return _textures[name] = null; }

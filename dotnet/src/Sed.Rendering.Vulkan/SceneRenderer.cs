@@ -29,6 +29,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     private PipelineLayout _layout;
     private Pipeline _pipeline;             // opaque, depth on
     private Pipeline _translucentPipeline;  // depth test on / write off, alpha blend
+    private Pipeline _translucentDepthWritePipeline;
+    private Pipeline _opaqueNoWritePipeline;
     private Pipeline _selectionPipeline;    // depth off (highlight)
 
     private GpuTexture _white;              // 1x1 index, for flat marker/selection draws
@@ -77,9 +79,14 @@ public sealed unsafe class SceneRenderer : IDisposable
     private ImageView _colorView, _depthView; private Framebuffer _framebuffer;
     private VkBuffer _readback; private DeviceMemory _readbackMem;
 
-    private readonly record struct DrawItem(DescriptorSet Set, uint IndexOffset, uint IndexCount, float InvW, float InvH, bool Translucent, bool Flat, uint SkyMode, uint ClampMode, uint LightingState);
-    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false);
-    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false);
+    private readonly record struct DrawItem(DescriptorSet Set, uint IndexOffset, uint IndexCount, float InvW, float InvH,
+        bool Translucent, bool Flat, uint SkyMode, uint ClampMode, uint LightingState, bool DepthWrite,
+        Vec3 A = default, Vec3 B = default, Vec3 C = default)
+    {
+        public bool Deferred => Translucent || !DepthWrite;
+    }
+    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
+    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
     private readonly record struct GpuColormap(GpuTexture Palette, GpuTexture Ramp);
     private struct GpuTexture { public Image Image; public DeviceMemory Memory; public ImageView View; public DescriptorSet Set; }
 
@@ -182,7 +189,7 @@ public sealed unsafe class SceneRenderer : IDisposable
                 {
                     var gpu = CreateImage2D(t.Indices, (uint)t.Width, (uint)t.Height, Format.R8Unorm, 1);
                     _sceneTextures.Add(gpu);
-                    image = new MaterialImage(gpu.View, 1f / t.Width, 1f / t.Height, t.IsSolid);
+                    image = new MaterialImage(gpu.View, 1f / t.Width, 1f / t.Height, t.IsSolid, t.HasColorKey);
                 }
                 else
                 {
@@ -194,7 +201,7 @@ public sealed unsafe class SceneRenderer : IDisposable
             }
             var map = ResolveColormap(sub.Colormap);
             var set = AllocateMaterialDescriptor(image.View, map);
-            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid);
+            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey);
         }
 
         RebuildDraws(scene, flat);
@@ -246,8 +253,24 @@ public sealed unsafe class SceneRenderer : IDisposable
             var mt = _materialCache.TryGetValue(MaterialKey(sub), out var c)
                 ? c : new MatTex(_white.Set, _white.View, 1f, 1f);
             uint state = RenderLightingState.Pack(sub.UseMonochromeLighting ? RenderLightingMode.Mono : _lightingMode,
-                mt.IsSolid, sub.LightMode, _usePaletteLightRamp);
-            _draws.Add(new DrawItem(mt.Set, (uint)sub.IndexOffset, (uint)sub.IndexCount, mt.InvW, mt.InvH, sub.Translucent, flat, (uint)sub.SkyMode, (uint)sub.ClampMode, state));
+                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey);
+            if (sub.IndexOffset < 0 || sub.IndexCount < 0 || sub.IndexCount % 3 != 0 || sub.IndexOffset > scene.Mesh.Indices.Count - sub.IndexCount)
+                throw new ArgumentException("Submesh indices must describe complete in-range triangles.");
+            bool depthWrite = !(sub.Adjoined && (sub.Translucent || mt.HasColorKey && !mt.IsSolid));
+            var draw = new DrawItem(mt.Set, (uint)sub.IndexOffset, (uint)sub.IndexCount, mt.InvW, mt.InvH,
+                sub.Translucent, flat, (uint)sub.SkyMode, (uint)sub.ClampMode, state, depthWrite);
+            if (!draw.Deferred) { _draws.Add(draw); continue; }
+            // Keep opaque material batching. Deferred geometry needs individual
+            // triangle ranges so distant faces sharing one MAT can interleave.
+            Vec3 Position(int index)
+            {
+                uint vertex = scene.Mesh.Indices[index];
+                if (vertex >= scene.Mesh.Vertices.Count) throw new ArgumentException("Submesh references a missing vertex.");
+                var v = scene.Mesh.Vertices[(int)vertex];
+                return new Vec3(v.Px, v.Py, v.Pz);
+            }
+            for (int i = sub.IndexOffset; i < sub.IndexOffset + sub.IndexCount; i += 3)
+                _draws.Add(draw with { IndexOffset = (uint)i, IndexCount = 3, A = Position(i), B = Position(i + 1), C = Position(i + 2) });
         }
     }
 
@@ -303,6 +326,12 @@ public sealed unsafe class SceneRenderer : IDisposable
     public byte[] Render(Mat4 viewProjection, Vec3 camPos, Vec3 camAngles, uint width, uint height,
         float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f)
     {
+        if (viewProjection.M is null || viewProjection.M.Length != 16 || viewProjection.M.Any(v => !float.IsFinite(v)))
+            throw new ArgumentException("Expected a finite 4x4 view-projection matrix.");
+        // Validate/materialize ordering before recording a command buffer. A bad
+        // managed input must not abandon a live Vulkan recording on exception.
+        var deferred = _draws.Where(d => d.Deferred)
+            .OrderByDescending(d => RenderDrawOrder.MinimumDepth(viewProjection, d.A, d.B, d.C)).ToArray();
         EnsureTargets(width, height);
         var cmd = BeginOneTimeCommands();
 
@@ -329,7 +358,7 @@ public sealed unsafe class SceneRenderer : IDisposable
             _vk.CmdBindPipeline(cmd, PipelineBindPoint.Graphics, _pipeline);
             BindSceneBuffers(cmd);
             foreach (var draw in _draws)
-                if (!draw.Translucent) DrawSubmesh(cmd, draw, draw.Flat ? 1u : 0u, 1f);
+                if (!draw.Deferred) DrawSubmesh(cmd, draw, draw.Flat ? 1u : 0u, 1f);
         }
 
         // Thing markers (flat).
@@ -340,13 +369,26 @@ public sealed unsafe class SceneRenderer : IDisposable
             _vk.CmdDrawIndexed(cmd, _markerIndexCount, 1, 0, 0, 0);
         }
 
-        // Translucent pass.
-        if (_draws.Any(d => d.Translucent))
+        // Minimum camera-space depth uses the engine's kind of deferred key.
+        // The engine computes it after CPU clipping; our un-clipped triangles
+        // remain an approximation at frustum edges and intersecting geometry.
+        // Sorting triangles also handles separated faces in a single MAT batch.
+        // Intersecting polygons still need splitting for exact painter ordering.
+        if (deferred.Length > 0)
         {
-            _vk.CmdBindPipeline(cmd, PipelineBindPoint.Graphics, _translucentPipeline);
             BindSceneBuffers(cmd);
-            foreach (var draw in _draws)
-                if (draw.Translucent) DrawSubmesh(cmd, draw, 0u, 90f / 255f);
+            ulong boundPipeline = 0;
+            foreach (var draw in deferred)
+            {
+                var pipeline = draw.Translucent ? (draw.DepthWrite ? _translucentDepthWritePipeline : _translucentPipeline) : _opaqueNoWritePipeline;
+                if (pipeline.Handle != boundPipeline)
+                {
+                    _vk.CmdBindPipeline(cmd, PipelineBindPoint.Graphics, pipeline);
+                    boundPipeline = pipeline.Handle;
+                }
+                // The accelerated engine inverts its stored 90/255 alpha before blending.
+                DrawSubmesh(cmd, draw, draw.Flat ? 1u : 0u, draw.Translucent ? 165f / 255f : 1f);
+            }
         }
 
         // Selection overlay (flat, depth off).
@@ -577,7 +619,7 @@ public sealed unsafe class SceneRenderer : IDisposable
             {
                 BlendEnable = true,
                 SrcColorBlendFactor = BlendFactor.SrcAlpha, DstColorBlendFactor = BlendFactor.OneMinusSrcAlpha, ColorBlendOp = BlendOp.Add,
-                SrcAlphaBlendFactor = BlendFactor.One, DstAlphaBlendFactor = BlendFactor.Zero, AlphaBlendOp = BlendOp.Add,
+                SrcAlphaBlendFactor = BlendFactor.One, DstAlphaBlendFactor = BlendFactor.OneMinusSrcAlpha, AlphaBlendOp = BlendOp.Add,
                 ColorWriteMask = ColorComponentFlags.RBit | ColorComponentFlags.GBit | ColorComponentFlags.BBit | ColorComponentFlags.ABit,
             };
             var blendOpaque = new PipelineColorBlendStateCreateInfo { SType = StructureType.PipelineColorBlendStateCreateInfo, AttachmentCount = 1, PAttachments = &noBlend };
@@ -610,6 +652,12 @@ public sealed unsafe class SceneRenderer : IDisposable
             var iTrans = baseInfo; iTrans.PDepthStencilState = &depthTestNoWrite; iTrans.PColorBlendState = &blendAlpha;
             if (_vk.CreateGraphicsPipelines(_dev.Device, default, 1, in iTrans, null, out _translucentPipeline) != Result.Success)
                 throw new VulkanException("translucent pipeline failed");
+            var iTransWrite = baseInfo; iTransWrite.PDepthStencilState = &depthOn; iTransWrite.PColorBlendState = &blendAlpha;
+            if (_vk.CreateGraphicsPipelines(_dev.Device, default, 1, in iTransWrite, null, out _translucentDepthWritePipeline) != Result.Success)
+                throw new VulkanException("translucent depth-write pipeline failed");
+            var iOpaqueNoWrite = baseInfo; iOpaqueNoWrite.PDepthStencilState = &depthTestNoWrite; iOpaqueNoWrite.PColorBlendState = &blendOpaque;
+            if (_vk.CreateGraphicsPipelines(_dev.Device, default, 1, in iOpaqueNoWrite, null, out _opaqueNoWritePipeline) != Result.Success)
+                throw new VulkanException("opaque no-depth-write pipeline failed");
             var iSel = baseInfo; iSel.PDepthStencilState = &depthOff; iSel.PColorBlendState = &blendOpaque;
             if (_vk.CreateGraphicsPipelines(_dev.Device, default, 1, in iSel, null, out _selectionPipeline) != Result.Success)
                 throw new VulkanException("selection pipeline failed");
@@ -889,6 +937,8 @@ public sealed unsafe class SceneRenderer : IDisposable
         DestroyTexture(_lightRamp);
         if (_selectionPipeline.Handle != 0) _vk.DestroyPipeline(d, _selectionPipeline, null);
         if (_translucentPipeline.Handle != 0) _vk.DestroyPipeline(d, _translucentPipeline, null);
+        if (_translucentDepthWritePipeline.Handle != 0) _vk.DestroyPipeline(d, _translucentDepthWritePipeline, null);
+        if (_opaqueNoWritePipeline.Handle != 0) _vk.DestroyPipeline(d, _opaqueNoWritePipeline, null);
         if (_pipeline.Handle != 0) _vk.DestroyPipeline(d, _pipeline, null);
         if (_layout.Handle != 0) _vk.DestroyPipelineLayout(d, _layout, null);
         if (_setLayout.Handle != 0) _vk.DestroyDescriptorSetLayout(d, _setLayout, null);

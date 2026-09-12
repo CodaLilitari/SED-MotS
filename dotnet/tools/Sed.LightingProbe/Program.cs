@@ -205,7 +205,7 @@ renderer.SetScene(Scene(RenderLightingMode.Rgb, 0, ColorF.Black, lightMode: 0),
 Pixel(Render("solid-zero-opaque"), 17, 73, 149, "Solid palette index0 is a visible color");
 renderer.SetScene(Scene(RenderLightingMode.Rgb, 0, ColorF.Black, lightMode: 0, translucent: true),
     _ => new IndexedTexture(1, 1, new byte[] { 0 }, IsSolid: true));
-Pixel(Render("solid-zero-translucent", clearBlack: true), 6, 26, 53, "Solid index0 must not be discarded; hardware translucency is90/255", alpha: 90);
+Pixel(Render("solid-zero-translucent", clearBlack: true), 11, 47, 96, "Solid index0 must not be discarded; accelerated opacity is165/255 over an opaque clear");
 
 renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 foreach (var mode in new[] { RenderLightingMode.Rgb, RenderLightingMode.Mono })

@@ -7,7 +7,8 @@ namespace Sed.Formats.ThreeDo;
 /// Parses the Sith-engine 3DO model text format (per PJ3DO_IO.INC). Reads the
 /// MODELRESOURCE materials, the highest-detail geoset's meshes (vertices,
 /// texture vertices, base lighting, vertex normals and face/mesh modes) and the
-/// HIERARCHYDEF node transforms. Reuses <see cref="JklReader"/> for the shared tokenizer.
+/// HIERARCHYDEF node transforms, pivots, names, flags and types. Reuses
+/// <see cref="JklReader"/> for the shared tokenizer.
 /// </summary>
 public static class ThreeDoParser
 {
@@ -205,20 +206,33 @@ public static class ThreeDoParser
         int n = Count(r.Current, 65536);
         for (int i = 0; i < n; i++)
         {
-            RequireRow(r, "hierarchy");
+            // Unlike keywords, node names are authored data. Do not uppercase them.
+            if (!r.Next(upper: false) || r.EndOfSection) throw new FormatException("Truncated 3DO hierarchy.");
             var t = JklReader.Tokens(JklReader.StripIndex(r.Current));
-            // After stripping "i:": flags type mesh parent child sibling numChildren x y z pitch yaw roll ...
-            if (t.Length < 13) throw new FormatException("Truncated 3DO hierarchy node.");
+            // JK/MotS rdModel3 requires all 18 conversions including the row index:
+            // flags type mesh parent child sibling numChildren x y z pitch yaw roll pivotx pivoty pivotz name.
+            if (t.Length < 17) throw new FormatException("Truncated 3DO hierarchy node.");
             model.Nodes.Add(new HierarchyNode
             {
+                Flags = ReadNodeBits(t[0]),
+                Type = ReadNodeBits(t[1]),
+                Name = t[16],
                 Mesh = JklReader.ParseInt(t[2]),
                 Parent = JklReader.ParseInt(t[3]),
                 Offset = new Vec3(JklReader.ParseFloat(t[7]), JklReader.ParseFloat(t[8]), JklReader.ParseFloat(t[9])),
                 Pitch = JklReader.ParseFloat(t[10]),
                 Yaw = JklReader.ParseFloat(t[11]),
                 Roll = JklReader.ParseFloat(t[12]),
+                Pivot = new Vec3(JklReader.ParseFloat(t[13]), JklReader.ParseFloat(t[14]), JklReader.ParseFloat(t[15])),
             });
         }
+    }
+
+    private static uint ReadNodeBits(string text)
+    {
+        long bits = JklReader.ParseHex(text);
+        if (bits < 0 || bits > uint.MaxValue) throw new FormatException("3DO hierarchy flags and type must fit 32 bits.");
+        return (uint)bits;
     }
 
     private static int LastInt(string line)

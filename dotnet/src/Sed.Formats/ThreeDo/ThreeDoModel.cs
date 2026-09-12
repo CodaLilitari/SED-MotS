@@ -36,10 +36,17 @@ public sealed class Mesh3do
 /// <summary>A hierarchy node: which mesh it draws and its rest transform relative to its parent.</summary>
 public sealed class HierarchyNode
 {
+    /// <summary>Engine node flags and type bitmasks, stored as hexadecimal 32-bit fields.</summary>
+    public uint Flags;
+    public uint Type = 1;
+    /// <summary>Authored hierarchy name; independent of the mesh name and retained with its original case.</summary>
+    public string Name = string.Empty;
     public int Mesh = -1;
     public int Parent = -1;
     public Vec3 Offset;
     public double Pitch, Yaw, Roll;
+    /// <summary>Authored local pivot. Preserved by format I/O; rendering support is separate.</summary>
+    public Vec3 Pivot;
 }
 
 /// <summary>

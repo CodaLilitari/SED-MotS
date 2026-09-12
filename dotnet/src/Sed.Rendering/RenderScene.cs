@@ -4,7 +4,7 @@ namespace Sed.Rendering;
 /// An 8-bit palette-indexed texture (one byte per pixel). The renderer applies
 /// the selected CMP palette with scalar or RGB lighting, or a monochrome ramp.
 /// </summary>
-public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false);
+public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false, bool HasColorKey = false);
 
 /// <summary>Resolves a material name (e.g. "wall01.mat") to indexed pixels, or null.</summary>
 public delegate IndexedTexture? TextureLookup(string material);
@@ -20,14 +20,15 @@ public static class RenderLightingState
     public const uint RgbBit = 1;
     public const uint SolidBit = 2;
     public const uint ScalarModulationBit = 4;
+    public const uint ColorKeyBit = 8;
     public const int LightModeShift = 8;
 
-    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true)
+    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false)
     {
         if (!Enum.IsDefined(lighting)) throw new ArgumentOutOfRangeException(nameof(lighting));
         if ((uint)lightMode > 255) throw new ArgumentOutOfRangeException(nameof(lightMode));
         return (uint)lighting | (solid ? SolidBit : 0) |
-            (usePaletteLightRamp ? 0 : ScalarModulationBit) | ((uint)lightMode << LightModeShift);
+            (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) | ((uint)lightMode << LightModeShift);
     }
 }
 
@@ -62,6 +63,8 @@ public sealed class Submesh
     public int IndexCount { get; init; }
     /// <summary>Drawn in a separate alpha-blended pass after opaque geometry.</summary>
     public bool Translucent { get; init; }
+    /// <summary>Masked/translucent adjoined world surfaces use the engine's deferred no-depth-write pass.</summary>
+    public bool Adjoined { get; init; }
     /// <summary>0 = normal, 1 = ceiling sky, 2 = horizon sky (UV computed in shader).</summary>
     public int SkyMode { get; init; }
 
