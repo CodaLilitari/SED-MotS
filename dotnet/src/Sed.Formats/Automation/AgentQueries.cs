@@ -69,6 +69,7 @@ public static class AgentQueries
         {
             schemaVersion = 1, inputSha256 = snapshot.InputSha256,
             sourceRevision = snapshot.SourceRevision, dependencies = snapshot.Dependencies,
+            sourceLightMetadata = AgentWorkspace.DescribeSourceLightMetadata(snapshot.Document),
             collection = request.Collection, sector = request.Sector, search = request.Search,
             total = indices.Length, sourceTotal = catalog.Count, offset = request.Offset,
             limit = request.Limit, returnedCount = count,
@@ -190,7 +191,9 @@ public static class AgentQueries
                 {
                     var light = level.Lights[i];
                     return new { index = i, light.Num, light.Flags, light.Layer, position = Position(light.Position),
-                        rgb = Rgb(light.Color), light.Intensity, light.Range };
+                        rgb = Rgb(light.Color), light.Intensity, light.Range, light.RgbIntensity,
+                        light.EffectiveRgbIntensity, light.LegacyRgbRange,
+                        rgbIntensityInherited = !light.RgbIntensity.HasValue };
                 });
             case "templates":
                 var templates = level.Templates.Values.OrderBy(t => t.Order).ThenBy(t => t.Name, StringComparer.OrdinalIgnoreCase).ToArray();

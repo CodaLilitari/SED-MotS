@@ -11,8 +11,14 @@ public sealed class Light
     public int Layer;
 
     public ColorF Color = ColorF.White;
+    /// <summary>White/monochrome intensity; also supplies RGB intensity when no independent value is authored.</summary>
     public double Intensity = 1.0;
+    /// <summary>Independent MotS RGB intensity. Null inherits <see cref="Intensity"/>; explicit zero disables RGB contribution.</summary>
+    public double? RgbIntensity;
+    public double EffectiveRgbIntensity => RgbIntensity ?? Intensity;
     public double Range;
+    /// <summary>Preserved legacy MotS RGB-range metadata. Baking uses <see cref="Range"/> for both channels.</summary>
+    public double? LegacyRgbRange;
     public Vec3 Position;
 }
 

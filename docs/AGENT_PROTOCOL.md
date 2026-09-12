@@ -102,6 +102,31 @@ Duplicate/unknown fields, missing fields, stale hashes, invalid indices, non-fin
 
 Operation request errors include `details.operationIndex`, `details.operation` and a `details.jsonPointer` so a client can repair the failing part of a batch. Parser errors include location details where available. Structural issues retain `itemIndex` and `parameterIndex` in addition to sector/surface selectors. Indices refer to the relevant issue type; they are not all thing indices.
 
+## Source-light authoring
+
+Discover `schema addLight` and `schema setLight` from the selected executable. `addLight` still requires `position`, `rgb`, `intensity` and `range`; it additionally accepts optional `rgbIntensity`, `legacyRgbRange`, `flags` and `layer`. `setLight` requires a zero-based `light` index from `query lights` and at least one of those eight editable fields. Omitted fields remain unchanged during `setLight`; omission on creation gives inherited RGB intensity, absent legacy RGB range, flags zero and layer zero.
+
+| Field | Agent input and meaning |
+| --- | --- |
+| `position` | Three finite world coordinates, each from -1,000,000 through 1,000,000. |
+| `rgb` | Three finite color components in [0,1]. Nonwhite authoring requires MotS. |
+| `intensity` | White/mono intensity in [0,1000]. Supplies RGB intensity when no override is stored. |
+| `rgbIntensity` | Independent RGB intensity in [0,1000], or `null` to inherit `intensity`. A non-null authored override requires MotS. |
+| `range` | Primary falloff range in [0.0001,100000], used by both channels when baking. |
+| `legacyRgbRange` | Preserved legacy value in [-100000,100000], or `null` to clear it. It does not control falloff. |
+| `flags` | Unsigned 32-bit mask, expressed as a decimal JSON integer. |
+| `layer` | Index of an existing named editor layer; only zero is accepted when the level has no named layers. The schema permits nonnegative integers through 2,147,483,647, and runtime validation checks the current level's layer list. |
+
+An explicit `rgbIntensity: 0` contributes no RGB even when white intensity is positive. An explicit value equal to `intensity` remains independent: setting both to 2 and later changing only white to 3 leaves RGB at 2. `null` restores inheritance, so RGB follows later white edits. `legacyRgbRange: 0` is a stored value; it differs from `null`. Both nullable fields reject non-finite numbers. Imported inactive JK RGB metadata remains readable and survives conversion and unrelated edits; agents may clear its override with `null`, but cannot author a new non-null RGB intensity in JK.
+
+`query lights` and each light operation's effect state report `position`, `rgb`, `intensity`, `range`, `rgbIntensity`, `legacyRgbRange`, `flags` and `layer`, plus read-only `effectiveRgbIntensity` and `rgbIntensityInherited`. These fields participate in the plan's serialization/readback checks. Neither operation bakes corners or architectural lighting. MotS's explicit static bake uses white and RGB intensities separately with the primary range; existing stored lighting changes only when an edit or bake explicitly changes it.
+
+Supported native JED/SED/NED text projects import into JKL. Their extra source-light values are written in additive, versioned `SED_SOURCE_LIGHTS` editor metadata, leaving ordinary JKL `LIGHTS` rows in their established layout. The extension also preserves inactive JK source RGB color. A semantic checksum binds the extension to the ordinary rows; malformed metadata, unsupported versions or a mismatched checksum refuse parsing rather than applying stale controls. There is no native project writer in this path.
+
+Keep the native project and companion templates as recovery sources. Older editors may discard `SED_SOURCE_LIGHTS`, losing the additional authoring controls; an older editor that retains the extension but changes its base rows can instead trigger the checksum refusal. This metadata does not replace baked engine lighting or establish retail compatibility. Retail acceptance and rendering of newly exported files remain unverified.
+
+Inspection, queries and validation report `sourceLightMetadata.state` as `absent` or `validated`; `binding` is null or `ordinary-lights-by-index`, respectively. Plans and conversions additionally report `outputSourceLightMetadata` from their reparsed output. This describes the current input/output extension and its consistency with indexed ordinary rows. It cannot establish preservation history or detect a wholly removed extension without an earlier artifact to compare. Malformed or unsupported metadata refuses parsing. The canonical v1 contract is in [SOURCE_LIGHT_METADATA.md](SOURCE_LIGHT_METADATA.md).
+
 ## Offscreen visual feedback
 
 Use `schema snapshot` for the exact camera contract. The request requires the current `inputSha256`, `position`, `target`, `fieldOfViewDegrees`, `width` and `height`, plus `schemaVersion: 1`; native inputs also require `sourceRevision`. Coordinates are Z-up. Output is a new `.png`; source/dependencies are checked before rendering and before the atomic output move. No window opens.

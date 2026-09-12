@@ -27,6 +27,7 @@ public static class JklWriter
     public static string Build(JklDocument doc)
     {
         var src = doc.SourceLines;
+        SourceLightMetadataFormat.ValidateRetainedSource(doc);
         var level = doc.Level;
         var ranges = new List<(int start, int end, List<string> replacement)>();
         var appended = new List<List<string>>();
@@ -63,8 +64,17 @@ public static class JklWriter
 
     internal static void CaptureBaseline(JklDocument doc)
     {
+        doc.OriginalSourceLightTextHash = SourceLightMetadataFormat.SourceTextHash(doc.SourceLines);
+        bool promoteSourceLights = SourceLightMetadataFormat.Needed(doc.Level) &&
+            FindSection(doc.SourceLines, SourceLightMetadataFormat.SectionName).start < 0;
         foreach (var section in GenerateSections(doc))
+        {
+            // A legacy JK LIGHTS row may contain inactive RGB color. Once it is
+            // represented in metadata, rewrite its ordinary row and metadata
+            // together so the checksum describes the actual serialized base.
+            if (promoteSourceLights && section.name is "LIGHTS" or SourceLightMetadataFormat.SectionName) continue;
             doc.OriginalSections.Add(section.name, string.Join('\n', section.lines));
+        }
     }
 
     private static List<(string name, List<string> lines, bool hasContent)> GenerateSections(JklDocument doc)
@@ -85,6 +95,7 @@ public static class JklWriter
             ("TEMPLATES", GenerateTemplates(level), level.Templates.Count > 0),
             ("THINGS", GenerateThings(level), level.Things.Count > 0),
             ("LIGHTS", GenerateLights(level), level.Lights.Count > 0),
+            (SourceLightMetadataFormat.SectionName, SourceLightMetadataFormat.Build(level), SourceLightMetadataFormat.Needed(level)),
             ("COGS", GenerateCogs(level), level.Cogs.Count > 0),
             ("LAYERS", GenerateLayers(level), level.Layers.Count > 0),
             ("ARCHLIGHTING", arch, level.Kind == ProjectType.MysteriesOfTheSith)

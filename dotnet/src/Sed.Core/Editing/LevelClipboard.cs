@@ -229,6 +229,8 @@ public sealed class LevelFragment
         Position = src.Position + offset,
         Range = src.Range,
         Intensity = src.Intensity,
+        RgbIntensity = src.RgbIntensity,
+        LegacyRgbRange = src.LegacyRgbRange,
         Color = src.Color,
         Flags = src.Flags,
         Layer = src.Layer,

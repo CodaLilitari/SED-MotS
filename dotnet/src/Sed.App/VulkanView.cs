@@ -464,6 +464,8 @@ public sealed class VulkanView : Control
                 Position = position,
                 Range = template.Range,
                 Intensity = template.Intensity,
+                RgbIntensity = template.RgbIntensity,
+                LegacyRgbRange = template.LegacyRgbRange,
                 Color = template.Color,
                 Flags = template.Flags,
                 Layer = template.Layer,
@@ -1270,7 +1272,7 @@ public sealed class VulkanView : Control
             return $"Thing #{t.Num} '{name}' @ {t.Position}  — arrows/PgUp-PgDn to move, Ctrl+click to add, Ctrl+Z undo";
         }
         if (Selection.PrimaryLight is { } li)
-            return $"Light #{li.Num} @ {li.Position} — range {li.Range:0.##}, intensity {li.Intensity:0.##}" +
+            return $"Light #{li.Num} @ {li.Position} — range {li.Range:0.##}, white {li.Intensity:0.##}, RGB {li.EffectiveRgbIntensity:0.##}" +
                    "  (arrows move, Delete removes, Insert adds another)";
         if (SelectedSurface is { } s)
         {

@@ -62,6 +62,47 @@ For supported native text `.jed`, `.sed`, or `.ned` inputs, copy both `inputSha2
 
 Retain the dependency files with the project, examine conversion warnings, and regenerate the patch after a provenance conflict. This dependency check covers the reported native import inputs; it is not a hash inventory of every game resource. Existing architectural lighting is preserved subject to the protocol's restrictions and is not rebaked.
 
+## Edit source lights without rebaking
+
+Use `schema setLight`, `schema addLight`, and `query lights` before choosing a light. With the `Invoke-SedJson` helper above, the following prepares independent white and RGB controls for the first returned light in a MotS project. Use the returned index for the light you intend to edit; the request's revision binds that selection to the inspected source.
+
+```powershell
+$lightQuery = @{ schemaVersion = 1; collection = 'lights'; offset = 0; limit = 1 } |
+    ConvertTo-Json -Compress
+$lights = Invoke-SedJson @('query', $inputLevel, '-') $lightQuery
+if ($lights.items.Count -eq 0) { throw 'Choose a project with an existing light, or use addLight.' }
+$lightPatch = @{
+    schemaVersion = 1
+    inputSha256 = $lights.inputSha256
+    sourceRevision = $lights.sourceRevision
+    operations = @(@{
+        op = 'setLight'; light = $lights.items[0].index
+        intensity = 0.75; rgbIntensity = 2.5
+    })
+} | ConvertTo-Json -Depth 8 -Compress
+$lightPlan = Invoke-SedJson @('plan', $inputLevel, '-') $lightPatch
+$lightPlan | ConvertTo-Json -Depth 20
+```
+
+Review the plan, then apply the same request to a fresh output path with `$lightPlan.outputSha256` as the final argument. Query that output and check both stored values and `effectiveRgbIntensity`/`rgbIntensityInherited`. Source-light edits do not automatically change baked corner or architectural lighting.
+
+Leave a field out of `setLight` to retain its current value. Use `rgbIntensity: null` to inherit white intensity, zero to turn off the RGB contribution independently, or a non-null scalar to keep RGB independent through later white edits. `legacyRgbRange` is retained metadata: changing it does not change the shared primary falloff range. `addLight` keeps its original four required fields and accepts optional RGB intensity, legacy RGB range, flags and layer. The [protocol field table](AGENT_PROTOCOL.md#source-light-authoring) gives limits and JK restrictions.
+
+Native input is converted to JKL with additive `SED_SOURCE_LIGHTS` authoring metadata; no native project writer is provided. Retain the original source because older editors may discard the extension. A retained extension whose ordinary light rows were changed is rejected when its checksum no longer matches. Retail handling remains unverified.
+
+## Repeatable source-light workflow
+
+Run the source-light workflow with the selected packaged executable and a fresh directory:
+
+```powershell
+./tools/Test-AgentSourceLights.ps1 -AgentPath 'C:/Tools/SED/agent/sed-agent.exe' `
+    -OutputDirectory ('C:/Temp/sed-source-lights-' + [Guid]::NewGuid().ToString('N'))
+```
+
+It creates an original synthetic native project, discovers the actual CLI schemas, converts to JKL, then plans/applies metadata-only, independent-intensity and unrelated edits. Readback checks inherited, zero and explicitly equal RGB values, original `addLight` compatibility, and stale/overwrite refusals. Direct processes have redirected streams, no console window and a 30-second deadline. The receipt retains request/reply files and hashes, artifact hashes, the executable identity and the outcome. It does not request Vulkan, a GUI or a game; these checks do not establish rendering or gameplay compatibility. Packaging invokes this workflow by default and records a successful result in `PROVENANCE.json` only after it passes.
+
+The existing `convert` command has no standalone caller `sourceRevision` parameter; resource-aware conversion accepts it in the resource request. This resource-free synthetic workflow first obtains a revision-bound identity-edit plan, calls conversion (which captures and rechecks its own inputs), then verifies the returned revision and output hash against that plan. That post-conversion comparison is distinct from a caller revision guard before writing. For reviewed native edits, use `plan`/`apply` with `sourceRevision` and the reviewed output hash.
+
 ## Repeatable smoke test
 
 Run the bundled workflow check with PowerShell 7.2 or later and an explicit executable. The output directory must not exist; its parent must exist.

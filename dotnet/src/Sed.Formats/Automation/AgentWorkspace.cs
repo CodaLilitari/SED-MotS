@@ -63,6 +63,18 @@ public static partial class AgentWorkspace
         return (snapshot.Document, snapshot.InputSha256);
     }
 
+    // Describes the extension captured while parsing this document's input, not
+    // edits to its model or an audit of preservation history/runtime compatibility.
+    internal static object DescribeSourceLightMetadata(JklDocument document)
+    {
+        bool validated = document.OriginalSourceLightTextHash is not null;
+        return new
+        {
+            state = validated ? "validated" : "absent",
+            binding = validated ? "ordinary-lights-by-index" : null,
+        };
+    }
+
     public static AgentDocumentSnapshot LoadWithProvenance(string path)
     {
         path = Path.GetFullPath(path);
@@ -164,6 +176,7 @@ public static partial class AgentWorkspace
             schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies, game = level.Kind.ToString(),
             counts = Counts(level), materials = doc.Materials,
+            sourceLightMetadata = DescribeSourceLightMetadata(doc),
             preservationWarnings = doc.PreservationWarnings,
             sectors = level.Sectors.Select((s, i) => new { index = i, s.Num, vertices = s.Vertices.Count, surfaces = s.Surfaces.Count }),
             things = level.Things.Select((t, i) => new
@@ -190,6 +203,7 @@ public static partial class AgentWorkspace
             dependencies = snapshot.Dependencies,
             valid = issues.All(i => i.Severity != IssueSeverity.Error) && !architecture.HasErrors, issues = DescribeIssues(issues),
             resourceRevision = architecture.ResourceRevision, architectureValidation = architecture,
+            sourceLightMetadata = DescribeSourceLightMetadata(doc),
             preservationWarnings = doc.PreservationWarnings };
     }
 
@@ -211,6 +225,8 @@ public static partial class AgentWorkspace
             schemaVersion = 1, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies, outputSha256 = Hash(Encoding.UTF8.GetBytes(output)), counts = Counts(reopened.Level),
             resourceRevision = exported.Validation.ResourceRevision, architectureValidation = exported.Validation,
+            sourceLightMetadata = DescribeSourceLightMetadata(doc),
+            outputSourceLightMetadata = DescribeSourceLightMetadata(reopened),
             preservationWarnings = doc.PreservationWarnings, issues = DescribeIssues(issues),
             note = "Legacy conversion uses the recorded importer coverage. Editor-only and unsupported records can produce warnings; this is not a gameplay test.",
         }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,
@@ -329,6 +345,8 @@ public static partial class AgentWorkspace
             schemaVersion = SchemaVersion, inputSha256 = hash, sourceRevision = snapshot.SourceRevision,
             dependencies = snapshot.Dependencies, outputSha256 = outputHash,
             resourceRevision = exported.Validation.ResourceRevision, architectureValidation = exported.Validation,
+            sourceLightMetadata = DescribeSourceLightMetadata(doc),
+            outputSourceLightMetadata = DescribeSourceLightMetadata(reopened),
             before, after = Counts(reopened.Level), changes = effects, issues = DescribeIssues(roundTripIssues),
             preservationWarnings = doc.PreservationWarnings,
             note = "Planning uses the GUI's Core commands. Explicit archives add current all-LOD architectural model validation; missing historical baselines remain unknown. Other asset closure and gameplay are not tested. Moved models may require relighting.",
@@ -393,6 +411,7 @@ public static partial class AgentWorkspace
 
     private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op)
     {
+        if (TryPrepareLightOperation(doc, op, out var lightCommand)) return lightCommand!;
         if (TryPrepareMaterialOperation(doc, op, out var materialCommand)) return materialCommand!;
         if (TryPrepareGeometryOperation(doc, op, out var geometryCommand)) return geometryCommand!;
         var level = doc.Level;
@@ -465,13 +484,6 @@ public static partial class AgentWorkspace
                 if (!level.Templates.ContainsKey(tpl)) throw new AgentRequestException("Template is not defined in this level.");
                 return new CreateThingCommand(level, new Thing { Level = level, Sector = Sector(), Template = tpl,
                     Name = Token(op, "name"), Position = Vector(op, "position") });
-            case "addLight":
-                Fields(op, "op", "position", "rgb", "intensity", "range");
-                var rgb = Color(op, "rgb");
-                if (level.Kind == ProjectType.JediKnight && rgb != ColorF.White)
-                    throw new AgentRequestException("JK editor lights do not store RGB values. Use rgb [1,1,1] and the intensity field, or use a MotS level.", jsonPointer: "/rgb");
-                return new CreateLightCommand(level, new Light { Position = Vector(op, "position"), Color = rgb,
-                    Intensity = Number(op, "intensity", 0, 1000), Range = Number(op, "range", 0.0001, 100000) });
             default: throw new AgentRequestException($"Unknown operation '{name}'. Use schema to list supported operations.");
         }
     }
@@ -487,6 +499,7 @@ public static partial class AgentWorkspace
         ["setSectorFlags"] = ["sector", "flags"], ["setSectorAmbient"] = ["sector", "value"],
         ["setGravity"] = ["value"], ["addBox"] = ["center", "halfSize"],
         ["addThing"] = ["sector", "template", "name", "position"], ["addLight"] = ["position", "rgb", "intensity", "range"],
+        ["setLight"] = ["light"],
         ["registerMaterial"] = ["name"], ["registerColormap"] = ["name"], ["setSectorColormap"] = ["sector", "colormapIndex"],
         ["fitSurfaceTexture"] = ["sector", "surface", "width", "height"], ["setSurfaceUv"] = ["sector", "surface", "uv"],
         ["setSurfaceRenderModes"] = ["sector", "surface", "geometryMode", "lightMode", "textureMode"],
@@ -512,12 +525,7 @@ public static partial class AgentWorkspace
                 sector = thing.Sector is null ? -1 : level.Sectors.IndexOf(thing.Sector), thing.ArchLightingIndex,
                 values = thing.Values.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => new { key = p.Key, value = p.Value }).ToArray() } };
         }
-        if (name == "addLight")
-        {
-            int index = created!.Value; var light = At(level.Lights, index, "light");
-            return new { target = new { kind = "light", index }, state = new { position = Position(light.Position),
-                rgb = new[] { light.Color.R, light.Color.G, light.Color.B }, light.Intensity, light.Range } };
-        }
+        if (name is "addLight" or "setLight") return LightOperationEffect(doc, op, created);
         int sectorIndex = created ?? Integer(op, "sector"); var sector = At(level.Sectors, sectorIndex, "sector");
         if (name == "addBox") return new { target = new { kind = "sector", index = sectorIndex }, state = new {
             vertices = sector.Vertices.Select(v => Position(v.Position)).ToArray(), surfaces = sector.Surfaces.Count } };

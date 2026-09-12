@@ -15,6 +15,8 @@ MotS's separate corner-light channels, architectural arrays and bindings survive
 
 The vertex inspector edits MotS's mono, red, green and blue channels independently. The thing inspector can explicitly unbind baked architectural lighting before changing a model. Both operations support undo. Clipboard transfers require matching game types and check layer, template and colormap dependencies before modifying the destination.
 
+The light inspector also exposes separate white and RGB source intensity. Check "RGB follows white" for inherited intensity; uncheck it to enter an independent value, including zero to disable only the RGB contribution. Legacy RGB range is preserved metadata; leave that field blank to remove it. Both channels use the primary range during a MotS bake. These edits support undo and do not automatically rebake the level. Additional controls imported from native projects are retained in the JKL's `SED_SOURCE_LIGHTS` editor section. Keep the original project: older editors may drop that section, and retail acceptance remains unverified.
+
 ## Test with OpenJKDF2 or retail
 
 Use Test Setup to choose the executable and engine profile for the selected game. Auto recognizes standard names; explicitly choose a profile for renamed executables. OpenJKDF2 MotS launches receive `-motsCompat`; retail launches do not.
@@ -36,6 +38,8 @@ For Codex, the full distribution includes `.agents/skills/sed-mots/SKILL.md` and
 For architectural model validation, add exact archive paths and hashes as `resourceArchives` in the patch, or use `schema resources` with `validate`/`convert`. Copy the reviewed plan's `resourceRevision` into the patch before applying it. That separate check catches changed model bytes even when the JKL output would be identical. Results distinguish usable current topology from a matching historical model baseline; missing historical information remains unknown. Resource-free edits remain available with an explicitly unverified ARCH result.
 
 The supplied `tools/Test-AgentDesign.ps1` demonstrates a connected room layout, material/UV assignment, readback and offscreen images using the installed executable. It uses fictional resource names to test registration, so its output is a geometry fixture rather than a playable episode. Run it with `-AgentPath` and a new `-OutputDirectory`; use `-SkipSnapshot` on a machine without Vulkan. The normal path never opens the editor or a game.
+
+For source lights, discover `schema setLight` and query the current `lights` collection. `tools/Test-AgentSourceLights.ps1` demonstrates native conversion, reviewed control edits, nullable RGB intensity and preservation readback using synthetic input. It needs no graphics device; see [the workflow guide](AGENT_WORKFLOWS.md#repeatable-source-light-workflow).
 
 For a lit preview, use `schema snapshot` and supply `mode: "lit"`, an explicit camera, and exact GOB/GOO paths with their SHA-256 values. The default `renderProfile: "openjk"` follows the accelerated engine's static lighting; `"palette"` is a separate CMP comparison profile. `lightingMode` selects game-default, mono or RGB world lighting, while ordinary models remain mono. Strict asset validation is on by default. `tools/Test-AgentLitSnapshot.ps1` demonstrates the complete process with synthetic assets. These are static previews: runtime lights, COG, animations and full retail transparency are still outside the tested behavior. See [MOTS_LIGHTING_STATUS.md](MOTS_LIGHTING_STATUS.md) for the tested features and remaining work.
 

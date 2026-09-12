@@ -1,4 +1,13 @@
 # Change Log
+
+## Unreleased — .NET MotS source lights
+
+- Preserve independent white/RGB source-light intensities, color, legacy RGB range, flags and layers when importing supported native JED/SED/NED text projects. MotS baking uses separate channel intensities with the same primary range; legacy RGB range remains metadata.
+- Add independent RGB-intensity and legacy-range controls to the light inspector, with undo and copy/template preservation. The "RGB follows white" checkbox restores inheritance; an unlinked explicit zero disables that light's RGB contribution.
+- Add agent `setLight` edits and optional `rgbIntensity`, `legacyRgbRange`, `flags` and `layer` fields to `addLight`. Queries and reviewed effect reports expose stored values, effective RGB intensity and inheritance state; existing `addLight` requests remain valid.
+- Preserve additional authoring values in a versioned `SED_SOURCE_LIGHTS` section beside unchanged ordinary JKL `LIGHTS` rows. A semantic checksum detects mismatched base rows. Supported native projects export JKL; this does not add a native project writer. Older editors may discard the extension, so retain the original authoring source. Retail handling is unverified.
+- Add a synthetic packaged CLI workflow for source-light conversion, reviewed edits, readback, nullable values and stale/overwrite refusals. It requires no GUI, game or graphics device. Test and package completion are recorded in their run receipts, not implied by this entry.
+
 ## Version 0.3
 - Fixed the flag editor to allow simultaneous selection of water and lava surface flags, enabling the creation of 'cold water' surface types.
 - Changed keyboard shortcut for View-To-Grid command in the Map Editor [PR #36](https://github.com/smlu/SED/pull/36) 

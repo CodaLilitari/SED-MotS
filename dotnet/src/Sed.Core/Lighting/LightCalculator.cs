@@ -30,6 +30,9 @@ public sealed record LightingStats(int Sectors, int Surfaces, int Vertices, int 
 /// <c>intensity · ((range − dist) / range)²</c> — quadratic falloff over the
 /// remaining range, not inverse-square. Jedi Knight accumulates greyscale,
 /// MotS and Infernal Machine accumulate per-channel RGB.
+/// MotS may author a separate RGB intensity; its white contribution still uses
+/// the primary intensity. Both use the primary range, preserving the historical
+/// RGB-range value as metadata without inventing a second falloff rule.
 ///
 /// Results land in <see cref="Surface.Corner.Intensity"/>, so they persist through
 /// the existing GEORESOURCE regeneration with no writer changes.
@@ -83,7 +86,9 @@ public static class LightCalculator
 
                 foreach (var light in level.Lights)
                 {
-                    if (light.Range <= 0 || light.Intensity == 0) continue;
+                    double rgbIntensity = level.Kind == ProjectType.MysteriesOfTheSith
+                        ? light.EffectiveRgbIntensity : light.Intensity;
+                    if (light.Range <= 0 || (light.Intensity == 0 && (!rgb || rgbIntensity == 0))) continue;
 
                     // The light must be on the front side of the surface.
                     if (surf.Normal.Dot(light.Position - origin) < FacingEpsilon) continue;
@@ -106,12 +111,13 @@ public static class LightCalculator
                         }
 
                         double falloff = (light.Range - dist) / light.Range;
-                        float contribution = (float)(light.Intensity * falloff * falloff);
+                        float monoContribution = (float)(light.Intensity * falloff * falloff);
+                        float rgbContribution = (float)(rgbIntensity * falloff * falloff);
 
                         corner.Intensity = rgb
-                            ? corner.Intensity + light.Color * contribution
-                            : Grey(Intensity(corner.Intensity) + contribution);
-                        corner.MonoIntensity = (corner.MonoIntensity ?? 0) + contribution;
+                            ? corner.Intensity + light.Color * rgbContribution
+                            : Grey(Intensity(corner.Intensity) + monoContribution);
+                        corner.MonoIntensity = (corner.MonoIntensity ?? 0) + monoContribution;
                     }
                 }
             }

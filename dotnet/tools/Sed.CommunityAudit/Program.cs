@@ -299,7 +299,8 @@ static byte[] Serialize(Level level)
         things = level.Things.Select(t => new { t.Name, t.Template, t.Position, t.Pitch, t.Yaw, t.Roll,
             sector = t.Sector?.Num ?? -1, t.Layer, t.ArchLightingIndex, t.Values, t.SourceParameters }),
         level.ThingCapacity, level.ArchitecturalLighting, level.Layers, level.ColorMaps,
-        lights = level.Lights.Select(l => new { l.Flags, l.Layer, l.Color, l.Intensity, l.Range, l.Position }),
+        lights = level.Lights.Select(l => new { l.Flags, l.Layer, l.Color, l.Intensity, l.Range, l.Position,
+            l.RgbIntensity, l.LegacyRgbRange }),
         cogs = level.Cogs.Select(c => new { c.Name, c.Values }),
         templates = level.Templates.Values.Select(t => new { t.Name, t.Parent, t.Values, t.SourceParameters })
     };

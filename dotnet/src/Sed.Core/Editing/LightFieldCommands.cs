@@ -48,6 +48,42 @@ public sealed class SetLightIntensityCommand : IEditCommand
     public void Revert() => _light.Intensity = _old;
 }
 
+/// <summary>Authors an independent MotS RGB intensity, or restores inheritance with null.</summary>
+public sealed class SetLightRgbIntensityCommand : IEditCommand
+{
+    private readonly Light _light;
+    private readonly double? _old, _new;
+
+    public SetLightRgbIntensityCommand(Light light, double? intensity)
+    {
+        if (intensity is { } value && !double.IsFinite(value))
+            throw new ArgumentOutOfRangeException(nameof(intensity), "RGB intensity must be finite or null to inherit white intensity.");
+        _light = light; _old = light.RgbIntensity; _new = intensity;
+    }
+
+    public string Name => "Set light RGB intensity";
+    public void Apply() => _light.RgbIntensity = _new;
+    public void Revert() => _light.RgbIntensity = _old;
+}
+
+/// <summary>Edits preserved legacy RGB-range metadata without changing the bake's primary range.</summary>
+public sealed class SetLightLegacyRgbRangeCommand : IEditCommand
+{
+    private readonly Light _light;
+    private readonly double? _old, _new;
+
+    public SetLightLegacyRgbRangeCommand(Light light, double? range)
+    {
+        if (range is { } value && !double.IsFinite(value))
+            throw new ArgumentOutOfRangeException(nameof(range), "Legacy RGB range must be finite or null.");
+        _light = light; _old = light.LegacyRgbRange; _new = range;
+    }
+
+    public string Name => "Set legacy light RGB range";
+    public void Apply() => _light.LegacyRgbRange = _new;
+    public void Revert() => _light.LegacyRgbRange = _old;
+}
+
 public sealed class SetLightColorCommand : IEditCommand
 {
     private readonly Light _light;

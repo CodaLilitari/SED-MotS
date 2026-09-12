@@ -124,7 +124,7 @@ public static class JedImporter
         coverage.Add("HEADER");
         if (sections.TryGetValue("GEO", out var geometry)) { ReadGeometry(new Rows(geometry), level, warnings); coverage.Add("GEO"); }
         if (sections.TryGetValue("THINGS", out var things)) { ReadThings(new Rows(things), level); coverage.Add("THINGS"); }
-        if (sections.TryGetValue("LIGHTS", out var lights)) { ReadLights(new Rows(lights), level, warnings); coverage.Add("LIGHTS"); }
+        if (sections.TryGetValue("LIGHTS", out var lights)) { ReadLights(new Rows(lights), level); coverage.Add("LIGHTS"); }
         if (sections.TryGetValue("COGS", out var cogs)) { ReadCogs(new Rows(cogs), level); coverage.Add("COGS"); }
         if (sections.TryGetValue("LAYERS", out var layers))
         {
@@ -283,9 +283,9 @@ public static class JedImporter
         rows.Finish();
     }
 
-    private static void ReadLights(Rows rows, Level level, List<string> warnings)
+    private static void ReadLights(Rows rows, Level level)
     {
-        int count = rows.Count("LTS"); bool legacyWarning = false;
+        int count = rows.Count("LTS");
         for (int i = 0; i < count; i++)
         {
             var t = JklReader.Tokens(rows.Next());
@@ -296,17 +296,10 @@ public static class JedImporter
             light.Color = new(Single(t[color]), Single(t[color + 1]), Single(t[color + 2]));
             if (t.Length == 12)
             {
-                _ = Number(t[7]);
-                double rgbIntensity = Number(t[8]);
-                if (level.Kind == ProjectType.MysteriesOfTheSith)
-                {
-                    legacyWarning |= rgbIntensity != light.Intensity || Number(t[7]) != light.Range;
-                    light.Intensity = rgbIntensity;
-                }
+                light.LegacyRgbRange = Number(t[7]);
+                light.RgbIntensity = Number(t[8]);
             }
-            if (level.Kind == ProjectType.JediKnight) light.Color = ColorF.White;
         }
-        if (legacyWarning) warnings.Add("Legacy MotS lights use RGB intensity and primary range. Independent white intensity and unused RGB range are not represented; imported baked surface values remain separate.");
         rows.Finish();
     }
 

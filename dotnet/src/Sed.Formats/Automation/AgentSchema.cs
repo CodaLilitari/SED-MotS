@@ -10,6 +10,7 @@ public static class AgentSchema
         if (operationName is not null && !AgentWorkspace.OperationFields.ContainsKey(operationName))
             throw new AgentRequestException($"Unknown schema '{operationName}'. Use schema commands or schema for discovery.");
         object Number(double minimum, double maximum) => new { type = "number", minimum, maximum };
+        object NullableNumber(double minimum, double maximum) => new { type = new[] { "number", "null" }, minimum, maximum };
         object Index() => new { type = "integer", minimum = 0, maximum = int.MaxValue };
         object Vector(double min, double max) => new { type = "array", minItems = 3, maxItems = 3, items = Number(min, max) };
         object Token() => new { type = "string", minLength = 1, maxLength = 127, pattern = "^[!$-~]+$" };
@@ -18,10 +19,11 @@ public static class AgentSchema
         {
             if (operationName is not null && operation != operationName) continue;
             var properties = new Dictionary<string, object> { ["op"] = new Dictionary<string, object> { ["const"] = operation } };
-            foreach (var field in fields)
+            var optional = AgentWorkspace.OptionalOperationFields.TryGetValue(operation, out var optionalFields) ? optionalFields : [];
+            foreach (var field in fields.Concat(optional))
                 properties[field] = field switch
                 {
-                    "thing" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" => Index(),
+                    "thing" or "light" or "layer" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" => Index(),
                     "position" or "center" or "orientation" => Vector(-1_000_000, 1_000_000),
                     "rgb" => Vector(0, 1),
                     "flags" => new { type = "integer", minimum = 0, maximum = (long)uint.MaxValue },
@@ -31,6 +33,8 @@ public static class AgentSchema
                     "lightMode" or "textureMode" => new { type = "integer", minimum = 0, maximum = 3 },
                     "uv" => new { type = "array", minItems = 3, maxItems = 64, items = new { type = "array", minItems = 2, maxItems = 2, items = Number(-1_000_000, 1_000_000) } },
                     "intensity" => Number(0, 1000),
+                    "rgbIntensity" => NullableNumber(0, 1000),
+                    "legacyRgbRange" => NullableNumber(-100000, 100000),
                     "value" when operation == "setGravity" => Number(0, 10000),
                     "value" when operation == "setSectorAmbient" => Number(0, 1),
                     "value" when operation == "setVertexLight" => Number(0, 1000),
@@ -39,7 +43,7 @@ public static class AgentSchema
                     _ => Token(),
                 };
             variants.Add(new { type = "object", description = OperationDescription(operation), additionalProperties = false,
-                required = new[] { "op" }.Concat(fields).ToArray(), properties });
+                required = new[] { "op" }.Concat(fields).ToArray(), minProperties = operation == "setLight" ? 3 : fields.Length + 1, properties });
         }
         return new Dictionary<string, object>
         {
@@ -79,7 +83,8 @@ public static class AgentSchema
         "setGravity" => "Set absolute level gravity; read the current value using query summary.",
         "addBox" => "Append an untextured, unconnected box sector; this does not create a portal or corridor connection.",
         "addThing" => "Append a thing using an existing template from query templates and return its new index in the plan.",
-        "addLight" => "Append an editor light; this does not bake surface lighting. Colored lights require MotS.",
+        "addLight" => "Append a source light without baking. intensity is white/shared fallback; optional rgbIntensity is independent in MotS (null inherits), legacyRgbRange is preserved metadata only. Optional flags/layer default to zero.",
+        "setLight" => "Edit one or more source-light fields through shared undoable commands. Omitted fields stay unchanged; rgbIntensity null restores inheritance and legacyRgbRange null removes only that metadata. Both channels bake with primary range. This operation does not bake lighting.",
         "registerMaterial" => "Append a unique .mat resource basename and return its material index; no asset file is read, verified or copied.",
         "registerColormap" => "Append a unique .cmp resource basename; index zero is the master palette. No asset availability check.",
         "setSectorColormap" => "Select a registered colormap for the sector.",

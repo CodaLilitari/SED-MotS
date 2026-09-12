@@ -29,6 +29,8 @@ public sealed class InspectorPanel : Border
     private EditMode _mode = EditMode.Surface;
     private object? _target;
     private EditHistory? _history;
+    private bool _refreshing;
+    private bool _refreshPending;
 
     /// <summary>Context handed to inspectors so their name fields can offer pickers.</summary>
     public InspectorContext Context { get; set; } = new();
@@ -56,6 +58,24 @@ public sealed class InspectorPanel : Border
 
     private void Refresh()
     {
+        // Replacing focused content can commit its edit on LostFocus. History
+        // callbacks may request another target while Avalonia is still replacing
+        // the visual child; coalesce that refresh until the assignment completes.
+        if (_refreshing) { _refreshPending = true; return; }
+        _refreshing = true;
+        try
+        {
+            do
+            {
+                _refreshPending = false;
+                RefreshContent();
+            } while (_refreshPending);
+        }
+        finally { _refreshing = false; }
+    }
+
+    private void RefreshContent()
+    {
         Control? content;
         if (_target is null || _history is null)
             content = MakeEmpty();
@@ -66,7 +86,7 @@ public sealed class InspectorPanel : Border
                 (EditMode.Surface, Surface s) => SurfaceInspector.Build(s, _history, Context),
                 (EditMode.Vertex,  Vertex v)  => VertexInspector.Build(v, _history),
                 (EditMode.Thing,   Thing t)   => ThingInspector.Build(t, _history, Context),
-                (EditMode.Light,   Light l)   => LightInspector.Build(l, _history),
+                (EditMode.Light,   Light l)   => LightInspector.Build(l, _history, Context),
                 _ => MakeEmpty(),
             };
         _scroll.Content = content;

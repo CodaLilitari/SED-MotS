@@ -40,6 +40,8 @@ public static class JklParser
         var r = new JklReader(reader);
         var geo = new GeoData();
         var seenSections = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        SourceLightMetadataFormat.Metadata? sourceLights = null;
+        var lightRowsWithColor = new HashSet<Light>();
 
         while (true)
         {
@@ -47,7 +49,7 @@ public static class JklParser
             if (r.Eof) break;
             var section = r.Section;
             if (!seenSections.Add(section) && section is "HEADER" or "MATERIALS" or "GEORESOURCE" or
-                "SECTORS" or "TEMPLATES" or "THINGS" or "LIGHTS" or "COGS" or "LAYERS" or "ARCHLIGHTING")
+                "SECTORS" or "TEMPLATES" or "THINGS" or "LIGHTS" or "SED_SOURCE_LIGHTS" or "COGS" or "LAYERS" or "ARCHLIGHTING")
                 throw new FormatException($"Duplicate modeled JKL section {section}.");
             r.EnterSection();
 
@@ -59,7 +61,8 @@ public static class JklParser
                 case "SECTORS": LoadSectors(r, level, geo, doc); break;
                 case "TEMPLATES": LoadTemplates(r, level, doc); break;
                 case "THINGS": LoadThings(r, level, doc); break;
-                case "LIGHTS": LoadLights(r, level); break;
+                case "LIGHTS": LoadLights(r, level, lightRowsWithColor); break;
+                case SourceLightMetadataFormat.SectionName: sourceLights = SourceLightMetadataFormat.Read(r); break;
                 case "COGS": LoadCogs(r, level); break;
                 case "LAYERS": LoadLayers(r, level); break;
                 case "ARCHLIGHTING": LoadArchitecturalLighting(r, level); break;
@@ -67,6 +70,7 @@ public static class JklParser
             }
         }
 
+        if (sourceLights is not null) SourceLightMetadataFormat.Apply(level, sourceLights, lightRowsWithColor);
         ResolveAdjoins(geo);
         foreach (var surface in geo.SurfaceByGlobalIndex.Values) surface.Material = geo.GetMaterial(surface.MaterialIndex);
         if (doc is not null) doc.Materials.AddRange(geo.Materials);
@@ -539,7 +543,7 @@ public static class JklParser
 
     // ---- LIGHTS ----
 
-    private static void LoadLights(JklReader r, Level level)
+    private static void LoadLights(JklReader r, Level level, HashSet<Light> rowsWithColor)
     {
         if (!r.Next()) return;
         int n = LastInt(r.Current);
@@ -572,12 +576,20 @@ public static class JklParser
             light.Intensity = JklReader.ParseFloat(t.ElementAtOrDefault(6) ?? "1");
             if (t.Length >= 10)
             {
+                rowsWithColor.Add(light);
                 light.Color = new ColorF(
                     (float)JklReader.ParseFloat(t[7]),
                     (float)JklReader.ParseFloat(t[8]),
                     (float)JklReader.ParseFloat(t[9]));
             }
         }
+        // Legacy files may omit END before another section or EOF. Extra rows
+        // cannot be ignored: a later rewrite would silently discard them.
+        if (!r.Next(upper: false)) return;
+        if (r.Current.Equals("END", StringComparison.OrdinalIgnoreCase) && !r.Next(upper: false)) return;
+        var next = JklReader.Tokens(r.Current);
+        if (next.Length != 2 || !next[0].Equals("SECTION:", StringComparison.OrdinalIgnoreCase))
+            throw new FormatException("Unexpected editor LIGHTS content after its declared rows; expected END, another SECTION or end of file.");
     }
 
     // ---- COGS ----

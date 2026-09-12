@@ -74,7 +74,9 @@ public static class ConsistencyChecker
         for (int li = 0; li < level.Lights.Count; li++)
         {
             var light = level.Lights[li];
-            if (light is null || !Finite(light.Position) || !Finite(light.Color) || !double.IsFinite(light.Intensity) || !double.IsFinite(light.Range))
+            if (light is null || !Finite(light.Position) || !Finite(light.Color) || !double.IsFinite(light.Intensity) || !double.IsFinite(light.Range)
+                || light.RgbIntensity is { } rgbIntensity && !double.IsFinite(rgbIntensity)
+                || light.LegacyRgbRange is { } rgbRange && !double.IsFinite(rgbRange))
                 issues.Add(new(ItemType.Light, IssueSeverity.Error, -1, -1, "Light has null or non-finite data") { ItemIndex = li });
         }
         if (options?.RetailProfile == true && level.Kind != ProjectType.InfernalMachine && level.Things.Count > 640)

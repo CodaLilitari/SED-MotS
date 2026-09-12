@@ -89,7 +89,9 @@ public class JedImporterTests
         Assert.Equal(1, level.Sectors[0].Layer);
         Assert.Equal(.125f, level.Sectors[0].Surfaces[0].Corners[0].MonoIntensity);
         Assert.Equal(new ColorF(.2f, .3f, .4f), level.Sectors[0].Surfaces[0].Corners[0].Intensity);
-        Assert.Equal(3, level.Lights[0].Intensity); // legacy MotS RGB channel control
+        Assert.Equal(2, level.Lights[0].Intensity); // independent legacy white channel
+        Assert.Equal(3, level.Lights[0].RgbIntensity);
+        Assert.Equal(9, level.Lights[0].LegacyRgbRange); // preserved, not used by baking
         Assert.Equal(5, level.Lights[0].Range); // primary range
         Assert.Equal(4, level.Lights[1].Intensity); // current SED layout on next row
         Assert.Equal("Second floor", level.Layers[1]);
@@ -97,7 +99,7 @@ public class JedImporterTests
         Assert.Equal(0, level.Things[0].ArchLightingIndex);
         Assert.Equal("abcdef", level.Things[0].ArchLightingSourceModelHash);
         Assert.Equal(257, level.ThingCapacity);
-        Assert.Contains(result.Warnings, w => w.Contains("Independent white"));
+        Assert.DoesNotContain(result.Warnings, w => w.Contains("Independent white"));
         Assert.Contains(result.Warnings, w => w.Contains("SHA256"));
         Assert.Contains("ARCHLIGHTING", result.Coverage);
     }
@@ -125,7 +127,9 @@ public class JedImporterTests
         var level = JedImporter.ImportText(source, [BaseTemplate()]).Document.Level;
         Assert.Equal(ProjectType.JediKnight, level.Kind);
         Assert.Equal(2, level.Lights[0].Intensity);
-        Assert.Equal(ColorF.White, level.Lights[0].Color);
+        Assert.Equal(new ColorF(.2f, .4f, .6f), level.Lights[0].Color); // inactive JK source color remains editable
+        Assert.Equal(3, level.Lights[0].RgbIntensity);
+        Assert.Equal(9, level.Lights[0].LegacyRgbRange);
         Assert.Equal(new ColorF(.125f, .125f, .125f), level.Sectors[0].Surfaces[0].Corners[0].Intensity);
     }
 

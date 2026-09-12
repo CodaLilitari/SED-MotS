@@ -55,7 +55,7 @@ foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }
@@ -95,6 +95,7 @@ if ($LASTEXITCODE -ne 4) { throw 'Packaged agent did not refuse an existing outp
 if ((Get-FileHash -LiteralPath $smokeInput -Algorithm SHA256).Hash.ToLowerInvariant() -ne $hash) { throw 'Packaged agent changed the source.' }
 
 & (Join-Path $PSScriptRoot 'Test-AgentWorkflow.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-workflow')
+& (Join-Path $PSScriptRoot 'Test-AgentSourceLights.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-source-lights')
 & (Join-Path $PSScriptRoot 'Test-AgentDesign.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-design') -SkipSnapshot:(!$RunAgentSnapshots)
 if ($RunAgentSnapshots) {
     & (Join-Path $PSScriptRoot 'Test-AgentLitSnapshot.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-lit-snapshot')
@@ -105,7 +106,7 @@ $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Ve
     basedOn='https://github.com/davidagnome/SED/tree/908d53d70d6b95784a92e9f1746ab5b13afcfdf0';
     sourceArchive='SED-MotS-source.zip'; target='win-x64'; selfContained=$true;
     guiLaunched=$false; gameLaunched=$false; packagedAgentSmoke='passed'; packagedAgentWorkflow='passed';
-    packagedAgentDesign='passed'; packagedAgentSnapshots=[bool]$RunAgentSnapshots;
+    packagedAgentDesign='passed'; packagedAgentSourceLights='passed'; packagedAgentSnapshots=[bool]$RunAgentSnapshots;
     createdUtc=[DateTime]::UtcNow.ToString('o'); dotnetSha256=(Get-FileHash -LiteralPath $dotnetExe -Algorithm SHA256).Hash.ToLowerInvariant() }
 $provenance | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $package 'PROVENANCE.json') -Encoding utf8
 $manifest = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {

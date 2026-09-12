@@ -284,6 +284,8 @@ await session.Dispatch(() =>
     Check("shift+drag pans without selecting", selection.IsEmpty,
         $"{selection.Count} selected after a pan");
 
+    LightInspectorProbe.Run(Check);
+
 }, CancellationToken.None);
 
 Console.WriteLine();
