@@ -69,3 +69,11 @@ Append dated entries with stable IDs, evidence basis, work status, verification 
 **Executed package gates:** Clean-source Release build and 908/908 tests; self-contained smoke; workflow 24 calls/26 assertions; source-light workflow 34/47; design workflow 62/108; lit-snapshot workflow 34/111. Those four workflows total 154 process calls and 292 assertions, excluding the separate smoke checks. Snapshots were offscreen. Native GUI, game, retail and installer execution were not part of this run. All receipts are within the package output directory.
 
 **Next:** Spatial selection and reference-safe editing remains planned. Build shared domain operations and a representative level-design acceptance task before adding a thin MCP transport. Native writers, full ARCH authoring and deterministic engine verification retain independent milestones. The collaborator remains willing to use the existing conversation for bounded checkpoints; technical recovery depends on these files and artifacts.
+
+## DEC-20260913-01 — Public source location documentation
+
+**Updates:** Current hosting/navigation information only; the September 9 private-hosting record and `DEC-20260912-05` package evidence remain historical facts.
+
+**Change and provenance:** Document `CodaLilitari/SED-MotS` on `main`, with immediate GitHub parent `davidagnome/SED` and network source `smlu/SED`. Preserve the Andrei/Coda collaboration, original authors, GPL notices and exact source ancestry. The documentation follows imported source `2a1461aea49f56ef834282b89d67a899bc5f2838`.
+
+**Verification scope:** Only Markdown navigation and hosting descriptions changed in an isolated source clone. Source identity, diff whitespace and linked source paths were checked. No editor build, runtime test or new binary package is claimed. Coda binary releases remain pending; each active checkout's remotes must be inspected separately.

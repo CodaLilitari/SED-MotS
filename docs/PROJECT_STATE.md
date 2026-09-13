@@ -2,6 +2,13 @@
 
 Updated: 2026-09-12. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
+Hosting update, 2026-09-13: the public source is
+[CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS), on `main`,
+forked from `davidagnome/SED` in the `smlu/SED` network. See
+[GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). The implementation, local-worktree and
+package facts below remain the September 12 LIGHT-01 checkpoint. This hosting
+documentation update does not rebuild or republish its binaries.
+
 ## Objective and current milestone
 
 Build a modern Windows JKDF2/MotS editor with a shared human and agent authoring model. OpenJKDF2/OpenMotS is the primary engine target; preserve retail compatibility where supported and report independent evidence for it.

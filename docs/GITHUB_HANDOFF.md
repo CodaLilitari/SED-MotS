@@ -1,6 +1,30 @@
-# Private GitHub hosting and later fork handoff
+# GitHub hosting and source-preserving migration
 
-## Current source relationship
+## Public source location — September 13, 2026
+
+- Public repository: [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS).
+- Publishing/default branch: `main`.
+- GitHub fork parent: [davidagnome/SED](https://github.com/davidagnome/SED).
+- Original fork-network source: [smlu/SED](https://github.com/smlu/SED).
+- Imported source checkpoint: `2a1461aea49f56ef834282b89d67a899bc5f2838`.
+
+The public copy preserves the source commits, upstream ancestry, licensing and
+original author credits. Andrei's repository remains a private preservation
+copy. Binary releases for the Coda repository are pending; the build and
+packaging instructions are in the [README](../README.md).
+
+Local checkout remotes are separate from repository hosting. Inspect each
+checkout's actual remotes and branch before publishing; this document does not
+assert that an existing working checkout has been reconfigured.
+
+## Historical initial private-hosting record — September 9, 2026
+
+The sections below preserve the initial handoff. Their present-tense status,
+local branch details and proposed later procedure refer to September 9, not
+the current public location above. The recorded HTTP 403 remains an Andrei
+account event; it is not evidence about the Coda account.
+
+### Source relationship at initial hosting
 
 - Hosting repository: [andreipemberton/SED-MotS](https://github.com/andreipemberton/SED-MotS).
 - Visibility: private. GitHub repository type: standalone (`fork: false`).
@@ -13,13 +37,13 @@ On 2026-09-09, the authenticated account could read the source repository but `P
 
 The editor branch retains its original Git parents and upstream history. It is a source-derived GPLv3 fork in the ordinary code-provenance sense, while GitHub does not yet display it as a member of the upstream fork network. No squash, source reconstruction, or replacement initial commit was used. GitHub documents standalone mirrors separately from [fork relationships](https://docs.github.com/en/pull-requests/reference/forks); see also [repository duplication](https://docs.github.com/en/repositories/creating-and-managing-repositories/duplicating-a-repository).
 
-## Local remotes and ongoing work
+### Local remotes and ongoing work at that handoff
 
 The active checkout is on `codex/mots-dotnet`. `origin` points to the private repository and this branch tracks `origin/codex/mots-dotnet`. The existing `dotnet-source` and `upstream` remotes retain their read-only push configuration. Push the reviewed development branch normally after committing further work.
 
 Only the development branch and its reachable history were uploaded for this handoff. Other local worktree branches and private research directories are outside this upload. The source tree includes its existing GPL license, dependency notices, tests and metadata audit reports. Game installations, downloaded community ZIPs, recovered proprietary tools/assets, ignored build outputs and local credentials remain external.
 
-## Transfer into a real GitHub fork later
+### Later-fork procedure proposed at that handoff
 
 Once fork creation works for the account, create a real fork of `davidagnome/SED` under an available name. The private holding repository already occupies `SED-MotS`, so use a different temporary name or deliberately rename the holding repository while retaining it. Preserve this private backup until the new fork and all required commits are verified.
 
