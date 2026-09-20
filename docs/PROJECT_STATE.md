@@ -5,14 +5,16 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Active milestone: [SPATIAL-01](SPATIAL_SELECTION.md).** Shared spatial selection
-and source/geometry-bound operation targets are implemented. The integrated
-build passes 1,043 unit tests and 91 actual headless UI checks. The executable
-Relay Outpost acceptance passes 52 calls/458 checks, with both diagnostic views
-inspected. Replacement packaging and publication are pending.
-Start from `DEC-20260920-08` and subsequent entries for the current work.
+**Latest completed milestone: [SPATIAL-01](SPATIAL_SELECTION.md), packaged and
+source published.** Implementation/package source is
+`1fe296a65f331161e13a4dac20f3306d322d3b53`. The integrated build passes 1,043
+unit tests and 91 actual headless UI checks. The self-contained Relay Outpost
+acceptance passes 52 calls/458 checks; all five packaged workflows total 213
+calls/771 checks. Both diagnostic views were inspected and match the packaged
+images exactly. See `DEC-20260920-08` through `DEC-20260920-11`; this completion
+documentation follows the tested source in a separate commit.
 
-**Current gate (2026-09-20): GEO-01 complete, packaged and source published.**
+**Previous milestone (2026-09-20): GEO-01 complete, packaged and source published.**
 Implementation/package commit `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`
 passes 981 unit tests, 91 actual headless UI checks and all four self-contained
 agent workflows (161 calls/313 checks). It fixes independently reproduced
@@ -27,7 +29,7 @@ forked from `davidagnome/SED` in the `smlu/SED` network. See
 [GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). On 2026-09-20, the authenticated CLI
 account and ADMIN permission were verified as CodaLilitari, with main the only
 remote branch at the account-handoff base `65e94af` before this milestone.
-The tested implementation was pushed and remote main verified at `8642887`;
+The tested SPATIAL-01 implementation was pushed and remote main verified at `1fe296a`;
 this checkpoint update follows separately. No GitHub binary release was created.
 
 ## Objective and current milestone
@@ -50,13 +52,21 @@ calls/129 assertions and both diagnostic images match the inspected versions.
 Handoff: `build/packages/SED-MotS-0.4.0-mots.8-dev-8642887/`.
 These results remain separate from LIGHT-01 and the superseded local candidate.
 
+Completed [SPATIAL-01](SPATIAL_SELECTION.md): select convex rooms by world point
+and faces by outward direction, then use exact source/geometry-bound tokens in
+supported shared editing commands. The eight-room Relay Outpost exercises seven
+extrusions, two additional adjoins, metadata revisions and deliberate refusal
+cases. Windows package `0.4.0-mots.9-dev` at `1fe296a` passed all five workflows,
+smoke and verification of 684 distribution files plus matching source/history.
+
 ## Current source and completed ownership
 
-- Current editor branch: `main`; final GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`. This completion documentation is a later commit.
+- Current editor branch: `main`; SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`. This completion documentation is a later commit.
+- Previous GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
-- SPATIAL-01 ownership: `sed_spatial_audit` owns Core selectors/digests and original tests; `sed_workflow_audit` owns selection protocol/Plan/schema and tests; `sed_export_review` owns the executable Relay Outpost workflow. Core and format implementations are frozen after integrated tests; executable acceptance is pending.
+- SPATIAL-01 completed ownership: `sed_spatial_audit` owns Core selectors/digests and original tests; `sed_workflow_audit` owns selection protocol/Plan/schema and tests; `sed_export_review` owns the executable Relay Outpost workflow. Implementations are frozen; integrated, executable and clean package gates passed.
 - Root owns process-level workflow, review, documentation, packaging and publication. No worker commits or pushes independently.
 
 ## Agreed contract
@@ -79,14 +89,13 @@ These results remain separate from LIGHT-01 and the superseded local candidate.
 
 ## Subsequent milestones
 
-GEO-01 is the bounded prerequisite to the spatial-authoring milestone below.
-Fresh regression tests reproduced its failures before production fixes. Source,
-executable and replacement-package checks pass. Spatial selectors remain planned rather
-than implied by the geometric preservation repair.
+GEO-01 preservation and the bounded SPATIAL-01 selection/authoring workflow are
+complete. Tokens are source-bound consistency checks, not persistent editor IDs;
+general remapping, native output and broader game behavior remain separate.
 
 | Milestone | Acceptance target | State |
 |---|---|---|
-| [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Implementation in progress; acceptance not yet run |
+| [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Complete within the documented convex-geometry/token scope |
 | Full architectural lighting authoring | Separate bind/rebind/rebake; dependencies and stale-bake status; undo samples and provenance | Planned |
 | Controlled engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Planned |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
@@ -100,7 +109,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.8-dev-8642887/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `8642887`. See `DEC-20260920-07` for hashes and gate counts. The earlier `9a1f2ce` candidate is superseded. GEO-01 executable receipts and negative controls remain under `build/geometry-preservation-20260920/`. The prior `.7` handoff is retained separately.
+The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.9-dev-1fe296a/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `1fe296a`. See `DEC-20260920-11` for hashes and gate counts. Its `agent-spatial/relay-final.jkl` is the original eight-room fixture. Prior `.8`/`.7` packages and the superseded `9a1f2ce` candidate remain separate. Spatial source/executable evidence is under `build/spatial01-20260920/`; earlier GEO-01 receipts remain under `build/geometry-preservation-20260920/`.
 
 ## Recovery discipline
 

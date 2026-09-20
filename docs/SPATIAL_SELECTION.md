@@ -1,8 +1,10 @@
 # Spatial selection and authoring (SPATIAL-01)
 
-Status: source and executable acceptance passed; clean Windows packaging is
-pending. This milestone follows [GEO-01](GEOMETRY_REFERENCE_PRESERVATION.md).
-The earlier package's test counts do not establish this milestone's acceptance.
+Status: complete within the documented scope, packaged and source published.
+Implementation/package commit: `1fe296a65f331161e13a4dac20f3306d322d3b53`.
+This milestone follows [GEO-01](GEOMETRY_REFERENCE_PRESERVATION.md); its results
+are separate from earlier package counts. Completion documentation is a later
+commit than the packaged source.
 
 ## Purpose and scope
 
@@ -142,3 +144,29 @@ omitted its required HEADER section; the error occurred before the intended
 companion-staleness assertion. Supplying that header let the unchanged assertion
 execute and pass. The old `.8` agent's absence of `schema select` is recorded as
 missing new capability, not a regression in its earlier contract.
+
+## Verified Windows handoff
+
+`build/packages/SED-MotS-0.4.0-mots.9-dev-1fe296a/` contains the self-contained
+Windows editor/agent, corresponding source ZIP and complete Git history bundle.
+The clean package build independently passed all 1,043 units at
+`build/package-worktrees/spatial01-1fe296a/build/dotnet/Release-eda6c2f963264bef8cf1316b65234cd3/`.
+
+| Packaged workflow | Agent calls | Checks |
+|---|---:|---:|
+| General editing | 24 | 26 |
+| Source lights | 34 | 47 |
+| Connected design | 69 | 129 |
+| Spatial Relay Outpost | 52 | 458 |
+| Lit snapshots | 34 | 111 |
+| Total | 213 | 771 |
+
+Separate smoke checks passed. `verification.json` matched all 684 distribution
+files, the exact ZIP member set, source archive and history commit. The packaged
+Relay Outpost JKL and both PNGs hash-identically to the accepted/inspected
+framework-dependent artifacts. No installer or game was run and no native GUI
+usability session or GitHub binary release is claimed.
+
+Windows ZIP SHA256:
+`7c371a9a8950d7f297cf85d8783aa2d21eca1cfddd4949900bfefa2ff06a82f3`.
+Full hashes and publication evidence are recorded in `DEC-20260920-11`.
