@@ -5,13 +5,14 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Current gate (2026-09-20): source acceptance passed; replacement package pending.**
-The reviewed follow-up passes 981 unit tests and 91 actual headless UI checks.
-It fixes independently reproduced numeric colormap, textured UV, residual-row,
-source-baseline and writer-side-effect defects, plus the resulting inspector
-ambiguity exception. The earlier `9a1f2ce` package remains a superseded local
-candidate; its checks did pass but do not cover these fixes. See
-`DEC-20260920-04` through `DEC-20260920-06`.
+**Current gate (2026-09-20): GEO-01 complete, packaged and source published.**
+Implementation/package commit `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`
+passes 981 unit tests, 91 actual headless UI checks and all four self-contained
+agent workflows (161 calls/313 checks). It fixes independently reproduced
+numeric colormap, textured UV, residual-row, source-baseline and writer-side-effect
+defects, plus the resulting inspector ambiguity exception. The earlier `9a1f2ce`
+package remains a superseded local candidate. See `DEC-20260920-04` through
+`DEC-20260920-07`; package identity is distinct from this completion-only update.
 
 Hosting: the public source is
 [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS), on `main`,
@@ -19,6 +20,8 @@ forked from `davidagnome/SED` in the `smlu/SED` network. See
 [GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). On 2026-09-20, the authenticated CLI
 account and ADMIN permission were verified as CodaLilitari, with main the only
 remote branch at the account-handoff base `65e94af` before this milestone.
+The tested implementation was pushed and remote main verified at `8642887`;
+this checkpoint update follows separately. No GitHub binary release was created.
 
 ## Objective and current milestone
 
@@ -28,20 +31,21 @@ Completed milestone LIGHT-01: preserve independent native MotS source-light inte
 
 Completed acceptance record: [LIGHT-01](LIGHT-01.md). Implementation passed 908 unit tests and 71 headless UI checks. Self-contained Windows package `0.4.0-mots.7-dev` passed all four agent workflows (154 calls, 292 assertions) and 681-file distribution verification. Operative decisions are `DEC-20260912-01` through `DEC-20260912-05`. The acceptance record is authoritative rather than a competing copy of criteria inside the app goal.
 
-Current bounded milestone: [GEO-01 geometry export preservation](GEOMETRY_REFERENCE_PRESERVATION.md).
+Completed bounded milestone: [GEO-01 geometry export preservation](GEOMETRY_REFERENCE_PRESERVATION.md).
 The writer now preserves supported imported geometry slots or refuses export,
 and geometry authoring accepts validated independent source-light metadata.
 The full solution builds with zero warnings/errors and 981 unit tests pass.
 The headless UI probe passes 91 checks, including 20 sector-colormap checks.
-The earlier candidate passed the enhanced executable design workflow (69 calls/
-129 assertions, two inspected diagnostic images) and all four packaged workflows
-(161 calls/313 assertions), smoke and 682-file distribution/source/history
-verification. The replacement self-contained package must rerun those gates
-against the follow-up source. These results remain separate from LIGHT-01.
+The replacement self-contained Windows package `0.4.0-mots.8-dev` at `8642887`
+passes all four workflows (161 calls/313 assertions), separate smoke and 682-file
+distribution/source/history verification. Its design workflow contributes 69
+calls/129 assertions and both diagnostic images match the inspected versions.
+Handoff: `build/packages/SED-MotS-0.4.0-mots.8-dev-8642887/`.
+These results remain separate from LIGHT-01 and the superseded local candidate.
 
 ## Current source and completed ownership
 
-- Current editor branch: `main`; reviewed GEO-01 follow-up is based on candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`. Its final package source identity and publication will be recorded separately after packaging.
+- Current editor branch: `main`; final GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`. This completion documentation is a later commit.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
@@ -70,7 +74,7 @@ against the follow-up source. These results remain separate from LIGHT-01.
 
 GEO-01 is the bounded prerequisite to the spatial-authoring milestone below.
 Fresh regression tests reproduced its failures before production fixes. Source,
-executable checks pass; replacement package verification is pending. Spatial selectors remain planned rather
+executable and replacement-package checks pass. Spatial selectors remain planned rather
 than implied by the geometric preservation repair.
 
 | Milestone | Acceptance target | State |

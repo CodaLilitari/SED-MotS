@@ -91,31 +91,37 @@ parsed source identities continue through the model-generated export path.
 
 ## Acceptance evidence
 
-Current gate: **source acceptance passed; replacement package pending**.
+Current gate: **complete, packaged and source published** at implementation
+commit `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`.
 The candidate `9a1f2ce` passed its original checks. A later uploaded-source
 review prompted 13 new cases, with 12 intended failures and one passing control.
 The resulting fixes and additional command/import controls now pass the full
 981-case suite. The colormap inspector exception was independently reproduced
 before fixing it; all 91 actual headless controls checks now pass. See
-`DEC-20260920-04` through `DEC-20260920-06` in the work log.
+`DEC-20260920-04` through `DEC-20260920-07` in the work log. The replacement
+self-contained package passed all four workflows and distribution verification;
+the earlier local candidate remains preserved as historical evidence.
 
 | Evidence | Result |
 |---|---|
 | Full Release solution build | Passed, zero warnings/errors |
 | Full unit suite | 981 passed, zero failed/skipped; includes 26 export-reference, 18 agent-geometry, 12 import-edge, seven transaction and ten colormap identity cases |
 | Actual Avalonia headless controls | 91 checks passed, including 20 sector-colormap checks; no native GUI window opened |
-| Candidate framework-dependent agent design workflow | 69 process calls, 129 assertions passed, including source-light state, exact room bounds/counts/neighbors and negative controls; replacement package must rerun it |
+| Self-contained agent design workflow | 69 process calls, 129 assertions passed, including source-light state, exact room bounds/counts/neighbors and negative controls |
 | Diagnostic images | Both interior PNGs inspected: distinct views show continuous room geometry and open connections; flat diagnostic colors, no material/gameplay claim |
-| Superseded local Windows candidate | `0.4.0-mots.8-dev` at `9a1f2ce`; all four workflows passed (161 calls/313 assertions), separate smoke passed, 682 distribution members verified; not a final handoff |
+| Final local Windows handoff | `0.4.0-mots.8-dev` at `8642887`; all four workflows passed (161 calls/313 assertions), separate smoke passed, 682 distribution members verified against the exact ZIP set and matching source/history; no GitHub binary release created |
 
 Final source build/TRX: `build/dotnet/Release-1fd7de3987aa43f5bb445566ac885ce5/`.
 The UI log is `build/geometry-ui-colormap-final.log`. Initial process requests, responses, hashes
 and images are in `build/geometry-preservation-20260920/design-final/`.
-The clean package and receipts are in
-`build/packages/SED-MotS-0.4.0-mots.8-dev-9a1f2ce/`. Its design image hashes match
+The final clean package and receipts are in
+`build/packages/SED-MotS-0.4.0-mots.8-dev-8642887/`. Its design image hashes match
 the inspected framework-dependent images exactly. `verification.json` binds
 the Windows binary, source ZIP and complete Git bundle to the same source
-commit. Packaging does not launch the native GUI or a game.
+commit. Its separate clean-worktree unit receipt is
+`build/package-worktrees/geo01-8642887/build/dotnet/Release-95396ba9b0ef412bae87611c16014ee8/`.
+Packaging does not launch the native GUI or a game. The superseded `9a1f2ce`
+candidate and failing baselines remain available locally.
 Tests include valid closed rooms with reversed global surface blocks, semantic
 COG witnesses resolved from emitted tables, append/reopen/append-again,
 overlap-plus-orphan ranges, adjoin flags/mirrors, stale retained source, invalid
