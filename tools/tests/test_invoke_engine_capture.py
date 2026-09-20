@@ -291,6 +291,79 @@ class CaptureRunnerTests(unittest.TestCase):
         self.assertEqual(result["status"], "failed")
         self.assertIn("requested sector", result["error"])
 
+    @staticmethod
+    def world_state():
+        return {"engineWorldStateAvailable": True, "isMultiplayer": False, "motsCompat": True,
+                "world": "archcheck.jkl", "localPlayerModel": "original-player.3do",
+                "localPlayerSoundClass": "original.snd", "hostRequestedModel": None,
+                "localPlayerHierarchyNodes": 1}
+
+    def receipt_fixture(self):
+        result = self.run_request()
+        self.assertEqual(result["status"], "completed")
+        return copy.deepcopy(result["engineReportedReceipt"])
+
+    def validate_receipt(self, value):
+        (self.output / "capture.ppm.json").write_text(json.dumps(value), encoding="utf-8")
+        return runner.validate_capture(self.output, self.request)
+
+    def test_legacy_engine_receipt_remains_accepted_without_world_observation(self):
+        value = self.receipt_fixture()
+        self.assertNotIn("engineWorldStateAvailable", value)
+        self.assertEqual(self.validate_receipt(value)["engineReportedReceipt"], value)
+
+    def test_complete_current_engine_world_receipt_is_preserved(self):
+        def observed(*args, **kwargs):
+            result = self.synthetic_capture(*args, **kwargs)
+            path = self.output / "capture.ppm.json"
+            value = json.loads(path.read_text())
+            value.update(self.world_state())
+            path.write_text(json.dumps(value), encoding="utf-8")
+            return result
+        result = self.run_request(executor=observed)
+        self.assertEqual(result["status"], "completed", result.get("error"))
+        self.assertTrue(result["engineReportedReceipt"]["engineWorldStateAvailable"])
+        self.assertEqual(result["engineReportedReceipt"]["localPlayerModel"], "original-player.3do")
+        self.assertFalse(result["runtimeResourceResolutionObserved"])
+        self.assertFalse(result["effectiveCameraObserved"])
+        value = dict(result["engineReportedReceipt"], world="ARCHCHECK.JKL", localPlayerModel=None,
+                     localPlayerSoundClass=None, localPlayerHierarchyNodes=0)
+        self.assertTrue(self.validate_receipt(value)["validPpm"])
+
+    def test_partial_world_receipt_extension_refused_for_each_missing_field(self):
+        base = self.receipt_fixture()
+        complete = dict(base, **self.world_state())
+        for key in self.world_state():
+            with self.subTest(missing=key):
+                value = dict(complete)
+                del value[key]
+                with self.assertRaisesRegex(runner.CaptureError, "missing required fields"):
+                    self.validate_receipt(value)
+        with self.assertRaisesRegex(runner.CaptureError, "missing required fields"):
+            self.validate_receipt(dict(base, engineWorldStateAvailable=False))
+
+    def test_malformed_or_mismatched_world_state_refused(self):
+        complete = dict(self.receipt_fixture(), **self.world_state())
+        changes = [("engineWorldStateAvailable", False), ("engineWorldStateAvailable", 1),
+                   ("isMultiplayer", True), ("isMultiplayer", 0), ("motsCompat", False), ("motsCompat", 1),
+                   ("world", "another.jkl"), ("world", None), ("localPlayerModel", 42),
+                   ("localPlayerModel", ""), ("localPlayerModel", "a"*33),
+                   ("localPlayerSoundClass", "line\nbreak.snd"), ("localPlayerSoundClass", []),
+                   ("hostRequestedModel", "host.3do"), ("localPlayerHierarchyNodes", True),
+                   ("localPlayerHierarchyNodes", 1.0), ("localPlayerHierarchyNodes", -1),
+                   ("localPlayerHierarchyNodes", 4097), ("localPlayerModel", None)]
+        for key, value in changes:
+            with self.subTest(field=key, value=value):
+                with self.assertRaises(runner.CaptureError):
+                    self.validate_receipt(dict(complete, **{key: value}))
+
+    def test_unknown_engine_receipt_fields_refused_with_or_without_extension(self):
+        base = self.receipt_fixture()
+        for value in (base, dict(base, **self.world_state())):
+            with self.subTest(extended="world" in value):
+                with self.assertRaisesRegex(runner.CaptureError, "Unsupported engine receipt fields"):
+                    self.validate_receipt(dict(value, unexpectedObservation=True))
+
     def supervise_synthetic(self, program, timeout=2000, observer=lambda _: (0, 0, 0)):
         self.output.mkdir()
         return runner.supervise([sys.executable, "-c", program], self.output, os.environ.copy(), timeout, 1024, {},

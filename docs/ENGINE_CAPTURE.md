@@ -78,6 +78,15 @@ reported request fields and unchanged immutable inputs. Accepted output roots
 retain failure receipts as well; an already existing output directory is refused
 without modification.
 
+The integrated engine additionally reports a complete bounded world/player
+state extension: loaded map, MotS compatibility, single-player state, player
+model/soundclass names, optional requested model and hierarchy-node count.
+When present, the checker requires all these known fields, checks the loaded
+map and mode against this request and validates the reported value types and
+bounds. Legacy receipts without the extension remain accepted; partial or
+unknown extensions are refused. These are engine-reported state facts, not
+verification of the loaded resource bytes, effective camera or ARCH arrays.
+
 ## Controls and interpretation
 
 The fixture uses a neutral asymmetric panel against a colored world. Its
@@ -125,6 +134,15 @@ of the independent panel interior and the expected green world across at least
 98% of its independent outside mask. The original 2x2 materials exposed an
 engine packed-row versus SDL surface-pitch loading defect. The earlier passing
 matrix remains superseded evidence, not a completed ENGINE-01 gate.
+
+Version reconciliation then established that the selected `b1be98bd` capture
+executable predates an existing fix: published engine main already contains
+`685dd18e` and the integrated capture build at `197c2625`. Main `74e4657c` has
+identical production source to that integrated build. The isolated replacement
+implementation made during this investigation is retained as local research;
+it is not the engine correction published by this editor milestone. Final
+acceptance uses the recovered integrated executable with freshly checked hashes
+and source payload, while retaining the unchanged original 2x2 scenario.
 
 Independent local review reproduced acceptance-tool errors: opposite channel
 errors could cancel in a mean, and an unreadable final input manifest could

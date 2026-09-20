@@ -455,10 +455,33 @@ def validate_capture(output, request):
                 "width": c["width"], "height": c["height"], "renderedFrame": request["frame"],
                 "sector": c["sector"], "position": c["position"], "pitchYawRoll": c["pitchYawRoll"],
                 "horizontalFov": c["horizontalFov"], "deterministicSimulation": False, "resourceHashesVerifiedByEngine": False}
-    exact_keys(receipt, set(expected), set(), "engine receipt")
+    # Current engines append this complete observation to schema 1. Keep legacy
+    # receipts valid, but never accept a partial extension or arbitrary extras.
+    world_fields = {"engineWorldStateAvailable", "isMultiplayer", "motsCompat", "world",
+                    "localPlayerModel", "localPlayerSoundClass", "hostRequestedModel", "localPlayerHierarchyNodes"}
+    require(isinstance(receipt, dict), "engine receipt must be an object.")
+    has_world_state = bool(set(receipt) & world_fields)
+    exact_keys(receipt, set(expected) | (world_fields if has_world_state else set()), set(), "engine receipt")
     for key, value in expected.items():
         require(receipt[key] == value and (not isinstance(value, (bool, int)) or type(receipt[key]) is type(value)),
                 f"Engine receipt does not match requested {key}.")
+    if has_world_state:
+        require(receipt["engineWorldStateAvailable"] is True, "Engine world-state extension must be available.")
+        require(receipt["isMultiplayer"] is False and receipt["motsCompat"] is True,
+                "Engine world-state extension does not match requested single-player MotS mode.")
+        for key in ("world", "localPlayerModel", "localPlayerSoundClass", "hostRequestedModel"):
+            name = receipt[key]
+            require((name is None and key != "world") or
+                    (isinstance(name, str) and 1 <= len(name) <= 32 and all(32 <= ord(c) < 127 for c in name)),
+                    f"Engine world-state {key} must be a bounded printable name or an allowed null.")
+        require(receipt["world"].casefold() == request["map"].casefold(),
+                "Engine world-state world does not match requested map.")
+        require(receipt["hostRequestedModel"] is None,
+                "Engine world-state hostRequestedModel must be null for single-player capture.")
+        # Receipt acceptance budget, not a claim about the engine's model limit.
+        nodes = integer(receipt["localPlayerHierarchyNodes"], 0, 4096, "Engine localPlayerHierarchyNodes")
+        require(receipt["localPlayerModel"] is not None or nodes == 0,
+                "Engine world-state absent player model cannot have hierarchy nodes.")
     return {"engineReportedReceipt": receipt, "imageSha256": sha256(image), "engineReceiptSha256": sha256(path), "validPpm": True}
 
 

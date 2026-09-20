@@ -5,22 +5,31 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Active milestone: ENGINE-01, not yet complete.** From `bcba14a`, original
-fixture generation, bounded hidden capture, resource-name collision checks,
-final staged hashes and independent image oracles are under implementation.
+**Active milestone: ENGINE-01, final validation before publication and pause.**
+Original fixture generation, bounded hidden capture, resource-name collision
+checks, final staged hashes and independent image oracles are implemented.
 Lilitari (ChatGPT 5.6 Pro) and Grok Build (`grok-4.6-build`, requested xhigh)
-returned review input; findings are being independently verified. The first
-actual captures exposed runtime scaffold prerequisites. Fixture-05 now launches
-and matrix-01 produced 21 captures passing the initial color-differential checks,
-but visual inspection found black texture rows. The stronger geometry-defined
-coverage check rejects that matrix (62.32% panel coverage). Source and exact UV
-seam projection identify packed MAT file rows being read as padded SDL rows.
-A bounded engine correction is under implementation in a separate worktree;
-the original 2x2 fixture is retained for before/after proof. See
-`docs/ENGINE_CAPTURE.md` and local `build/engine01-20260920/`.
-Do not infer completed runtime, retail, deterministic or package evidence from
-the tools' presence or the superseded matrix receipt. Existing ARCH-01 completion
-below remains the latest release.
+provided review input; adopted findings were independently checked. Matrix-01
+is superseded: visual inspection exposed incomplete material rows despite its
+initial passing differential checks. The stronger independent coverage check
+rejects it (62.32% panel coverage).
+
+Version reconciliation found current engine main `74e4657c` already contains
+the packed-row fix and has identical production source/build inputs to the
+integrated `197c2625` capture build. That build's 2,603 committed source payload
+files and runtime binaries were freshly verified. Current execution uses its
+`4f9c4f7a...` executable with the original 2x2 fixture; it is an existing build
+with a copied dependency cache, not a fresh dependency rebuild. A local duplicate
+engine experiment is retained as research and will not be published here.
+The capture checker now accepts and validates the integrated engine's bounded
+world/player receipt extension, while preserving explicit limits on resource and
+camera observation. See [ENGINE_CAPTURE.md](ENGINE_CAPTURE.md), DEC-17 onward
+in the work log and local `build/engine01-20260920/`.
+
+User instruction: publish the latest tested SED revision, then pause. Do not
+start another milestone or publish the separate engine research. Final package,
+runtime and publication results follow only after execution; ARCH-01 remains
+the latest completed gate until then.
 
 **Latest completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
 source published.** Implementation/package source is
