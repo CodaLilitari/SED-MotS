@@ -24,7 +24,7 @@ try
                 if (commands.Count == 0) throw new AgentRequestException("Unknown command. Use help to list commands.");
             }
             result = new { schemaVersion = 1, commands = commands.Select(c => new { c.Name, c.Usage, c.Description, c.WritesFiles }),
-                next = "Use schema query for bounded readback, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
+                next = "Use schema query for bounded readback, schema select for spatial targets, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
             break;
         case "--version" when args.Length == 1:
         case "version" when args.Length == 1:
@@ -34,7 +34,8 @@ try
             break;
         case "schema" when args.Length == 2:
             result = args[1] switch {
-                "query" => AgentQueries.Schema(), "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
+                "query" => AgentQueries.Schema(), "select" => AgentSelections.Schema(),
+                "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
                 "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
                 "snapshot" => AgentSnapshotRequest.Schema(),
                 "resources" => AgentWorkspace.ResourceRequestSchema(),
@@ -45,9 +46,10 @@ try
                 patch = new { schemaVersion = 1, inputSha256 = "SHA256 returned by inspect", operations = AgentWorkspace.OperationFields },
                 patchJsonSchema = AgentSchema.Patch(),
                 queryJsonSchema = AgentQueries.Schema(),
+                selectJsonSchema = AgentSelections.Schema(),
                 commandSchemas = AgentCommandCatalog.Commands(),
                 capabilities = Capabilities(),
-                selectors = "Zero-based indices bound to the exact sourceRevision (inputSha256 for JKL).",
+                selectors = "Zero-based indices remain supported. select returns unique spatial target tokens bound to sourceRevision and containing-sector geometry; supported operations accept target/otherTarget instead of numeric geometry addresses.",
                 vectors = "position, orientation, center, rgb are arrays of three finite numbers; orientation is pitch/yaw/roll in degrees.",
                 limits = new { operations = AgentWorkspace.MaxOperations, requestBytes = AgentWorkspace.MaxRequestBytes, levelBytes = AgentWorkspace.MaxLevelBytes },
                 output = "plan is read-only; apply creates a new output and never overwrites an existing file.",
@@ -58,6 +60,9 @@ try
             break;
         case "query" when args.Length == 3:
             result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
+            break;
+        case "select" when args.Length == 3:
+            result = AgentWorkspace.Select(args[1], ReadRequest(args[2]));
             break;
         case "snapshot" when args.Length == 4:
             result = Sed.Agent.AgentSnapshotRunner.Run(args[1], ReadRequest(args[2]), args[3]);
@@ -109,7 +114,7 @@ catch (Exception error) when (error is FormatException or InvalidOperationExcept
 catch (AgentValidationException error)
 { return Failure(3, "validation_failed", error.Message, error.Issues); }
 catch (AgentConflictException error)
-{ return Failure(4, "conflict", error.Message); }
+{ return Failure(4, "conflict", error.Message, details: new { error.OperationIndex, error.Operation, error.JsonPointer }); }
 catch (Exception error) when (error is IOException or UnauthorizedAccessException)
 { return Failure(5, "io_error", error.Message); }
 
@@ -120,7 +125,7 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
-    "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
+    "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
     "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {

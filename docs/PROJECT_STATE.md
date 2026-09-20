@@ -5,6 +5,13 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
+**Active milestone: [SPATIAL-01](SPATIAL_SELECTION.md).** Shared spatial selection
+and source/geometry-bound operation targets are implemented. The integrated
+build passes 1,043 unit tests and 91 actual headless UI checks. The executable
+Relay Outpost acceptance passes 52 calls/458 checks, with both diagnostic views
+inspected. Replacement packaging and publication are pending.
+Start from `DEC-20260920-08` and subsequent entries for the current work.
+
 **Current gate (2026-09-20): GEO-01 complete, packaged and source published.**
 Implementation/package commit `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`
 passes 981 unit tests, 91 actual headless UI checks and all four self-contained
@@ -49,7 +56,7 @@ These results remain separate from LIGHT-01 and the superseded local candidate.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
-- GEO-01 JKL mapping/export: `sed_spatial_audit`; geometry policy/agent tests: `sed_workflow_audit`; independent review: `sed_export_review`. Assigned implementations are frozen after integrated tests.
+- SPATIAL-01 ownership: `sed_spatial_audit` owns Core selectors/digests and original tests; `sed_workflow_audit` owns selection protocol/Plan/schema and tests; `sed_export_review` owns the executable Relay Outpost workflow. Core and format implementations are frozen after integrated tests; executable acceptance is pending.
 - Root owns process-level workflow, review, documentation, packaging and publication. No worker commits or pushes independently.
 
 ## Agreed contract
@@ -79,7 +86,7 @@ than implied by the geometric preservation repair.
 
 | Milestone | Acceptance target | State |
 |---|---|---|
-| Spatial and reference-safe editing | Build and revise a six-to-ten-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Planned |
+| [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Implementation in progress; acceptance not yet run |
 | Full architectural lighting authoring | Separate bind/rebind/rebake; dependencies and stale-bake status; undo samples and provenance | Planned |
 | Controlled engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Planned |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
@@ -93,7 +100,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.8-dev-9a1f2ce/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `9a1f2ce`. See `DEC-20260920-03` for hashes and gate counts. GEO-01 earlier executable receipts and negative controls remain under `build/geometry-preservation-20260920/`. The prior `.7` handoff is retained separately.
+The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.8-dev-8642887/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `8642887`. See `DEC-20260920-07` for hashes and gate counts. The earlier `9a1f2ce` candidate is superseded. GEO-01 executable receipts and negative controls remain under `build/geometry-preservation-20260920/`. The prior `.7` handoff is retained separately.
 
 ## Recovery discipline
 

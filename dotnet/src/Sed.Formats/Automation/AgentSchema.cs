@@ -44,6 +44,20 @@ public static class AgentSchema
                 };
             variants.Add(new { type = "object", description = OperationDescription(operation), additionalProperties = false,
                 required = new[] { "op" }.Concat(fields).ToArray(), minProperties = operation == "setLight" ? 3 : fields.Length + 1, properties });
+            if (AgentSelections.TargetKind(operation) is string targetKind)
+            {
+                var selectedProperties = new Dictionary<string, object>(properties);
+                string[] replaced = ["sector", "surface", "otherSector", "otherSurface"];
+                foreach (string field in replaced) selectedProperties.Remove(field);
+                selectedProperties["target"] = AgentSelections.TokenSchema(targetKind);
+                if (operation == "adjoinSurfaces") selectedProperties["otherTarget"] = AgentSelections.TokenSchema("surface");
+                string[] selectedRequired = new[] { "op" }.Concat(fields.Where(f => !replaced.Contains(f)))
+                    .Concat(operation == "adjoinSurfaces" ? ["target", "otherTarget"] : new[] { "target" }).ToArray();
+                variants.Add(new { type = "object", description = OperationDescription(operation)
+                    + " Use the unique select result's token instead of integer addressing. Tokens bind the source revision and containing sector geometry, and are checked immediately before this operation.",
+                    additionalProperties = false, required = selectedRequired, minProperties = selectedRequired.Length,
+                    properties = selectedProperties });
+            }
         }
         return new Dictionary<string, object>
         {

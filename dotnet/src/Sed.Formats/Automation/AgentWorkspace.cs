@@ -20,7 +20,14 @@ public sealed class AgentRequestException(string message, int? operationIndex = 
     public string? Operation { get; } = operation;
     public string? JsonPointer { get; } = jsonPointer;
 }
-public sealed class AgentConflictException(string message) : Exception(message);
+public sealed class AgentConflictException(string message, int? operationIndex = null,
+    string? operation = null, string? jsonPointer = null, Exception? innerException = null)
+    : Exception(message, innerException)
+{
+    public int? OperationIndex { get; } = operationIndex;
+    public string? Operation { get; } = operation;
+    public string? JsonPointer { get; } = jsonPointer;
+}
 public sealed class AgentValidationException(string message, object issues) : Exception(message)
 {
     public object Issues { get; } = issues;
@@ -289,7 +296,7 @@ public static partial class AgentWorkspace
 
         var before = Counts(doc.Level);
         var history = new EditHistory();
-        var changes = new List<(JsonElement operation, int? createdIndex, string command, object? before, object? after)>();
+        var changes = new List<(JsonElement operation, int? createdIndex, string command, object? before, object? after, object? selections)>();
         int operationIndex = 0;
         foreach (var operation in operations.EnumerateArray())
         {
@@ -299,13 +306,21 @@ public static partial class AgentWorkspace
                 && operationName.ValueKind == JsonValueKind.String ? operationName.GetString() : null;
             try
             {
-                var command = PrepareOperation(doc, operation);
+                // Bind once at this operation's turn. Receipts must retain these
+                // concrete addresses, never resolve a spatial predicate again.
+                var (boundOperation, selections) = AgentSelections.BindOperation(snapshot, operation);
+                var command = PrepareOperation(doc, boundOperation);
                 int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
                     "registerMaterial" => doc.Materials.Count, "registerColormap" => doc.Level.ColorMaps.Count,
                     "addLight" => doc.Level.Lights.Count, _ => null };
-                object? oldValue = created is null || name == "extrudeSurface" ? OperationEffect(doc, operation, null) : null;
+                object? oldValue = created is null || name == "extrudeSurface" ? OperationEffect(doc, boundOperation, null) : null;
                 history.Do(command);
-                changes.Add((operation, created, command.Name, oldValue, OperationEffect(doc, operation, created)));
+                changes.Add((boundOperation, created, command.Name, oldValue, OperationEffect(doc, boundOperation, created), selections));
+            }
+            catch (AgentConflictException error)
+            {
+                throw new AgentConflictException($"Operation {operationIndex} ({name}): {error.Message}",
+                    operationIndex, name, $"/operations/{operationIndex}" + error.JsonPointer, error);
             }
             catch (Exception error) when (error is AgentRequestException or ArgumentException or InvalidOperationException or FormatException or OverflowException or KeyNotFoundException)
             {
@@ -337,7 +352,8 @@ public static partial class AgentWorkspace
                     new[] { new { operationIndex = index, operation = String(change.operation, "op"),
                         jsonPointer = $"/operations/{index}", expected = finalExpected, actual = readBack } });
             effects.Add(new { index, operation = String(change.operation, "op"), command = change.command,
-                before = change.before, afterOperation = change.after, serializedFinal = readBack });
+                before = change.before, afterOperation = change.after, serializedFinal = readBack,
+                selectionBindings = change.selections });
         }
         var outputHash = Hash(new UTF8Encoding(false).GetBytes(text));
         return new PreparedAgentEdit(Path.GetFullPath(path), hash, text, new

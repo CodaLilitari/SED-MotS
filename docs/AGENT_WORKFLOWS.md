@@ -48,6 +48,48 @@ if ($actualHash -ne $plan.outputSha256 -or $after.items[0].header.gravity -ne 6.
 
 An existing output, changed source, changed dependency, or mismatched reviewed output hash is a conflict. Inspect again and prepare a new review when the source changes. Never silently substitute a fresh plan after reviewing an earlier one. Without the final expected-output hash, `apply` still validates and prevents overwrites, but does not bind the write to a previous plan's serialized bytes.
 
+## Select a room face and extrude it
+
+The following extends the PowerShell helper above. Supply the current input and
+a fresh output path; the example chooses the east wall of the room containing
+the origin. No sector or surface index is calculated by the caller.
+
+```powershell
+$selectionRequest = @{
+    schemaVersion = 1; kind = 'surface'
+    sectorPoint = @(0, 0, 0); outward = @(1, 0, 0)
+} | ConvertTo-Json -Depth 8 -Compress
+$selected = Invoke-SedJson @('select', $inputLevel, '-') $selectionRequest
+if ($selected.status -ne 'unique' -or $null -eq $selected.selection) {
+    throw "Select a more precise target: $($selected.status) at $($selected.stage)."
+}
+$patch = @{
+    schemaVersion = 1
+    inputSha256 = $selected.inputSha256
+    sourceRevision = $selected.sourceRevision
+    operations = @(@{
+        op = 'extrudeSurface'; target = $selected.selection; distance = 2
+    })
+} | ConvertTo-Json -Depth 12 -Compress
+$plan = Invoke-SedJson @('plan', $inputLevel, '-') $patch
+# Inspect the plan and its selectionBindings, then apply the reviewed bytes.
+$applied = Invoke-SedJson @('apply', $inputLevel, '-', $outputLevel, $plan.outputSha256) $patch
+```
+
+The source point identifies the room, and outward direction identifies the face.
+Selection includes boundaries; an interior point avoids a two-room portal
+ambiguity. A geometry-changing operation invalidates the old containing-sector
+token, so select again from the new file before the next geometry edit. The
+existing material, UV and lighting operations remain shared editor commands.
+
+[Test-AgentSpatial.ps1](../tools/Test-AgentSpatial.ps1) exercises an eight-room
+Relay Outpost with a loop, shortcut, annex and upper observation room. It uses
+returned tokens for geometry edits, revisits existing rooms, checks stale and
+ambiguous targets, and records reviewed applies, exact topology and optional
+offscreen images. Run it with an explicit `-AgentPath`, new `-OutputDirectory`
+and optional `-SkipSnapshot`. The fixture uses synthetic resource names and does
+not establish a playable episode or game-resource availability.
+
 ## Discover exact targets
 
 Use `query` collections `sectors`, `things`, `lights`, `templates`, and `materials` for bounded discovery. `surfaces` and `vertices` require a `sector` index. `summary` includes header values and counts. Templates expose existing definitions; things expose current position, orientation, and parameters. Use `search` only with `things`, `templates`, or `materials`.

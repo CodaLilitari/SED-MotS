@@ -2,7 +2,7 @@
 
 `agent/sed-agent.exe` is a local JSON command-line interface. It does not start a GUI, shell, game or network service. Only `snapshot` creates an offscreen Vulkan graphics device. Editing uses the same model and Core edit commands as the editor; material-table registration also updates the format document.
 
-Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request, 3 validation failure, 4 changed input or existing output, 5 I/O failure. Unexpected host failures can terminate the process; callers must check both its exit code and valid JSON.
+Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request, 3 validation failure, 4 changed input, stale spatial target or existing output, 5 I/O failure. Unexpected host failures can terminate the process; callers must check both its exit code and valid JSON.
 
 ## Commands
 
@@ -10,9 +10,10 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 | --- | --- |
 | `help [command]`, `--help`, `-h` | Compact JSON command help; also returned when no command is supplied |
 | `--version` | Executable build version and supported capabilities |
-| `schema [patch\|query\|commands\|launch-plan\|snapshot\|resources\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
+| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
 | `inspect <level.jkl> [sector-index]` | Source hash, game, counts, materials, sector and thing indices; optional detailed geometry |
 | `query <level> <query.json\|->` | Bounded, paged readback of fields used by existing edits, including templates and lighting |
+| `select <level> <selection.json\|->` | Select a sector by world point or a face by outward direction; return a token only for a unique match |
 | `snapshot <level> <snapshot.json\|-> <new-output.png>` | Explicit-camera diagnostic or static lit PNG, rendered offscreen; no window or game |
 | `validate <level.jkl> [resources.json\|-]` | Structural diagnostics, with optional current-resource ARCH validation |
 | `plan <level.jkl> <patch.json\|->` | Edit an isolated model, serialize and reopen; no writes |
@@ -23,9 +24,9 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 | `extract <archive> <exact-entry-name> <new-output.jkl>` | Recover the selected JKL byte-for-byte into a new file |
 | `convert <legacy.jed> <new-output.jkl> [resources.json\|-] [expected-output-sha256]` | Import supported native text projects and export a validated JKL; optionally bind ARCH resources and reviewed output bytes |
 
-`inspect`, `query`, `validate`, `plan` and `apply` also accept supported native `.jed`, `.sed` and `.ned` text projects. Conversion reports preservation warnings. Native template libraries are read from the tool's `data` folder and a project companion `master.tpl` or `mots.tpl`; preserve those inputs with the project. `inputSha256` continues to identify the project file. The additional `sourceRevision` binds that file and the native template inputs, including missing companion files whose later appearance could change import behavior. Native patches must include the revision returned by inspection or query. The importer supports observed layouts, not every historical editor dialect.
+`inspect`, `query`, `select`, `validate`, `plan` and `apply` also accept supported native `.jed`, `.sed` and `.ned` text projects. Conversion reports preservation warnings. Native template libraries are read from the tool's `data` folder and a project companion `master.tpl` or `mots.tpl`; preserve those inputs with the project. `inputSha256` continues to identify the project file. The additional `sourceRevision` binds that file and the native template inputs, including missing companion files whose later appearance could change import behavior. Native patches must include the revision returned by inspection, query or selection. The importer supports observed layouts, not every historical editor dialect.
 
-Selectors are zero-based and valid only for the exact `sourceRevision` (`inputSha256` for JKL). Later operations can address objects appended earlier in the same plan. Version 1 has no delete/reorder operations because these require fuller COG and unknown-section reference remapping.
+Numeric selectors are zero-based and valid only for the exact `sourceRevision` (`inputSha256` for JKL). Later operations can address objects appended earlier in the same plan. Spatial tokens provide an alternative for supported sector/surface operations, with stricter geometry binding described below. Version 1 has no delete/reorder operations because these require fuller COG and unknown-section reference remapping.
 
 Requests supplied using `-` are a single UTF-8 JSON document on stdin, terminated by EOF. Files use the same bounded reader; UTF-8 BOM is accepted. No shell commands are accepted inside requests. A client should invoke the executable with an argument array, redirect stdin/stdout/stderr, close stdin after writing, and check the exit code and JSON result. This is a tool-neutral CLI and does not claim to implement MCP.
 
@@ -48,6 +49,31 @@ For example, find candidate templates without putting the entire template librar
 Read sector ambient and flags using `sectors`; thing position, orientation and parameter values using `things`; and editor-light settings using `lights`. `summary` includes the header and counts. Detailed surface and vertex pages expose stored lighting and geometry. Corner `mono` is the nullable stored channel; when absent, the implicit scalar is `rgb[0]`. Each response identifies the source, so clients can detect changes between pages. `inspect` remains available for existing callers, but its legacy response is not paginated.
 
 Sector `geometryBounds` are calculated from current vertices and kept separate from authored `boundBox` metadata. `neighbors` lists adjoined sectors, without claiming that every link is visible or traversable. Sector `colorMapIndex` is the stored numeric selection: `-1` denotes name-only authoring state, and an invalid imported index remains visible for diagnosis rather than being reported as slot zero. Surface queries supply inward `normal`, corner-average `centroid` and `geometryBounds`; these let a client choose a face by direction and location without hardcoded surface numbers.
+
+## Spatial targets
+
+Use `schema select` for read-only selection by `sectorPoint`, with
+`kind: "sector"` or `kind: "surface"`. Surface requests require `outward` and may include
+`surfacePoint`; defaults are `tolerance: 1e-7` world units and
+`angularToleranceDegrees: 0.1`. The geometry must be safely classifiable as a
+closed convex sector. Portal boundaries may match both rooms. The response
+reports the matching stage, full `total`, bounded candidates and `status`.
+Only `status: "unique"` carries a `selection` token. `none` and `ambiguous`
+return exit 0 with a null token; check both process status and match status.
+
+Copy the token into `target` for supported operations; use `otherTarget` too
+for `adjoinSurfaces`. Do not combine tokens with integer geometry fields in one
+operation. Tokens bind the source revision and full containing-sector geometry,
+including the selected address and adjoin endpoints. Each operation checks its
+token before execution. Geometry changes inside the same batch make a previous
+token stale; material/UV/light metadata changes do not. Save/reopen and select
+again to address new geometry. The final plan receipts retain concrete resolved
+addresses and `selectionBindings`, and never rerun a predicate after editing.
+Stale tokens return conflict with an operation index and JSON pointer.
+
+Tokens are consistency checks, not persistent IDs or authentication. See
+[SPATIAL_SELECTION.md](SPATIAL_SELECTION.md) for exact scope and limits and
+[the workflows](AGENT_WORKFLOWS.md#select-a-room-face-and-extrude-it) for an example.
 
 ## Example edit
 
