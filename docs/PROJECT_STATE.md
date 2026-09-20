@@ -5,17 +5,19 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Current work: [ARCH-01](ARCHITECTURE_AUTHORING.md) implemented and source-tested;
-clean-worktree packaging/publication pending.** Shared bind, reset and unoccluded
+**Latest completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
+source published.** Implementation/package source is
+`adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`. Shared bind, reset and unoccluded
 source-point baking, saved provenance, computed stale status, paginated samples,
 actual inspector controls and raw model identity in the renderer are implemented.
-Source build passes 1,098 units with zero warnings/errors; the corrected actual
-headless UI probe passes 113 checks. The expanded lit/resource workflow passes
-50 calls/139 checks, with the three interior before/RGB/mono images inspected.
-See DEC-20260920-12 and 13 for scope and corrected acceptance fixtures. The older
-SPATIAL-01 package below remains the latest verified handoff until packaging ends.
+Source and clean package builds each pass 1,098 units with zero warnings/errors;
+the corrected actual headless UI probe passes 113 checks. Five packaged workflows
+pass 229 calls/799 checks, with 685 distribution members and matching source/full
+history verified. The three inspected interior before/RGB/mono images match the
+packaged images exactly. See DEC-20260920-12 through 14. This completion
+documentation follows the tested implementation in a separate commit.
 
-**Latest completed milestone: [SPATIAL-01](SPATIAL_SELECTION.md), packaged and
+**Previous milestone: [SPATIAL-01](SPATIAL_SELECTION.md), packaged and
 source published.** Implementation/package source is
 `1fe296a65f331161e13a4dac20f3306d322d3b53`. The integrated build passes 1,043
 unit tests and 91 actual headless UI checks. The self-contained Relay Outpost
@@ -38,8 +40,8 @@ Hosting: the public source is
 forked from `davidagnome/SED` in the `smlu/SED` network. See
 [GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). On 2026-09-20, the authenticated CLI
 account and ADMIN permission were verified as CodaLilitari, with main the only
-remote branch at the account-handoff base `65e94af` before this milestone.
-The tested SPATIAL-01 implementation was pushed and remote main verified at `1fe296a`;
+remote branch before and after this milestone.
+The tested ARCH-01 implementation was pushed and remote main verified at `adb0cae`;
 this checkpoint update follows separately. No GitHub binary release was created.
 
 ## Objective and current milestone
@@ -69,14 +71,23 @@ extrusions, two additional adjoins, metadata revisions and deliberate refusal
 cases. Windows package `0.4.0-mots.9-dev` at `1fe296a` passed all five workflows,
 smoke and verification of 684 distribution files plus matching source/history.
 
+Completed bounded [ARCH-01](ARCHITECTURE_AUTHORING.md): explicit current-resource
+bind, reset/rebind, and `source-points-v1` baking with private allocations and exact
+undo. The saved `SED_ARCH_AUTHORING` extension records origin, raw model identity,
+input and sample digests; local freshness and resource validation remain separate.
+Single-LOD rest-pose sampling is unoccluded and non-directional. Unsupported pivots,
+insertion offsets and ambiguous hierarchy instances are refused. This is not a
+shadowed or retail-equivalent baker. Windows `.10-dev` is the current handoff.
+
 ## Current source and completed ownership
 
-- Current editor branch: `main`; SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`. This completion documentation is a later commit.
+- Current editor branch: `main`; ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`. This completion documentation is a later commit.
+- Previous SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`; its completion documentation was `896c808`.
 - Previous GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
-- SPATIAL-01 completed ownership: `sed_spatial_audit` owns Core selectors/digests and original tests; `sed_workflow_audit` owns selection protocol/Plan/schema and tests; `sed_export_review` owns the executable Relay Outpost workflow. Implementations are frozen; integrated, executable and clean package gates passed.
+- ARCH-01 completed ownership: `sed_spatial_audit` owns Core authoring/digests/commands and independent format review; `sed_workflow_audit` owns resource/model preparation, extension and format tests; `sed_export_review` owns inspector controls, actual headless acceptance, Core tests and renderer regression. All implementations are frozen and integrated gates passed.
 - Root owns process-level workflow, review, documentation, packaging and publication. No worker commits or pushes independently.
 
 ## Agreed contract
@@ -106,7 +117,7 @@ general remapping, native output and broader game behavior remain separate.
 | Milestone | Acceptance target | State |
 |---|---|---|
 | [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Complete within the documented convex-geometry/token scope |
-| [Architectural lighting authoring (ARCH-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback | Source-tested; package pending. Initial recipe is unoccluded and single-LOD; shadowed/LOD correspondence remains separate |
+| [Architectural lighting authoring (ARCH-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback | Complete within the unoccluded single-LOD recipe; shadowed baking and LOD correspondence remain separate |
 | Controlled engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Planned |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
 | Thin MCP adapter | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Planned after domain prerequisites |
@@ -119,7 +130,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.9-dev-1fe296a/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `1fe296a`. See `DEC-20260920-11` for hashes and gate counts. Its `agent-spatial/relay-final.jkl` is the original eight-room fixture. Prior `.8`/`.7` packages and the superseded `9a1f2ce` candidate remain separate. Spatial source/executable evidence is under `build/spatial01-20260920/`; earlier GEO-01 receipts remain under `build/geometry-preservation-20260920/`.
+The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.10-dev-adb0cae/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and complete history identify `adb0cae`. See `DEC-20260920-14` for hashes and gate counts. Its `agent-lit-snapshot/architecture-baked.jkl` and `architecture-stale.jkl` demonstrate authoring/readback; the inherited `agent-spatial/relay-final.jkl` remains the original eight-room structural fixture. Prior `.9`/`.8`/`.7` packages and the superseded `9a1f2ce` candidate remain separate. Current source/executable evidence is under `build/arch01-20260920/`. The next independent gate is controlled engine verification; no engine/retail run or playable-level claim follows from these editor results.
 
 ## Recovery discipline
 
