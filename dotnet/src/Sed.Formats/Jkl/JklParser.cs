@@ -41,6 +41,7 @@ public static class JklParser
         var geo = new GeoData();
         var seenSections = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         SourceLightMetadataFormat.Metadata? sourceLights = null;
+        ArchitectureAuthoringMetadataFormat.Metadata? architectureAuthoring = null;
         var lightRowsWithColor = new HashSet<Light>();
 
         while (true)
@@ -49,8 +50,10 @@ public static class JklParser
             if (r.Eof) break;
             var section = r.Section;
             if (!seenSections.Add(section) && section is "HEADER" or "MATERIALS" or "GEORESOURCE" or
-                "SECTORS" or "TEMPLATES" or "THINGS" or "LIGHTS" or "SED_SOURCE_LIGHTS" or "COGS" or "LAYERS" or "ARCHLIGHTING")
+                "SECTORS" or "TEMPLATES" or "THINGS" or "LIGHTS" or "SED_SOURCE_LIGHTS" or "SED_ARCH_AUTHORING" or "COGS" or "LAYERS" or "ARCHLIGHTING")
                 throw new FormatException($"Duplicate modeled JKL section {section}.");
+            if (section == ArchitectureAuthoringMetadataFormat.SectionName && JklReader.Tokens(r.Current).Length != 2)
+                throw new FormatException("Architectural authoring section header must contain exactly one section name.");
             r.EnterSection();
 
             switch (section)
@@ -63,6 +66,7 @@ public static class JklParser
                 case "THINGS": LoadThings(r, level, doc); break;
                 case "LIGHTS": LoadLights(r, level, lightRowsWithColor); break;
                 case SourceLightMetadataFormat.SectionName: sourceLights = SourceLightMetadataFormat.Read(r); break;
+                case ArchitectureAuthoringMetadataFormat.SectionName: architectureAuthoring = ArchitectureAuthoringMetadataFormat.Read(r); break;
                 case "COGS": LoadCogs(r, level); break;
                 case "LAYERS": LoadLayers(r, level); break;
                 case "ARCHLIGHTING": LoadArchitecturalLighting(r, level); break;
@@ -81,6 +85,7 @@ public static class JklParser
                 throw new FormatException($"Thing {thing.Num} references missing architectural lighting object {thing.ArchLightingIndex}.");
             if (thing.ArchLightingIndex >= 0) thing.ArchLightingSourceModel = level.GetThingModel(thing);
         }
+        if (architectureAuthoring is not null) ArchitectureAuthoringMetadataFormat.Apply(level, architectureAuthoring);
         if (doc is not null) doc.SourceGeometry = JklSourceGeometry.Capture(level, geo, doc.SourceLines);
         return level;
     }

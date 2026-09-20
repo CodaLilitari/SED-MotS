@@ -27,7 +27,7 @@ public sealed class ModelLibrary
                 if (matches.Count == 0) continue;
                 if (matches.Count != 1)
                     throw new InvalidDataException($"Ambiguous model resource '{name}'.");
-                model = ThreeDoParser.Parse(gob.ReadText(matches[0]));
+                model = ThreeDoParser.ParseBytes(gob.ReadBytes(matches[0]));
                 break;
             }
         }

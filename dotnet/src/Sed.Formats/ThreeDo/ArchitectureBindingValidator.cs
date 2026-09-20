@@ -18,7 +18,7 @@ public enum ArchitectureDiagnosticCode
     SourceModelNameMismatch, IneligibleThingFlags, InvalidThingFlags, MissingHistoricalBaseline,
     UnsupportedFingerprintNormalization, InvalidHistoricalFingerprint, ModelContentMismatch,
     MissingTopology, InvalidTopology, TopLevelMeshMismatch, TopLevelVertexMismatch,
-    LowerLodMeshOverflow, LowerLodVertexOverflow,
+    LowerLodMeshOverflow, LowerLodVertexOverflow, AuthoredModelBytesMismatch,
 }
 
 public sealed record ArchitectureBindingDiagnostic(ArchitectureDiagnosticCode Code,
@@ -41,7 +41,7 @@ public sealed record ArchitectureBindingValidation(int ThingIndex, int Architect
 /// </summary>
 public static class ArchitectureBindingValidator
 {
-    public const string Version = "1";
+    public const string Version = "2";
 
     /// <summary>Instance thingflags replace the closest inherited value; they do not merge with it.</summary>
     public static bool IsLevelGeometry(Level level, Thing thing)
@@ -55,6 +55,15 @@ public static class ArchitectureBindingValidator
     }
 
     public static ArchitectureBindingValidation Validate(Level level, Thing thing, ResolvedArchitectureModel? resolvedModel)
+        => ValidateCore(level, thing, resolvedModel, thing.ArchLightingIndex, checkStoredBaseline: true);
+
+    /// <summary>Checks an explicit allocation for a new binding without mutating the thing or asserting bake history.</summary>
+    internal static ArchitectureBindingValidation ValidateBindingCandidate(Level level, Thing thing,
+        ResolvedArchitectureModel resolvedModel, int architectureIndex)
+        => ValidateCore(level, thing, resolvedModel, architectureIndex, checkStoredBaseline: false);
+
+    private static ArchitectureBindingValidation ValidateCore(Level level, Thing thing,
+        ResolvedArchitectureModel? resolvedModel, int architectureIndex, bool checkStoredBaseline)
     {
         ArgumentNullException.ThrowIfNull(level);
         ArgumentNullException.ThrowIfNull(thing);
@@ -62,21 +71,21 @@ public static class ArchitectureBindingValidator
         string modelName = level.GetThingModel(thing);
         var diagnostics = new List<ArchitectureBindingDiagnostic>();
         bool compatible = false;
-        ArchitectureBaselineStatus baseline = thing.ArchLightingIndex == -1 ? ArchitectureBaselineStatus.NotBound : ArchitectureBaselineStatus.Missing;
+        ArchitectureBaselineStatus baseline = architectureIndex == -1 ? ArchitectureBaselineStatus.NotBound : ArchitectureBaselineStatus.Missing;
         void Error(ArchitectureDiagnosticCode code, string message, int? geoset = null, int? mesh = null)
             => diagnostics.Add(new(code, ArchitectureDiagnosticSeverity.Error, message, geoset, mesh));
         void Warning(ArchitectureDiagnosticCode code, string message)
             => diagnostics.Add(new(code, ArchitectureDiagnosticSeverity.Warning, message));
-        ArchitectureBindingValidation Result() => new(index, thing.ArchLightingIndex, modelName,
+        ArchitectureBindingValidation Result() => new(index, architectureIndex, modelName,
             resolvedModel?.ResourceIdentity, resolvedModel?.RawSha256, compatible, baseline, diagnostics.AsReadOnly());
 
-        if (thing.ArchLightingIndex == -1) return Result();
+        if (architectureIndex == -1) return Result();
         if (level.Kind != ProjectType.MysteriesOfTheSith)
             Error(ArchitectureDiagnosticCode.UnsupportedProject, "Architectural lighting is a MotS binding.");
         ArchitecturalLightObject? architecture = null;
-        if ((uint)thing.ArchLightingIndex >= level.ArchitecturalLighting.Count)
+        if ((uint)architectureIndex >= level.ArchitecturalLighting.Count)
             Error(ArchitectureDiagnosticCode.MissingArchitectureObject, "Architectural-lighting object index is outside the stored section.");
-        else architecture = level.ArchitecturalLighting[thing.ArchLightingIndex];
+        else architecture = level.ArchitecturalLighting[architectureIndex];
         try
         {
             if (!IsLevelGeometry(level, thing))
@@ -85,14 +94,20 @@ public static class ArchitectureBindingValidator
         catch (FormatException exception) { Error(ArchitectureDiagnosticCode.InvalidThingFlags, exception.Message); }
         if (string.IsNullOrEmpty(modelName) || modelName.Equals("none", StringComparison.OrdinalIgnoreCase))
             Error(ArchitectureDiagnosticCode.MissingModel, "Bound thing has no model3d.");
-        if (!string.IsNullOrEmpty(thing.ArchLightingSourceModel) && !thing.ArchLightingSourceModel.Equals(modelName, StringComparison.OrdinalIgnoreCase))
+        if (checkStoredBaseline && !string.IsNullOrEmpty(thing.ArchLightingSourceModel) && !thing.ArchLightingSourceModel.Equals(modelName, StringComparison.OrdinalIgnoreCase))
             Error(ArchitectureDiagnosticCode.SourceModelNameMismatch, "Resolved model3d differs from the imported architectural-lighting source model.");
         if (resolvedModel is null)
             Error(ArchitectureDiagnosticCode.MissingModel, $"Model '{modelName}' is unavailable from the declared resources.");
         else if (!resolvedModel.ModelName.Equals(modelName, StringComparison.OrdinalIgnoreCase))
             Error(ArchitectureDiagnosticCode.ResolvedModelNameMismatch, "The supplied resource identity does not resolve the thing's current model3d.");
 
-        string sourceHash = thing.ArchLightingSourceModelHash;
+        if (checkStoredBaseline && thing.ArchLightingProvenance is { } authored && resolvedModel is not null &&
+            (!authored.ModelName.Equals(modelName, StringComparison.OrdinalIgnoreCase) ||
+             !authored.ModelSha256.Equals(resolvedModel.RawSha256, StringComparison.OrdinalIgnoreCase)))
+            Error(ArchitectureDiagnosticCode.AuthoredModelBytesMismatch,
+                "Current model bytes differ from the accepted architectural authoring resource. Explicitly rebind before exporting with these resources.");
+
+        string sourceHash = checkStoredBaseline ? thing.ArchLightingSourceModelHash : string.Empty;
         if (string.IsNullOrEmpty(sourceHash))
             Warning(ArchitectureDiagnosticCode.MissingHistoricalBaseline, "No historical model fingerprint is stored; current topology compatibility does not certify the original bake.");
         else if (!IsSha256(sourceHash))

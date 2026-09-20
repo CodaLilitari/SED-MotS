@@ -421,7 +421,8 @@ public class MainWindow : Window
 
         _currentLevel = level;
         _levelName = Path.GetFileNameWithoutExtension(name);
-        _inspector.Context = new InspectorContext(this, level, Assets());
+        _inspector.Context = new InspectorContext(this, level, Assets(),
+            () => GuiResourceExport.CaptureResources(_materialArchives));
         _view.Layers.ShowAll();      // a new level starts fully visible
         _view.Materials = _currentDoc?.Materials ?? new List<string>();
         _view.SetLevel(level, textures, models, paletteRgb, lightTable, colormaps);

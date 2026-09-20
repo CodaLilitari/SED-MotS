@@ -31,6 +31,7 @@ public sealed class JklDocument
     internal JklSourceGeometry? SourceGeometry { get; set; }
     internal string? OriginalGeometryIdentityError { get; set; }
     internal string? OriginalSourceLightTextHash { get; set; }
+    internal string? OriginalArchitectureAuthoringTextHash { get; set; }
     internal string? OriginalSourceTextHash { get; set; }
     internal HashSet<string> SectionsWithUnmodeledFields { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<string> PreservationWarnings { get; } = new();

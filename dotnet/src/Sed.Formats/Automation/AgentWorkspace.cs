@@ -309,7 +309,7 @@ public static partial class AgentWorkspace
                 // Bind once at this operation's turn. Receipts must retain these
                 // concrete addresses, never resolve a spatial predicate again.
                 var (boundOperation, selections) = AgentSelections.BindOperation(snapshot, operation);
-                var command = PrepareOperation(doc, boundOperation);
+                var command = PrepareOperation(doc, boundOperation, resources);
                 int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
                     "registerMaterial" => doc.Materials.Count, "registerColormap" => doc.Level.ColorMaps.Count,
                     "addLight" => doc.Level.Lights.Count, _ => null };
@@ -425,8 +425,9 @@ public static partial class AgentWorkspace
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
-    private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op)
+    private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op, ExplicitArchiveResources? resources)
     {
+        if (TryPrepareArchitectureOperation(doc, op, resources, out var architectureCommand)) return architectureCommand!;
         if (TryPrepareLightOperation(doc, op, out var lightCommand)) return lightCommand!;
         if (TryPrepareMaterialOperation(doc, op, out var materialCommand)) return materialCommand!;
         if (TryPrepareGeometryOperation(doc, op, out var geometryCommand)) return geometryCommand!;
@@ -511,6 +512,9 @@ public static partial class AgentWorkspace
         ["setThingName"] = ["thing", "name"], ["setThingTemplate"] = ["thing", "template"],
         ["setThingValue"] = ["thing", "key", "value"], ["setVertexPosition"] = ["sector", "vertex", "position"],
         ["clearThingArchitecture"] = ["thing"],
+        ["bindThingArchitecture"] = ["thing", "lightingIndex"],
+        ["rebindThingArchitecture"] = ["thing", "policy"],
+        ["bakeThingArchitecture"] = ["thing", "profile"],
         ["setVertexLight"] = ["sector", "vertex", "channel", "value"],
         ["setSurfaceMaterial"] = ["sector", "surface", "materialIndex"], ["setSurfaceFlags"] = ["sector", "surface", "flags"],
         ["setSectorFlags"] = ["sector", "flags"], ["setSectorAmbient"] = ["sector", "value"],
@@ -530,6 +534,8 @@ public static partial class AgentWorkspace
     {
         string name = String(op, "op");
         var level = doc.Level;
+        if (name is "bindThingArchitecture" or "rebindThingArchitecture" or "bakeThingArchitecture")
+            return ArchitectureOperationEffect(doc, op);
         if (name is "registerMaterial" or "registerColormap" or "setSectorColormap" or "fitSurfaceTexture" or "setSurfaceUv" or "setSurfaceRenderModes")
             return MaterialOperationEffect(doc, op, created);
         if (name is "extrudeSurface" or "adjoinSurfaces") return GeometryOperationEffect(doc, op, created);
@@ -540,6 +546,7 @@ public static partial class AgentWorkspace
             return new { target = new { kind = "thing", index }, state = new {
                 thing.Name, thing.Template, position = Position(thing.Position), orientation = new[] { thing.Pitch, thing.Yaw, thing.Roll },
                 sector = thing.Sector is null ? -1 : level.Sectors.IndexOf(thing.Sector), thing.ArchLightingIndex,
+                architecture = DescribeArchitecture(level, thing),
                 values = thing.Values.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => new { key = p.Key, value = p.Value }).ToArray() } };
         }
         if (name is "addLight" or "setLight") return LightOperationEffect(doc, op, created);

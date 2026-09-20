@@ -55,7 +55,7 @@ internal sealed class SnapshotResources : IDisposable
         try
         {
             if (Capture.Read(name, "3do") is not { } bytes) return _models[name] = null;
-            var model = ThreeDoParser.Parse(Encoding.Latin1.GetString(bytes.Span));
+            var model = ThreeDoParser.ParseBytes(bytes.Span);
             if (model.Version is not (2.1 or 2.2) || model.Meshes.Count == 0
                 || !model.Meshes.Any(m => m.Faces.Any(f => f.VertexIndices.Count >= 3)))
                 throw new FormatException("Expected a drawable JK/MotS 3DO 2.1 or 2.2 model; content is empty, incomplete or unsupported.");

@@ -1,7 +1,11 @@
 using Sed.Core.Math;
 using Sed.Core.Model;
+using Sed.Core.Lighting;
+using Sed.Formats.Gob;
 using Sed.Formats.ThreeDo;
 using Sed.Rendering;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Sed.Core.Tests;
 
@@ -353,6 +357,83 @@ public sealed class SceneLightingTests
         var second = architecture.Meshes[0].Vertices[2];
         Light(scene.Mesh.Vertices[0], (float)first.Mono, (float)first.Red, (float)first.Green, (float)first.Blue);
         Light(scene.Mesh.Vertices[3], (float)second.Mono, (float)second.Red, (float)second.Green, (float)second.Blue);
+    }
+
+    [Fact]
+    public void AuthoredArchitectureUsesTheActualParsedModelResourceHashInPreview()
+    {
+        string source = ParsedFixtureSource();
+        byte[] bytes = Encoding.Latin1.GetBytes(source);
+        var model = ArchivedModel(bytes);
+        var level = new Level { Kind = ProjectType.MysteriesOfTheSith };
+        var samples = Architecture(); level.ArchitecturalLighting.Add(samples);
+        var thing = Place(level, binding: 0);
+        thing.ArchLightingProvenance = new ArchitectureLightingProvenance("bound", "synthetic.3do",
+            Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant(), "", ArchitecturalLightingAuthoring.SamplesDigest(samples));
+        var scene = Things(level, model);
+        Assert.Empty(scene.Diagnostics);
+        var sample = samples.Meshes[0].Vertices[2];
+        Light(scene.Mesh.Vertices[0], (float)sample.Mono, (float)sample.Red, (float)sample.Green, (float)sample.Blue);
+        Assert.Equal(new[] { .11f, .22f, .33f }, model.Meshes[0].VertexIntensities);
+    }
+
+    [Fact]
+    public void SameNameChangedRawModelBytesRefuseAuthoredBindingEvenWhenNormalizedContentMatches()
+    {
+        string source = ParsedFixtureSource();
+        byte[] original = Encoding.Latin1.GetBytes(source);
+        var model = ArchivedModel(Encoding.Latin1.GetBytes(source + "\n# changed archive entry bytes\n"));
+        Assert.Equal(ArchitectureModelFingerprint.Compute(source), model.ArchitectureContentHash);
+        var level = new Level { Kind = ProjectType.MysteriesOfTheSith };
+        var samples = Architecture(); level.ArchitecturalLighting.Add(samples);
+        var thing = Place(level, binding: 0);
+        thing.ArchLightingProvenance = new ArchitectureLightingProvenance("bound", "synthetic.3do",
+            Convert.ToHexString(SHA256.HashData(original)).ToLowerInvariant(), "", ArchitecturalLightingAuthoring.SamplesDigest(samples));
+        var scene = Things(level, model);
+        Assert.Contains(scene.Diagnostics, value => value.Contains("Current model bytes differ", StringComparison.Ordinal));
+        Light(scene.Mesh.Vertices[0], .33f, .33f, .33f, .33f);
+        Assert.Equal(0, thing.ArchLightingIndex);
+        Assert.Same(samples, level.ArchitecturalLighting[0]);
+    }
+
+    [Fact]
+    public void ImportedArchitectureWithoutAuthoringProvenanceStillUsesCompatibleParsedModels()
+    {
+        var model = ArchivedModel(Encoding.Latin1.GetBytes(ParsedFixtureSource()));
+        var level = new Level { Kind = ProjectType.MysteriesOfTheSith };
+        var samples = Architecture(); level.ArchitecturalLighting.Add(samples);
+        var thing = Place(level, binding: 0);
+        var scene = Things(level, model);
+        Assert.Empty(scene.Diagnostics); Assert.Null(thing.ArchLightingProvenance);
+        Assert.Equal("unknown", ArchitecturalLightingAuthoring.Status(level, thing));
+        var sample = samples.Meshes[0].Vertices[2];
+        Light(scene.Mesh.Vertices[0], (float)sample.Mono, (float)sample.Red, (float)sample.Green, (float)sample.Blue);
+    }
+
+    private static string ParsedFixtureSource()
+    {
+        var model = Model(); model.Name = "synthetic"; model.Meshes[0].Name = "triangle";
+        return ThreeDoWriter.Build(model, 2.2);
+    }
+
+    private static ThreeDoModel ArchivedModel(byte[] modelBytes)
+    {
+        // Original one-entry GOB, exercising the actual resource model loader.
+        using var stream = new MemoryStream();
+        using (var writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true))
+        {
+            writer.Write(Encoding.ASCII.GetBytes("GOB ")); writer.Write(0x14u); writer.Write(0u);
+            writer.Write(modelBytes);
+            uint directory = checked((uint)stream.Position);
+            writer.Write(1u); writer.Write(12u); writer.Write(checked((uint)modelBytes.Length));
+            byte[] name = new byte[128]; Encoding.ASCII.GetBytes("3do\\synthetic.3do").CopyTo(name, 0); writer.Write(name);
+            stream.Position = 8; writer.Write(directory);
+        }
+        stream.Position = 0;
+        using var archive = new GobArchive(stream);
+        var result = new ModelLibrary(archive).Get("synthetic.3do");
+        Assert.NotNull(result); Assert.NotNull(result.ArchitectureTopology);
+        return result;
     }
 
     [Fact]

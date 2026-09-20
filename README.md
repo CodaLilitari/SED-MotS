@@ -16,6 +16,8 @@ The agent can also register material/colormap references, edit surface UVs, extr
 
 Lit snapshots select `renderProfile: "openjk"` by default, multiplying the base palette color by textured scalar light; `"palette"` selects CMP light-table rows for comparison. This choice is independent of `lightingMode: "game"`, `"mono"` or `"rgb"`. Ordinary model things keep their mono pass even in an RGB world. The preview and resource-aware exports share checks for available native architectural model fingerprints and topology across LODs. These checks do not rebake lighting or add lower-LOD rendering. Dynamic lights, animations and retail pixel parity remain separate work; see [renderer details](docs/RENDERER_LIGHTING.md). The included [Codex skill](.agents/skills/sed-mots/SKILL.md) supports this workflow through the CLI. An MCP adapter is optional future integration; see the [agent design roadmap](docs/AGENT_DESIGN_ROADMAP.md).
 
+The thing inspector and agent now share explicit architectural bind, reset/rebind and source-light bake operations. `source-points-v1` writes independent mono/RGB samples for supported single-LOD rest-pose models using unoccluded, non-directional point lights. Each edit creates a private allocation, preserves old arrays and supports undo. Saved provenance reports stale inputs or overridden samples; captured model bytes are checked separately. See [the architectural authoring contract](docs/ARCHITECTURE_AUTHORING.md) for supported layouts and the distinction from shadowed or retail-equivalent baking.
+
 ## .NET build and packaging
 
 Use the .NET SDK pinned by `global.json`:

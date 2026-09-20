@@ -334,6 +334,7 @@ public sealed class LevelFragment
             ArchLightingIndex = src.ArchLightingIndex,
             ArchLightingSourceModel = src.ArchLightingSourceModel,
             ArchLightingSourceModelHash = src.ArchLightingSourceModelHash,
+            ArchLightingProvenance = src.ArchLightingProvenance,
         };
 
         foreach (var (k, v) in src.Values) dst.Values[k] = v;

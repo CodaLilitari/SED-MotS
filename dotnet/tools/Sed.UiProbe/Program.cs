@@ -286,6 +286,7 @@ await session.Dispatch(() =>
 
     LightInspectorProbe.Run(Check);
     SectorColormapProbe.Run(Check);
+    ArchitectureInspectorProbe.Run(Check);
 
 }, CancellationToken.None);
 

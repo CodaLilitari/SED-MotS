@@ -33,6 +33,7 @@ public static class JklWriter
     {
         var src = doc.SourceLines;
         SourceLightMetadataFormat.ValidateRetainedSource(doc);
+        ArchitectureAuthoringMetadataFormat.ValidateRetainedSource(doc);
         if (src.Length > 0 && (doc.OriginalSourceTextHash is null || doc.SourceGeometry is null))
             throw new InvalidOperationException("Export requires a parsed source baseline, including validated source-light metadata when present. Reopen the source through JklParser.ParseDocument before saving.");
         JklSourceGeometry.ValidateRetainedSource(doc);
@@ -76,6 +77,7 @@ public static class JklWriter
     internal static void CaptureBaseline(JklDocument doc)
     {
         doc.OriginalSourceLightTextHash = SourceLightMetadataFormat.SourceTextHash(doc.SourceLines);
+        doc.OriginalArchitectureAuthoringTextHash = ArchitectureAuthoringMetadataFormat.SourceTextHash(doc.SourceLines);
         bool promoteSourceLights = SourceLightMetadataFormat.Needed(doc.Level) &&
             FindSection(doc.SourceLines, SourceLightMetadataFormat.SectionName).start < 0;
         var sections = GenerateSections(doc, out var materials, captureBaseline: true);
@@ -129,7 +131,8 @@ public static class JklWriter
             (SourceLightMetadataFormat.SectionName, SourceLightMetadataFormat.Build(level), SourceLightMetadataFormat.Needed(level)),
             ("COGS", GenerateCogs(level), level.Cogs.Count > 0),
             ("LAYERS", GenerateLayers(level), level.Layers.Count > 0),
-            ("ARCHLIGHTING", arch, level.Kind == ProjectType.MysteriesOfTheSith)
+            ("ARCHLIGHTING", arch, level.Kind == ProjectType.MysteriesOfTheSith),
+            (ArchitectureAuthoringMetadataFormat.SectionName, ArchitectureAuthoringMetadataFormat.Build(level), ArchitectureAuthoringMetadataFormat.Needed(level))
         };
     }
 

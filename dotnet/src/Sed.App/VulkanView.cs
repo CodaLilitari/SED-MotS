@@ -432,6 +432,7 @@ public sealed class VulkanView : Control
                 Level = _level, Layer = sel.Layer, Flags = sel.Flags, BBox = sel.BBox,
                 ArchLightingIndex = sel.ArchLightingIndex, ArchLightingSourceModel = sel.ArchLightingSourceModel,
                 ArchLightingSourceModelHash = sel.ArchLightingSourceModelHash,
+                ArchLightingProvenance = sel.ArchLightingProvenance,
             };
             foreach (var (k, v) in sel.Values) t.Values[k] = v;
             t.SourceParameters.AddRange(sel.SourceParameters);

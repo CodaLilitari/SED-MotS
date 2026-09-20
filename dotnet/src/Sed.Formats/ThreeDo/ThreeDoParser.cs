@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Sed.Core.Math;
 using Sed.Formats.Jkl;
 
@@ -12,6 +14,14 @@ namespace Sed.Formats.ThreeDo;
 /// </summary>
 public static class ThreeDoParser
 {
+    /// <summary>Parses captured Latin1 model bytes and retains their independent raw identity.</summary>
+    public static ThreeDoModel ParseBytes(ReadOnlySpan<byte> bytes)
+    {
+        var model = Parse(Encoding.Latin1.GetString(bytes));
+        model.RawSha256 = Convert.ToHexStringLower(SHA256.HashData(bytes));
+        return model;
+    }
+
     public static ThreeDoModel Parse(string text)
     {
         var model = Parse(new StringReader(text));

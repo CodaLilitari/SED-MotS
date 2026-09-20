@@ -39,6 +39,8 @@ Choose and pin an SDK deliberately. The `2025-11-25` protocol negotiates version
 
 ## Priorities for serious level design
 
+[ARCH-01](ARCHITECTURE_AUTHORING.md) now supplies explicit bind/reset/rebake commands, private sample allocations, source-point sampling, saved provenance, computed stale status, and bounded sample queries through the shared GUI/CLI model. Its `source-points-v1` recipe is unoccluded and non-directional and refuses unsupported LOD/pivot/hierarchy layouts. Shadowed baking and multi-LOD sample correspondence remain separate work; an MCP transport would expose these same domain contracts rather than supply the missing lighting semantics.
+
 | Priority | Capability | Useful outcome and acceptance evidence |
 | --- | --- | --- |
 | 1 | Spatial queries, picking and stable handles | Find a floor, doorway, region or visible surface by geometry rather than guessing indices. Return coordinates, candidates and ambiguity. Bind handles to a source revision and explicitly invalidate or remap them after topology changes. Test shared vertices, overlapping geometry and stale handles. |

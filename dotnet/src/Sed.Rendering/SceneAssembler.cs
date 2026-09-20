@@ -257,7 +257,7 @@ public sealed class SceneAssembler
             return null;
         }
         var result = ArchitectureBindingValidator.Validate(level, thing,
-            new(level.GetThingModel(thing), model.Name, "", topology));
+            new(level.GetThingModel(thing), model.Name, model.RawSha256 ?? "", topology));
         if (result.CanUseBinding) return level.ArchitecturalLighting[thing.ArchLightingIndex];
         string reason = string.Join("; ", result.Diagnostics.Where(d => d.Code != ArchitectureDiagnosticCode.MissingHistoricalBaseline).Select(d => d.Message));
         _diagnostics.Add($"Thing {level.Things.IndexOf(thing)}: {reason}; showing model base/sector light without that binding. {model.ArchitectureTopologyError}".TrimEnd());

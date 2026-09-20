@@ -16,6 +16,7 @@ internal static class JklGeometrySectionPolicy
         // references. Reject their sections even when current indices happen
         // to remain stable; those sections can impose other geometry contracts.
         bool hasSourceLights = false;
+        bool hasArchitectureAuthoring = false;
         foreach (string raw in document.SourceLines)
         {
             string header = raw.Split('#')[0].Trim();
@@ -31,10 +32,16 @@ internal static class JklGeometrySectionPolicy
                 hasSourceLights = true;
                 continue;
             }
+            if (fields[1].Equals(ArchitectureAuthoringMetadataFormat.SectionName, StringComparison.OrdinalIgnoreCase))
+            {
+                hasArchitectureAuthoring = true;
+                continue;
+            }
             if (!SupportedSections.Contains(fields[1], StringComparer.OrdinalIgnoreCase))
                 throw new InvalidOperationException($"Geometry authoring refuses unmodeled section '{fields[1]}' because it may contain topology references. No opaque references were remapped.");
         }
 
+        if (hasArchitectureAuthoring) ArchitectureAuthoringMetadataFormat.ValidateRetainedSource(document);
         if (!hasSourceLights) return;
         // The extension binds ordinary light rows, not geometry. Recognize it
         // only after successful parsing, then recheck retained source text so

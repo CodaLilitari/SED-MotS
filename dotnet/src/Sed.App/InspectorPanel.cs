@@ -16,7 +16,8 @@ namespace Sed.App;
 public sealed record InspectorContext(
     Avalonia.Controls.Window? Owner = null,
     Sed.Core.Model.Level? Level = null,
-    AssetCatalog? Assets = null);
+    AssetCatalog? Assets = null,
+    Func<Sed.Formats.Resources.ExplicitArchiveResources?>? CaptureArchitectureResources = null);
 
 /// <summary>
 /// A contextual inspector panel that rebuilds its content based on the current

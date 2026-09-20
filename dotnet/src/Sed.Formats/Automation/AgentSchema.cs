@@ -23,7 +23,9 @@ public static class AgentSchema
             foreach (var field in fields.Concat(optional))
                 properties[field] = field switch
                 {
-                    "thing" or "light" or "layer" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" => Index(),
+                    "thing" or "light" or "layer" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" or "lightingIndex" => Index(),
+                    "policy" => new Dictionary<string, object> { ["const"] = "reset" },
+                    "profile" => new Dictionary<string, object> { ["const"] = "source-points-v1" },
                     "position" or "center" or "orientation" => Vector(-1_000_000, 1_000_000),
                     "rgb" => Vector(0, 1),
                     "flags" => new { type = "integer", minimum = 0, maximum = (long)uint.MaxValue },
@@ -65,6 +67,12 @@ public static class AgentSchema
             ["title"] = "SED MotS agent patch version 1",
             ["type"] = "object", ["additionalProperties"] = false,
             ["required"] = new[] { "schemaVersion", "inputSha256", "operations" },
+            ["allOf"] = new object[] { new Dictionary<string, object> {
+                ["if"] = new { properties = new { operations = new { contains = new {
+                    required = new[] { "op" }, properties = new { op = new Dictionary<string, object> {
+                        ["enum"] = new[] { "bindThingArchitecture", "rebindThingArchitecture", "bakeThingArchitecture" } } } } } } },
+                ["then"] = new { required = new[] { "resourceArchives" } },
+            } },
             ["properties"] = new Dictionary<string, object>
             {
                 ["schemaVersion"] = new Dictionary<string, object> { ["const"] = 1 },
@@ -88,6 +96,9 @@ public static class AgentSchema
         "setThingTemplate" => "Use an existing template from query templates. Clear an incompatible architecture binding explicitly first.",
         "setThingValue" => "Set one named thing parameter. Inspect values before editing; this is not a COG reference-remapping operation.",
         "clearThingArchitecture" => "Explicitly clear a thing's architectural lighting binding; retain the stored lighting arrays.",
+        "bindThingArchitecture" => "Bind an unbound MotS architecture thing to a private copy of compatible stored samples. Requires resourceArchives; records current model acceptance, not historical bake origin. Read indices using query architecture.",
+        "rebindThingArchitecture" => "Explicitly reset this MotS architecture thing to a private zeroed allocation for the captured current model. Requires policy reset and resourceArchives. Retains old arrays; does not bake. Single-LOD static layouts only.",
+        "bakeThingArchitecture" => "Bake private MotS architecture samples using explicit profile source-points-v1 and resourceArchives. Quadratic unoccluded non-directional point-source falloff, independent mono/RGB, no ambient or shadows. Refuses unsupported LOD/hierarchy/pivot layouts. Saved input and sample digests expose stale or overridden results; resource freshness requires separate validation.",
         "setVertexPosition" => "Move a sector-local vertex in world units; all referencing surfaces in that sector use the new position.",
         "setVertexLight" => "Change one stored lighting component on every corner sharing the sector-local vertex. RGB channels require MotS; this does not bake lighting.",
         "setSurfaceMaterial" => "Choose an existing index from query materials; this does not import a new material.",

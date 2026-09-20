@@ -237,6 +237,83 @@ function Invoke-Snapshot([string]$Name, [string]$LevelPath, $Request) {
         width = $image.width; height = $image.height; counts = $result.counts; warnings = $result.warnings })
     return @{ result = $result; image = $image; path = $path }
 }
+function Invoke-ArchitectureAuthoringWorkflow([string]$Source, $Inspection, $Archives) {
+    $patch = [ordered]@{ schemaVersion = 1; inputSha256 = $Inspection.inputSha256; resourceArchives = $Archives
+        operations = @(
+            @{ op = 'addLight'; position = @(-0.6, -0.6, 1.2); rgb = @(1, 0.5, 0.25); intensity = 0.8; rgbIntensity = 0.4; range = 2 },
+            @{ op = 'bakeThingArchitecture'; thing = 0; profile = 'source-points-v1' }) }
+    $schema = Invoke-Agent 'architecture-bake-schema' @('schema', 'bakeThingArchitecture')
+    Confirm-Check 'bake schema names the bounded profile' ((Convert-Request $schema) -match 'source-points-v1')
+    $plan = Invoke-Agent 'plan-architecture-bake' @('plan', $Source, '-') (Convert-Request $patch)
+    $effect = $plan.changes[1].serializedFinal.state
+    Confirm-Check 'bake appends private arrays and records captured model plus local input state' (
+        $effect.archLightingIndex -eq 1 -and $effect.architecture.status -eq 'current-inputs' -and
+        $effect.architecture.provenance.origin -eq 'source-points-v1' -and
+        $effect.architecture.provenance.modelSha256 -match '^[0-9a-f]{64}$' -and
+        $plan.after.architecturalObjects -eq 2)
+    $patch.resourceRevision = $plan.resourceRevision
+    $baked = Join-Path $scratch 'architecture-baked.jkl'
+    $null = Invoke-Agent 'apply-architecture-bake' @('apply', $Source, '-', $baked, $plan.outputSha256) (Convert-Request $patch)
+    Confirm-Check 'baked document matches the reviewed bytes' ((Get-Hash $baked) -eq $plan.outputSha256)
+    $things = Invoke-Agent 'query-baked-thing' @('query', $baked, '-') '{"schemaVersion":1,"collection":"things"}'
+    Confirm-Check 'saved provenance remains locally current without asserting resource freshness' (
+        $things.items[0].architecture.status -eq 'current-inputs' -and
+        $things.items[0].architecture.resourceStatus -eq 'unverified-use-resource-validation')
+    $samples = Invoke-Agent 'query-baked-samples' @('query', $baked, '-') '{"schemaVersion":1,"collection":"architecturalVertices","lightingIndex":1,"mesh":0,"limit":2}'
+    Confirm-Check 'samples are paginated with analytic independent white RGB values' (
+        $samples.total -eq 4 -and $samples.nextOffset -eq 2 -and $samples.returnedCount -eq 2 -and
+        [Math]::Abs($samples.items[0].mono - 0.2) -lt 1e-12 -and
+        [Math]::Abs($samples.items[0].rgb[0] - 0.1) -lt 1e-12 -and
+        [Math]::Abs($samples.items[0].rgb[1] - 0.05) -lt 1e-12 -and
+        [Math]::Abs($samples.items[0].rgb[2] - 0.025) -lt 1e-12)
+    $old = Invoke-Agent 'query-preserved-old-architecture' @('query', $baked, '-') '{"schemaVersion":1,"collection":"architecturalVertices","lightingIndex":0,"mesh":0}'
+    Confirm-Check 'bake leaves the original allocation untouched' ($old.items[0].mono -eq 0.9 -and $old.items[0].rgb[2] -eq 0.8)
+    $catalog = Invoke-Agent 'query-architecture-catalog' @('query', $baked, '-') '{"schemaVersion":1,"collection":"architecture"}'
+    Confirm-Check 'catalog exposes orphan and bound arrays without silently compacting them' (
+        $catalog.items.Count -eq 2 -and $catalog.items[0].boundThings.Count -eq 0 -and $catalog.items[1].boundThings[0] -eq 0)
+    $bakedInspection = Invoke-Agent 'inspect-baked-architecture' @('inspect', $baked)
+    # The closed transaction room needs an interior camera. The open-scene
+    # default sits outside it and only sees an opaque wall. Hold the material
+    # profile fixed and compare before/after arrays with unchanged world lighting.
+    $rgbRequest = New-SnapshotRequest $bakedInspection 'lit' 'rgb' $Archives[0].path $Archives[0].sha256
+    $rgbRequest.position = @(0, -1.4, 2); $rgbRequest.target = @(0, 0, 0.2); $rgbRequest.renderProfile = 'openjk'
+    $monoRequest = ConvertFrom-Json -InputObject (Convert-Request $rgbRequest) -AsHashtable -Depth 50
+    $monoRequest.lightingMode = 'mono'
+    $beforeRequest = ConvertFrom-Json -InputObject (Convert-Request $rgbRequest) -AsHashtable -Depth 50
+    $beforeRequest.inputSha256 = $Inspection.inputSha256; $beforeRequest.sourceRevision = $Inspection.sourceRevision
+    $before = Invoke-Snapshot 'authored-architecture-before' $Source $beforeRequest
+    $rgb = Invoke-Snapshot 'authored-architecture-rgb' $baked $rgbRequest
+    $mono = Invoke-Snapshot 'authored-architecture-mono' $baked $monoRequest
+    Confirm-Check 'new architectural samples visibly change the fixed-profile scene' ($rgb.result.rgbaSha256 -ne $before.result.rgbaSha256)
+    Confirm-Check 'authored channel comparison keeps camera and material profile fixed' (
+        $rgb.result.rgbaSha256 -ne $mono.result.rgbaSha256 -and $rgb.result.renderProfile -eq 'openjk' -and
+        $mono.result.renderProfile -eq 'openjk' -and $rgb.result.cameraSha256 -eq $mono.result.cameraSha256)
+    $stalePatch = @{ schemaVersion = 1; inputSha256 = $bakedInspection.inputSha256
+        operations = @(@{ op = 'setLight'; light = 0; rgbIntensity = 0 }) }
+    $stale = Join-Path $scratch 'architecture-stale.jkl'
+    $null = Invoke-Agent 'save-stale-architecture' @('apply', $baked, '-', $stale) (Convert-Request $stalePatch)
+    $staleThings = Invoke-Agent 'query-stale-architecture' @('query', $stale, '-') '{"schemaVersion":1,"collection":"things"}'
+    Confirm-Check 'source edit preserves samples but makes the recorded bake stale' (
+        $staleThings.items[0].architecture.status -eq 'stale' -and
+        $staleThings.items[0].architecture.samplesSha256 -eq $things.items[0].architecture.samplesSha256)
+    $resetPatch = @{ schemaVersion = 1; inputSha256 = $Inspection.inputSha256; resourceArchives = $Archives
+        operations = @(@{ op = 'rebindThingArchitecture'; thing = 0; policy = 'reset' }) }
+    $reset = Invoke-Agent 'plan-explicit-architecture-reset' @('plan', $Source, '-') (Convert-Request $resetPatch)
+    Confirm-Check 'explicit reset is not described as baked' ($reset.changes[0].serializedFinal.state.architecture.status -eq 'reset')
+    $bindPatch = @{ schemaVersion = 1; inputSha256 = $Inspection.inputSha256; resourceArchives = $Archives
+        operations = @(@{ op = 'clearThingArchitecture'; thing = 0 }, @{ op = 'bindThingArchitecture'; thing = 0; lightingIndex = 0 }) }
+    $bind = Invoke-Agent 'plan-architecture-bind' @('plan', $Source, '-') (Convert-Request $bindPatch)
+    Confirm-Check 'binding retained samples does not invent fresh bake provenance' ($bind.changes[1].serializedFinal.state.architecture.status -eq 'bound')
+    $missing = @{ schemaVersion = 1; inputSha256 = $Inspection.inputSha256
+        operations = @(@{ op = 'bakeThingArchitecture'; thing = 0; profile = 'source-points-v1' }) }
+    $refusedPath = Join-Path $scratch 'must-not-bake-without-resources.jkl'
+    $refusal = Invoke-Agent 'refuse-bake-without-resources' @('apply', $Source, '-', $refusedPath) (Convert-Request $missing) 2
+    Confirm-Check 'resource-free bake refuses with operation diagnostics and no output' (
+        -not (Test-Path -LiteralPath $refusedPath) -and $refusal.details.operationIndex -eq 0)
+    foreach ($path in @($baked, $stale)) { $receipt.outputs.Add(@{name='architecture-authoring-jkl';path=$path;sha256=Get-Hash $path;kind='jkl'}) }
+    $receipt.architectureAuthoring = @{ profile = 'source-points-v1'; shadows = $false; directionalNormals = $false
+        sourcePath = $Source; bakedPath = $baked; stalePath = $stale; resourceRevision = $plan.resourceRevision }
+}
 function Invoke-ResourceWorkflow([string]$LevelText, [string]$ModelText, [Collections.IDictionary]$Entries) {
     $resourceSchema = Invoke-Agent 'resource-schema' @('schema', 'resources')
     $patchSchema = Invoke-Agent 'resource-patch-schema' @('schema', 'patch')
@@ -326,6 +403,8 @@ END
     Confirm-Check 'resource validation identifies the exact model entry and raw hash' (
         $validated.architectureValidation.usedResources.Count -eq 1 -and
         $validated.architectureValidation.usedResources[0].sha256 -eq (Get-BytesHash $Entries['3do\agent_lit.3do']))
+
+    Invoke-ArchitectureAuthoringWorkflow $closedPath $closedInspection $resourceRequest.resourceArchives
 
     $patch = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256; sourceRevision = $closedInspection.sourceRevision
         resourceArchives = $resourceRequest.resourceArchives; operations = @(@{ op = 'setThingName'; thing = 0; name = 'ReviewedPanel' }) }

@@ -126,7 +126,8 @@ static string ReadRequest(string path)
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
     "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
-    "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export"];
+    "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export",
+    "architecture-authoring", "architecture-source-point-bake", "architecture-provenance-readback"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
     Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));

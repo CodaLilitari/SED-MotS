@@ -22,6 +22,8 @@ public sealed class Thing
     public string ArchLightingSourceModel = string.Empty;
     /// <summary>Optional source-content baseline retained from a native project; resource-aware verification is separate.</summary>
     public string ArchLightingSourceModelHash = string.Empty;
+    /// <summary>Optional current editor binding/bake evidence; resource verification is separate.</summary>
+    public ArchitectureLightingProvenance? ArchLightingProvenance;
     public Sector? Sector;
     public Box BBox;
 

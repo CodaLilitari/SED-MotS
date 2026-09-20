@@ -57,6 +57,8 @@ public sealed class ThreeDoModel
 {
     public string Name { get; set; } = string.Empty;
     public double Version { get; set; }
+    /// <summary>Exact captured source-byte SHA256; absent for a model parsed only from decoded text.</summary>
+    public string? RawSha256 { get; set; }
     /// <summary>Windows Delphi native-project normalized model fingerprint, when source encoding is verifiable.</summary>
     public string? ArchitectureContentHash { get; set; }
     /// <summary>All-LOD shape metadata captured from source; null is unverified, not a single-LOD assertion.</summary>

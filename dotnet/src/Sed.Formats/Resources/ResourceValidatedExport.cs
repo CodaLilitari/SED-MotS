@@ -14,7 +14,7 @@ public sealed record ArchitectureResourceValidationResult(string Status, int Bou
     public bool HasErrors => Bindings.Any(b => !b.CanUseBinding);
 }
 
-/// <summary>Validates the live document before JKL serialization loses native fingerprint provenance.</summary>
+/// <summary>Validates live resource bindings independently of stored authoring-input freshness.</summary>
 public static class ArchitectureResourceValidation
 {
     public static ArchitectureResourceValidationResult Evaluate(Level level, IArchitectureResourceProvider? resources)
@@ -55,5 +55,5 @@ public static class ResourceValidatedExport
     public static string DocumentRevision(JklDocument document) => AgentWorkspace.Hash(JsonSerializer.SerializeToUtf8Bytes(new {
         version = "sed-resource-export-document-v1", output = JklWriter.Build(document),
         architecture = document.Level.Things.Select(t => new {
-            t.ArchLightingIndex, t.ArchLightingSourceModel, t.ArchLightingSourceModelHash }).ToArray() }));
+            t.ArchLightingIndex, t.ArchLightingSourceModel, t.ArchLightingSourceModelHash, t.ArchLightingProvenance }).ToArray() }));
 }

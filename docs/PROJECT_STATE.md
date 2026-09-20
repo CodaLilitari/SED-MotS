@@ -5,6 +5,16 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
+**Current work: [ARCH-01](ARCHITECTURE_AUTHORING.md) implemented and source-tested;
+clean-worktree packaging/publication pending.** Shared bind, reset and unoccluded
+source-point baking, saved provenance, computed stale status, paginated samples,
+actual inspector controls and raw model identity in the renderer are implemented.
+Source build passes 1,098 units with zero warnings/errors; the corrected actual
+headless UI probe passes 113 checks. The expanded lit/resource workflow passes
+50 calls/139 checks, with the three interior before/RGB/mono images inspected.
+See DEC-20260920-12 and 13 for scope and corrected acceptance fixtures. The older
+SPATIAL-01 package below remains the latest verified handoff until packaging ends.
+
 **Latest completed milestone: [SPATIAL-01](SPATIAL_SELECTION.md), packaged and
 source published.** Implementation/package source is
 `1fe296a65f331161e13a4dac20f3306d322d3b53`. The integrated build passes 1,043
@@ -96,7 +106,7 @@ general remapping, native output and broader game behavior remain separate.
 | Milestone | Acceptance target | State |
 |---|---|---|
 | [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Complete within the documented convex-geometry/token scope |
-| Full architectural lighting authoring | Separate bind/rebind/rebake; dependencies and stale-bake status; undo samples and provenance | Planned |
+| [Architectural lighting authoring (ARCH-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback | Source-tested; package pending. Initial recipe is unoccluded and single-LOD; shadowed/LOD correspondence remains separate |
 | Controlled engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Planned |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
 | Thin MCP adapter | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Planned after domain prerequisites |

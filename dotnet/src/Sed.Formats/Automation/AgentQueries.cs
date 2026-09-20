@@ -19,7 +19,7 @@ public static class AgentQueries
     public const int MaxLimit = 200;
     public const int MaxResponseBytes = 1024 * 1024;
     private static readonly string[] Collections =
-        ["summary", "sectors", "things", "lights", "templates", "materials", "colormaps", "surfaces", "vertices"];
+        ["summary", "sectors", "things", "lights", "templates", "materials", "colormaps", "surfaces", "vertices", "architecture", "architecturalVertices"];
     private static readonly string[] NamedCollections = ["things", "templates", "materials", "colormaps"];
 
     public static object Schema() => new Dictionary<string, object>
@@ -36,10 +36,18 @@ public static class AgentQueries
             ["offset"] = new { type = "integer", minimum = 0, maximum = int.MaxValue, @default = 0 },
             ["limit"] = new { type = "integer", minimum = 1, maximum = MaxLimit, @default = DefaultLimit },
             ["sector"] = new { type = "integer", minimum = 0, maximum = int.MaxValue },
+            ["lightingIndex"] = new { type = "integer", minimum = 0, maximum = int.MaxValue },
+            ["mesh"] = new { type = "integer", minimum = 0, maximum = int.MaxValue },
             ["search"] = new { type = "string", minLength = 1, maxLength = 127, pattern = @"\S" },
         },
         ["allOf"] = new object[]
         {
+            new Dictionary<string, object>
+            {
+                ["if"] = new { properties = new { collection = new Dictionary<string, object> { ["const"] = "architecturalVertices" } } },
+                ["then"] = new { required = new[] { "lightingIndex", "mesh" } },
+                ["else"] = new { properties = new { lightingIndex = false, mesh = false } },
+            },
             new Dictionary<string, object>
             {
                 ["if"] = new { properties = new { collection = new Dictionary<string, object> { ["enum"] = new[] { "surfaces", "vertices" } } } },
@@ -54,7 +62,7 @@ public static class AgentQueries
         },
     };
 
-    private sealed record Request(string Collection, int Offset, int Limit, int? Sector, string? Search);
+    private sealed record Request(string Collection, int Offset, int Limit, int? Sector, string? Search, int? LightingIndex, int? Mesh);
     private sealed record Catalog(int Count, Func<int, object> Item, Func<int, bool>? Matches = null);
 
     internal static object Run(string path, string requestText)
@@ -71,6 +79,7 @@ public static class AgentQueries
             sourceRevision = snapshot.SourceRevision, dependencies = snapshot.Dependencies,
             sourceLightMetadata = AgentWorkspace.DescribeSourceLightMetadata(snapshot.Document),
             collection = request.Collection, sector = request.Sector, search = request.Search,
+            lightingIndex = request.LightingIndex, mesh = request.Mesh,
             total = indices.Length, sourceTotal = catalog.Count, offset = request.Offset,
             limit = request.Limit, returnedCount = count,
             nextOffset = (long)request.Offset + count < indices.Length ? (int?)(request.Offset + count) : null,
@@ -104,7 +113,7 @@ public static class AgentQueries
         var root = json.RootElement;
         if (root.ValueKind != JsonValueKind.Object) throw new AgentRequestException("Query must be a JSON object.");
         var names = new HashSet<string>(StringComparer.Ordinal);
-        string[] allowed = ["schemaVersion", "collection", "offset", "limit", "sector", "search"];
+        string[] allowed = ["schemaVersion", "collection", "offset", "limit", "sector", "search", "lightingIndex", "mesh"];
         foreach (var property in root.EnumerateObject())
             if (!names.Add(property.Name) || !allowed.Contains(property.Name, StringComparer.Ordinal))
                 throw new AgentRequestException($"Duplicate or unsupported query property '{property.Name}'.");
@@ -130,7 +139,14 @@ public static class AgentQueries
                 throw new AgentRequestException("search must contain between 1 and 127 characters and cannot be blank.");
             search = field.GetString();
         }
-        return new Request(collection, offset, limit, sector, search);
+        bool samples = collection == "architecturalVertices";
+        int? lightingIndex = root.TryGetProperty("lightingIndex", out _) ? Integer(root, "lightingIndex", null, 0, int.MaxValue) : null;
+        int? mesh = root.TryGetProperty("mesh", out _) ? Integer(root, "mesh", null, 0, int.MaxValue) : null;
+        if (samples && (lightingIndex is null || mesh is null))
+            throw new AgentRequestException("architecturalVertices requires lightingIndex and mesh from query architecture.");
+        if (!samples && (lightingIndex is not null || mesh is not null))
+            throw new AgentRequestException("lightingIndex and mesh are only valid for architecturalVertices.");
+        return new Request(collection, offset, limit, sector, search, lightingIndex, mesh);
     }
 
     private static int Integer(JsonElement root, string name, int? fallback, int minimum, int maximum)
@@ -184,6 +200,7 @@ public static class AgentQueries
                         sector = thing.Sector is null ? -1 : level.Sectors.IndexOf(thing.Sector), thing.Layer,
                         parameters = thing.Values, sourceParameters = Parameters(thing.SourceParameters),
                         thing.ArchLightingIndex, thing.ArchLightingSourceModel, thing.ArchLightingSourceModelHash,
+                        architecture = AgentWorkspace.DescribeArchitecture(level, thing),
                     };
                 }, i => Match(level.Things[i].Name) || Match(level.Things[i].Template));
             case "lights":
@@ -194,6 +211,23 @@ public static class AgentQueries
                         rgb = Rgb(light.Color), light.Intensity, light.Range, light.RgbIntensity,
                         light.EffectiveRgbIntensity, light.LegacyRgbRange,
                         rgbIntensityInherited = !light.RgbIntensity.HasValue };
+                });
+            case "architecture":
+                return new Catalog(level.ArchitecturalLighting.Count, i => new {
+                    index = i, meshVertexCounts = level.ArchitecturalLighting[i].Meshes.Select(m => m.Vertices.Count).ToArray(),
+                    boundThings = level.Things.Select((t, index) => (t, index)).Where(p => p.t.ArchLightingIndex == i).Select(p => p.index).ToArray(),
+                    samplesSha256 = Sed.Core.Lighting.ArchitecturalLightingAuthoring.SamplesDigest(level.ArchitecturalLighting[i]),
+                });
+            case "architecturalVertices":
+                if (request.LightingIndex is not int lighting || lighting >= level.ArchitecturalLighting.Count)
+                    throw new AgentRequestException("lightingIndex is outside the architecture collection.");
+                var architecturalObject = level.ArchitecturalLighting[lighting];
+                if (request.Mesh is not int mesh || mesh >= architecturalObject.Meshes.Count)
+                    throw new AgentRequestException("mesh is outside the selected architecture object.");
+                var architecturalVertices = architecturalObject.Meshes[mesh].Vertices;
+                return new Catalog(architecturalVertices.Count, i => new {
+                    index = i, lightingIndex = lighting, mesh, mono = architecturalVertices[i].Mono,
+                    rgb = new[] { architecturalVertices[i].Red, architecturalVertices[i].Green, architecturalVertices[i].Blue },
                 });
             case "templates":
                 var templates = level.Templates.Values.OrderBy(t => t.Order).ThenBy(t => t.Name, StringComparer.OrdinalIgnoreCase).ToArray();
