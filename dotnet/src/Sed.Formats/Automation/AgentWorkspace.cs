@@ -477,6 +477,7 @@ public static partial class AgentWorkspace
                 return new SetHeaderFieldCommand<float>(level.Header, "gravity", (float)Number(op, "value", 0, 10000), h => h.Gravity, (h, v) => h.Gravity = v);
             case "addBox":
                 Fields(op, "op", "center", "halfSize");
+                EnsureKnownGeometrySections(doc);
                 return new CreateSectorCommand(level, SectorFactory.CreateBox(level, Vector(op, "center"), Number(op, "halfSize", 0.0001, 100000), string.Empty, -1));
             case "addThing":
                 Fields(op, "op", "sector", "template", "name", "position");

@@ -81,6 +81,7 @@ public static class JklParser
                 throw new FormatException($"Thing {thing.Num} references missing architectural lighting object {thing.ArchLightingIndex}.");
             if (thing.ArchLightingIndex >= 0) thing.ArchLightingSourceModel = level.GetThingModel(thing);
         }
+        if (doc is not null) doc.SourceGeometry = JklSourceGeometry.Capture(level, geo, doc.SourceLines);
         return level;
     }
 
@@ -347,6 +348,12 @@ public static class JklParser
         for (int i = 0; i < numSecs; i++)
         {
             RequireData(r); // "SECTOR i"
+            var sectorLabel = JklReader.Tokens(r.Current);
+            int? sourceNumber = sectorLabel.Length == 2 && sectorLabel[0] == "SECTOR" &&
+                int.TryParse(sectorLabel[1], out int parsedNumber) ? parsedNumber : null;
+            geo.SectorNumbers.Add(sourceNumber);
+            if (sourceNumber != i)
+                doc?.PreservationWarnings.Add($"Sector row {i} has a nonsequential or unsupported source label; geometry regeneration cannot preserve that identity.");
             var sector = level.NewSector();
             var globalToLocal = new Dictionary<int, Vertex>();
 

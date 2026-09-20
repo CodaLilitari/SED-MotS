@@ -124,6 +124,11 @@ public class JklMotsPreservationTests
         END
         """;
 
+    // Positive geometry/sector rewrites use only modeled sections. The full
+    // Source fixture retains opaque data for unchanged and unrelated edits.
+    private static string KnownSectionsOnlySource =>
+        Source[..Source.IndexOf("SECTION: CUSTOM", StringComparison.Ordinal)].TrimEnd();
+
     [Fact]
     public void NoEditSavePreservesAllSourceLines()
     {
@@ -138,7 +143,7 @@ public class JklMotsPreservationTests
     [Fact]
     public void EditedGeometryKeepsIndependentMonoRgbAndNearbyVertices()
     {
-        var doc = JklParser.ParseDocument(Source);
+        var doc = JklParser.ParseDocument(KnownSectionsOnlySource);
         doc.Level.Sectors[0].Surfaces[0].Corners[0].Intensity = new(.91f, .81f, .71f);
         var back = JklParser.ParseDocument(JklWriter.Build(doc));
         var corner = back.Level.Sectors[0].Surfaces[0].Corners[0];
@@ -186,7 +191,7 @@ public class JklMotsPreservationTests
     [Fact]
     public void EditedSectorKeepsThrustCollisionAndAuthoredBounds()
     {
-        var doc = JklParser.ParseDocument(Source);
+        var doc = JklParser.ParseDocument(KnownSectionsOnlySource);
         doc.Level.Sectors[0].Thrust = new(9, 8, 7);
         var sector = JklParser.Parse(JklWriter.Build(doc)).Sectors[0];
         Assert.Equal(new Vec3(9, 8, 7), sector.Thrust);
@@ -211,7 +216,7 @@ public class JklMotsPreservationTests
     [Fact]
     public void MaterialNameEditAppendsWithoutLosingOriginalRows()
     {
-        var doc = JklParser.ParseDocument(Source);
+        var doc = JklParser.ParseDocument(KnownSectionsOnlySource);
         doc.Level.Sectors[0].Surfaces[0].Material = "new.mat";
         var output = JklWriter.Build(doc);
         Assert.Contains("0: original.mat 0.25 0.75", output);
@@ -262,7 +267,7 @@ public class JklMotsPreservationTests
     [Fact]
     public void DistinctCoincidentSourceVerticesRemainDistinctAfterRewrite()
     {
-        var doc = JklParser.ParseDocument(Source.Replace("3: 0.000001 0 0", "3: 0 0 0"));
+        var doc = JklParser.ParseDocument(KnownSectionsOnlySource.Replace("3: 0.000001 0 0", "3: 0 0 0"));
         doc.Level.Sectors[0].Surfaces[0].ExtraLightIntensity = .8f;
         var back = JklParser.Parse(JklWriter.Build(doc));
         Assert.Equal(4, back.Sectors[0].Vertices.Count);

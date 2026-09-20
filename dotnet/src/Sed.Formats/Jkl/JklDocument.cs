@@ -28,6 +28,8 @@ public sealed class JklDocument
     /// <summary>Original material names (index order) for resolving surface material indices on save.</summary>
     public List<string> Materials { get; } = new();
     internal Dictionary<string, string> OriginalSections { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal JklSourceGeometry? SourceGeometry { get; set; }
+    internal string? OriginalGeometryIdentityError { get; set; }
     internal string? OriginalSourceLightTextHash { get; set; }
     internal HashSet<string> SectionsWithUnmodeledFields { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<string> PreservationWarnings { get; } = new();

@@ -2,12 +2,15 @@
 
 Updated: 2026-09-12. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
-Hosting update, 2026-09-13: the public source is
+Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
+The incidental `openmots` checkout is a separate engine project.
+
+Hosting: the public source is
 [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS), on `main`,
 forked from `davidagnome/SED` in the `smlu/SED` network. See
-[GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). The implementation, local-worktree and
-package facts below remain the September 12 LIGHT-01 checkpoint. This hosting
-documentation update does not rebuild or republish its binaries.
+[GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). On 2026-09-20, the authenticated CLI
+account and ADMIN permission were verified as CodaLilitari, with main the only
+remote branch at the account-handoff base `65e94af` before this milestone.
 
 ## Objective and current milestone
 
@@ -17,15 +20,23 @@ Completed milestone LIGHT-01: preserve independent native MotS source-light inte
 
 Completed acceptance record: [LIGHT-01](LIGHT-01.md). Implementation passed 908 unit tests and 71 headless UI checks. Self-contained Windows package `0.4.0-mots.7-dev` passed all four agent workflows (154 calls, 292 assertions) and 681-file distribution verification. Operative decisions are `DEC-20260912-01` through `DEC-20260912-05`. The acceptance record is authoritative rather than a competing copy of criteria inside the app goal.
 
+Current bounded milestone: [GEO-01 geometry export preservation](GEOMETRY_REFERENCE_PRESERVATION.md).
+The writer now preserves supported imported geometry slots or refuses export,
+and geometry authoring accepts validated independent source-light metadata.
+The full solution builds with zero warnings/errors and 952 unit tests pass.
+The headless UI probe passes 71 checks; the enhanced executable design workflow
+passes 69 calls/129 assertions, with both diagnostic images inspected. A new
+self-contained package is pending. These results are separate from the older
+LIGHT-01 package above. See `DEC-20260920-01` and `DEC-20260920-02`.
+
 ## Current source and completed ownership
 
-- Editor implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`, branch `codex/mots-dotnet`. Completion documentation follows in a separate commit. Previous implementation base was `9d1d316`.
+- Current editor branch: `main`, based on hosting checkpoint `65e94af`; GEO-01 implementation is ready for a reviewed source commit and clean-worktree packaging.
+- Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
 - Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
-- Core model/editing/bake and tests: `model_hierarchy_preservation` subagent.
-- Native/JKL formats and preservation tests: `transparency_contract` subagent.
-- Agent acceptance tests and independent source audit: `arch_export_path` subagent.
-- GUI/automation integration, documentation, review and final validation: root.
+- GEO-01 JKL mapping/export: `sed_spatial_audit`; geometry policy/agent tests: `sed_workflow_audit`; independent review: `sed_export_review`. Assigned implementations are frozen after integrated tests.
+- Root owns process-level workflow, review, documentation, packaging and publication. No worker commits or pushes independently.
 
 ## Agreed contract
 
@@ -47,6 +58,11 @@ Completed acceptance record: [LIGHT-01](LIGHT-01.md). Implementation passed 908 
 
 ## Subsequent milestones
 
+GEO-01 is the bounded prerequisite to the spatial-authoring milestone below.
+Fresh regression tests reproduced its failures before production fixes. Source
+and executable checks pass; packaging remains pending. Spatial selectors remain
+planned rather than implied by the geometric preservation repair.
+
 | Milestone | Acceptance target | State |
 |---|---|---|
 | Spatial and reference-safe editing | Build and revise a six-to-ten-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Planned |
@@ -63,7 +79,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.7-dev-f6100fe/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `f6100fe`. See `DEC-20260912-05` for hashes and gate counts. No agents have outstanding implementation ownership for LIGHT-01.
+The previous verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.7-dev-f6100fe/`; use its `verification.json`, workflow receipts and `SHA256SUMS.txt`. Package source, binaries and history all identify `f6100fe`. See `DEC-20260912-05` for hashes and gate counts. GEO-01 executable receipts are under `build/geometry-preservation-20260920/`; no new distribution is claimed until its separate package checks pass.
 
 ## Recovery discipline
 

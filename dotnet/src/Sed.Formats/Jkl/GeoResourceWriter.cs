@@ -14,16 +14,39 @@ namespace Sed.Formats.Jkl;
 /// </summary>
 internal static class GeoResourceWriter
 {
-    public static (List<string> geo, List<string> sectors) Build(Level level, IReadOnlyList<string>? materials = null)
+    public static (List<string> geo, List<string> sectors, string? identityError) Build(Level level,
+        IReadOnlyList<string>? materials = null, JklSourceGeometry? source = null)
     {
-        // 1) Reuse a shared imported vertex only when its source identity and
-        // current position both match. Equal coordinates can be distinct topology.
-        var vxList = new List<Vec3>();
+        string? identityError = null;
+        var surfaces = OrderedSurfaces(level, source, out identityError);
+        identityError ??= source?.AdjoinProblem;
+
+        // 1) Retain original world-vertex slots, including unused rows. SECTORS
+        // can be retained verbatim independently of GEORESOURCE. Renumbering here
+        // would then change its vertex references even for an ordinary light edit.
+        var vxList = source?.Vertices.ToList() ?? new List<Vec3>();
         var vxKey = new Dictionary<(int, Vec3), int>();
         var vertexGlobal = new Dictionary<Vertex, int>();
+        var assignedSlots = new Dictionary<int, Vec3>();
         foreach (var sector in level.Sectors)
             foreach (var v in sector.Vertices)
-                vertexGlobal[v] = Pool(vxList, vxKey, v);
+            {
+                if (source is not null && source.VertexSlots.TryGetValue(v, out int slot) && (uint)slot < (uint)vxList.Count)
+                {
+                    if (assignedSlots.TryGetValue(slot, out var position) && !SamePositionBits(position, v.Position))
+                    {
+                        identityError ??= $"World vertex {slot} has split into different positions; a single imported reference cannot identify both.";
+                        vertexGlobal[v] = Pool(vxList, vxKey, v);
+                    }
+                    else
+                    {
+                        vxList[slot] = v.Position;
+                        assignedSlots[slot] = v.Position;
+                        vertexGlobal[v] = slot;
+                    }
+                }
+                else vertexGlobal[v] = Pool(vxList, vxKey, v);
+            }
 
         // 2) Pool texture vertices by their exact component bits. Numeric
         // equality merges +0 and -0, losing an authored sign on regeneration.
@@ -37,30 +60,44 @@ internal static class GeoResourceWriter
 
         // 3) Global surface numbering + adjoin records (mirror-pairs).
         var surfNum = new Dictionary<Surface, int>();
-        int gs = 0;
+        for (int i = 0; i < surfaces.Count; i++) surfNum[surfaces[i]] = i;
+        int gs = surfaces.Count;
         foreach (var sector in level.Sectors)
-            foreach (var surf in sector.Surfaces)
-                surfNum[surf] = gs++;
+            for (int i = 1; i < sector.Surfaces.Count; i++)
+                if (surfNum[sector.Surfaces[i]] != surfNum[sector.Surfaces[0]] + i)
+                    identityError ??= $"Sector {level.Sectors.IndexOf(sector)} no longer has a contiguous surface range in imported global order.";
 
         var adjOf = new Dictionary<Surface, int>();
-        var adjFlags = new List<long>();
-        var adjOwner = new List<int>();
-        foreach (var sector in level.Sectors)
-            foreach (var surf in sector.Surfaces)
+        var adjFlags = source?.Adjoins.Select(a => a.Flags).ToList() ?? new List<long>();
+        var mirror = source?.Adjoins.Select(a => a.Mirror).ToList() ?? new List<int>();
+        var assignedAdjoins = new HashSet<int>();
+        foreach (var surf in surfaces)
+        {
+            if (surf.Adjoin is { } partner && (!surfNum.ContainsKey(partner) ||
+                ReferenceEquals(surf, partner) || !ReferenceEquals(partner.Adjoin, surf)))
+                identityError ??= $"Surface {surfNum[surf]} has an adjoin outside the current geometry or without a reciprocal partner.";
+            if (surf.Adjoin is not null && surfNum.ContainsKey(surf.Adjoin))
             {
-                if (surf.Adjoin is not null && surfNum.ContainsKey(surf.Adjoin))
+                int slot = source is not null && source.AdjoinSlots.TryGetValue(surf, out int original) ? original : -1;
+                if ((uint)slot < (uint)adjFlags.Count && assignedAdjoins.Add(slot))
                 {
-                    adjOf[surf] = adjFlags.Count;
-                    adjFlags.Add(surf.AdjoinFlags);
-                    adjOwner.Add(surfNum[surf]);
+                    adjOf[surf] = slot;
+                    adjFlags[slot] = surf.AdjoinFlags;
                 }
-                else adjOf[surf] = -1;
+                else
+                {
+                    if (slot >= 0) identityError ??= $"Imported adjoin {slot} has missing or multiple surface owners.";
+                    adjOf[surf] = adjFlags.Count;
+                    assignedAdjoins.Add(adjFlags.Count);
+                    adjFlags.Add(surf.AdjoinFlags);
+                    mirror.Add(-1);
+                }
             }
-        var mirror = new int[adjFlags.Count];
-        foreach (var sector in level.Sectors)
-            foreach (var surf in sector.Surfaces)
-                if (surf.Adjoin is not null && adjOf.TryGetValue(surf.Adjoin, out int m) && adjOf[surf] >= 0)
-                    mirror[adjOf[surf]] = m;
+            else adjOf[surf] = -1;
+        }
+        foreach (var surf in surfaces)
+            if (surf.Adjoin is not null && adjOf.TryGetValue(surf.Adjoin, out int m) && adjOf[surf] >= 0)
+                mirror[adjOf[surf]] = m;
 
         // ---- GEORESOURCE ----
         var geo = new List<string> { "SECTION: GEORESOURCE", "" };
@@ -81,12 +118,13 @@ internal static class GeoResourceWriter
         geo.Add("");
 
         geo.Add($"World surfaces {gs}");
-        foreach (var sector in level.Sectors)
-            foreach (var surf in sector.Surfaces)
+        foreach (var surf in surfaces)
             {
                 var sb = new StringBuilder();
                 int materialIndex = surf.MaterialIndex;
-                if (materials is not null && surf.Material.Length > 0)
+                if (materials is not null && surf.Material.Length > 0 &&
+                    ((uint)materialIndex >= (uint)materials.Count ||
+                     !materials[materialIndex].Equals(surf.Material, StringComparison.OrdinalIgnoreCase)))
                     for (int i = 0; i < materials.Count; i++)
                         if (materials[i].Equals(surf.Material, StringComparison.OrdinalIgnoreCase)) { materialIndex = i; break; }
                 sb.Append(surfNum[surf]).Append(":\t").Append(materialIndex).Append('\t')
@@ -106,8 +144,7 @@ internal static class GeoResourceWriter
             }
         geo.Add("");
         geo.Add("#--- Surface normals ---");
-        foreach (var sector in level.Sectors)
-            foreach (var surf in sector.Surfaces)
+        foreach (var surf in surfaces)
             {
                 surf.RecalcNormal();
                 geo.Add($"{surfNum[surf]}:\t{F8(surf.Normal.X)}\t{F8(surf.Normal.Y)}\t{F8(surf.Normal.Z)}");
@@ -119,7 +156,6 @@ internal static class GeoResourceWriter
         var sectors = new List<string> { "SECTION: SECTORS", "" };
         sectors.Add($"World sectors\t{level.Sectors.Count}");
         sectors.Add("");
-        int nsurf = 0;
         for (int s = 0; s < level.Sectors.Count; s++)
         {
             var sec = level.Sectors[s];
@@ -148,15 +184,61 @@ internal static class GeoResourceWriter
             sectors.Add($"RADIUS\t{F8(radius)}");
             sectors.Add($"VERTICES\t{sec.Vertices.Count}");
             for (int v = 0; v < sec.Vertices.Count; v++) sectors.Add($"{v}: {vertexGlobal[sec.Vertices[v]]}");
-            sectors.Add($"SURFACES\t{nsurf}\t{sec.Surfaces.Count}");
-            nsurf += sec.Surfaces.Count;
+            int firstSurface = sec.Surfaces.Count == 0 ? 0 : surfNum[sec.Surfaces[0]];
+            sectors.Add($"SURFACES\t{firstSurface}\t{sec.Surfaces.Count}");
             sectors.Add("");
         }
         sectors.Add("end");
         sectors.Add("");
 
-        return (geo, sectors);
+        return (geo, sectors, identityError);
     }
+
+    private static List<Surface> OrderedSurfaces(Level level, JklSourceGeometry? source, out string? error)
+    {
+        error = null;
+        var current = level.Sectors.SelectMany(s => s.Surfaces).ToList();
+        if (source is null) return current;
+        var present = current.ToHashSet();
+        if (current.Count != present.Count)
+            error = "A surface is owned by more than one sector.";
+        if (source.ParsedSurfaceCount != source.Surfaces.Length)
+            error ??= "Imported global surface ranges overlap or leave unowned rows.";
+        var owners = new Dictionary<Surface, Sector>();
+        foreach (var sector in level.Sectors)
+            foreach (var surface in sector.Surfaces) owners.TryAdd(surface, sector);
+        for (int i = 0; i < source.Sectors.Length; i++)
+        {
+            if (i >= source.SectorNumbers.Length || source.SectorNumbers[i] != i)
+                error ??= $"Imported sector row {i} has a nonsequential or unsupported source label.";
+            if (i >= level.Sectors.Count || !ReferenceEquals(source.Sectors[i], level.Sectors[i]))
+                error ??= $"Imported sector {i} was removed or reordered.";
+        }
+        var ordered = new List<Surface>();
+        for (int i = 0; i < source.Surfaces.Length; i++)
+        {
+            var surface = source.Surfaces[i];
+            if (surface is null || !present.Remove(surface))
+                error ??= $"Imported global surface {i} is unowned, removed, or multiply owned.";
+            else
+            {
+                var originalOwner = source.SurfaceOwners[surface];
+                if (!ReferenceEquals(owners[surface], originalOwner) || !ReferenceEquals(surface.Sector, originalOwner))
+                    error ??= $"Imported global surface {i} changed its sector owner.";
+                ordered.Add(surface);
+            }
+        }
+        // A fallback permits a malformed source's baseline/read-only import. The
+        // writer refuses changed geometry if the retained identities cannot fit.
+        if (error is not null) return current;
+        ordered.AddRange(current.Where(present.Contains));
+        return ordered;
+    }
+
+    private static bool SamePositionBits(Vec3 a, Vec3 b) =>
+        BitConverter.DoubleToInt64Bits(a.X) == BitConverter.DoubleToInt64Bits(b.X) &&
+        BitConverter.DoubleToInt64Bits(a.Y) == BitConverter.DoubleToInt64Bits(b.Y) &&
+        BitConverter.DoubleToInt64Bits(a.Z) == BitConverter.DoubleToInt64Bits(b.Z);
 
     private static int Pool(List<Vec3> list, Dictionary<(int, Vec3), int> keys, Vertex vertex)
     {

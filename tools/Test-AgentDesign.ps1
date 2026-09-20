@@ -162,6 +162,7 @@ function Commit-Design {
     Confirm-Check "$Name plan retains the source bytes" ((Get-Hash $InputPath) -eq $source.inputSha256)
     $output = Join-Path $scratch "$Name.jkl"
     $applied = Invoke-Agent "$Name-apply" @('apply', $InputPath, '-', $output, $plan.outputSha256) $patch
+    Confirm-Check "$Name apply retains the source bytes" ((Get-Hash $InputPath) -eq $source.inputSha256)
     $hash = Get-Hash $output
     Confirm-Check "$Name output matches reviewed hash" ($hash -eq $plan.outputSha256 -and $hash -eq $applied.plan.outputSha256)
     $valid = Invoke-Agent "$Name-validate" @('validate', $output)
@@ -201,7 +202,7 @@ try {
     $receipt.agentVersion = $version.version
     $null = Invoke-Agent 'command-schema' @('schema', 'commands')
     $null = Invoke-Agent 'query-schema' @('schema', 'query')
-    foreach ($operation in @('registerMaterial', 'registerColormap', 'setSectorColormap', 'setSurfaceMaterial', 'fitSurfaceTexture', 'setSurfaceUv', 'setSurfaceRenderModes', 'extrudeSurface', 'adjoinSurfaces', 'addThing')) {
+    foreach ($operation in @('registerMaterial', 'registerColormap', 'setSectorColormap', 'setSurfaceMaterial', 'fitSurfaceTexture', 'setSurfaceUv', 'setSurfaceRenderModes', 'extrudeSurface', 'adjoinSurfaces', 'addThing', 'addLight', 'setLight', 'addBox')) {
         $schema = Invoke-Agent "schema-$operation" @('schema', $operation)
         Confirm-Check "$operation schema is available" ($schema.type -eq 'object')
     }
@@ -219,8 +220,20 @@ try {
     $colormapName = 'agent_demo_palette.cmp'
     $registered = Commit-Design 'mots-registered' $original @(
         @{ op = 'registerMaterial'; name = $materialName },
-        @{ op = 'registerColormap'; name = $colormapName }
+        @{ op = 'registerColormap'; name = $colormapName },
+        @{ op = 'addLight'; position = @(0, 0, 0); rgb = @(1, 0.5, 0.25); intensity = 0.375; range = 4 },
+        @{ op = 'addLight'; position = @(0.25, 0, 0); rgb = @(0.25, 1, 0.5); intensity = 0.625; rgbIntensity = 0; range = 5; legacyRgbRange = 99 },
+        @{ op = 'addLight'; position = @(-0.25, 0, 0); rgb = @(0.5, 0.25, 1); intensity = 0.875; rgbIntensity = 0.875; range = 6; legacyRgbRange = 0 }
     )
+    $sourceLights = Read-Collection 'source-lights-before-geometry' $registered.path 'lights'
+    Confirm-Check 'source light fixture retains inherited zero and explicit-equal RGB' (
+        $sourceLights.items.Count -eq 3 -and $sourceLights.items[0].rgbIntensityInherited -and
+        $null -eq $sourceLights.items[0].rgbIntensity -and $null -eq $sourceLights.items[0].legacyRgbRange -and
+        -not $sourceLights.items[1].rgbIntensityInherited -and $sourceLights.items[1].rgbIntensity -eq 0 -and
+        $sourceLights.items[1].legacyRgbRange -eq 99 -and -not $sourceLights.items[2].rgbIntensityInherited -and
+        $sourceLights.items[2].rgbIntensity -eq $sourceLights.items[2].intensity -and $sourceLights.items[2].legacyRgbRange -eq 0)
+    $sourceLightState = Convert-Request $sourceLights.items
+    Confirm-Check 'source lights use a validated authoring metadata extension' ($registered.plan.outputSourceLightMetadata.state -eq 'validated')
     $materials = Read-Collection 'registered-materials' $registered.path 'materials'
     $colormaps = Read-Collection 'registered-colormaps' $registered.path 'colormaps'
     $material = @($materials.items | Where-Object name -EQ $materialName)
@@ -279,6 +292,9 @@ try {
     }
     else { $receipt.player = @{ status = 'skipped'; reason = 'One exact walkplayer template with type=player was not available.' } }
     $finished = Commit-Design 'mots-design' $second.path $textureOperations.ToArray()
+    $finishedLights = Read-Collection 'source-lights-after-geometry' $finished.path 'lights'
+    Confirm-Check 'all source light fields survive geometry and material edits' ((Convert-Request $finishedLights.items) -ceq $sourceLightState)
+    Confirm-Check 'final design retains validated source light metadata' ($finished.plan.outputSourceLightMetadata.state -eq 'validated')
 
     $sectors = Read-Collection 'final-sectors' $finished.path 'sectors'
     $surfaceMap = @{}
@@ -312,7 +328,11 @@ try {
     $sourceRoom = @($sectors.items | Where-Object index -EQ 0)[0]
     $eastRoom = @($sectors.items | Where-Object index -EQ $firstSector)[0]
     $northRoom = @($sectors.items | Where-Object index -EQ $secondSector)[0]
-    Confirm-Check 'neighbors describe the intended L-shaped chain' ($firstSector -in $sourceRoom.neighbors -and $secondSector -notin $sourceRoom.neighbors -and 0 -in $eastRoom.neighbors -and $secondSector -in $eastRoom.neighbors -and $firstSector -in $northRoom.neighbors)
+    Confirm-Check 'MotS design has exactly three rooms' (@($sectors.items).Count -eq 3)
+    Confirm-Check 'source room retains its original bounds' ((Test-VectorEqual $sourceRoom.geometryBounds.min @(-1, -1, -1)) -and (Test-VectorEqual $sourceRoom.geometryBounds.max @(1, 1, 1)))
+    Confirm-Check 'east room extends exactly two units outward' ((Test-VectorEqual $eastRoom.geometryBounds.min @(1, -1, -1)) -and (Test-VectorEqual $eastRoom.geometryBounds.max @(3, 1, 1)))
+    Confirm-Check 'north room extends exactly two units outward' ((Test-VectorEqual $northRoom.geometryBounds.min @(1, 1, -1)) -and (Test-VectorEqual $northRoom.geometryBounds.max @(3, 3, 1)))
+    Confirm-Check 'neighbors describe exactly the intended L-shaped chain' ((Test-VectorEqual @($sourceRoom.neighbors | Sort-Object) @($firstSector)) -and (Test-VectorEqual @($eastRoom.neighbors | Sort-Object) @(0, $secondSector)) -and (Test-VectorEqual @($northRoom.neighbors | Sort-Object) @($firstSector)))
     $floor = @($surfaceMap[0] | Where-Object index -EQ $manualUvSurface)[0]
     $uvMatches = @($floor.corners).Count -eq $manualUv.Count
     for ($corner = 0; $uvMatches -and $corner -lt $manualUv.Count; $corner++) {
@@ -328,6 +348,22 @@ try {
     $occupied = Invoke-Agent 'occupied-portal-refusal' @('plan', $finished.path, '-') $occupiedPatch 2
     Confirm-Check 'occupied portal refuses a second extrusion without mutation' ($occupied.error -eq 'invalid_request' -and $occupied.message -match 'already adjoined' -and (Get-Hash $finished.path) -eq $finished.hash)
 
+    $lateOutput = Join-Path $scratch 'late-failure-refused.jkl'
+    $latePatch = Convert-Request @{ schemaVersion = 1; inputSha256 = $finished.hash; operations = @(
+        @{ op = 'setLight'; light = [int]$finishedLights.items[0].index; intensity = 9 },
+        @{ op = 'extrudeSurface'; sector = 0; surface = [int]$eastFace.index; distance = 1 }) }
+    $late = Invoke-Agent 'late-geometry-failure' @('apply', $finished.path, '-', $lateOutput) $latePatch 2
+    Confirm-Check 'late geometry failure does not persist the earlier light edit' ($late.error -eq 'invalid_request' -and $late.details.operationIndex -eq 1 -and -not (Test-Path -LiteralPath $lateOutput) -and (Get-Hash $finished.path) -eq $finished.hash)
+
+    # Deliberately opaque synthetic negative fixture, not an authored design step.
+    $opaque = Join-Path $scratch 'opaque-reference-input.jkl'
+    [IO.File]::WriteAllText($opaque, [IO.File]::ReadAllText($original) + "`nSECTION: AGENT_UNKNOWN_REFERENCES`n0: 0`nend`n", $utf8)
+    $opaqueHash = Get-Hash $opaque
+    $opaqueOutput = Join-Path $scratch 'opaque-box-refused.jkl'
+    $opaquePatch = Convert-Request @{ schemaVersion = 1; inputSha256 = $opaqueHash; operations = @(@{ op = 'addBox'; center = @(10, 0, 0); halfSize = 1 }) }
+    $opaqueResult = Invoke-Agent 'opaque-box-refusal' @('apply', $opaque, '-', $opaqueOutput) $opaquePatch 2
+    Confirm-Check 'box append refuses unknown reference sections without output' ($opaqueResult.error -eq 'invalid_request' -and $opaqueResult.message -match 'AGENT_UNKNOWN_REFERENCES' -and -not (Test-Path -LiteralPath $opaqueOutput) -and (Get-Hash $opaque) -eq $opaqueHash)
+
     $jkOriginal = Join-Path $scratch 'jk-original.jkl'
     $jkCreated = Invoke-Agent 'new-jk' @('new', $jkOriginal, 'jk')
     $jkValid = Invoke-Agent 'validate-jk-original' @('validate', $jkOriginal)
@@ -340,7 +376,10 @@ try {
     $jkSectors = Read-Collection 'jk-final-sectors' $jkDesign.path 'sectors'
     $jkRoot = @($jkSectors.items | Where-Object index -EQ 0)[0]
     $jkNeighbor = @($jkSectors.items | Where-Object index -EQ $jkAppended)[0]
-    Confirm-Check 'JK connected rooms report reciprocal neighbors' ($jkAppended -in $jkRoot.neighbors -and 0 -in $jkNeighbor.neighbors)
+    Confirm-Check 'JK design has exactly two rooms' (@($jkSectors.items).Count -eq 2)
+    Confirm-Check 'JK original room retains its bounds' ((Test-VectorEqual $jkRoot.geometryBounds.min @(-1, -1, -1)) -and (Test-VectorEqual $jkRoot.geometryBounds.max @(1, 1, 1)))
+    Confirm-Check 'JK new room extends exactly two units outward' ((Test-VectorEqual $jkNeighbor.geometryBounds.min @(1, -1, -1)) -and (Test-VectorEqual $jkNeighbor.geometryBounds.max @(3, 1, 1)))
+    Confirm-Check 'JK connected rooms report exact reciprocal neighbors' ((Test-VectorEqual @($jkRoot.neighbors) @($jkAppended)) -and (Test-VectorEqual @($jkNeighbor.neighbors) @(0)))
 
     if (-not $SkipSnapshot) {
         $eastCenter = Get-Center $eastRoom.geometryBounds

@@ -31,7 +31,8 @@ public static class JklWriter
         var level = doc.Level;
         var ranges = new List<(int start, int end, List<string> replacement)>();
         var appended = new List<List<string>>();
-        foreach (var section in GenerateSections(doc))
+        var sections = GenerateSections(doc, out var materials, enforceGeometryIdentity: true);
+        foreach (var section in sections)
             AddSection(ranges, appended, doc, section.name, section.lines, section.hasContent);
         ranges.Sort((a, b) => a.start != b.start ? a.start.CompareTo(b.start) : a.end.CompareTo(b.end));
 
@@ -59,7 +60,11 @@ public static class JklWriter
             result.AddRange(section);
         }
 
-        return string.Join('\n', result);
+        string output = string.Join('\n', result);
+        // Commit inferred registrations only after every generator, section
+        // preservation check and output assembly has succeeded.
+        doc.Materials.AddRange(materials.Skip(doc.Materials.Count));
+        return output;
     }
 
     internal static void CaptureBaseline(JklDocument doc)
@@ -67,7 +72,8 @@ public static class JklWriter
         doc.OriginalSourceLightTextHash = SourceLightMetadataFormat.SourceTextHash(doc.SourceLines);
         bool promoteSourceLights = SourceLightMetadataFormat.Needed(doc.Level) &&
             FindSection(doc.SourceLines, SourceLightMetadataFormat.SectionName).start < 0;
-        foreach (var section in GenerateSections(doc))
+        var sections = GenerateSections(doc, out var materials, captureBaseline: true);
+        foreach (var section in sections)
         {
             // A legacy JK LIGHTS row may contain inactive RGB color. Once it is
             // represented in metadata, rewrite its ordinary row and metadata
@@ -75,22 +81,37 @@ public static class JklWriter
             if (promoteSourceLights && section.name is "LIGHTS" or SourceLightMetadataFormat.SectionName) continue;
             doc.OriginalSections.Add(section.name, string.Join('\n', section.lines));
         }
+        doc.Materials.AddRange(materials.Skip(doc.Materials.Count));
     }
 
-    private static List<(string name, List<string> lines, bool hasContent)> GenerateSections(JklDocument doc)
+    private static List<(string name, List<string> lines, bool hasContent)> GenerateSections(JklDocument doc,
+        out List<string> materials, bool enforceGeometryIdentity = false, bool captureBaseline = false)
     {
         var level = doc.Level;
+        materials = doc.Materials.ToList();
         foreach (var surface in level.Sectors.SelectMany(s => s.Surfaces))
             if (!string.IsNullOrWhiteSpace(surface.Material) &&
-                !doc.Materials.Contains(surface.Material, StringComparer.OrdinalIgnoreCase))
-                doc.Materials.Add(surface.Material);
-        var (geo, sectors) = GeoResourceWriter.Build(level, doc.Materials);
+                !materials.Contains(surface.Material, StringComparer.OrdinalIgnoreCase))
+                materials.Add(surface.Material);
+        var (geo, sectors, identityError) = GeoResourceWriter.Build(level, materials, doc.SourceGeometry);
+        if (captureBaseline) doc.OriginalGeometryIdentityError = identityError;
+        if (enforceGeometryIdentity && identityError is not null &&
+            (doc.OriginalGeometryIdentityError is null || Changed("GEORESOURCE", geo) || Changed("SECTORS", sectors)))
+            throw new InvalidOperationException("Cannot rewrite geometry while preserving imported index references: " + identityError +
+                " No COG or opaque reference values were inferred or remapped.");
+        bool Changed(string name, List<string> lines) =>
+            !doc.OriginalSections.TryGetValue(name, out string? original) || original != string.Join('\n', lines);
+        if (enforceGeometryIdentity && (Changed("GEORESOURCE", geo) || Changed("SECTORS", sectors)))
+        {
+            JklSourceGeometry.ValidateRetainedSource(doc);
+            JklGeometrySectionPolicy.EnsureSupported(doc);
+        }
         var arch = new List<string> { "SECTION: ARCHLIGHTING" };
         arch.AddRange(ArchitecturalLightingFormat.Build(level.ArchitecturalLighting));
         arch.Add("END");
         return new()
         {
-            ("HEADER", GenerateHeader(level), true), ("MATERIALS", GenerateMaterials(doc), doc.Materials.Count > 0),
+            ("HEADER", GenerateHeader(level), true), ("MATERIALS", GenerateMaterials(doc, materials), materials.Count > 0),
             ("GEORESOURCE", geo, true), ("SECTORS", sectors, true),
             ("TEMPLATES", GenerateTemplates(level), level.Templates.Count > 0),
             ("THINGS", GenerateThings(level), level.Things.Count > 0),
@@ -102,7 +123,7 @@ public static class JklWriter
         };
     }
 
-    private static List<string> GenerateMaterials(JklDocument doc)
+    private static List<string> GenerateMaterials(JklDocument doc, IReadOnlyList<string> materials)
     {
         var originalRows = new Dictionary<int, string>();
         var (start, end) = FindSection(doc.SourceLines, "MATERIALS");
@@ -112,13 +133,13 @@ public static class JklWriter
             var first = JklReader.FirstWord(line.Trim());
             if (first.EndsWith(':') && int.TryParse(first[..^1], out int index)) originalRows[index] = line;
         }
-        var lines = new List<string> { "SECTION: MATERIALS", $"World materials {doc.Materials.Count}" };
-        for (int i = 0; i < doc.Materials.Count; i++)
+        var lines = new List<string> { "SECTION: MATERIALS", $"World materials {materials.Count}" };
+        for (int i = 0; i < materials.Count; i++)
         {
             if (originalRows.TryGetValue(i, out string? row) &&
-                JklReader.WordAt(JklReader.StripIndex(row), 0).Equals(doc.Materials[i], StringComparison.OrdinalIgnoreCase))
+                JklReader.WordAt(JklReader.StripIndex(row), 0).Equals(materials[i], StringComparison.OrdinalIgnoreCase))
                 lines.Add(row);
-            else lines.Add($"{i}: {doc.Materials[i]} 1 1");
+            else lines.Add($"{i}: {materials[i]} 1 1");
         }
         lines.Add("END");
         return lines;

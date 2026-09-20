@@ -14,6 +14,7 @@ internal sealed class GeoData
     public List<Vec2> TexVertices { get; } = new();
     public List<TempSurface> Surfaces { get; } = new();
     public List<TempAdjoin> Adjoins { get; } = new();
+    public List<int?> SectorNumbers { get; } = new();
 
     /// <summary>Global surface index → built model surface (for resolving adjoins).</summary>
     public Dictionary<int, Sed.Core.Model.Surface> SurfaceByGlobalIndex { get; } = new();

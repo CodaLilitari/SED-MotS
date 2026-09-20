@@ -156,17 +156,13 @@ public static partial class AgentWorkspace
 
     private static void EnsureKnownGeometrySections(JklDocument doc)
     {
-        // Appending a sector preserves existing sector and global surface indices.
-        // The writer can renumber adjoins/world vertices, so opaque sections may
-        // contain references we cannot safely remap. Resource lists do not.
-        string[] safe = ["COPYRIGHT", "HEADER", "GEORESOURCE", "SECTORS", "THINGS", "MATERIALS", "TEMPLATES", "LIGHTS",
-            "LAYERS", "COGS", "ARCHLIGHTING", "MODELS", "SPRITES", "SOUNDS", "COGSCRIPTS", "KEYFRAMES", "ANIMCLASS", "AICLASS", "SOUNDCLASS"];
-        foreach (string raw in doc.SourceLines)
+        try
         {
-            var fields = JklReader.Tokens(raw.Split('#')[0]);
-            if (fields.Length >= 2 && fields[0].Equals("SECTION:", StringComparison.OrdinalIgnoreCase)
-                && !safe.Contains(fields[1], StringComparer.OrdinalIgnoreCase))
-                throw new AgentRequestException($"Geometry authoring refuses unmodeled section '{fields[1]}' because it may contain topology references. No opaque references were remapped.");
+            JklGeometrySectionPolicy.EnsureSupported(doc);
+        }
+        catch (InvalidOperationException error)
+        {
+            throw new AgentRequestException(error.Message, innerException: error);
         }
     }
 }
