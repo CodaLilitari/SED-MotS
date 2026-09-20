@@ -55,7 +55,7 @@ foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/compare_engine_lighting.py tools/test_engine_lighting.py)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }

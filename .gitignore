@@ -58,3 +58,7 @@ res/SED.res
 
 # ad-hoc scratch probes (not part of the solution)
 dotnet/scratch/
+
+# Python acceptance tools
+__pycache__/
+*.pyc

@@ -5,6 +5,23 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
+**Active milestone: ENGINE-01, not yet complete.** From `bcba14a`, original
+fixture generation, bounded hidden capture, resource-name collision checks,
+final staged hashes and independent image oracles are under implementation.
+Lilitari (ChatGPT 5.6 Pro) and Grok Build (`grok-4.6-build`, requested xhigh)
+returned review input; findings are being independently verified. The first
+actual captures exposed runtime scaffold prerequisites. Fixture-05 now launches
+and matrix-01 produced 21 captures passing the initial color-differential checks,
+but visual inspection found black texture rows. The stronger geometry-defined
+coverage check rejects that matrix (62.32% panel coverage). Source and exact UV
+seam projection identify packed MAT file rows being read as padded SDL rows.
+A bounded engine correction is under implementation in a separate worktree;
+the original 2x2 fixture is retained for before/after proof. See
+`docs/ENGINE_CAPTURE.md` and local `build/engine01-20260920/`.
+Do not infer completed runtime, retail, deterministic or package evidence from
+the tools' presence or the superseded matrix receipt. Existing ARCH-01 completion
+below remains the latest release.
+
 **Latest completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
 source published.** Implementation/package source is
 `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`. Shared bind, reset and unoccluded
