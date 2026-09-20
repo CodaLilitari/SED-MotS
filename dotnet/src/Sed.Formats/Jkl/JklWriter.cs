@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using Sed.Core.Model;
 
@@ -13,25 +14,34 @@ public static class JklWriter
 {
     public static void Save(JklDocument doc, string path)
     {
-        string content = Build(doc);
+        string content = BuildCandidate(doc, out var materials);
         string fullPath = Path.GetFullPath(path);
         string temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
             File.WriteAllText(temporary, content);
             File.Move(temporary, fullPath, overwrite: true);
+            doc.Materials.AddRange(materials.Skip(doc.Materials.Count));
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
-    public static string Build(JklDocument doc)
+    /// <summary>Generates output without changing the document or derived geometry caches.</summary>
+    public static string Build(JklDocument doc) => BuildCandidate(doc, out _);
+
+    private static string BuildCandidate(JklDocument doc, out List<string> materials)
     {
         var src = doc.SourceLines;
         SourceLightMetadataFormat.ValidateRetainedSource(doc);
+        if (src.Length > 0 && (doc.OriginalSourceTextHash is null || doc.SourceGeometry is null))
+            throw new InvalidOperationException("Export requires a parsed source baseline, including validated source-light metadata when present. Reopen the source through JklParser.ParseDocument before saving.");
+        JklSourceGeometry.ValidateRetainedSource(doc);
+        if (doc.OriginalSourceTextHash is not null && doc.OriginalSourceTextHash != SourceTextHash(src))
+            throw new InvalidOperationException("Retained source text changed outside the document model. Reopen the changed source through JklParser.ParseDocument before exporting it.");
         var level = doc.Level;
         var ranges = new List<(int start, int end, List<string> replacement)>();
         var appended = new List<List<string>>();
-        var sections = GenerateSections(doc, out var materials, enforceGeometryIdentity: true);
+        var sections = GenerateSections(doc, out materials, enforceGeometryIdentity: true);
         foreach (var section in sections)
             AddSection(ranges, appended, doc, section.name, section.lines, section.hasContent);
         ranges.Sort((a, b) => a.start != b.start ? a.start.CompareTo(b.start) : a.end.CompareTo(b.end));
@@ -60,11 +70,7 @@ public static class JklWriter
             result.AddRange(section);
         }
 
-        string output = string.Join('\n', result);
-        // Commit inferred registrations only after every generator, section
-        // preservation check and output assembly has succeeded.
-        doc.Materials.AddRange(materials.Skip(doc.Materials.Count));
-        return output;
+        return string.Join('\n', result);
     }
 
     internal static void CaptureBaseline(JklDocument doc)
@@ -82,7 +88,11 @@ public static class JklWriter
             doc.OriginalSections.Add(section.name, string.Join('\n', section.lines));
         }
         doc.Materials.AddRange(materials.Skip(doc.Materials.Count));
+        doc.OriginalSourceTextHash = SourceTextHash(doc.SourceLines);
     }
+
+    private static string SourceTextHash(string[] lines) =>
+        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join('\n', lines))));
 
     private static List<(string name, List<string> lines, bool hasContent)> GenerateSections(JklDocument doc,
         out List<string> materials, bool enforceGeometryIdentity = false, bool captureBaseline = false)

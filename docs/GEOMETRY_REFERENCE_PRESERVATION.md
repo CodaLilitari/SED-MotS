@@ -51,17 +51,36 @@ reciprocal adjoin partners must be representable. Shared copies of one imported
 world vertex must retain identical position bits, including signed zero.
 
 The shared writer checks these invariants when GEORESOURCE or SECTORS changes,
-including surface-lighting and material edits. It also checks retained geometry
-text against its captured hash and applies the shared section policy. Valid
+including surface-lighting and material edits. Nonempty source text requires a
+captured parsed baseline, and all retained source text is checked against its
+captured hash before output generation. Raw source-array edits require reopening
+through the parser. A geometry-specific hash supplies focused diagnostics. Valid
 comments on section headers remain supported; extra header tokens refuse
-regeneration. Unchanged malformed/opaque geometry may remain readable and be
+regeneration. Unmodeled tail records in MATERIALS, GEORESOURCE and SECTORS also
+block replacement of their containing section. Unchanged malformed/opaque geometry may remain readable and be
 retained during unrelated edits. This is not an automatic repair facility.
 
 Existing material slots survive duplicate or case-insensitive matching names
-when the surface's selected slot still matches. Inferred material registrations
-commit only after successful output generation and preservation checks. This
-does not promise rollback of a successful Build if a subsequent filesystem
-write fails, nor a transaction over every mutable derived model cache.
+when the surface's selected slot still matches. Sector colormap selections now
+retain numeric slots too; explicit agent choices and undo restore both slot and
+name. The human inspector provides an exact registered-slot selector and displays
+ambiguous-name refusals without changing the model or undo history. Ambiguous
+unbound names refuse. Invalid imported colormap references block
+regeneration, while the existing empty-table/slot-zero scaffold stays supported.
+
+`Build` is non-mutating: it stages inferred material registrations and computes
+export normals without assigning live caches. `Save` commits registrations only
+after successful file replacement. Refused generation and failed file promotion
+preserve material state; a clean retry produces the same output.
+
+Invalid imported texture-vertex references on surfaces with potentially textured
+materials block regeneration with source surface/corner/index diagnostics.
+Material-less faces deliberately ignore UV tokens in the inspected engine
+loader, so their unusual indices remain compatible rather than being called
+universal game-load failures. Those ignored tokens may be canonicalized during
+geometry regeneration. No asset-aware proof of a named material's texture type
+is implied; assigning a material to unresolved imported UVs requires supported
+source data rather than invented coordinates.
 
 The contract does not cover arbitrary COG argument typing/remapping, thing or
 UV reference identities, persistent editor IDs, or every resource table.
@@ -72,21 +91,31 @@ parsed source identities continue through the model-generated export path.
 
 ## Acceptance evidence
 
-Current state: implementation and integrated source/executable checks passed;
-new self-contained package verification remains pending.
+Current gate: **source acceptance passed; replacement package pending**.
+The candidate `9a1f2ce` passed its original checks. A later uploaded-source
+review prompted 13 new cases, with 12 intended failures and one passing control.
+The resulting fixes and additional command/import controls now pass the full
+981-case suite. The colormap inspector exception was independently reproduced
+before fixing it; all 91 actual headless controls checks now pass. See
+`DEC-20260920-04` through `DEC-20260920-06` in the work log.
 
 | Evidence | Result |
 |---|---|
 | Full Release solution build | Passed, zero warnings/errors |
-| Full unit suite | 952 passed, zero failed/skipped; includes 26 export-reference and 18 agent-geometry cases |
-| Actual Avalonia headless controls | 71 checks passed; no native GUI window opened |
-| Enhanced framework-dependent agent design workflow | 69 process calls, 129 assertions passed, including source-light state, exact room bounds/counts/neighbors and negative controls |
+| Full unit suite | 981 passed, zero failed/skipped; includes 26 export-reference, 18 agent-geometry, 12 import-edge, seven transaction and ten colormap identity cases |
+| Actual Avalonia headless controls | 91 checks passed, including 20 sector-colormap checks; no native GUI window opened |
+| Candidate framework-dependent agent design workflow | 69 process calls, 129 assertions passed, including source-light state, exact room bounds/counts/neighbors and negative controls; replacement package must rerun it |
 | Diagnostic images | Both interior PNGs inspected: distinct views show continuous room geometry and open connections; flat diagnostic colors, no material/gameplay claim |
-| New self-contained Windows distribution | Pending |
+| Superseded local Windows candidate | `0.4.0-mots.8-dev` at `9a1f2ce`; all four workflows passed (161 calls/313 assertions), separate smoke passed, 682 distribution members verified; not a final handoff |
 
-Source build/TRX evidence: `build/dotnet/Release-5a3b21746918409f908e20492e52ac4c/`.
-The UI log is `build/geometry-ui-probe.log`. Process requests, responses, hashes
+Final source build/TRX: `build/dotnet/Release-1fd7de3987aa43f5bb445566ac885ce5/`.
+The UI log is `build/geometry-ui-colormap-final.log`. Initial process requests, responses, hashes
 and images are in `build/geometry-preservation-20260920/design-final/`.
+The clean package and receipts are in
+`build/packages/SED-MotS-0.4.0-mots.8-dev-9a1f2ce/`. Its design image hashes match
+the inspected framework-dependent images exactly. `verification.json` binds
+the Windows binary, source ZIP and complete Git bundle to the same source
+commit. Packaging does not launch the native GUI or a game.
 Tests include valid closed rooms with reversed global surface blocks, semantic
 COG witnesses resolved from emitted tables, append/reopen/append-again,
 overlap-plus-orphan ranges, adjoin flags/mirrors, stale retained source, invalid

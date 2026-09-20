@@ -69,12 +69,14 @@ public sealed class Surface
     /// numerical noise on near-planar surfaces. Winding convention is unchanged.
     /// A genuinely degenerate (zero-area) surface still yields <see cref="Vec3.Zero"/>.
     /// </summary>
-    public void RecalcNormal()
+    public void RecalcNormal() => Normal = CalculateNormal();
+
+    /// <summary>Calculates the polygon normal without changing its cached value.</summary>
+    public Vec3 CalculateNormal()
     {
         if (Corners.Count < 3)
         {
-            Normal = Vec3.Zero;
-            return;
+            return Vec3.Zero;
         }
 
         double nx = 0, ny = 0, nz = 0;
@@ -87,6 +89,6 @@ public sealed class Surface
             nz += (cur.X - nxt.X) * (cur.Y + nxt.Y);
         }
 
-        Normal = new Vec3(nx, ny, nz).Normalized();
+        return new Vec3(nx, ny, nz).Normalized();
     }
 }

@@ -20,6 +20,11 @@ internal static class GeoResourceWriter
         string? identityError = null;
         var surfaces = OrderedSurfaces(level, source, out identityError);
         identityError ??= source?.AdjoinProblem;
+        identityError ??= source?.ColormapProblem;
+        if (source is not null)
+            foreach (var invalid in source.InvalidTextureVertices)
+                if (invalid.Surface.MaterialIndex >= 0 || !string.IsNullOrWhiteSpace(invalid.Surface.Material))
+                    identityError ??= $"Imported surface {invalid.SourceSurface} corner {invalid.Corner} references missing texture vertex {invalid.Index}; its material may use UV coordinates.";
 
         // 1) Retain original world-vertex slots, including unused rows. SECTORS
         // can be retained verbatim independently of GEORESOURCE. Renumbering here
@@ -146,8 +151,8 @@ internal static class GeoResourceWriter
         geo.Add("#--- Surface normals ---");
         foreach (var surf in surfaces)
             {
-                surf.RecalcNormal();
-                geo.Add($"{surfNum[surf]}:\t{F8(surf.Normal.X)}\t{F8(surf.Normal.Y)}\t{F8(surf.Normal.Z)}");
+                var normal = surf.CalculateNormal();
+                geo.Add($"{surfNum[surf]}:\t{F8(normal.X)}\t{F8(normal.Y)}\t{F8(normal.Z)}");
             }
         geo.Add("end");
         geo.Add("");
@@ -172,7 +177,7 @@ internal static class GeoResourceWriter
             sectors.Add($"FLAGS\t0x{sec.Flags:x}");
             sectors.Add($"AMBIENT LIGHT\t{F6(sec.Ambient.R)}");
             sectors.Add($"EXTRA LIGHT\t{F6(sec.ExtraLight.R)}");
-            sectors.Add($"COLORMAP\t{ColorMapIndex(level, sec.ColorMap)}");
+            sectors.Add($"COLORMAP\t{sec.ResolveColorMapIndex()}");
             sectors.Add($"TINT\t{F6(sec.Tint.R)}\t{F6(sec.Tint.G)}\t{F6(sec.Tint.B)}");
             sectors.Add($"BOUNDBOX\t{F8(box.Min.X)} {F8(box.Min.Y)} {F8(box.Min.Z)} {F8(box.Max.X)} {F8(box.Max.Y)} {F8(box.Max.Z)}");
             if (sec.HasCollideBox)
@@ -255,12 +260,6 @@ internal static class GeoResourceWriter
         var k = (BitConverter.DoubleToInt64Bits(uv.U), BitConverter.DoubleToInt64Bits(uv.V));
         if (keys.TryGetValue(k, out int idx)) return idx;
         idx = list.Count; list.Add(new Vec2(uv.U, uv.V)); keys[k] = idx; return idx;
-    }
-
-    private static int ColorMapIndex(Level level, string name)
-    {
-        int i = level.ColorMaps.FindIndex(c => string.Equals(c, name, StringComparison.OrdinalIgnoreCase));
-        return i < 0 ? 0 : i;
     }
 
     private static Box Bounds(Sector sector, out Vec3 center, out double radius)

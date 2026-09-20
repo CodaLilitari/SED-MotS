@@ -28,7 +28,7 @@ public static partial class AgentWorkspace
                 int colormap = Integer(op, "colormapIndex");
                 if ((uint)colormap >= (uint)doc.Level.ColorMaps.Count)
                     throw FieldError("colormapIndex is outside the current document.", "colormapIndex");
-                command = new SetSectorColormapCommand(Sector(), doc.Level.ColorMaps[colormap]);
+                command = new SetSectorColormapCommand(Sector(), doc.Level.ColorMaps[colormap], colormap);
                 return true;
             case "fitSurfaceTexture":
                 Fields(op, "op", "sector", "surface", "width", "height");
@@ -95,7 +95,7 @@ public static partial class AgentWorkspace
         int sectorIndex = Integer(op, "sector");
         var sector = At(doc.Level.Sectors, sectorIndex, "sector");
         if (name == "setSectorColormap") return new { target = new { kind = "sector", index = sectorIndex },
-            state = new { index = doc.Level.ColorMaps.FindIndex(c => c.Equals(sector.ColorMap, StringComparison.OrdinalIgnoreCase)), name = sector.ColorMap } };
+            state = new { index = sector.ResolveColorMapIndex(), name = sector.ColorMap } };
         int surfaceIndex = Integer(op, "surface");
         var surface = At(sector.Surfaces, surfaceIndex, "surface");
         return new { target = new { kind = "surface", sector = sectorIndex, index = surfaceIndex }, state = new {

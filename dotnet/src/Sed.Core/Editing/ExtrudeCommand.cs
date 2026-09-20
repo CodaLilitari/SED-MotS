@@ -130,6 +130,7 @@ public sealed class ExtrudeSurfaceCommand : IEditCommand
         _newSector.Ambient = source.Ambient;
         _newSector.Flags = source.Flags & ~0x1000L; // New volume has no inherited interior COLLIDEBOX.
         _newSector.ColorMap = source.ColorMap;
+        _newSector.ColorMapIndex = source.ColorMapIndex;
         _newSector.Tint = source.Tint;
         _newSector.ExtraLight = source.ExtraLight;
         _newSector.Sound = source.Sound;

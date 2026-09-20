@@ -246,6 +246,7 @@ public sealed class LevelFragment
             ExtraLight = src.ExtraLight,
             Tint = src.Tint,
             ColorMap = src.ColorMap,
+            ColorMapIndex = ReferenceEquals(src.Level, target) ? src.ColorMapIndex : -1,
             Sound = src.Sound,
             SoundVolume = src.SoundVolume,
             Thrust = src.Thrust,

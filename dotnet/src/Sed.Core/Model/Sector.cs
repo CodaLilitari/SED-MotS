@@ -14,6 +14,8 @@ public sealed class Sector
     public ColorF Tint = ColorF.Black;
 
     public string ColorMap = string.Empty;
+    /// <summary>Selected slot in this level's colormap table; -1 means name-only authoring state.</summary>
+    public int ColorMapIndex = -1;
     public string Sound = string.Empty;
     public double SoundVolume;
     public Vec3 Thrust = Vec3.Zero;
@@ -33,6 +35,30 @@ public sealed class Sector
     public Vec3[]? BoundsSourceVertices;
 
     public Sector(Level owner) => Level = owner;
+
+    /// <summary>
+    /// Resolves the selected colormap for export/readback. A matching explicit
+    /// slot wins even when names repeat. Unbound duplicate names are ambiguous.
+    /// The legacy empty-table/unmatched-name fallback is slot 0; with an empty
+    /// table this is a scaffold convention, not a verified resource binding.
+    /// </summary>
+    public int ResolveColorMapIndex() => ResolveColorMapIndex(Level, ColorMap, ColorMapIndex);
+
+    internal static int ResolveColorMapIndex(Level level, string name, int selectedIndex)
+    {
+        if ((uint)selectedIndex < (uint)level.ColorMaps.Count &&
+            level.ColorMaps[selectedIndex].Equals(name, StringComparison.OrdinalIgnoreCase))
+            return selectedIndex;
+        int found = -1;
+        for (int index = 0; index < level.ColorMaps.Count; index++)
+        {
+            if (!level.ColorMaps[index].Equals(name, StringComparison.OrdinalIgnoreCase)) continue;
+            if (found >= 0)
+                throw new InvalidOperationException($"Colormap name '{name}' is ambiguous without a matching numeric slot. Select an explicit colormap index.");
+            found = index;
+        }
+        return found >= 0 ? found : 0;
+    }
 
     public Vertex AddVertex(Vec3 p)
     {

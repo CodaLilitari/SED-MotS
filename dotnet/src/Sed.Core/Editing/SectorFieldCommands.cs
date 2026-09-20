@@ -52,15 +52,22 @@ public sealed class SetSectorColormapCommand : IEditCommand
 {
     private readonly Sector _sector;
     private readonly string _old, _new;
+    private readonly int _oldIndex, _newIndex;
 
-    public SetSectorColormapCommand(Sector sector, string colormap)
+    public SetSectorColormapCommand(Sector sector, string colormap, int? colormapIndex = null)
     {
         _sector = sector; _old = sector.ColorMap; _new = colormap;
+        _oldIndex = sector.ColorMapIndex;
+        if (colormapIndex is int explicitIndex && ((uint)explicitIndex >= (uint)sector.Level.ColorMaps.Count ||
+            !sector.Level.ColorMaps[explicitIndex].Equals(colormap, StringComparison.OrdinalIgnoreCase)))
+            throw new ArgumentException("Explicit colormap index must identify the requested name in this level.", nameof(colormapIndex));
+        _newIndex = colormapIndex ?? (_old.Equals(colormap, StringComparison.OrdinalIgnoreCase) ? _oldIndex : -1);
+        _ = Sector.ResolveColorMapIndex(sector.Level, _new, _newIndex);
     }
 
     public string Name => "Set sector colormap";
-    public void Apply() => _sector.ColorMap = _new;
-    public void Revert() => _sector.ColorMap = _old;
+    public void Apply() { _sector.ColorMap = _new; _sector.ColorMapIndex = _newIndex; }
+    public void Revert() { _sector.ColorMap = _old; _sector.ColorMapIndex = _oldIndex; }
 }
 
 public sealed class SetSectorSoundCommand : IEditCommand

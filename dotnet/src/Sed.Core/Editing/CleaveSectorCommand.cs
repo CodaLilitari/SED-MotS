@@ -128,6 +128,7 @@ public sealed class CleaveSectorCommand : IEditCommand
         newSector.ExtraLight = _sector.ExtraLight;
         newSector.Tint = _sector.Tint;
         newSector.ColorMap = _sector.ColorMap;
+        newSector.ColorMapIndex = _sector.ColorMapIndex;
         newSector.Sound = _sector.Sound;
         newSector.SoundVolume = _sector.SoundVolume;
         newSector.Thrust = _sector.Thrust;

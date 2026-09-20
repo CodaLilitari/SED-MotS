@@ -56,7 +56,7 @@ public static class JklParser
             switch (section)
             {
                 case "HEADER": LoadHeader(r, level, doc); break;
-                case "MATERIALS": LoadMaterials(r, geo); break;
+                case "MATERIALS": LoadMaterials(r, geo, doc); break;
                 case "GEORESOURCE": LoadGeometry(r, level, geo, doc); break;
                 case "SECTORS": LoadSectors(r, level, geo, doc); break;
                 case "TEMPLATES": LoadTemplates(r, level, doc); break;
@@ -172,7 +172,7 @@ public static class JklParser
 
     // ---- MATERIALS ----
 
-    private static void LoadMaterials(JklReader r, GeoData geo)
+    private static void LoadMaterials(JklReader r, GeoData geo, JklDocument? doc)
     {
         if (!r.Next()) return;
         int n = LastInt(r.Current);
@@ -183,6 +183,7 @@ public static class JklParser
             int dot = body.IndexOf(".mat", StringComparison.OrdinalIgnoreCase);
             geo.Materials.Add(dot >= 0 ? body[..(dot + 4)].Trim() : JklReader.FirstWord(body));
         }
+        ReadUnmodeledTail(r, doc, "MATERIALS");
     }
 
     // ---- GEORESOURCE ----
@@ -258,6 +259,7 @@ public static class JklParser
 
         // Normals: one line per surface — skip.
         for (int i = 0; i < ns; i++) RequireData(r);
+        ReadUnmodeledTail(r, doc, "GEORESOURCE");
     }
 
     private static TempSurface ParseSurface(string line, int version, bool ijim, Level level)
@@ -399,7 +401,12 @@ public static class JklParser
                 else if (w == "COLORMAP" && t.Length >= 2)
                 {
                     int ci = JklReader.ParseInt(t[1]);
+                    sector.ColorMapIndex = ci;
                     sector.ColorMap = (uint)ci < (uint)level.ColorMaps.Count ? level.ColorMaps[ci] : string.Empty;
+                    // Empty-table slot zero is an existing editor scaffold, not
+                    // evidence that a nonempty table can resolve an invalid slot.
+                    if ((uint)ci >= (uint)level.ColorMaps.Count && !(ci == 0 && level.ColorMaps.Count == 0))
+                        geo.ColormapProblems.Add($"Imported sector {i} references missing colormap {ci} in a table of {level.ColorMaps.Count} entries.");
                 }
                 else if (w == "SOUND" && t.Length >= 3)
                 {
@@ -419,6 +426,16 @@ public static class JklParser
             }
             sector.BoundsSourceVertices = sector.Vertices.Select(v => v.Position).ToArray();
         }
+        ReadUnmodeledTail(r, doc, "SECTORS");
+    }
+
+    private static void ReadUnmodeledTail(JklReader reader, JklDocument? document, string section)
+    {
+        // Counted tables used to return before END, letting SeekSection silently
+        // consume remaining records. Keep them inspectable and refuse rewriting
+        // the containing section instead of dropping data we do not model.
+        while (!reader.EndOfSection && reader.Next(upper: false) && !reader.EndOfSection)
+            Unmodeled(document, section, reader.Current);
     }
 
     private static void BuildSectorSurfaces(Sector sector, GeoData geo, int bsurf, int nsurfs,

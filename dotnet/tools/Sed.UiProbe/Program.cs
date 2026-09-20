@@ -285,6 +285,7 @@ await session.Dispatch(() =>
         $"{selection.Count} selected after a pan");
 
     LightInspectorProbe.Run(Check);
+    SectorColormapProbe.Run(Check);
 
 }, CancellationToken.None);
 

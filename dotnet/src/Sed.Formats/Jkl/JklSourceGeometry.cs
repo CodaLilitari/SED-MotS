@@ -21,6 +21,8 @@ internal sealed class JklSourceGeometry
     public required (long Flags, int Mirror)[] Adjoins { get; init; }
     public required Dictionary<Surface, int> AdjoinSlots { get; init; }
     public string? AdjoinProblem { get; init; }
+    public string? ColormapProblem { get; init; }
+    public required (Surface Surface, int SourceSurface, int Corner, int Index)[] InvalidTextureVertices { get; init; }
     public required string SourceTextHash { get; init; }
 
     public static JklSourceGeometry Capture(Level level, GeoData geo, string[] sourceLines) => new()
@@ -38,6 +40,10 @@ internal sealed class JklSourceGeometry
         AdjoinSlots = geo.SurfaceByGlobalIndex.Where(pair => geo.Surfaces[pair.Key].Adjoin >= 0)
             .ToDictionary(pair => pair.Value, pair => geo.Surfaces[pair.Key].Adjoin),
         AdjoinProblem = FindAdjoinProblem(geo),
+        ColormapProblem = geo.ColormapProblems.FirstOrDefault(),
+        InvalidTextureVertices = geo.SurfaceByGlobalIndex.SelectMany(pair => geo.Surfaces[pair.Key].Tvxs
+            .Select((index, corner) => (Surface: pair.Value, SourceSurface: pair.Key, Corner: corner, Index: index))
+            .Where(value => (uint)value.Index >= (uint)geo.TexVertices.Count)).ToArray(),
         SourceTextHash = ComputeSourceTextHash(sourceLines),
     };
 

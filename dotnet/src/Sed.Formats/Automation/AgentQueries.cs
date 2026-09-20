@@ -165,7 +165,7 @@ public static class AgentQueries
                     {
                         index = i, sector.Num, sector.Flags, sector.Layer,
                         ambient = sector.Ambient.R, extraLight = sector.ExtraLight.R, tint = Rgb(sector.Tint),
-                        sector.ColorMap, sector.Sound, sector.SoundVolume, thrust = Position(sector.Thrust),
+                        sector.ColorMap, sector.ColorMapIndex, sector.Sound, sector.SoundVolume, thrust = Position(sector.Thrust),
                         vertices = sector.Vertices.Count, surfaces = sector.Surfaces.Count,
                         geometryBounds = GeometryBounds(sector.Vertices.Select(v => v.Position)),
                         neighbors = sector.Surfaces.Where(s => s.Adjoin is not null).Select(s => level.Sectors.IndexOf(s.Adjoin!.Sector)).Distinct().Order().ToArray(),
