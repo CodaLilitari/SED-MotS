@@ -5,33 +5,42 @@ Updated: 2026-09-20. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Active milestone: ENGINE-01, final validation before publication and pause.**
-Original fixture generation, bounded hidden capture, resource-name collision
-checks, final staged hashes and independent image oracles are implemented.
+**Latest completed bounded milestone: [ENGINE-01](ENGINE_CAPTURE.md).**
+Implementation/package source is `ea4d6f4a8c39501198064a52264317b16e5741e0`,
+Windows version `0.4.0-mots.11-dev`. Original agent-authored MotS architecture
+passed 21 hidden runtime captures: seven scenarios across three clean-process
+repeats, 33 image checks and both refusal controls. Geometry-defined panel and
+world coverage were each 100%. Observed repeated frames match exactly; this
+does not make the engine's wall-time simulation deterministic.
+
+The final clean package passed 1,098 units with zero build warnings/errors,
+all five agent workflows (229 calls/799 checks), smoke and exact verification
+of 691 distribution files, matching source and full history. Python acceptance
+tools pass 75 tests. Final packaged fixture preparation made 43 agent calls;
+all 56 staged files across eight scenarios match the matrix fixture byte for
+byte, and all five packaged companion tools match the matrix-tested source.
+A fresh packaged single-case capture also passed. Current milestone did not
+rerun the previous 113-check headless UI probe; no C# UI code changed.
+
+Engine main `74e4657c` already contains the material-row fix and has identical
+production source/build inputs to integrated capture `197c2625`. Its 2,603
+committed source payload files and runtime binary identities were freshly
+verified. Execution used existing executable `4f9c4f7a...`, whose historical
+build used a copied dependency cache. Matrix-01 on the stale executable remains
+superseded, including its original passing receipt and later failing coverage
+check. A duplicate engine experiment remains local research, outside publication.
+
 Lilitari (ChatGPT 5.6 Pro) and Grok Build (`grok-4.6-build`, requested xhigh)
-provided review input; adopted findings were independently checked. Matrix-01
-is superseded: visual inspection exposed incomplete material rows despite its
-initial passing differential checks. The stronger independent coverage check
-rejects it (62.32% panel coverage).
+provided review input; adopted findings were independently checked. Limited
+world/player state is engine-reported. Effective camera, resolved resource bytes,
+loaded ARCH arrays, engine mono-mode crossover, retail parity and gameplay remain
+unverified. See DEC-15 through DEC-19 and `build/engine01-20260920/`.
 
-Version reconciliation found current engine main `74e4657c` already contains
-the packed-row fix and has identical production source/build inputs to the
-integrated `197c2625` capture build. That build's 2,603 committed source payload
-files and runtime binaries were freshly verified. Current execution uses its
-`4f9c4f7a...` executable with the original 2x2 fixture; it is an existing build
-with a copied dependency cache, not a fresh dependency rebuild. A local duplicate
-engine experiment is retained as research and will not be published here.
-The capture checker now accepts and validates the integrated engine's bounded
-world/player receipt extension, while preserving explicit limits on resource and
-camera observation. See [ENGINE_CAPTURE.md](ENGINE_CAPTURE.md), DEC-17 onward
-in the work log and local `build/engine01-20260920/`.
+**User stop condition:** publish this tested revision and completion checkpoint,
+then pause. No next milestone or separate engine research is authorized to
+continue automatically after that publication.
 
-User instruction: publish the latest tested SED revision, then pause. Do not
-start another milestone or publish the separate engine research. Final package,
-runtime and publication results follow only after execution; ARCH-01 remains
-the latest completed gate until then.
-
-**Latest completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
+**Previous completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
 source published.** Implementation/package source is
 `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`. Shared bind, reset and unoccluded
 source-point baking, saved provenance, computed stale status, paginated samples,
@@ -67,8 +76,10 @@ forked from `davidagnome/SED` in the `smlu/SED` network. See
 [GITHUB_HANDOFF.md](GITHUB_HANDOFF.md). On 2026-09-20, the authenticated CLI
 account and ADMIN permission were verified as CodaLilitari, with main the only
 remote branch before and after this milestone.
-The tested ARCH-01 implementation was pushed and remote main verified at `adb0cae`;
-this checkpoint update follows separately. No GitHub binary release was created.
+Remote main was verified at `bcba14a` before ENGINE-01 publication. Its tested
+implementation/package is `ea4d6f4`; this completion-only checkpoint follows in
+a separate commit. The final push receipt records the resulting remote identity.
+No GitHub binary release was created; the verified Windows ZIP is a local handoff.
 
 ## Objective and current milestone
 
@@ -103,15 +114,16 @@ undo. The saved `SED_ARCH_AUTHORING` extension records origin, raw model identit
 input and sample digests; local freshness and resource validation remain separate.
 Single-LOD rest-pose sampling is unoccluded and non-directional. Unsupported pivots,
 insertion offsets and ambiguous hierarchy instances are refused. This is not a
-shadowed or retail-equivalent baker. Windows `.10-dev` is the current handoff.
+shadowed or retail-equivalent baker. Windows `.11-dev` retains this authoring path
+and adds the separate bounded runtime capture workflow.
 
 ## Current source and completed ownership
 
-- Current editor branch: `main`; ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`. This completion documentation is a later commit.
+- Current editor branch: `main`; ENGINE-01 implementation/package is `ea4d6f4a8c39501198064a52264317b16e5741e0`. This completion documentation is a later commit. Previous ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`.
 - Previous SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`; its completion documentation was `896c808`.
 - Previous GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
-- Separate engine base: `b1be98bd4f170b5384cb71b15443a274aac6a937`. Engine code is not part of this milestone.
+- Separate engine target: published `74e4657c4f1751d09af9ad9e056acb8f41997acb`, production-source equivalent to capture `197c26255883fadbc7b90dcd3a2573572696058f`. Local `b1be98bd` and its original capture executable were stale. No engine change is published in this editor milestone.
 - Pre-existing tracked deletions: `.DS_Store`, `dotnet/.DS_Store`, `dotnet/src/.DS_Store`. Leave them outside milestone commits.
 - ARCH-01 completed ownership: `sed_spatial_audit` owns Core authoring/digests/commands and independent format review; `sed_workflow_audit` owns resource/model preparation, extension and format tests; `sed_export_review` owns inspector controls, actual headless acceptance, Core tests and renderer regression. All implementations are frozen and integrated gates passed.
 - Root owns process-level workflow, review, documentation, packaging and publication. No worker commits or pushes independently.
@@ -144,7 +156,8 @@ general remapping, native output and broader game behavior remain separate.
 |---|---|---|
 | [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Complete within the documented convex-geometry/token scope |
 | [Architectural lighting authoring (ARCH-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback | Complete within the unoccluded single-LOD recipe; shadowed baking and LOD correspondence remain separate |
-| Controlled engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Planned |
+| [Static runtime RGB verification (ENGINE-01)](ENGINE_CAPTURE.md) | Original authored fixture, independent coverage/channel controls, metadata invariants, repeated captures and bounded refusal controls | Complete within the documented static RGB scope; simulation is wall-time and only limited world/player state is observed |
+| Instrumented engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Future work, paused |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
 | Thin MCP adapter | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Planned after domain prerequisites |
 
@@ -156,7 +169,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.10-dev-adb0cae/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and complete history identify `adb0cae`. See `DEC-20260920-14` for hashes and gate counts. Its `agent-lit-snapshot/architecture-baked.jkl` and `architecture-stale.jkl` demonstrate authoring/readback; the inherited `agent-spatial/relay-final.jkl` remains the original eight-room structural fixture. Prior `.9`/`.8`/`.7` packages and the superseded `9a1f2ce` candidate remain separate. Current source/executable evidence is under `build/arch01-20260920/`. The next independent gate is controlled engine verification; no engine/retail run or playable-level claim follows from these editor results.
+The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.11-dev-ea4d6f4/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and complete history identify `ea4d6f4`; its embedded checkpoint describes the build-time state, while this later completion checkpoint records the executed final gates. See `DEC-20260920-19` for hashes and counts. Its `agent-lit-snapshot/architecture-baked.jkl` and `architecture-stale.jkl` demonstrate authoring/readback; `agent-spatial/relay-final.jkl` remains the original eight-room structural fixture. Prior packages remain separate, including the superseded `.11-dev-ed17c14` capture-tool candidate. Current runtime evidence is in `build/engine01-20260920/matrix-02/`, packaged fixture preparation in `fixture-07/`, and the final packaged diagnostic in `diagnostic-08/`. Stock bootstrap assets and the separate engine are not included in the editor package. This is bounded static engine evidence, not retail parity or a playable-level claim.
 
 ## Recovery discipline
 
