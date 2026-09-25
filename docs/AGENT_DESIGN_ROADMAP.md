@@ -79,6 +79,47 @@ This is the next recommended integration, not an implemented MCP/ACP capability.
 The delivered EDIT-01 Windows package remains usable through `sed-agent` and
 the repository skill without either protocol or screen control.
 
+### Independently reviewed first-adapter boundaries
+
+A bounded external architecture review on 2026-09-25 used the existing
+Antigravity Gemini 3.1 Pro / High subscription route and the published source at
+`11550ee9`. No tools were executed by that reviewer. Its recommendations were
+checked against source and the MCP cancellation rules; this is design review,
+not an implemented or client-tested adapter.
+
+- Reuse `Sed.Formats.Automation` directly for text queries, planning and edits;
+  its public services already exist. Begin with bounded queued work rather than
+  assuming all static services support concurrent use. A semaphore controls
+  concurrency, not per-request memory or CPU consumption: retain runtime size
+  and work limits as well as schema constraints.
+- Keep offscreen Vulkan rendering in a fixed, version-checked snapshot worker
+  for the first adapter. Invoke its executable with an argument array, not a
+  shell command supplied by a model. Bound process time, captured output and
+  image bytes. This contains a rendering-process failure without duplicating
+  the editor's geometry or resource semantics.
+- Make the reviewed output hash mandatory for MCP apply and recompute the edit
+  through the existing service. Preserve no-overwrite promotion. Competing
+  final-path writes already become conflicts; they are not evidence of a
+  corruption bug. A matching hash proves content identity, not exactly-once
+  execution or which request created a file.
+- Define commit and response delivery separately. Existing operations lack
+  cooperative cancellation. A late canceled response cannot be the recovery
+  mechanism because clients may ignore it. Provide scoped outcome receipts and
+  subsequent-call reconciliation; never claim rollback or silently retry an
+  uncertain write. Cancellation around final promotion needs controlled tests.
+  [MCP cancellation rules](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation)
+- Explicitly configure project/output and read-only asset roots for the adapter,
+  covering companion templates and archive/image paths too. The general local
+  CLI does not claim workspace containment. The adapter must validate Windows
+  aliases and reparse points if it advertises that boundary; normalization or a
+  simple string prefix is insufficient.
+
+A packaged executable check measured 93,828 UTF-8 bytes for the complete schema,
+versus 3,975 for `rebindCogReference` and 3,074 for `snapshot` (LF-joined output).
+This supports compact discovery with exact details on demand. These are byte
+counts, not tokenizer benchmarks. Actual protocol/client negotiation, failure
+isolation and the cancellation/receipt tests remain implementation acceptance.
+
 ## Priorities for serious level design
 
 [ARCH-01](ARCHITECTURE_AUTHORING.md) supplies explicit bind/reset/rebake commands, private sample allocations, source-point sampling, saved provenance, computed stale status, and bounded sample queries through the shared GUI/CLI model. [EDIT-01](EDITING_FOUNDATIONS.md) adds an explicitly separate world-occluded recipe, preserving the original unoccluded profile. Both refuse unsupported LOD/pivot/hierarchy layouts. Alpha-aware material, model/self shadows and multi-LOD sample correspondence remain separate work; an MCP transport would expose these same domain contracts rather than supply missing lighting semantics.
