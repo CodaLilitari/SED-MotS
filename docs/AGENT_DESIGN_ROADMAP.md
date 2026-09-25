@@ -37,6 +37,48 @@ Return actionable domain failures as tool results with `isError: true`, preservi
 
 Choose and pin an SDK deliberately. The `2025-11-25` protocol negotiates versions through `initialize`; the C# SDK v2 documentation describes `2026-07-28` discovery and fallback changes. Those documents do not establish which revision an installed Codex client will negotiate. Before advertising compatibility, record the actual client and negotiated revision and exercise discovery, readback, a refused stale edit, a successful reviewed edit, cancellation and an image result. Do not require the July revision merely because its documentation exists. [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [C# SDK transition behavior](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/stateless/stateless.html)
 
+### Next integration after EDIT-01: MCP first, ACP for a later editor panel
+
+Public-source comparison on 2026-09-25 identified useful independent precedents.
+[dcc-mcp-maya at 1eff754](https://github.com/dcc-mcp/dcc-mcp-maya/tree/1eff754a0106cb34007d0c6ebdfbf0ee4fba1419)
+offers progressive capability discovery, typed tools, scene resources and readiness
+checks. Its background service dispatches Maya work through the UI thread.
+[abrahamADSK/maya-mcp at a9f0af1](https://github.com/abrahamADSK/maya-mcp/tree/a9f0af10ad327a052a12b8b7cfc4aa812be265e2)
+combines scene snapshots, preview tools and searchable operation documentation.
+Both repositories declare MIT licenses. These are source/documentation comparisons;
+neither adapter was installed or executed, and neither is a SED implementation.
+
+Apply the useful interface ideas to SED's own services:
+
+1. Expose a compact set of named tools for capability/schema lookup, scene and
+   spatial queries, diagnostics, resource inspection, plan, apply and snapshots.
+   Return bounded schemas and examples on demand instead of loading every
+   operation into each model context.
+2. Preserve source and resource revision scopes, plan output hashes, refusal
+   details and serialized readback. Serve an inline image with its camera,
+   rendering profile, asset receipts and source identity. An undo group alone
+   does not establish rollback or all-or-nothing mutation.
+3. Start with a local stdio process and explicit workspace/resource paths. Use
+   the same domain implementation as the CLI. Arbitrary Python/MEL execution and
+   network listeners in other applications are not prerequisites for SED design.
+4. Accept only after an actual MCP client discovers the tools, designs a connected
+   fixture, changes a typed COG binding, bakes the declared lighting profile and
+   receives a preview. Exercise stale-input refusal, output preservation,
+   cancellation and progress on bounded long operations. Record actual negotiated
+   protocol and executable identities.
+
+ACP here means **Agent Client Protocol**, whose purpose is connecting an editor
+to an agent. Its session setup can supply MCP servers to that agent. SED could
+later act as an ACP client for an embedded assistant panel while its MCP server
+continues to expose editing tools. That also needs an explicit shared-document
+revision/undo protocol to handle unsaved human edits. Neither protocol provides
+that document model automatically. [ACP introduction](https://agentclientprotocol.com/get-started/introduction),
+[ACP session setup](https://agentclientprotocol.com/protocol/v1/session-setup)
+
+This is the next recommended integration, not an implemented MCP/ACP capability.
+The delivered EDIT-01 Windows package remains usable through `sed-agent` and
+the repository skill without either protocol or screen control.
+
 ## Priorities for serious level design
 
 [ARCH-01](ARCHITECTURE_AUTHORING.md) supplies explicit bind/reset/rebake commands, private sample allocations, source-point sampling, saved provenance, computed stale status, and bounded sample queries through the shared GUI/CLI model. [EDIT-01](EDITING_FOUNDATIONS.md) adds an explicitly separate world-occluded recipe, preserving the original unoccluded profile. Both refuse unsupported LOD/pivot/hierarchy layouts. Alpha-aware material, model/self shadows and multi-LOD sample correspondence remain separate work; an MCP transport would expose these same domain contracts rather than supply missing lighting semantics.

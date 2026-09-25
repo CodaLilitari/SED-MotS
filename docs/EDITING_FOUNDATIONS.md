@@ -1,6 +1,8 @@
 # EDIT-01: shared editing, diagnostics and lighting foundations
 
-Status: source verified; final delivery in progress. Started 2026-09-25 from published `c6aabe6`.
+Status: implemented, reviewed, Windows packaged and source published on 2026-09-25.
+Implementation/package commit: `8d047860c576021ea3da22743b97f5e27e15c9cc`.
+Completion documentation follows separately. Started from published `c6aabe6`.
 Andrei resumed implementation after the research handoff and requested public
 Massassi forum research and a new goal. This supersedes the previous pause for
 this SED work. OpenJKDF2/OpenMotS remains primary; retail results stay separate.
@@ -142,7 +144,16 @@ unoccluded profile. It does not claim material-alpha or model/self shadows.
 
 ## Delivery status
 
-Implementation and review corrections are integrated; final source validation
-passed 1,329 tests and 126 actual headless UI checks. Clean Windows packaging and
-publication remain in progress. These numbers identify those source runs, not a
-future final binary. No new runtime, retail parity or gameplay result is claimed.
+Implementation and independently verified review corrections are complete.
+Final source validation passed 1,329 tests and 126 actual headless UI checks.
+A clean detached-worktree Windows build independently passed all 1,329 units
+again, with zero build warnings/errors. The self-contained `0.4.0-mots.12-dev`
+package passed all six workflows: 272 actual agent calls and 866 checks, plus
+separate smoke. Exact distribution verification matched 693 manifested files,
+ZIP membership, the source archive and complete Git history at the same commit.
+An independent audit additionally matched all 745 source ZIP members to Git blobs.
+
+The implementation is published on `CodaLilitari/SED-MotS` main. Local package:
+`build/packages/SED-MotS-0.4.0-mots.12-dev-8d04786/`. Exact artifact hashes,
+review scope, publication receipt and limits are recorded in WORK_LOG.md
+DEC-20260925-04. No new engine run, retail parity or gameplay result is claimed.

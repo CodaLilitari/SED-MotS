@@ -5,7 +5,7 @@ Updated: 2026-09-25. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Active work (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
+**Latest completed bounded milestone (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
 public Massassi forum research, implementation of the recommendations and a new
 goal. This explicitly resumes SED development after the completed ENGINE-01
 pause. The phased goal covers robustness, headless texture alignment,
@@ -15,17 +15,31 @@ Read the phase acceptance document and current WORK_LOG before continuing.
 Publication constraint: keep scraped Discord logs and copied forum posts out of
 public GitHub and forum posts. Raw captures stay ignored/local; use original findings and links.
 
-**Source verified; delivery in progress:** integrated EDIT-01 passes **1,329 unit
-tests and 126 actual headless UI checks**, with no build warnings/errors in those
-runs. It includes KEY/3DO preservation fixes, strict neighbor UV alignment,
+**Verified implementation and Windows handoff:** implementation/package commit
+`8d047860c576021ea3da22743b97f5e27e15c9cc`, version `0.4.0-mots.12-dev`.
+Integrated source passes **1,329 unit tests and 126 actual headless UI checks**;
+the clean Release package independently passes all 1,329 units again, without
+build warnings/errors. It includes KEY/3DO preservation fixes, strict neighbor UV alignment,
 containment/capacity/direct-asset/world-bake diagnostics, typed COG discovery and
 guarded GUI/agent rebinding, and the separate world-occluded ARCH recipe.
 Independent review produced executed corrections for resource revision scope,
 GUI script ambiguity/lifetime, and a thin-polygon ray predicate. Raw captures
-remain local. The new actual-process editing workflow and extended lighting
-workflow pass their initial runs; final clean Windows packaging and source
-publication remain pending. Per-run evidence is under `build/edit01-20260925/`;
-do not report delivery complete until the package and remote are verified.
+remain local. Six self-contained workflows pass **272 agent calls / 866 checks**,
+plus separate smoke. Exact verification covers 693 manifested distribution
+files, ZIP membership, source and complete Git history at the same commit.
+An independent check also matches all 745 source ZIP members to Git blobs.
+Handoff: `build/packages/SED-MotS-0.4.0-mots.12-dev-8d04786/`.
+Source main was pushed and freshly verified at `8d04786`; this completion
+documentation follows in a separate commit. Final publication receipts belong
+under `build/edit01-20260925/publication.json`. No binary GitHub release or new
+engine/retail/gameplay qualification is claimed. The three unrelated `.DS_Store`
+deletions remain uncommitted. See DEC-20260925-04 for exact hashes and boundaries.
+
+**Next recommended direction:** expose the now-tested headless contracts through
+a thin local MCP adapter, with progressive discovery, structured results and
+inline preview images. Shared unsaved GUI sessions and an ACP agent panel are
+separate later capabilities; neither exists merely because the CLI is automated.
+See [the agent roadmap](AGENT_DESIGN_ROADMAP.md).
 
 **Pre-implementation research checkpoint (2026-09-25):** source was at published
 `c6aabe620a2e18a5a7a5d78aa327b6441a873c51`; no implementation or new publication
@@ -44,7 +58,7 @@ neighbor texture alignment, COG binding queries, and ARCH occlusion. World-light
 shadow rays, independent mono/RGB data, and source-point ARCH authoring already
 exist. See DEC-20260925-01; research recommendations are not implemented features.
 
-**Latest completed bounded milestone: [ENGINE-01](ENGINE_CAPTURE.md).**
+**Previous completed bounded milestone: [ENGINE-01](ENGINE_CAPTURE.md).**
 Implementation/package source is `ea4d6f4a8c39501198064a52264317b16e5741e0`,
 Windows version `0.4.0-mots.11-dev`. Original agent-authored MotS architecture
 passed 21 hidden runtime captures: seven scenarios across three clean-process
