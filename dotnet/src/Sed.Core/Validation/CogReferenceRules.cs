@@ -11,6 +11,11 @@ public sealed class ConsistencyOptions
 {
     /// <summary>Only explicit retail selection enables the inferred retail capacity warning.</summary>
     public bool RetailProfile { get; init; }
+    /// <summary>
+    /// Opt-in point containment diagnostics. Each thing scans level geometry;
+    /// unsupported geometry is reported as unverified, never guessed or reassigned.
+    /// </summary>
+    public bool CheckThingContainment { get; init; }
     /// <summary>Null means script schemas are unavailable; raw values are never guessed to be references.</summary>
     public Func<Cog, IReadOnlyList<CogParameterDefinition>?>? ResolveCogParameters { get; init; }
 }

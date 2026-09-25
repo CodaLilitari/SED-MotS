@@ -21,7 +21,7 @@ public static class AgentSelections
     internal static string? TargetKind(string operation) => operation switch
     {
         "setSectorFlags" or "setSectorAmbient" or "setSectorColormap" => "sector",
-        "setSurfaceMaterial" or "setSurfaceFlags" or "fitSurfaceTexture" or "setSurfaceUv"
+        "setSurfaceMaterial" or "setSurfaceFlags" or "fitSurfaceTexture" or "setSurfaceUv" or "alignSurfaceTexture"
             or "setSurfaceRenderModes" or "extrudeSurface" or "adjoinSurfaces" => "surface",
         _ => null,
     };
@@ -153,9 +153,10 @@ public static class AgentSelections
         string? kind = TargetKind(name);
         if (kind is null) throw Request($"{name} does not support selection tokens.", hasTarget ? "/target" : "/otherTarget");
         if (!hasTarget) throw Request("target is required when using otherTarget.", "/target");
-        if (hasOther != (name == "adjoinSurfaces"))
-            throw Request(name == "adjoinSurfaces" ? "adjoinSurfaces requires target and otherTarget together."
-                : "otherTarget is only supported by adjoinSurfaces.", "/otherTarget");
+        bool paired = name is "adjoinSurfaces" or "alignSurfaceTexture";
+        if (hasOther != paired)
+            throw Request(paired ? $"{name} requires target and otherTarget together."
+                : "otherTarget is only supported by paired-surface operations.", "/otherTarget");
         foreach (string field in new[] { "sector", "surface", "otherSector", "otherSurface" })
             if (operation.TryGetProperty(field, out _))
                 throw Request("Selection tokens cannot be mixed with integer sector/surface addressing in the same operation.", "/" + field);

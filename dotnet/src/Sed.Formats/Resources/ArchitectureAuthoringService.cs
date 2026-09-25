@@ -12,7 +12,8 @@ namespace Sed.Formats.Resources;
 public static class ArchitectureAuthoringService
 {
     public static ReplaceThingArchitectureCommand Prepare(Level level, Thing thing,
-        ExplicitArchiveResources resources, string action, int? lightingIndex = null)
+        ExplicitArchiveResources resources, string action, int? lightingIndex = null,
+        string profile = ArchitecturalLightingAuthoring.BakeProfile)
     {
         ArgumentNullException.ThrowIfNull(level); ArgumentNullException.ThrowIfNull(thing);
         ArgumentNullException.ThrowIfNull(resources);
@@ -21,6 +22,9 @@ public static class ArchitectureAuthoringService
         if (!ArchitectureBindingValidator.IsLevelGeometry(level, thing))
             throw new ArgumentException("Architectural authoring requires resolved thingflags level-geometry bit 0x8.");
         if (action is not ("bind" or "rebind" or "bake")) throw new ArgumentException("Architecture action must be bind, rebind or bake.");
+        if (!ArchitecturalLightingAuthoring.IsBakeProfile(profile)
+            || action != "bake" && profile != ArchitecturalLightingAuthoring.BakeProfile)
+            throw new ArgumentException("An explicit supported sampling profile is only used by bake.", nameof(profile));
         if (action == "bind" && (thing.ArchLightingIndex != -1 || lightingIndex is null))
             throw new ArgumentException("Bind requires an unbound thing and an explicit existing lightingIndex.");
         if (action != "bind" && lightingIndex.HasValue)
@@ -56,9 +60,9 @@ public static class ArchitectureAuthoringService
             var points = ArchitectureAuthoringGeometry.Prepare(Encoding.Latin1.GetString(bytes), resolved.Topology!, thing);
             if (action == "bake")
             {
-                samples = ArchitecturalLightingAuthoring.PrepareSamples(level, points);
-                origin = ArchitecturalLightingAuthoring.BakeProfile;
-                inputHash = ArchitecturalLightingAuthoring.InputsDigest(level, thing);
+                samples = ArchitecturalLightingAuthoring.PrepareSamples(level, points, profile);
+                origin = profile;
+                inputHash = ArchitecturalLightingAuthoring.InputsDigest(level, thing, profile);
             }
             else
             {

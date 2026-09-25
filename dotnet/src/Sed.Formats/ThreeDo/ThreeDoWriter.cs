@@ -16,6 +16,10 @@ public static class ThreeDoWriter
     /// <summary>Builds the 3DO text for <paramref name="model"/> (default version 2.1).</summary>
     public static string Build(ThreeDoModel model, double version = 2.1)
     {
+        var insertOffset = model.InsertOffset;
+        if (!double.IsFinite(insertOffset.X) || !double.IsFinite(insertOffset.Y) || !double.IsFinite(insertOffset.Z))
+            throw new FormatException("3DO insertion offset must contain finite coordinates.");
+
         var sb = new System.Text.StringBuilder();
         void W(string s) => sb.AppendLine(s);
         void WF(string fmt, params object[] args) => W(string.Format(CultureInfo.InvariantCulture, fmt, args));
@@ -39,7 +43,7 @@ public static class ThreeDoWriter
         W("");
         WF("RADIUS {0:0.000000}", FindRadius(model));
         W("");
-        W("INSERT OFFSET 0 0 0");
+        WF("INSERT OFFSET {0:G17} {1:G17} {2:G17}", insertOffset.X, insertOffset.Y, insertOffset.Z);
         W("");
         W("GEOSETS 1");
         W("");

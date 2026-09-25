@@ -116,6 +116,27 @@ public sealed class AgentQueryTests : IDisposable
     }
 
     [Fact]
+    public void ContainmentPagesPreserveIdentityAndDoNotReassignOutsideThings()
+    {
+        var fixture = CreateFixture();
+        fixture.Level.ThingCapacity = 901;
+        fixture.Level.Things[1].Position = new Vec3(1000, 1000, 1000);
+        SaveFixture(fixture);
+        byte[] before = File.ReadAllBytes(_input);
+        var page = Query("""{"schemaVersion":1,"collection":"thingContainment","search":"Beta","limit":1}""");
+        var item = Assert.Single(page.GetProperty("items").EnumerateArray());
+        Assert.Equal(1, item.GetProperty("index").GetInt32());
+        Assert.Equal("NoContainingSector", item.GetProperty("status").GetString());
+        Assert.Equal("NotContained", item.GetProperty("assignment").GetString());
+        Assert.False(item.GetProperty("assignedSectorMatches").GetBoolean());
+        Assert.Equal(0, item.GetProperty("assignedSectorIndex").GetInt32());
+        Assert.Empty(item.GetProperty("candidates").EnumerateArray());
+        Assert.Equal(901, QueryCollection("summary").GetProperty("items")[0].GetProperty("serializedThingCapacity").GetInt32());
+        Assert.Equal(AgentWorkspace.Hash(before), page.GetProperty("sourceRevision").GetString());
+        Assert.Equal(before, File.ReadAllBytes(_input));
+    }
+
+    [Fact]
     public void SurfaceAndVertexQueriesUseLocalIndicesAndPreserveCornerChannels()
     {
         var surfacePage = Query("""{"schemaVersion":1,"collection":"surfaces","sector":0,"offset":0,"limit":1}""");

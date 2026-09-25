@@ -47,11 +47,13 @@ public sealed class AgentArchitectureAuthoringTests : IDisposable
     private string Save(PreparedAgentEdit plan, string name) { string path = Path.Combine(_directory, name); AgentWorkspace.Commit(plan, path); return path; }
     private static JsonElement Json(object value) => JsonSerializer.SerializeToElement(value, AgentWorkspace.JsonOptions);
 
-    [Fact]
-    public void BakeBootstrapsAndReadbackKeepsAnalyticChannelsAndResourceBoundary()
+    [Theory]
+    [InlineData("source-points-v1")]
+    [InlineData("source-points-world-occluded-v1")]
+    public void BakeBootstrapsAndReadbackKeepsAnalyticChannelsAndResourceBoundary(string profile)
     {
         var original = File.ReadAllBytes(_input);
-        var plan = AgentWorkspace.Plan(_input, Request(Bake));
+        var plan = AgentWorkspace.Plan(_input, Request(Bake.Replace("source-points-v1", profile)));
         string path = Save(plan, "baked.jkl");
         var level = AgentWorkspace.Load(path).Document.Level;
         var sample = Assert.Single(Assert.Single(level.ArchitecturalLighting).Meshes).Vertices[0];
@@ -59,7 +61,7 @@ public sealed class AgentArchitectureAuthoringTests : IDisposable
         Assert.Equal(.05, sample.Green, 12); Assert.Equal(.025, sample.Blue, 12);
         Assert.Equal("current-inputs", ArchitecturalLightingAuthoring.Status(level, level.Things[0]));
         var thing = Json(AgentWorkspace.Query(path, """{"schemaVersion":1,"collection":"things"}""" )).GetProperty("items")[0];
-        Assert.Equal("source-points-v1", thing.GetProperty("architecture").GetProperty("provenance").GetProperty("origin").GetString());
+        Assert.Equal(profile, thing.GetProperty("architecture").GetProperty("provenance").GetProperty("origin").GetString());
         Assert.Equal("unverified-use-resource-validation", thing.GetProperty("architecture").GetProperty("resourceStatus").GetString());
         var page = Json(AgentWorkspace.Query(path, """{"schemaVersion":1,"collection":"architecturalVertices","lightingIndex":0,"mesh":0,"limit":1}"""));
         Assert.Equal(3, page.GetProperty("total").GetInt32()); Assert.Equal(1, page.GetProperty("nextOffset").GetInt32());

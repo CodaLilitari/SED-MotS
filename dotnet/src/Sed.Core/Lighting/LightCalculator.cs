@@ -37,7 +37,7 @@ public sealed record LightingStats(int Sectors, int Surfaces, int Vertices, int 
 /// Results land in <see cref="Surface.Corner.Intensity"/>, so they persist through
 /// the existing GEORESOURCE regeneration with no writer changes.
 /// </summary>
-public static class LightCalculator
+public static partial class LightCalculator
 {
     private const double FacingEpsilon = 0.001;
     private const double EndpointEpsilonSq = 0.0001;
@@ -86,12 +86,11 @@ public static class LightCalculator
 
                 foreach (var light in level.Lights)
                 {
-                    double rgbIntensity = level.Kind == ProjectType.MysteriesOfTheSith
-                        ? light.EffectiveRgbIntensity : light.Intensity;
-                    if (light.Range <= 0 || (light.Intensity == 0 && (!rgb || rgbIntensity == 0))) continue;
+                    double rgbIntensity = EffectiveRgbIntensity(level.Kind, light);
+                    if (SkipLight(light, rgb, rgbIntensity)) continue;
 
                     // The light must be on the front side of the surface.
-                    if (surf.Normal.Dot(light.Position - origin) < FacingEpsilon) continue;
+                    if (BehindSurface(surf.Normal, origin, light.Position)) continue;
 
                     bool sameSector = lightSectors.TryGetValue(light, out var ls) && ReferenceEquals(ls, sector);
                     bool checkShadows = options.CastShadows
@@ -100,24 +99,18 @@ public static class LightCalculator
 
                     foreach (var corner in surf.Corners)
                     {
-                        var target = corner.Vertex.Position;
-                        double dist = (light.Position - target).Length;
-                        if (dist >= light.Range) continue;
-
-                        if (checkShadows && grid.IsBlocked(light.Position, target, surf))
+                        var sample = EvaluateSample(light, rgbIntensity, corner.Vertex.Position, surf, checkShadows, grid);
+                        if (sample.Status == SampleStatus.OutOfRange) continue;
+                        if (sample.Status == SampleStatus.Shadowed)
                         {
                             shadowed++;
                             continue;
                         }
 
-                        double falloff = (light.Range - dist) / light.Range;
-                        float monoContribution = (float)(light.Intensity * falloff * falloff);
-                        float rgbContribution = (float)(rgbIntensity * falloff * falloff);
-
                         corner.Intensity = rgb
-                            ? corner.Intensity + light.Color * rgbContribution
-                            : Grey(Intensity(corner.Intensity) + monoContribution);
-                        corner.MonoIntensity = (corner.MonoIntensity ?? 0) + monoContribution;
+                            ? corner.Intensity + light.Color * sample.Rgb
+                            : Grey(Intensity(corner.Intensity) + sample.Mono);
+                        corner.MonoIntensity = (corner.MonoIntensity ?? 0) + sample.Mono;
                     }
                 }
             }
@@ -129,6 +122,31 @@ public static class LightCalculator
         int surfaceCount = 0;
         foreach (var s in targets) surfaceCount += s.Surfaces.Count;
         return new LightingStats(targets.Count, surfaceCount, vertexCount, level.Lights.Count, shadowed);
+    }
+
+    private static double EffectiveRgbIntensity(ProjectType kind, Light light) =>
+        kind == ProjectType.MysteriesOfTheSith ? light.EffectiveRgbIntensity : light.Intensity;
+
+    // Preserve the bake's comparisons, including their existing behavior for invalid data.
+    // Diagnostics refuse invalid data separately rather than silently changing the bake.
+    private static bool SkipLight(Light light, bool rgb, double rgbIntensity) =>
+        light.Range <= 0 || (light.Intensity == 0 && (!rgb || rgbIntensity == 0));
+
+    private static bool BehindSurface(Vec3 normal, Vec3 origin, Vec3 lightPosition) =>
+        normal.Dot(lightPosition - origin) < FacingEpsilon;
+
+    private enum SampleStatus { OutOfRange, Shadowed, Eligible }
+    private readonly record struct LightSample(SampleStatus Status, float Mono = 0, float Rgb = 0);
+
+    private static LightSample EvaluateSample(Light light, double rgbIntensity, Vec3 target,
+        Surface surface, bool checkShadows, SurfaceGrid grid)
+    {
+        double dist = (light.Position - target).Length;
+        if (dist >= light.Range) return new(SampleStatus.OutOfRange);
+        if (checkShadows && grid.IsBlocked(light.Position, target, surface)) return new(SampleStatus.Shadowed);
+        double falloff = (light.Range - dist) / light.Range;
+        return new(SampleStatus.Eligible,
+            (float)(light.Intensity * falloff * falloff), (float)(rgbIntensity * falloff * falloff));
     }
 
     /// <summary>
@@ -293,7 +311,7 @@ public static class LightCalculator
         /// portals; hits at either endpoint are ignored so a surface never
         /// shadows its own vertices.
         /// </summary>
-        public bool IsBlocked(Vec3 from, Vec3 to, Surface exclude)
+        public bool IsBlocked(Vec3 from, Vec3 to, Surface? exclude)
         {
             var segment = Box.Empty;
             segment.Encapsulate(from);
@@ -334,19 +352,19 @@ public static class LightCalculator
         }
     }
 
-    private static List<SurfacePlane> BuildPlaneCache(Level level)
+    private static List<SurfacePlane> BuildPlaneCache(Level level, bool updateNormals = true)
     {
         var cache = new List<SurfacePlane>();
         foreach (var sector in level.Sectors)
             foreach (var surf in sector.Surfaces)
             {
                 if (surf.Corners.Count < 3) continue;
-                surf.RecalcNormal();
+                var normal = GetNormal(surf, updateNormals);
 
                 var box = Box.Empty;
                 foreach (var c in surf.Corners) box.Encapsulate(c.Vertex.Position);
 
-                cache.Add(new SurfacePlane(surf, surf.Normal, surf.Normal.Dot(surf.Corners[0].Vertex.Position), box));
+                cache.Add(new SurfacePlane(surf, normal, normal.Dot(surf.Corners[0].Vertex.Position), box));
             }
         return cache;
     }
@@ -358,21 +376,19 @@ public static class LightCalculator
 
     /// <summary>Shared with the geometry ops so the two cannot drift apart.</summary>
     private static bool PointOnSurface(Surface surf, Vec3 normal, Vec3 point) =>
-        GeometryOps.PointOnSurface(surf, point);
+        GeometryOps.PointOnSurface(surf, point, normal);
 
     // ---- sector lookup ----
 
     /// <summary>
     /// The sector containing a point, or null.
     ///
-    /// Uses ray-casting parity (odd number of surface crossings ⇒ inside) rather
-    /// than testing the point against every surface plane's sign. Sector surface
-    /// windings are not consistently oriented — <see cref="SectorFactory.CreateBox"/>
-    /// gives opposite faces the same normal direction, and retail levels vary too —
-    /// so a sign-based test silently reports the wrong answer. Parity does not care
-    /// which way a normal points.
+    /// Uses the baker's historical ray-casting parity and returns the first match.
+    /// This is separate from the editor's strict all-candidate spatial selection.
     /// </summary>
-    public static Sector? FindSector(Level level, Vec3 point)
+    public static Sector? FindSector(Level level, Vec3 point) => FindSector(level, point, updateNormals: true);
+
+    private static Sector? FindSector(Level level, Vec3 point, bool updateNormals)
     {
         // Skewed so the ray is unlikely to graze a shared edge or vertex, which
         // would be counted twice and flip the parity.
@@ -393,9 +409,7 @@ public static class LightCalculator
             foreach (var surf in sector.Surfaces)
             {
                 if (surf.Corners.Count < 3) continue;
-                surf.RecalcNormal();
-
-                var n = surf.Normal;
+                var n = GetNormal(surf, updateNormals);
                 double denom = n.Dot(direction);
                 if (System.Math.Abs(denom) < 1e-12) continue;      // ray parallel to the face
 
@@ -410,6 +424,13 @@ public static class LightCalculator
         }
 
         return null;
+    }
+
+    private static Vec3 GetNormal(Surface surface, bool updateCache)
+    {
+        if (!updateCache) return surface.CalculateNormal();
+        surface.RecalcNormal();
+        return surface.Normal;
     }
 
     // ---- colour helpers (TColorF semantics) ----

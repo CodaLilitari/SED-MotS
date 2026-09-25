@@ -30,54 +30,95 @@ public sealed class AlignTextureToNeighbourCommand : IEditCommand
 
     /// <summary>Null when the pair can be aligned, else why not.</summary>
     public static string? Validate(Surface target, Surface reference)
+        => Calculate(target, reference, out _);
+
+    // Compute and validate the complete result before touching UVs or cached
+    // normals. GUI previews and agent plans must reject the same geometry.
+    private static string? Calculate(Surface target, Surface reference, out TexVertex[] result)
     {
+        result = [];
         if (ReferenceEquals(target, reference)) return "Pick two different surfaces.";
-        if (target.Corners.Count < 3 || reference.Corners.Count < 3)
-            return "Both surfaces need at least three vertices.";
-        if (FindSharedEdge(target, reference) is null)
-            return "The surfaces do not share an edge.";
-        return null;
-    }
-
-    public void Apply()
-    {
-        _old.Clear();
-        foreach (var c in _target.Corners) _old.Add(c.Uv);
-
-        if (FindSharedEdge(_target, _reference) is not { } edge) return;
-        var (a, b) = edge;
-
-        _reference.RecalcNormal();
-        _target.RecalcNormal();
-
+        if (target.Corners.Count is < 3 or > 64 || reference.Corners.Count is < 3 or > 64)
+            return "Both surfaces need between three and 64 vertices.";
+        foreach (var surface in new[] { target, reference })
+        {
+            if (surface.Corners.Any(c => c is null || c.Vertex is null || !Finite(c.Vertex.Position)
+                || !double.IsFinite(c.Uv.U) || !double.IsFinite(c.Uv.V)))
+                return "Surfaces need finite vertices and texture coordinates.";
+            if (surface.Corners.Where((c, i) => (c.Vertex.Position
+                - surface.Corners[(i + 1) % surface.Corners.Count].Vertex.Position).LengthSquared < 1e-18).Any())
+                return "Surfaces must not contain zero-length edges.";
+            var normal = surface.CalculateNormal();
+            if (!Finite(normal) || normal.LengthSquared < .99)
+                return "Both surfaces need nonzero area.";
+            if (surface.Corners.Any(c => System.Math.Abs(normal.Dot(c.Vertex.Position - surface.Corners[0].Vertex.Position)) > 1e-6))
+                return "Texture alignment requires planar surfaces.";
+        }
+        if (FindSharedEdge(target, reference, out var edge) is { } edgeProblem)
+            return edgeProblem;
+        var (a, b, referenceA, referenceB) = edge;
         var along = b - a;
         double length = along.Length;
-        if (length < 1e-9) return;
+        if (!double.IsFinite(length) || length < 1e-9) return "The shared edge is degenerate.";
         along *= 1.0 / length;
 
         // UV gradient along the shared edge, in UV units per world unit.
-        var uvA = UvAt(_reference, a);
-        var uvB = UvAt(_reference, b);
+        // Keep the matched corners: a fresh tolerance lookup can select the
+        // same corner for both endpoints of a short, but valid, shared edge.
+        var uvA = referenceA.Uv;
+        var uvB = referenceB.Uv;
         var gradAlong = new TexVertex((uvB.U - uvA.U) / length, (uvB.V - uvA.V) / length);
 
-        // UV gradient perpendicular to it, taken from a reference corner off the edge.
-        var perpRef = InwardPerpendicular(_reference, along, a);
-        if (!TryPerpendicularGradient(_reference, a, along, perpRef, uvA, gradAlong, out var gradPerp))
-            return;
+        // Recover the reference mapping in its own basis. A near-only shared
+        // edge can differ slightly in length/direction from the target's edge.
+        var refAnchor = referenceA.Vertex.Position;
+        var refAlong = referenceB.Vertex.Position - refAnchor;
+        double refLength = refAlong.Length;
+        if (!double.IsFinite(refLength) || refLength < 1e-9) return "The shared reference edge is degenerate.";
+        refAlong *= 1.0 / refLength;
+        var refGradAlong = new TexVertex((uvB.U - uvA.U) / refLength, (uvB.V - uvA.V) / refLength);
+        var perpRef = InwardPerpendicular(reference, refAlong, refAnchor);
+        if (!TryPerpendicularGradient(reference, refAnchor, refAlong, perpRef, uvA, refGradAlong, out var gradPerp))
+            return "The reference surface has no usable texture gradient across the shared edge.";
+        if (!HasAffineMapping(reference, refAnchor, refAlong, perpRef, uvA, refGradAlong, gradPerp))
+            return "Texture alignment requires an affine reference UV mapping; its corner gradients disagree.";
 
-        var perpTarget = InwardPerpendicular(_target, along, a);
+        var perpTarget = InwardPerpendicular(target, along, a);
+        if (!Finite(perpTarget) || perpTarget.LengthSquared < .99)
+            return "The target surface is degenerate across the shared edge.";
+        if (System.Math.Abs(reference.CalculateNormal().Dot(target.CalculateNormal())) > 1 - 1e-10
+            && perpRef.Dot(perpTarget) > 0)
+            return "Coplanar neighbours must lie on opposite sides of the shared edge.";
 
-        foreach (var corner in _target.Corners)
+        var computed = new List<TexVertex>();
+        foreach (var corner in target.Corners)
         {
             var d = corner.Vertex.Position - a;
             double u = d.Dot(along);
             double v = d.Dot(perpTarget);
 
-            corner.Uv = new TexVertex(
-                uvA.U + gradAlong.U * u + gradPerp.U * v,
-                uvA.V + gradAlong.V * u + gradPerp.V * v);
+            var uv = new TexVertex(
+                uvA.U + gradAlong.U * u - gradPerp.U * v,
+                uvA.V + gradAlong.V * u - gradPerp.V * v);
+            if (!double.IsFinite(uv.U) || !double.IsFinite(uv.V)
+                || System.Math.Abs(uv.U) > 1_000_000 || System.Math.Abs(uv.V) > 1_000_000)
+                return "Aligned texture coordinates must be finite and within +/-1000000 texels.";
+            computed.Add(uv);
         }
+        result = computed.ToArray();
+        return null;
     }
+
+    public void Apply()
+    {
+        if (Calculate(_target, _reference, out var result) is { } error)
+            throw new InvalidOperationException(error);
+        _old.Clear();
+        foreach (var c in _target.Corners) _old.Add(c.Uv);
+        for (int i = 0; i < result.Length; i++) _target.Corners[i].Uv = result[i];
+    }
+
+    private static bool Finite(Vec3 value) => double.IsFinite(value.X) && double.IsFinite(value.Y) && double.IsFinite(value.Z);
 
     public void Revert()
     {
@@ -86,13 +127,18 @@ public sealed class AlignTextureToNeighbourCommand : IEditCommand
     }
 
     /// <summary>
-    /// The two world positions of an edge both surfaces contain. Matched by
-    /// position rather than vertex identity: adjoined sectors keep their own
-    /// vertex objects at the same coordinates.
+    /// Matches one edge and preserves its endpoint correspondence. Exact
+    /// coordinates win over tolerance matches; ambiguous approximate direction
+    /// and multiple edges are refused instead of depending on corner order.
+    /// Vertex identity cannot be used: adjoined sectors keep their own objects.
     /// </summary>
-    private static (Vec3 a, Vec3 b)? FindSharedEdge(Surface x, Surface y)
+    private static string? FindSharedEdge(Surface x, Surface y, out SharedEdge edge)
     {
         const double tol = 1e-6;
+        edge = default;
+        var exact = new List<SharedEdge>();
+        var approximate = new List<SharedEdge>();
+        bool ambiguousOrientation = false;
 
         for (int i = 0; i < x.Corners.Count; i++)
         {
@@ -101,16 +147,32 @@ public sealed class AlignTextureToNeighbourCommand : IEditCommand
 
             for (int j = 0; j < y.Corners.Count; j++)
             {
-                var ya = y.Corners[j].Vertex.Position;
-                var yb = y.Corners[(j + 1) % y.Corners.Count].Vertex.Position;
-
-                bool same = (Near(xa, ya, tol) && Near(xb, yb, tol))
-                            || (Near(xa, yb, tol) && Near(xb, ya, tol));
-                if (same) return (xa, xb);
+                var ca = y.Corners[j];
+                var cb = y.Corners[(j + 1) % y.Corners.Count];
+                var ya = ca.Vertex.Position;
+                var yb = cb.Vertex.Position;
+                if (xa == ya && xb == yb) exact.Add(new SharedEdge(xa, xb, ca, cb));
+                else if (xa == yb && xb == ya) exact.Add(new SharedEdge(xa, xb, cb, ca));
+                else
+                {
+                    bool forward = Near(xa, ya, tol) && Near(xb, yb, tol);
+                    bool reverse = Near(xa, yb, tol) && Near(xb, ya, tol);
+                    if (forward && reverse) ambiguousOrientation = true;
+                    else if (forward) approximate.Add(new SharedEdge(xa, xb, ca, cb));
+                    else if (reverse) approximate.Add(new SharedEdge(xa, xb, cb, ca));
+                }
             }
         }
+        if (exact.Count == 0 && ambiguousOrientation)
+            return "The near-matched shared edge has ambiguous endpoint orientation.";
+        var candidates = exact.Count > 0 ? exact : approximate;
+        if (candidates.Count == 0) return "The surfaces do not share an edge.";
+        if (candidates.Count != 1) return "Texture alignment requires one unambiguous shared edge; multiple shared edges were found.";
+        edge = candidates[0];
         return null;
     }
+
+    private readonly record struct SharedEdge(Vec3 A, Vec3 B, Surface.Corner ReferenceA, Surface.Corner ReferenceB);
 
     private static bool Near(Vec3 p, Vec3 q, double tol) => (p - q).LengthSquared < tol * tol;
 
@@ -120,7 +182,7 @@ public sealed class AlignTextureToNeighbourCommand : IEditCommand
     /// </summary>
     private static Vec3 InwardPerpendicular(Surface surf, Vec3 along, Vec3 anchor)
     {
-        var perp = surf.Normal.Cross(along);
+        var perp = surf.CalculateNormal().Cross(along);
         if (perp.LengthSquared < 1e-18) return perp;
         perp = perp.Normalized();
 
@@ -160,11 +222,19 @@ public sealed class AlignTextureToNeighbourCommand : IEditCommand
         return true;
     }
 
-    private static TexVertex UvAt(Surface surf, Vec3 position)
+    private static bool HasAffineMapping(Surface reference, Vec3 anchor, Vec3 along,
+        Vec3 perp, TexVertex uvAnchor, TexVertex gradAlong, TexVertex gradPerp)
     {
-        const double tol = 1e-6;
-        foreach (var c in surf.Corners)
-            if (Near(c.Vertex.Position, position, tol)) return c.Uv;
-        return new TexVertex(0, 0);
+        static bool Agrees(double expected, double actual) => double.IsFinite(expected)
+            && System.Math.Abs(expected - actual) <= 1e-6 + 1e-10 * System.Math.Max(System.Math.Abs(expected), System.Math.Abs(actual));
+        foreach (var corner in reference.Corners)
+        {
+            var d = corner.Vertex.Position - anchor;
+            double u = d.Dot(along), v = d.Dot(perp);
+            if (!Agrees(uvAnchor.U + gradAlong.U * u + gradPerp.U * v, corner.Uv.U)
+                || !Agrees(uvAnchor.V + gradAlong.V * u + gradPerp.V * v, corner.Uv.V))
+                return false;
+        }
+        return true;
     }
 }

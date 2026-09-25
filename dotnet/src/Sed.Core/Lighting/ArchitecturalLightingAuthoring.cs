@@ -8,21 +8,25 @@ namespace Sed.Core.Lighting;
 
 /// <summary>
 /// An explicit editor sampling profile, not a recovered retail bake algorithm.
-/// Samples are non-directional, unoccluded source-point contributions: no
-/// normals, ambient floor, world/model shadows, or legacy RGB-range semantics.
+/// Samples are non-directional source-point contributions. The original profile
+/// is unoccluded; the opt-in profile uses the existing world polygon shadow rule.
+/// Neither adds ambient, model/self shadows, alpha-aware tracing or retail parity.
 /// Preparation and status queries never modify the level or model inputs.
 /// </summary>
 public static class ArchitecturalLightingAuthoring
 {
     public const string BakeProfile = "source-points-v1";
+    public const string WorldOccludedBakeProfile = "source-points-world-occluded-v1";
+    public static bool IsBakeProfile(string? profile) => profile is BakeProfile or WorldOccludedBakeProfile;
     /// <summary>Maximum vertex/light pairs evaluated by one source-point preparation.</summary>
     public const long MaxSampleLightPairs = 50_000_000;
 
     public static ArchitecturalLightObject PrepareSamples(Level level,
-        IReadOnlyList<IReadOnlyList<Vec3>> worldMeshes)
+        IReadOnlyList<IReadOnlyList<Vec3>> worldMeshes, string profile = BakeProfile)
     {
         ArgumentNullException.ThrowIfNull(level);
         ArgumentNullException.ThrowIfNull(worldMeshes);
+        RequireProfile(profile);
         RequireMotS(level);
         ValidateLights(level);
         long vertices = 0;
@@ -40,6 +44,14 @@ public static class ArchitecturalLightingAuthoring
         foreach (var mesh in worldMeshes)
         {
             foreach (var point in mesh) RequireFinite(point, "Model sample position");
+        }
+        Func<Vec3, Vec3, bool>? blocked = null;
+        if (profile == WorldOccludedBakeProfile)
+        {
+            ValidateOcclusionWorld(level);
+            // One shared grid for this preparation, queried sequentially. No
+            // excluded model face and no world-baker same-sector shortcut.
+            blocked = LightCalculator.CreateWorldOcclusion(level);
         }
 
         var result = new ArchitecturalLightObject();
@@ -60,6 +72,8 @@ public static class ArchitecturalLightingAuthoring
                     if (System.Math.Abs(dx) >= 1 || System.Math.Abs(dy) >= 1 || System.Math.Abs(dz) >= 1) continue;
                     double distance = System.Math.Sqrt(dx * dx + dy * dy + dz * dz);
                     if (distance >= 1) continue;
+                    if (blocked is not null && (light.Flags & LightFlags.NoBlock) == 0
+                        && blocked(light.Position, point)) continue;
                     double remaining = 1 - distance;
                     double falloff = remaining * remaining;
                     mono += light.Intensity * falloff;
@@ -79,11 +93,14 @@ public static class ArchitecturalLightingAuthoring
 
     /// <summary>
     /// Digests the exact pose and resolved sampling inputs. Resource bytes have
-    /// their own provenance hash. Geometry, sector, flags, ambient and nullable
-    /// RGB representation are excluded when they do not alter this profile.
+    /// their own provenance hash. The original profile's canonical bytes are
+    /// unchanged. The occluded profile additionally binds world geometry,
+    /// adjoin identities and flags. Neither profile consumes ambient, texture
+    /// alpha, model-face lighting modes or legacy RGB-range metadata.
     /// </summary>
-    public static string InputsDigest(Level level, Thing thing)
+    public static string InputsDigest(Level level, Thing thing, string profile = BakeProfile)
     {
+        RequireProfile(profile);
         RequireLiveThing(level, thing);
         RequireMotS(level);
         RequireFinite(thing.Position, "Thing position");
@@ -91,9 +108,11 @@ public static class ArchitecturalLightingAuthoring
         ValidateLights(level);
         string model = level.GetThingModel(thing);
         bool eligible = IsLevelGeometry(level, thing);
+        if (profile == WorldOccludedBakeProfile) ValidateOcclusionWorld(level);
         return Digest(writer =>
         {
-            writer.Write("SED-ARCH-INPUTS-1"); writer.Write(BakeProfile);
+            writer.Write(profile == BakeProfile ? "SED-ARCH-INPUTS-1" : "SED-ARCH-INPUTS-WORLD-OCCLUDED-1");
+            writer.Write(profile);
             writer.Write((int)level.Kind); writer.Write(model.ToLowerInvariant()); writer.Write(eligible);
             WritePoint(writer, thing.Position);
             writer.Write(thing.Pitch); writer.Write(thing.Yaw); writer.Write(thing.Roll);
@@ -103,7 +122,9 @@ public static class ArchitecturalLightingAuthoring
                 WritePoint(writer, light.Position);
                 writer.Write(light.Range); writer.Write(light.Intensity); writer.Write(light.EffectiveRgbIntensity);
                 writer.Write(light.Color.R); writer.Write(light.Color.G); writer.Write(light.Color.B);
+                if (profile == WorldOccludedBakeProfile) writer.Write(light.Flags);
             }
+            if (profile == WorldOccludedBakeProfile) WriteOcclusionWorld(writer, level);
         });
     }
 
@@ -150,8 +171,8 @@ public static class ArchitecturalLightingAuthoring
         {
             if (level.Kind != ProjectType.MysteriesOfTheSith || !IsLevelGeometry(level, thing)
                 || !level.GetThingModel(thing).Equals(provenance.ModelName, StringComparison.OrdinalIgnoreCase)) return "stale";
-            if (provenance.Origin != BakeProfile) return provenance.Origin;
-            return InputsDigest(level, thing).Equals(provenance.InputSha256, StringComparison.OrdinalIgnoreCase)
+            if (!IsBakeProfile(provenance.Origin)) return provenance.Origin;
+            return InputsDigest(level, thing, provenance.Origin).Equals(provenance.InputSha256, StringComparison.OrdinalIgnoreCase)
                 ? "current-inputs" : "stale";
         }
         catch (Exception error) when (error is ArgumentException or InvalidOperationException or FormatException) { return "stale"; }
@@ -175,10 +196,68 @@ public static class ArchitecturalLightingAuthoring
     }
 
     internal static bool ValidProvenance(ArchitectureLightingProvenance provenance) =>
-        provenance.Origin is "bound" or "reset" or BakeProfile
+        (provenance.Origin is "bound" or "reset" || IsBakeProfile(provenance.Origin))
         && !string.IsNullOrWhiteSpace(provenance.ModelName)
         && IsHash(provenance.ModelSha256) && IsHash(provenance.SamplesSha256)
-        && (provenance.Origin == BakeProfile ? IsHash(provenance.InputSha256) : provenance.InputSha256 == "");
+        && (IsBakeProfile(provenance.Origin) ? IsHash(provenance.InputSha256) : provenance.InputSha256 == "");
+
+    private static void RequireProfile(string? profile)
+    {
+        if (!IsBakeProfile(profile)) throw new ArgumentException("Unsupported architectural source-point profile.", nameof(profile));
+    }
+
+    private static void ValidateOcclusionWorld(Level level)
+    {
+        LightCalculator.ValidateWorldOcclusionGeometry(level);
+        var surfaces = level.Sectors.SelectMany(sector => sector.Surfaces).ToHashSet();
+        foreach (var surface in surfaces)
+        {
+            if (surface.Corners.Count is < 3 or > 64)
+                throw new InvalidOperationException("World-occluded ARCH requires world faces with 3..64 corners.");
+            var normal = surface.CalculateNormal();
+            if (normal.LengthSquared < .99)
+                throw new InvalidOperationException("World-occluded ARCH refuses zero-area world faces.");
+            var anchor = surface.Corners[0].Vertex.Position;
+            foreach (var corner in surface.Corners)
+            {
+                var relative = corner.Vertex.Position - anchor;
+                RequireFinite(relative, "World face span");
+                double distance = normal.Dot(relative);
+                if (!double.IsFinite(distance) || System.Math.Abs(distance) > 1e-6)
+                    throw new InvalidOperationException("World-occluded ARCH requires planar world faces.");
+            }
+            for (int i = 0; i < surface.Corners.Count; i++)
+            {
+                double lengthSquared = (surface.Corners[i].Vertex.Position
+                    - surface.Corners[(i + 1) % surface.Corners.Count].Vertex.Position).LengthSquared;
+                if (!double.IsFinite(lengthSquared) || lengthSquared <= 1e-18)
+                    throw new InvalidOperationException("World-occluded ARCH refuses degenerate or unrepresentable world edges.");
+            }
+            if (surface.Adjoin is { } other && (!surfaces.Contains(other)
+                || ReferenceEquals(surface, other) || !ReferenceEquals(other.Adjoin, surface)))
+                throw new InvalidOperationException("World-occluded ARCH requires live reciprocal world adjoins.");
+        }
+    }
+
+    private static void WriteOcclusionWorld(BinaryWriter writer, Level level)
+    {
+        var indices = level.Sectors.SelectMany(sector => sector.Surfaces)
+            .Select((surface, index) => (surface, index)).ToDictionary(pair => pair.surface, pair => pair.index);
+        writer.Write(level.Sectors.Count);
+        foreach (var sector in level.Sectors)
+        {
+            // Flags are conservatively bound in full. Materials, UVs, lighting
+            // and cached normals are not ray inputs and are deliberately absent.
+            writer.Write(sector.Flags); writer.Write(sector.Surfaces.Count);
+            foreach (var surface in sector.Surfaces)
+            {
+                writer.Write(surface.SurfFlags); writer.Write(surface.FaceFlags);
+                writer.Write(surface.Adjoin is { } other ? indices[other] : -1);
+                writer.Write(surface.Adjoin is null ? 0L : surface.AdjoinFlags); writer.Write(surface.Corners.Count);
+                foreach (var corner in surface.Corners) WritePoint(writer, corner.Vertex.Position);
+            }
+        }
+    }
 
     private static bool IsHash(string? hash) => hash is { Length: 64 } && hash.All(Uri.IsHexDigit);
     private static bool IsLevelGeometry(Level level, Thing thing)

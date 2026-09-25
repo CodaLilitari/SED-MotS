@@ -199,7 +199,7 @@ internal static class GeoResourceWriter
         return (geo, sectors, identityError);
     }
 
-    private static List<Surface> OrderedSurfaces(Level level, JklSourceGeometry? source, out string? error)
+    internal static List<Surface> OrderedSurfaces(Level level, JklSourceGeometry? source, out string? error)
     {
         error = null;
         var current = level.Sectors.SelectMany(s => s.Surfaces).ToList();

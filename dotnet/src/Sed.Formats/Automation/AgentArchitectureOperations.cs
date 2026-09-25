@@ -22,11 +22,12 @@ public static partial class AgentWorkspace
             throw new AgentRequestException("Architectural authoring requires explicit hash-bound resourceArchives. Use schema resources and review the resulting resourceRevision.");
         if (name == "rebindThingArchitecture" && String(op, "policy") != "reset")
             throw FieldError("Rebind requires policy 'reset': it replaces this thing's samples with a private zeroed allocation.", "policy");
-        if (name == "bakeThingArchitecture" && String(op, "profile") != ArchitecturalLightingAuthoring.BakeProfile)
-            throw FieldError("The supported profile is 'source-points-v1': unoccluded, non-directional source lights, without ambient or model shadows.", "profile");
+        if (name == "bakeThingArchitecture" && !ArchitecturalLightingAuthoring.IsBakeProfile(String(op, "profile")))
+            throw FieldError("Choose source-points-v1 (unoccluded) or source-points-world-occluded-v1 (world polygon blockers). Neither adds ambient, model/self shadows, alpha-aware tracing or retail parity.", "profile");
         string action = name switch { "bindThingArchitecture" => "bind", "rebindThingArchitecture" => "rebind", _ => "bake" };
         command = ArchitectureAuthoringService.Prepare(doc.Level, thing, resources, action,
-            name == "bindThingArchitecture" ? Integer(op, "lightingIndex") : null);
+            name == "bindThingArchitecture" ? Integer(op, "lightingIndex") : null,
+            name == "bakeThingArchitecture" ? String(op, "profile") : ArchitecturalLightingAuthoring.BakeProfile);
         return true;
     }
 
@@ -41,8 +42,12 @@ public static partial class AgentWorkspace
             provenance = thing.ArchLightingProvenance,
             samplesSha256 = samples is null ? null : ArchitecturalLightingAuthoring.SamplesDigest(samples),
             meshVertexCounts = samples?.Meshes.Select(m => m.Vertices.Count).ToArray(),
-            profileLimits = thing.ArchLightingProvenance?.Origin == ArchitecturalLightingAuthoring.BakeProfile
-                ? "Unoccluded, non-directional source-point samples; no ambient, self/model shadows, animation, or retail-equivalence claim." : null,
+            profileLimits = thing.ArchLightingProvenance?.Origin switch
+            {
+                ArchitecturalLightingAuthoring.BakeProfile => "Unoccluded, non-directional source-point samples; no ambient, self/model shadows, animation, or retail-equivalence claim.",
+                ArchitecturalLightingAuthoring.WorldOccludedBakeProfile => "Non-directional source points with world polygon blockers and BlockLight portal flags; NoBlock bypasses rays. No ambient, model/self shadows, material-alpha tracing, animation or retail equivalence. Render/fullbright modes do not make walls transmit light.",
+                _ => (string?)null,
+            },
         };
     }
 

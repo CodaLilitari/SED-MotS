@@ -4,7 +4,7 @@ namespace Sed.Formats.Cogs;
 
 /// <summary>
 /// Resolves a placed COG's script name (e.g. <c>00_door.cog</c>) to its parsed
-/// script, searching the archives under <c>cog\</c>.
+/// script, using the shared resource lookup policy that prefers <c>cog\</c>.
 ///
 /// Both the level archive and the resource archives must be searched: level-specific
 /// scripts live in the episode GOB while shared ones live in the resource GOB. On a
@@ -26,24 +26,23 @@ public sealed class CogScriptLibrary
                 if (archive is not null) _archives.Add(archive);
     }
 
-    /// <summary>The parsed script, or null when no archive supplies it.</summary>
+    /// <summary>The parsed script, or null when missing or ambiguous in the first matching archive.</summary>
     public CogScript? Get(string cogName)
     {
         if (string.IsNullOrWhiteSpace(cogName)) return null;
         if (_cache.TryGetValue(cogName, out var cached)) return cached;
 
         CogScript? result = null;
-        var wanted = "cog/" + cogName.Replace('\\', '/').ToLowerInvariant();
-
         foreach (var archive in _archives)
         {
-            foreach (var entry in archive.Entries)
-            {
-                if (!entry.NormalizedName.Equals(wanted, StringComparison.Ordinal)) continue;
-                result = CogScript.Parse(cogName, archive.ReadText(entry));
-                break;
-            }
-            if (result is not null) break;
+            var matches = archive.FindResourceEntries(cogName, "cog");
+            if (matches.Count == 0) continue;
+            // Match the explicit agent provider: a higher-priority ambiguous
+            // archive blocks resolution instead of choosing a schema or falling
+            // through to another archive. Cache refusal just like a miss.
+            if (matches.Count != 1) return _cache[cogName] = null;
+            result = CogScript.Parse(cogName, archive.ReadText(matches[0]));
+            break;
         }
 
         _cache[cogName] = result;

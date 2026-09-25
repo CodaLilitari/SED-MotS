@@ -24,17 +24,18 @@ public sealed class ConsistencyWindow : Window
         public Sector? Sector { get; init; }
         public Surface? Surface { get; init; }
 
-        public string Location => Issue.SectorIndex < 0
+        public string Location => Issue.Type == ItemType.Thing && Issue.ItemIndex >= 0 ? $"Thing {Issue.ItemIndex}" : Issue.SectorIndex < 0
             ? "—"
             : Issue.SurfaceIndex < 0
                 ? $"Sector {Issue.SectorIndex}"
                 : $"Sector {Issue.SectorIndex} · Surface {Issue.SurfaceIndex}";
     }
 
-    private readonly Level _level;
+    private Level _level;
     private readonly Func<ConsistencyOptions?>? _options;
     private readonly ListBox _list;
     private readonly TextBlock _summary;
+    private readonly CheckBox _containment;
 
     public ConsistencyWindow(Level level, Func<ConsistencyOptions?>? options = null)
     {
@@ -60,12 +61,20 @@ public sealed class ConsistencyWindow : Window
 
         var recheck = new Button { Content = "Re-check", Margin = new Thickness(10, 6) };
         recheck.Click += (_, _) => Run();
+        _containment = new CheckBox
+        {
+            Name = "CheckThingContainment", Content = "Check thing containment (may be slow)",
+            Margin = new Thickness(10, 0), IsChecked = false,
+        };
+        var controls = new StackPanel { Orientation = Orientation.Horizontal };
+        controls.Children.Add(recheck);
+        controls.Children.Add(_containment);
 
         var root = new DockPanel();
         DockPanel.SetDock(_summary, Dock.Top);
         root.Children.Add(_summary);
-        DockPanel.SetDock(recheck, Dock.Bottom);
-        root.Children.Add(recheck);
+        DockPanel.SetDock(controls, Dock.Bottom);
+        root.Children.Add(controls);
         root.Children.Add(_list);
         Content = root;
 
@@ -73,9 +82,18 @@ public sealed class ConsistencyWindow : Window
     }
 
     /// <summary>Re-runs the check against the current state of the level.</summary>
+    public void SetLevel(Level level) { _level = level; Run(); }
+
+    /// <summary>Re-runs the check against the current state of the level.</summary>
     public void Run()
     {
-        var issues = ConsistencyChecker.Check(_level, _options?.Invoke());
+        var supplied = _options?.Invoke();
+        var issues = ConsistencyChecker.Check(_level, new ConsistencyOptions
+        {
+            RetailProfile = supplied?.RetailProfile ?? false,
+            ResolveCogParameters = supplied?.ResolveCogParameters,
+            CheckThingContainment = _containment.IsChecked == true,
+        });
         var rows = issues.Select(i => new Row
         {
             Issue = i,

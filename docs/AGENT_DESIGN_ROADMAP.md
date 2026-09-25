@@ -39,7 +39,15 @@ Choose and pin an SDK deliberately. The `2025-11-25` protocol negotiates version
 
 ## Priorities for serious level design
 
-[ARCH-01](ARCHITECTURE_AUTHORING.md) now supplies explicit bind/reset/rebake commands, private sample allocations, source-point sampling, saved provenance, computed stale status, and bounded sample queries through the shared GUI/CLI model. Its `source-points-v1` recipe is unoccluded and non-directional and refuses unsupported LOD/pivot/hierarchy layouts. Shadowed baking and multi-LOD sample correspondence remain separate work; an MCP transport would expose these same domain contracts rather than supply the missing lighting semantics.
+[ARCH-01](ARCHITECTURE_AUTHORING.md) supplies explicit bind/reset/rebake commands, private sample allocations, source-point sampling, saved provenance, computed stale status, and bounded sample queries through the shared GUI/CLI model. [EDIT-01](EDITING_FOUNDATIONS.md) adds an explicitly separate world-occluded recipe, preserving the original unoccluded profile. Both refuse unsupported LOD/pivot/hierarchy layouts. Alpha-aware material, model/self shadows and multi-LOD sample correspondence remain separate work; an MCP transport would expose these same domain contracts rather than supply missing lighting semantics.
+
+EDIT-01 also implements bounded point containment, neighbor texture alignment,
+per-light world bake explanations, known direct asset receipts, and typed COG
+binding discovery/rebinding. Query and plan resource revisions have distinct
+scopes. Direct asset resolution is not recursive closure; guarded existing COG
+parameter edits do not yet create episodes or safely delete/reindex arbitrary
+referenced objects. The remaining priorities below should build on those
+implemented contracts rather than recreating them in a wrapper.
 
 | Priority | Capability | Useful outcome and acceptance evidence |
 | --- | --- | --- |

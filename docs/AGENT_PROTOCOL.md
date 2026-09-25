@@ -10,9 +10,12 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 | --- | --- |
 | `help [command]`, `--help`, `-h` | Compact JSON command help; also returned when no command is supplied |
 | `--version` | Executable build version and supported capabilities |
-| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
+| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|bindings\|lighting\|assets\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
 | `inspect <level.jkl> [sector-index]` | Source hash, game, counts, materials, sector and thing indices; optional detailed geometry |
 | `query <level> <query.json\|->` | Bounded, paged readback of fields used by existing edits, including templates and lighting |
+| `bindings <level> <bindings.json\|->` | One placed COG's typed binding page, complete-schema status, modifiers and exact current-world target addresses; explicit archives required |
+| `lighting <level> <lighting.json\|->` | Read-only world-corner bake explanation per source light: facing, range, shadow and contribution counts |
+| `assets <level> <assets.json\|->` | Bounded direct resource scan with origins and exact captured entry receipts; explicit archives required; recursive closure stays unverified |
 | `select <level> <selection.json\|->` | Select a sector by world point or a face by outward direction; return a token only for a unique match |
 | `snapshot <level> <snapshot.json\|-> <new-output.png>` | Explicit-camera diagnostic or static lit PNG, rendered offscreen; no window or game |
 | `validate <level.jkl> [resources.json\|-]` | Structural diagnostics, with optional current-resource ARCH validation |
@@ -38,7 +41,14 @@ Use `schema query` for the exact request schema. A first query can be as small a
 { "schemaVersion": 1, "collection": "summary" }
 ```
 
-Collections cover `summary`, `sectors`, `things`, `lights`, `templates`, `materials`, `colormaps`, `surfaces`, `vertices`, `architecture` and `architecturalVertices`. `surfaces` and `vertices` require a `sector` index. `architecturalVertices` requires `lightingIndex` and `mesh` from `architecture`; it pages independent mono/RGB samples. Thing queries also expose authoring status and provenance, separately from resource freshness. Search applies to things, templates, materials and colormaps; it is case-insensitive. Use the returned index, rather than assuming a name is unique. The default page is 50 items and the maximum is 200. Follow `nextOffset` until it is null; a response may return fewer items to respect its 1 MiB limit. `total` is the filtered count and `sourceTotal` is the unfiltered count. A zero-result search succeeds with an empty `items` array; an oversized single record fails explicitly.
+Collections cover `summary`, `sectors`, `things`, `thingContainment`, `cogs`, `lights`, `templates`, `materials`, `colormaps`, `surfaces`, `vertices`, `architecture` and `architecturalVertices`. `surfaces` and `vertices` require a `sector` index. `architecturalVertices` requires `lightingIndex` and `mesh` from `architecture`; it pages independent mono/RGB samples. Thing queries also expose authoring status and provenance, separately from resource freshness. Search applies to things, thingContainment, templates, materials and colormaps; it is case-insensitive. Use the returned index, rather than assuming a name is unique. The default page is 50 items and the maximum is 200. Follow `nextOffset` until it is null; a response may return fewer items to respect its 1 MiB limit. `total` is the filtered count and `sourceTotal` is the unfiltered count. A zero-result search succeeds with an empty `items` array; an oversized single record fails explicitly.
+
+`thingContainment` checks point positions without reassigning things. It retains
+overlap/boundary ambiguity and reports unsupported geometry with unavailable
+candidates. `summary.serializedThingCapacity` is the greater of declared capacity
+and placed count. `cogs` exposes raw placed script names and values; use `bindings`
+to obtain types, never infer them from integers. See [EDIT-01 contracts](EDITING_FOUNDATIONS.md#agent-contracts)
+for the new diagnostics and guarded COG edit loop.
 
 For example, find candidate templates without putting the entire template library in the agent's context:
 
@@ -62,7 +72,8 @@ Only `status: "unique"` carries a `selection` token. `none` and `ambiguous`
 return exit 0 with a null token; check both process status and match status.
 
 Copy the token into `target` for supported operations; use `otherTarget` too
-for `adjoinSurfaces`. Do not combine tokens with integer geometry fields in one
+for `adjoinSurfaces` or `alignSurfaceTexture`. For alignment, `otherTarget` supplies
+the reference UVs and `target` receives them. Do not combine tokens with integer geometry fields in one
 operation. Tokens bind the source revision and full containing-sector geometry,
 including the selected address and adjoin endpoints. Each operation checks its
 token before execution. Geometry changes inside the same batch make a previous
@@ -203,6 +214,6 @@ Games: `JediKnight`, `MysteriesOfTheSith`. Engines: `Auto`, `OpenJKDF2`, `Retail
 
 Planning checks structural validity and the affected fields after serialization. This is not a whole-document equivalence check. Separate corpus audits compare a broader modeled-field digest. Neither proves gameplay, resources or every possible extension. Unknown sections are retained and may contain indexes requiring separate interpretation after topology changes. Existing malformed levels remain inspectable, but `apply` refuses outputs with validation errors.
 
-Architectural lighting is preserved unless an explicit authoring operation changes it. Changed model names with old bindings are refused during ordinary editing. Explicit `resourceArchives` extend `validate`, `plan`, `apply` and `convert` with the same current-model all-LOD, optional historical-fingerprint and authored raw-model checks as the lit preview. Requests without those archives remain structurally checked and resource-unverified. `bindThingArchitecture`, `rebindThingArchitecture` with policy `reset`, and `bakeThingArchitecture` with profile `source-points-v1` require captured resources. The last is an unoccluded, non-directional point-source recipe for supported single-LOD rest-pose layouts; see [ARCH-01](ARCHITECTURE_AUTHORING.md). `current-inputs` status does not verify current model bytes. The native `sourceRevision` covers imported template files; `resourceRevision` separately covers the declared archives and used model entries. Neither identifies every installed or runtime resource. Retain source inputs and use a new output for each reviewed edit.
+Architectural lighting is preserved unless an explicit authoring operation changes it. Changed model names with old bindings are refused during ordinary editing. Explicit `resourceArchives` extend `validate`, `plan`, `apply` and `convert` with the same current-model all-LOD, optional historical-fingerprint and authored raw-model checks as the lit preview. Requests without those archives remain structurally checked and resource-unverified. `bindThingArchitecture`, `rebindThingArchitecture` with policy `reset`, and `bakeThingArchitecture` require captured resources. Bake profiles are `source-points-v1` (unoccluded) and `source-points-world-occluded-v1` (world polygon shadows), with the independent channels, exact limitations and supported layouts documented in [the authoring contract](ARCHITECTURE_AUTHORING.md). `current-inputs` does not verify current model bytes. The native `sourceRevision` covers imported template files; a plan's `resourceRevision` separately covers the declared archives and resources consumed by that plan, including typed COG scripts. Neither identifies every installed or runtime resource. Retain source inputs and use a new output for each reviewed edit.
 
 When deliberately changing an architectural model, add `{"op":"clearThingArchitecture","thing":0}` before the template/model change. This explicitly removes the old thing binding while retaining its archived lighting arrays. It does not calculate replacement lighting.

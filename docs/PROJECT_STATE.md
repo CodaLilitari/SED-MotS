@@ -1,9 +1,48 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-20. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-25. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
+
+**Active work (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
+public Massassi forum research, implementation of the recommendations and a new
+goal. This explicitly resumes SED development after the completed ENGINE-01
+pause. The phased goal covers robustness, headless texture alignment,
+source-aware diagnostics, typed COG bindings and supported ARCH occlusion,
+followed by independent review, a verified Windows package and source delivery.
+Read the phase acceptance document and current WORK_LOG before continuing.
+Publication constraint: keep scraped Discord logs and copied forum posts out of
+public GitHub and forum posts. Raw captures stay ignored/local; use original findings and links.
+
+**Source verified; delivery in progress:** integrated EDIT-01 passes **1,329 unit
+tests and 126 actual headless UI checks**, with no build warnings/errors in those
+runs. It includes KEY/3DO preservation fixes, strict neighbor UV alignment,
+containment/capacity/direct-asset/world-bake diagnostics, typed COG discovery and
+guarded GUI/agent rebinding, and the separate world-occluded ARCH recipe.
+Independent review produced executed corrections for resource revision scope,
+GUI script ambiguity/lifetime, and a thin-polygon ray predicate. Raw captures
+remain local. The new actual-process editing workflow and extended lighting
+workflow pass their initial runs; final clean Windows packaging and source
+publication remain pending. Per-run evidence is under `build/edit01-20260925/`;
+do not report delivery complete until the package and remote are verified.
+
+**Pre-implementation research checkpoint (2026-09-25):** source was at published
+`c6aabe620a2e18a5a7a5d78aa327b6441a873c51`; no implementation or new publication
+was performed at that checkpoint. The requested public-fork/add-on review and private local channel
+archive are under ignored `build/research-20260925/`. Start with `README.md`,
+`TOOL_INVENTORY.md`, and `discord/TECHNICAL_FINDINGS.md` there. Do not publish that
+directory: it contains private channel text and attachment references.
+
+The six-repository, sixteen-branch public SED review found three older unique
+commits, not a new MotS lighting correction. The new Urgon Qt editor was not found
+as an obtainable source/build in the inspected routes. Original packaged-library
+fixtures reproduce a before-first-keyframe sampling exception and nonzero 3DO
+insertion-offset loss; the latter is not reached by current sector export.
+Prioritize those scoped robustness findings, source-aware diagnostics, shared
+neighbor texture alignment, COG binding queries, and ARCH occlusion. World-light
+shadow rays, independent mono/RGB data, and source-point ARCH authoring already
+exist. See DEC-20260925-01; research recommendations are not implemented features.
 
 **Latest completed bounded milestone: [ENGINE-01](ENGINE_CAPTURE.md).**
 Implementation/package source is `ea4d6f4a8c39501198064a52264317b16e5741e0`,
@@ -36,9 +75,10 @@ world/player state is engine-reported. Effective camera, resolved resource bytes
 loaded ARCH arrays, engine mono-mode crossover, retail parity and gameplay remain
 unverified. See DEC-15 through DEC-19 and `build/engine01-20260920/`.
 
-**User stop condition:** publish this tested revision and completion checkpoint,
-then pause. No next milestone or separate engine research is authorized to
-continue automatically after that publication.
+**Historical ENGINE-01 stop condition:** publish that tested revision and
+completion checkpoint, then pause. That publication was verified at `c6aabe6`.
+Andrei resumed SED implementation on 2026-09-25 for EDIT-01 above; this does not
+independently authorize unrelated engine-repository work.
 
 **Previous completed milestone: [ARCH-01](ARCHITECTURE_AUTHORING.md), packaged and
 source published.** Implementation/package source is

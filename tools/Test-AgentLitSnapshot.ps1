@@ -8,6 +8,8 @@ Checks independent surface and architectural mono/RGB rendering, exact resource
 provenance, strict/permissive asset handling and refusal to replace existing PNGs.
 Also checks resource validation and reviewed plan/apply/convert using a separate
 closed synthetic room, including changed resources that leave output JKL unchanged.
+Separately checks world-occluded ARCH baking against a ceiling/NoBlock control,
+analytic independent mono/RGB samples and saved profile/resource provenance.
 Starts only direct bounded agent processes, with no GUI, game, shell or network.
 Requires an agent build that supports lit snapshots and a working Vulkan device.
 #>
@@ -314,6 +316,94 @@ function Invoke-ArchitectureAuthoringWorkflow([string]$Source, $Inspection, $Arc
     $receipt.architectureAuthoring = @{ profile = 'source-points-v1'; shadows = $false; directionalNormals = $false
         sourcePath = $Source; bakedPath = $baked; stalePath = $stale; resourceRevision = $plan.resourceRevision }
 }
+function Invoke-WorldOccludedArchitectureWorkflow([string]$ClosedText, [Collections.IDictionary]$Entries) {
+    $profile = 'source-points-world-occluded-v1'
+    $schema = Invoke-Agent 'world-occluded-bake-schema' @('schema', 'bakeThingArchitecture')
+    Confirm-Check 'bake schema explicitly supports the world-occluded profile' (
+        $profile -in $schema.properties.operations.items.oneOf[0].properties.profile.enum)
+
+    # Keep separate immutable inputs: the resource workflow later mutates its
+    # own archive. The source is above the closed room's ceiling at z=3; every
+    # panel sample is inside at z=.2. Thus every ray crosses the ceiling, while
+    # NoBlock=1 deliberately bypasses it. No model/material/runtime claim follows.
+    $source = Join-Path $scratch 'world-occluded-source.jkl'
+    $archive = Join-Path $scratch 'world-occluded-original.gob'
+    Write-NewBytes $source $utf8.GetBytes($ClosedText)
+    Write-NewBytes $archive (New-SyntheticGob $Entries)
+    foreach ($path in @($source, $archive)) {
+        $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length })
+    }
+    $inspection = Invoke-Agent 'inspect-world-occluded-source' @('inspect', $source)
+    $archives = @(@{ path = $archive; sha256 = Get-Hash $archive })
+    $modelHash = Get-BytesHash $Entries['3do\agent_lit.3do']
+    $cases = @(
+        @{ name = 'blocked'; flags = 0; mono = 0.8; color = 0.4; expected = @(0, 0, 0, 0) },
+        @{ name = 'noblock'; flags = 1; mono = 0.8; color = 0.4; expected = @(0.2, 0.1, 0.05, 0.025) },
+        @{ name = 'mono-only'; flags = 1; mono = 0.8; color = 0; expected = @(0.2, 0, 0, 0) },
+        @{ name = 'rgb-only'; flags = 1; mono = 0; color = 0.4; expected = @(0, 0.1, 0.05, 0.025) })
+    $records = [Collections.Generic.List[object]]::new()
+    foreach ($case in $cases) {
+        $name = 'world-occluded-' + $case.name
+        $patch = [ordered]@{ schemaVersion = 1; inputSha256 = $inspection.inputSha256
+            sourceRevision = $inspection.sourceRevision; resourceArchives = $archives
+            operations = @(
+                @{ op = 'addLight'; position = @(-0.6, -0.6, 4.2); rgb = @(1, 0.5, 0.25)
+                    intensity = $case.mono; rgbIntensity = $case.color; range = 8; flags = $case.flags },
+                @{ op = 'bakeThingArchitecture'; thing = 0; profile = $profile }) }
+        $plan = Invoke-Agent "plan-$name" @('plan', $source, '-') (Convert-Request $patch)
+        $effect = $plan.changes[1].serializedFinal.state
+        Confirm-Check "$name appends a private array with exact model/profile provenance" (
+            $effect.archLightingIndex -eq 1 -and $plan.after.architecturalObjects -eq 2 -and
+            $effect.architecture.status -eq 'current-inputs' -and $effect.architecture.provenance.origin -eq $profile -and
+            $effect.architecture.provenance.modelSha256 -eq $modelHash -and
+            $effect.architecture.provenance.inputSha256 -match '^[0-9a-f]{64}$' -and
+            $effect.architecture.provenance.samplesSha256 -match '^[0-9a-f]{64}$')
+        $patch.resourceRevision = $plan.resourceRevision
+        $output = Join-Path $scratch "$name.jkl"
+        $applied = Invoke-Agent "apply-$name" @('apply', $source, '-', $output, $plan.outputSha256) (Convert-Request $patch)
+        Confirm-Check "$name applies the reviewed document and resource revisions" (
+            (Get-Hash $output) -eq $plan.outputSha256 -and $applied.plan.resourceRevision -eq $plan.resourceRevision)
+
+        $things = Invoke-Agent "query-$name-provenance" @('query', $output, '-') '{"schemaVersion":1,"collection":"things"}'
+        $saved = $things.items[0].architecture
+        Confirm-Check "$name retains exact provenance and local freshness after save/reopen" (
+            $saved.status -eq 'current-inputs' -and $saved.resourceStatus -eq 'unverified-use-resource-validation' -and
+            $saved.provenance.origin -eq $profile -and $saved.provenance.modelSha256 -eq $modelHash -and
+            $saved.provenance.inputSha256 -eq $effect.architecture.provenance.inputSha256 -and
+            $saved.provenance.samplesSha256 -eq $effect.architecture.provenance.samplesSha256)
+        $samples = Invoke-Agent "query-$name-samples" @('query', $output, '-') '{"schemaVersion":1,"collection":"architecturalVertices","lightingIndex":1,"mesh":0,"limit":4}'
+        # First sample (-.6,-.6,.2) is exactly four units from the source.
+        # Range eight gives (1 - 4/8)^2 = 1/4, independently for white and RGB.
+        Confirm-Check "$name reads all four samples with the analytic first sample" (
+            $samples.total -eq 4 -and $samples.returnedCount -eq 4 -and $null -eq $samples.nextOffset -and
+            [Math]::Abs($samples.items[0].mono - $case.expected[0]) -lt 1e-12 -and
+            [Math]::Abs($samples.items[0].rgb[0] - $case.expected[1]) -lt 1e-12 -and
+            [Math]::Abs($samples.items[0].rgb[1] - $case.expected[2]) -lt 1e-12 -and
+            [Math]::Abs($samples.items[0].rgb[2] - $case.expected[3]) -lt 1e-12)
+        $unexpected = @($samples.items | Where-Object {
+            ($case.flags -eq 0 -and ($_.mono -ne 0 -or $_.rgb[0] -ne 0 -or $_.rgb[1] -ne 0 -or $_.rgb[2] -ne 0)) -or
+            ($case.flags -eq 1 -and $case.mono -gt 0 -and $_.mono -le 0) -or
+            ($case.mono -eq 0 -and $_.mono -ne 0) -or
+            ($case.flags -eq 1 -and $case.color -gt 0 -and ($_.rgb[0] -le 0 -or $_.rgb[1] -le 0 -or $_.rgb[2] -le 0)) -or
+            ($case.color -eq 0 -and ($_.rgb[0] -ne 0 -or $_.rgb[1] -ne 0 -or $_.rgb[2] -ne 0)) })
+        Confirm-Check "$name obeys ceiling occlusion and independent channels at every sample" ($unexpected.Count -eq 0)
+        $lights = Invoke-Agent "query-$name-light" @('query', $output, '-') '{"schemaVersion":1,"collection":"lights"}'
+        Confirm-Check "$name preserves the explicit source flags and independent intensity values" (
+            $lights.total -eq 1 -and $lights.items[0].flags -eq $case.flags -and
+            $lights.items[0].intensity -eq $case.mono -and $lights.items[0].rgbIntensity -eq $case.color -and
+            $lights.items[0].effectiveRgbIntensity -eq $case.color -and -not $lights.items[0].rgbIntensityInherited)
+        $receipt.outputs.Add(@{ name = $name; path = $output; sha256 = Get-Hash $output; kind = 'jkl' })
+        $records.Add(@{ name = $case.name; path = $output; firstSample = $samples.items[0]
+            provenance = $saved.provenance; resourceRevision = $plan.resourceRevision })
+    }
+    Confirm-Check 'world occlusion and NoBlock comparison binds differing inputs and samples' (
+        $records[0].provenance.inputSha256 -ne $records[1].provenance.inputSha256 -and
+        $records[0].provenance.samplesSha256 -ne $records[1].provenance.samplesSha256)
+    $receipt.worldOccludedArchitecture = @{ profile = $profile; sourcePath = $source; archivePath = $archive
+        sourcePosition = @(-0.6, -0.6, 4.2); firstSamplePosition = @(-0.6, -0.6, 0.2)
+        ceilingZ = 3; range = 8; unblockedFirstSampleFalloff = 0.25; cases = $records
+        limits = 'Editor world-polygon recipe only; no material-alpha, model/self shadow, runtime or retail equivalence claim.' }
+}
 function Invoke-ResourceWorkflow([string]$LevelText, [string]$ModelText, [Collections.IDictionary]$Entries) {
     $resourceSchema = Invoke-Agent 'resource-schema' @('schema', 'resources')
     $patchSchema = Invoke-Agent 'resource-patch-schema' @('schema', 'patch')
@@ -405,6 +495,7 @@ END
         $validated.architectureValidation.usedResources[0].sha256 -eq (Get-BytesHash $Entries['3do\agent_lit.3do']))
 
     Invoke-ArchitectureAuthoringWorkflow $closedPath $closedInspection $resourceRequest.resourceArchives
+    Invoke-WorldOccludedArchitectureWorkflow $closedText $Entries
 
     $patch = [ordered]@{ schemaVersion = 1; inputSha256 = $closedInspection.inputSha256; sourceRevision = $closedInspection.sourceRevision
         resourceArchives = $resourceRequest.resourceArchives; operations = @(@{ op = 'setThingName'; thing = 0; name = 'ReviewedPanel' }) }
@@ -495,6 +586,8 @@ END
 
 try {
     $version = Invoke-Agent 'version' @('--version'); $receipt.agentVersion = $version.version
+    Confirm-Check 'agent advertises world-occluded baking and provenance readback' (
+        'architecture-world-occluded-bake' -in $version.capabilities -and 'architecture-provenance-readback' -in $version.capabilities)
     $schema = Invoke-Agent 'snapshot-schema' @('schema', 'snapshot')
     Confirm-Check 'snapshot schema exposes explicit lit assets and mono/RGB modes' ('lit' -in $schema.properties.mode.enum -and 'mono' -in $schema.properties.lightingMode.enum -and 'rgb' -in $schema.properties.lightingMode.enum -and $schema.properties.strictAssets.default -eq $true)
 

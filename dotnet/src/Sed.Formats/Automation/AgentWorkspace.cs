@@ -237,7 +237,7 @@ public static partial class AgentWorkspace
             preservationWarnings = doc.PreservationWarnings, issues = DescribeIssues(issues),
             note = "Legacy conversion uses the recorded importer coverage. Editor-only and unsupported records can produce warnings; this is not a gameplay test.",
         }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,
-            ResourceCapture = CaptureResources(options, exported.Validation, output) };
+            ResourceCapture = CaptureResources(options, exported.Validation, resources, output) };
     }
 
     public static object InspectArchive(string path)
@@ -367,7 +367,7 @@ public static partial class AgentWorkspace
             preservationWarnings = doc.PreservationWarnings,
             note = "Planning uses the GUI's Core commands. Explicit archives add current all-LOD architectural model validation; missing historical baselines remain unknown. Other asset closure and gameplay are not tested. Moved models may require relighting.",
         }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,
-            ResourceCapture = CaptureResources(resourceOptions, exported.Validation, text) };
+            ResourceCapture = CaptureResources(resourceOptions, exported.Validation, resources, text) };
     }
 
     public static object Commit(PreparedAgentEdit edit, string outputPath)
@@ -428,6 +428,7 @@ public static partial class AgentWorkspace
     private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op, ExplicitArchiveResources? resources)
     {
         if (TryPrepareArchitectureOperation(doc, op, resources, out var architectureCommand)) return architectureCommand!;
+        if (TryPrepareCogOperation(doc, op, resources, out var cogCommand)) return cogCommand!;
         if (TryPrepareLightOperation(doc, op, out var lightCommand)) return lightCommand!;
         if (TryPrepareMaterialOperation(doc, op, out var materialCommand)) return materialCommand!;
         if (TryPrepareGeometryOperation(doc, op, out var geometryCommand)) return geometryCommand!;
@@ -512,6 +513,7 @@ public static partial class AgentWorkspace
         ["setThingName"] = ["thing", "name"], ["setThingTemplate"] = ["thing", "template"],
         ["setThingValue"] = ["thing", "key", "value"], ["setVertexPosition"] = ["sector", "vertex", "position"],
         ["clearThingArchitecture"] = ["thing"],
+        ["rebindCogReference"] = ["cog", "parameter", "symbol", "kind", "targetIndex", "scriptSha256"],
         ["bindThingArchitecture"] = ["thing", "lightingIndex"],
         ["rebindThingArchitecture"] = ["thing", "policy"],
         ["bakeThingArchitecture"] = ["thing", "profile"],
@@ -523,6 +525,7 @@ public static partial class AgentWorkspace
         ["setLight"] = ["light"],
         ["registerMaterial"] = ["name"], ["registerColormap"] = ["name"], ["setSectorColormap"] = ["sector", "colormapIndex"],
         ["fitSurfaceTexture"] = ["sector", "surface", "width", "height"], ["setSurfaceUv"] = ["sector", "surface", "uv"],
+        ["alignSurfaceTexture"] = ["sector", "surface", "otherSector", "otherSurface"],
         ["setSurfaceRenderModes"] = ["sector", "surface", "geometryMode", "lightMode", "textureMode"],
         ["extrudeSurface"] = ["sector", "surface", "distance"], ["adjoinSurfaces"] = ["sector", "surface", "otherSector", "otherSurface"],
     };
@@ -534,9 +537,10 @@ public static partial class AgentWorkspace
     {
         string name = String(op, "op");
         var level = doc.Level;
+        if (name == "rebindCogReference") return CogOperationEffect(doc, op);
         if (name is "bindThingArchitecture" or "rebindThingArchitecture" or "bakeThingArchitecture")
             return ArchitectureOperationEffect(doc, op);
-        if (name is "registerMaterial" or "registerColormap" or "setSectorColormap" or "fitSurfaceTexture" or "setSurfaceUv" or "setSurfaceRenderModes")
+        if (name is "registerMaterial" or "registerColormap" or "setSectorColormap" or "fitSurfaceTexture" or "alignSurfaceTexture" or "setSurfaceUv" or "setSurfaceRenderModes")
             return MaterialOperationEffect(doc, op, created);
         if (name is "extrudeSurface" or "adjoinSurfaces") return GeometryOperationEffect(doc, op, created);
         if (name == "setGravity") return new { target = new { kind = "header" }, state = new { gravity = level.Header.Gravity } };

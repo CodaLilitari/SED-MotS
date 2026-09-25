@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Sed.Core.Math;
 using Sed.Core.Model;
+using Sed.Core.Query;
 using Sed.Formats.Jkl;
 
 namespace Sed.Formats.Automation;
@@ -19,8 +20,8 @@ public static class AgentQueries
     public const int MaxLimit = 200;
     public const int MaxResponseBytes = 1024 * 1024;
     private static readonly string[] Collections =
-        ["summary", "sectors", "things", "lights", "templates", "materials", "colormaps", "surfaces", "vertices", "architecture", "architecturalVertices"];
-    private static readonly string[] NamedCollections = ["things", "templates", "materials", "colormaps"];
+        ["summary", "sectors", "things", "thingContainment", "lights", "cogs", "templates", "materials", "colormaps", "surfaces", "vertices", "architecture", "architecturalVertices"];
+    private static readonly string[] NamedCollections = ["things", "thingContainment", "templates", "materials", "colormaps"];
 
     public static object Schema() => new Dictionary<string, object>
     {
@@ -134,7 +135,7 @@ public static class AgentQueries
         if (root.TryGetProperty("search", out var field))
         {
             if (!NamedCollections.Contains(collection, StringComparer.Ordinal))
-                throw new AgentRequestException("search is only valid for things, templates, materials and colormaps queries.");
+                throw new AgentRequestException("search is only valid for things, thingContainment, templates, materials and colormaps queries.");
             if (field.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(field.GetString()) || field.GetString()!.Length > 127)
                 throw new AgentRequestException("search must contain between 1 and 127 characters and cannot be blank.");
             search = field.GetString();
@@ -203,6 +204,23 @@ public static class AgentQueries
                         architecture = AgentWorkspace.DescribeArchitecture(level, thing),
                     };
                 }, i => Match(level.Things[i].Name) || Match(level.Things[i].Template));
+            case "thingContainment":
+                return new Catalog(level.Things.Count, i =>
+                {
+                    var result = ThingContainment.Evaluate(level, i);
+                    return new
+                    {
+                        index = i, level.Things[i].Name, level.Things[i].Template,
+                        position = result.Position is Vec3 p ? Position(p) : null,
+                        status = result.Status.ToString(), assignment = result.Assignment.ToString(),
+                        result.AssignedSectorIndex, result.AssignedSectorMatches, result.OnBoundary,
+                        result.Candidates, result.Tolerance, result.Detail,
+                        scope = "Point position in verified convex sectors; no collision-volume or runtime transition claim. Unsupported geometry makes candidates incomplete and therefore unavailable.",
+                    };
+                }, i => Match(level.Things[i].Name) || Match(level.Things[i].Template));
+            case "cogs":
+                return new Catalog(level.Cogs.Count, i => new { index = i, level.Cogs[i].Name,
+                    values = level.Cogs[i].Values.ToArray(), bindingStatus = "unverified-use-bindings-with-explicit-resources" });
             case "lights":
                 return new Catalog(level.Lights.Count, i =>
                 {
@@ -295,7 +313,8 @@ public static class AgentQueries
                 lights = level.Lights.Count, cogs = level.Cogs.Count, architecturalObjects = level.ArchitecturalLighting.Count,
                 templates = level.Templates.Count, materials = document.Materials.Count, colormaps = level.ColorMaps.Count,
             },
-            level.ThingCapacity, preservationWarnings = document.PreservationWarnings,
+            level.ThingCapacity, serializedThingCapacity = System.Math.Max(level.ThingCapacity, level.Things.Count),
+            preservationWarnings = document.PreservationWarnings,
         };
     }
 

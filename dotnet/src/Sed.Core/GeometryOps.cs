@@ -59,6 +59,14 @@ public static class GeometryOps
             n = surface.Normal;
         }
 
+        return PointOnSurface(surface, point, n);
+    }
+
+    /// <summary>Same polygon test with a supplied normal, without reading or updating its cached normal.</summary>
+    public static bool PointOnSurface(Surface surface, Vec3 point, Vec3 normal)
+    {
+        var n = normal;
+
         double ax = System.Math.Abs(n.X), ay = System.Math.Abs(n.Y), az = System.Math.Abs(n.Z);
         int drop = az >= ax && az >= ay ? 2 : ay >= ax ? 1 : 0;
 
@@ -71,8 +79,11 @@ public static class GeometryOps
             var (ix, iy) = Flatten(corners[i].Vertex.Position, drop);
             var (jx, jy) = Flatten(corners[j].Vertex.Position, drop);
 
+            // Opposite sides of the horizontal ray guarantee jy != iy.
+            // Adding an epsilon can reverse a small negative denominator and
+            // change containment for otherwise valid thin polygons.
             if ((iy > py) != (jy > py) &&
-                px < (jx - ix) * (py - iy) / (jy - iy + 1e-30) + ix)
+                px < (jx - ix) * (py - iy) / (jy - iy) + ix)
                 inside = !inside;
         }
 

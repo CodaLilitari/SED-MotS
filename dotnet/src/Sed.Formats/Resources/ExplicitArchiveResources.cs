@@ -10,6 +10,8 @@ namespace Sed.Formats.Resources;
 public record ResourceArchiveRequest(string Path, string Sha256);
 public sealed record ResourceArchiveReceipt(string Path, string Sha256, long Bytes);
 public sealed record ResourceEntryReceipt(string Requested, string Archive, string Entry, long Bytes, string Sha256);
+public sealed record ResourceReadRequest(string Name, string Folder);
+public enum ResourceLookupStatus { Resolved, Missing, Ambiguous }
 
 /// <summary>Captured model resources for one validation/export, with an immediate pre-write unchanged check.</summary>
 public interface IArchitectureResourceProvider
@@ -29,13 +31,17 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
     private sealed record CapturedEntry(byte[] Bytes, ResourceEntryReceipt Receipt);
     private readonly List<OpenArchive> _archives = new();
     private readonly Dictionary<string, CapturedEntry?> _entries = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ResourceLookupStatus> _statuses = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ResolvedArchitectureModel?> _models = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<ResourceEntryReceipt> _used = new();
+    private readonly List<ResourceReadRequest> _requests = new();
     private readonly List<string> _diagnostics = new();
     private long _resolvedBytes;
     private bool _disposed;
     public IReadOnlyList<string> Diagnostics => _diagnostics.AsReadOnly();
     public IReadOnlyList<ResourceEntryReceipt> UsedResources => _used.AsReadOnly();
+    /// <summary>Exact resolution requests, including misses, for pre-write replay.</summary>
+    public IReadOnlyList<ResourceReadRequest> ReadRequests => _requests.AsReadOnly();
     public IReadOnlyList<ResourceArchiveReceipt> Archives => Array.AsReadOnly(_archives.Select(a =>
         new ResourceArchiveReceipt(a.Request.Path, a.Request.Sha256, a.Stream.Length)).ToArray());
     public string ResourceRevision => ComputeRevision(Archives, UsedResources);
@@ -107,13 +113,26 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
         return new ReadOnlyMemory<byte>(entry.Bytes);
     }
 
+    /// <summary>Exact captured receipt for the same normalized read request, including cached reads.</summary>
+    public ResourceEntryReceipt? ReceiptFor(string name, string folder) => Capture(name, folder)?.Receipt;
+
+    /// <summary>Structured result of the same captured lookup; ambiguity never falls through to another archive.</summary>
+    public ResourceLookupStatus StatusFor(string name, string folder)
+    {
+        Capture(name, folder);
+        return _statuses[RequestKey(name, folder)];
+    }
+
+    private static string RequestKey(string name, string folder) =>
+        folder.Replace('\\', '/').Trim('/').ToLowerInvariant() + "/" + name.Replace('\\', '/').ToLowerInvariant();
+
     private CapturedEntry? Capture(string name, string folder)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        string normalized = name.Replace('\\', '/').ToLowerInvariant();
         folder = folder.Replace('\\', '/').Trim('/').ToLowerInvariant();
-        string key = folder + "/" + normalized;
+        string key = RequestKey(name, folder);
         if (_entries.TryGetValue(key, out var cached)) return cached;
+        _requests.Add(new(name, folder));
         foreach (var source in _archives)
         {
             var matches = source.Archive.FindResourceEntries(name, folder);
@@ -121,6 +140,7 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
             if (matches.Count != 1)
             {
                 _diagnostics.Add($"Ambiguous {folder} resource '{name}' in {source.Request.Path}; not resolved.");
+                _statuses[key] = ResourceLookupStatus.Ambiguous;
                 return _entries[key] = null;
             }
             var entry = matches[0];
@@ -130,9 +150,11 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
             _resolvedBytes += bytes.Length;
             var receipt = new ResourceEntryReceipt(name, source.Request.Path, entry.Name, bytes.LongLength, AgentWorkspace.Hash(bytes));
             _used.Add(receipt);
+            _statuses[key] = ResourceLookupStatus.Resolved;
             return _entries[key] = new(bytes, receipt);
         }
         _diagnostics.Add($"Missing {folder} resource '{name}' in the explicit archives.");
+        _statuses[key] = ResourceLookupStatus.Missing;
         return _entries[key] = null;
     }
 

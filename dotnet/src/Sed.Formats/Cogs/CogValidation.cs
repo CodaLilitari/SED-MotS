@@ -8,13 +8,18 @@ public static class CogValidation
     public static ConsistencyOptions Options(CogScriptLibrary library, bool retailProfile = false) => new()
     {
         RetailProfile = retailProfile,
-        ResolveCogParameters = cog => library.Get(cog.Name)?.LevelValues.Select(s => new CogParameterDefinition(s.Name, s.Type switch
+        ResolveCogParameters = cog =>
         {
-            CogSymbolType.Cog => CogReferenceKind.Cog,
-            CogSymbolType.Thing => CogReferenceKind.Thing,
-            CogSymbolType.Sector => CogReferenceKind.Sector,
-            CogSymbolType.Surface => CogReferenceKind.Surface,
-            _ => CogReferenceKind.Other,
-        })).ToArray(),
+            var script = library.Get(cog.Name);
+            if (script is null || !script.IsComplete || script.LevelValues.Count != cog.Values.Count) return null;
+            return script.LevelValues.Select(s => new CogParameterDefinition(s.Name, s.Type switch
+            {
+                CogSymbolType.Cog => CogReferenceKind.Cog,
+                CogSymbolType.Thing => CogReferenceKind.Thing,
+                CogSymbolType.Sector => CogReferenceKind.Sector,
+                CogSymbolType.Surface => CogReferenceKind.Surface,
+                _ => CogReferenceKind.Other,
+            })).ToArray();
+        },
     };
 }

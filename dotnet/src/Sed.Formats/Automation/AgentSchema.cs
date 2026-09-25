@@ -23,9 +23,12 @@ public static class AgentSchema
             foreach (var field in fields.Concat(optional))
                 properties[field] = field switch
                 {
-                    "thing" or "light" or "layer" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" or "lightingIndex" => Index(),
+                    "thing" or "light" or "layer" or "sector" or "surface" or "vertex" or "materialIndex" or "colormapIndex" or "otherSector" or "otherSurface" or "lightingIndex" or "cog" or "parameter" => Index(),
+                    "targetIndex" => new { type = "integer", minimum = -1, maximum = int.MaxValue },
+                    "kind" => new Dictionary<string, object> { ["enum"] = new[] { "thing", "sector", "surface", "cog" } },
+                    "scriptSha256" => new { type = "string", pattern = "^[0-9a-fA-F]{64}$" },
                     "policy" => new Dictionary<string, object> { ["const"] = "reset" },
-                    "profile" => new Dictionary<string, object> { ["const"] = "source-points-v1" },
+                    "profile" => new Dictionary<string, object> { ["enum"] = new[] { "source-points-v1", "source-points-world-occluded-v1" } },
                     "position" or "center" or "orientation" => Vector(-1_000_000, 1_000_000),
                     "rgb" => Vector(0, 1),
                     "flags" => new { type = "integer", minimum = 0, maximum = (long)uint.MaxValue },
@@ -52,9 +55,10 @@ public static class AgentSchema
                 string[] replaced = ["sector", "surface", "otherSector", "otherSurface"];
                 foreach (string field in replaced) selectedProperties.Remove(field);
                 selectedProperties["target"] = AgentSelections.TokenSchema(targetKind);
-                if (operation == "adjoinSurfaces") selectedProperties["otherTarget"] = AgentSelections.TokenSchema("surface");
+                bool paired = operation is "adjoinSurfaces" or "alignSurfaceTexture";
+                if (paired) selectedProperties["otherTarget"] = AgentSelections.TokenSchema("surface");
                 string[] selectedRequired = new[] { "op" }.Concat(fields.Where(f => !replaced.Contains(f)))
-                    .Concat(operation == "adjoinSurfaces" ? ["target", "otherTarget"] : new[] { "target" }).ToArray();
+                    .Concat(paired ? ["target", "otherTarget"] : new[] { "target" }).ToArray();
                 variants.Add(new { type = "object", description = OperationDescription(operation)
                     + " Use the unique select result's token instead of integer addressing. Tokens bind the source revision and containing sector geometry, and are checked immediately before this operation.",
                     additionalProperties = false, required = selectedRequired, minProperties = selectedRequired.Length,
@@ -70,7 +74,7 @@ public static class AgentSchema
             ["allOf"] = new object[] { new Dictionary<string, object> {
                 ["if"] = new { properties = new { operations = new { contains = new {
                     required = new[] { "op" }, properties = new { op = new Dictionary<string, object> {
-                        ["enum"] = new[] { "bindThingArchitecture", "rebindThingArchitecture", "bakeThingArchitecture" } } } } } } },
+                        ["enum"] = new[] { "bindThingArchitecture", "rebindThingArchitecture", "bakeThingArchitecture", "rebindCogReference" } } } } } } },
                 ["then"] = new { required = new[] { "resourceArchives" } },
             } },
             ["properties"] = new Dictionary<string, object>
@@ -96,9 +100,10 @@ public static class AgentSchema
         "setThingTemplate" => "Use an existing template from query templates. Clear an incompatible architecture binding explicitly first.",
         "setThingValue" => "Set one named thing parameter. Inspect values before editing; this is not a COG reference-remapping operation.",
         "clearThingArchitecture" => "Explicitly clear a thing's architectural lighting binding; retain the stored lighting arrays.",
+        "rebindCogReference" => "Rebind one existing typed thing/sector/global-surface/placed-COG parameter (or -1 null) through the shared undoable command. Requires the exact complete script schema, parameter count, symbol, kind and scriptSha256 from bindings. resourceArchives are mandatory; scripts and other values are preserved. Static/runtime COG links and guessed layouts are refused.",
         "bindThingArchitecture" => "Bind an unbound MotS architecture thing to a private copy of compatible stored samples. Requires resourceArchives; records current model acceptance, not historical bake origin. Read indices using query architecture.",
         "rebindThingArchitecture" => "Explicitly reset this MotS architecture thing to a private zeroed allocation for the captured current model. Requires policy reset and resourceArchives. Retains old arrays; does not bake. Single-LOD static layouts only.",
-        "bakeThingArchitecture" => "Bake private MotS architecture samples using explicit profile source-points-v1 and resourceArchives. Quadratic unoccluded non-directional point-source falloff, independent mono/RGB, no ambient or shadows. Refuses unsupported LOD/hierarchy/pivot layouts. Saved input and sample digests expose stale or overridden results; resource freshness requires separate validation.",
+        "bakeThingArchitecture" => "Bake private MotS ARCH using source-points-v1 (unoccluded) or source-points-world-occluded-v1 (world polygon blockers, BlockLight portals and NoBlock rays), plus resourceArchives. Both use non-directional point-source falloff and independent mono/RGB; neither adds ambient, model/self shadows, alpha-aware material tracing or retail parity. Refuses unsupported LOD/hierarchy/pivot layouts. Saved digests expose stale or overridden inputs; resource freshness requires separate validation.",
         "setVertexPosition" => "Move a sector-local vertex in world units; all referencing surfaces in that sector use the new position.",
         "setVertexLight" => "Change one stored lighting component on every corner sharing the sector-local vertex. RGB channels require MotS; this does not bake lighting.",
         "setSurfaceMaterial" => "Choose an existing index from query materials; this does not import a new material.",
@@ -114,6 +119,7 @@ public static class AgentSchema
         "registerColormap" => "Append a unique .cmp resource basename; index zero is the master palette. No asset availability check.",
         "setSectorColormap" => "Select a registered colormap for the sector.",
         "fitSurfaceTexture" => "Fit the surface UVs to the supplied width/height in texels. Query the corners for readback; asset dimensions must be supplied by the caller.",
+        "alignSurfaceTexture" => "Align target UVs across a shared edge using otherSector/otherSurface (or otherTarget) as the reference. Preserves reference UVs, geometry, materials and lighting. Refuses non-finite, degenerate or nonplanar geometry and out-of-range results; output UVs are limited to +/-1000000 texels.",
         "setSurfaceUv" => "Set explicit texel UV pairs in existing surface-corner order. Preserves geometry and independent lighting channels.",
         "setSurfaceRenderModes" => "Set geometry, lighting and texture modes explicitly. Geometry mode zero hides the face; this does not change portal flags.",
         "extrudeSurface" => "Extrude an eligible convex sector face outward by positive distance; append a sector with inward normals and an open paired portal. Refuses occupied portals and overlapping geometry.",

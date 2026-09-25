@@ -102,6 +102,74 @@ public class KeyFileTests
     {
         var key = KeyFile.Parse(Key);
         key.Nodes[0].Entries.Clear();
-        Assert.False(key.Nodes[0].GetFrame(5, out _, out _, out _, out _, out _, out _));
+        AssertNoPose(key.Nodes[0], 5);
     }
+
+    [Theory]
+    [InlineData(int.MinValue)]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(9)]
+    public void AcceptedDelayedFirstEntryHasNoPoseBeforeItsStart(int frame)
+    {
+        var node = Assert.Single(KeyFile.Parse(DelayedKey).Nodes);
+        AssertNoPose(node, frame);
+    }
+
+    [Theory]
+    [InlineData(10, 0)]
+    [InlineData(11, 1)]
+    [InlineData(20, 10)]
+    public void DelayedFirstEntryStartsAtItsAuthoredFrameAndKeepsForwardSampling(int frame, int delta)
+    {
+        var node = Assert.Single(KeyFile.Parse(DelayedKey).Nodes);
+        Assert.True(node.GetFrame(frame, out var x, out var y, out var z,
+            out var pitch, out var yaw, out var roll));
+        Assert.Equal(new double[] { 1 + delta, 2 + 2 * delta, 3 + 3 * delta,
+            4 + 4 * delta, 5 + 5 * delta, 6 + 6 * delta },
+            new[] { x, y, z, pitch, yaw, roll });
+    }
+
+    [Fact]
+    public void NegativeRequestBeforeAnOrdinaryFrameZeroEntryHasNoPose()
+        => AssertNoPose(KeyFile.Parse(Key).Nodes[0], -1);
+
+    [Fact]
+    public void EntryBoundarySelectsTheNewEntry()
+    {
+        var node = KeyFile.Parse(Key).Nodes[0];
+        node.Entries[0].CX = 10;
+        node.Entries[0].DX = 2;
+        node.Entries[1].CX = 123;
+        node.Entries[1].DX = 1;
+
+        Assert.True(node.GetFrame(29, out var before, out _, out _, out _, out _, out _));
+        Assert.Equal(68, before);
+        Assert.True(node.GetFrame(30, out var boundary, out _, out _, out _, out _, out _));
+        Assert.Equal(123, boundary);
+        Assert.True(node.GetFrame(31, out var after, out _, out _, out _, out _, out _));
+        Assert.Equal(124, after);
+    }
+
+    private static void AssertNoPose(KeyNode node, int frame)
+    {
+        Assert.False(node.GetFrame(frame, out var x, out var y, out var z,
+            out var pitch, out var yaw, out var roll));
+        Assert.Equal(new double[6], new[] { x, y, z, pitch, yaw, roll });
+    }
+
+    // Original input reproducing the accepted-file/frame-zero preview failure.
+    private const string DelayedKey = """
+        SECTION: HEADER
+        FRAMES 21
+        FPS 15
+        SECTION: KEYFRAME
+        NODES 1
+        NODE 0
+        MESH NAME synthetic
+        ENTRIES 1
+        0: 10 0x3 1 2 3 4 5 6
+        1 2 3 4 5 6
+        END
+        """;
 }

@@ -1,5 +1,6 @@
 using Sed.Core.Math;
 using Sed.Core.Model;
+using Sed.Core.Query;
 
 namespace Sed.Core.Validation;
 
@@ -70,6 +71,8 @@ public static class ConsistencyChecker
                 issues.Add(new(ItemType.Thing, IssueSeverity.Error, -1, -1, "Thing references a sector outside this level") { ItemIndex = ti });
             if (!Finite(thing.Position) || !double.IsFinite(thing.Pitch) || !double.IsFinite(thing.Yaw) || !double.IsFinite(thing.Roll))
                 issues.Add(new(ItemType.Thing, IssueSeverity.Error, -1, -1, "Thing has a non-finite position or rotation") { ItemIndex = ti });
+            if (options?.CheckThingContainment == true)
+                CheckThingContainment(level, ti, issues);
         }
         for (int li = 0; li < level.Lights.Count; li++)
         {
@@ -79,11 +82,31 @@ public static class ConsistencyChecker
                 || light.LegacyRgbRange is { } rgbRange && !double.IsFinite(rgbRange))
                 issues.Add(new(ItemType.Light, IssueSeverity.Error, -1, -1, "Light has null or non-finite data") { ItemIndex = li });
         }
-        if (options?.RetailProfile == true && level.Kind != ProjectType.InfernalMachine && level.Things.Count > 640)
+        int serializedThingCapacity = System.Math.Max(level.ThingCapacity, level.Things.Count);
+        if (options?.RetailProfile == true && level.Kind != ProjectType.InfernalMachine && serializedThingCapacity > 640)
             issues.Add(new(ItemType.Thing, IssueSeverity.Warning, -1, -1,
-                "Retail compatibility: more than 640 placed things exceeds the inferred non-QOL pointer range; runtime spawning also needs headroom. This is not a complete retail capacity model."));
+                $"Retail compatibility: {level.Things.Count} placed things, serialized capacity {serializedThingCapacity} (declared {level.ThingCapacity}). " +
+                "Serialized capacity exceeds the inferred non-QOL pointer range of 640; runtime spawning also needs headroom. This is not a complete retail capacity model."));
         CheckCogs(level, options, issues);
         return issues;
+    }
+
+    private static void CheckThingContainment(Level level, int thingIndex, List<ConsistencyIssue> issues)
+    {
+        var result = ThingContainment.Evaluate(level, thingIndex);
+        if (result.Status == ThingContainmentStatus.UnsupportedGeometry)
+            issues.Add(new(ItemType.Thing, IssueSeverity.Warning, result.AssignedSectorIndex ?? -1, -1,
+                $"Thing containment was not verified: {result.Detail}") { ItemIndex = thingIndex });
+        else if (result.Assignment == ThingSectorAssignmentStatus.NotContained)
+        {
+            string candidates = result.Candidates.Count == 0 ? "none"
+                : string.Join(", ", result.Candidates.Select(candidate => candidate.SectorIndex));
+            issues.Add(new(ItemType.Thing, IssueSeverity.Warning, result.AssignedSectorIndex ?? -1, -1,
+                $"Thing position is not contained by its assigned sector {result.AssignedSectorIndex}; containing sector candidates: {candidates}. " +
+                "No sector assignment was changed.") { ItemIndex = thingIndex });
+        }
+        // Existing reference checks cover unassigned/outside-level things.
+        // Multiple candidates are legitimate when the assigned sector is among them.
     }
 
     private static void CheckSurface(List<ConsistencyIssue> issues, Surface surf, HashSet<Vertex> vertices,

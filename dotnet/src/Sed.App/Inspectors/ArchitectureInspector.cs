@@ -35,7 +35,7 @@ internal static class ArchitectureInspector
         panel.Children.Add(status);
         panel.Children.Add(new TextBlock
         {
-            Text = "Source-light baking uses distance falloff without shadows or directional shading. Reset creates zero samples; neither operation certifies game lighting parity.",
+            Text = "Choose unoccluded source lights or world polygon shadows. Both use distance falloff without directional shading, model/self shadows or texture-alpha tracing. Render/fullbright modes do not make walls transmit light. Reset creates zero samples; these recipes do not certify retail parity.",
             FontSize = 11, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(4, 0, 4, 4),
         });
         var error = new TextBlock
@@ -50,7 +50,7 @@ internal static class ArchitectureInspector
             SelectedIndex = level.ArchitecturalLighting.Count > 0 ? 0 : -1 };
         panel.Children.Add(InspectorPanel.Row("Existing lighting", slots));
         bool committing = false;
-        void Commit(string action)
+        void Commit(string action, string profile = ArchitecturalLightingAuthoring.BakeProfile)
         {
             if (committing) return;
             committing = true;
@@ -64,7 +64,7 @@ internal static class ArchitectureInspector
                         ?? throw new InvalidOperationException("Configure the game's resource archives before authoring architectural lighting.");
                     int? index = action == "bind" ? slots.SelectedIndex : null;
                     if (index < 0) throw new InvalidOperationException("Select an existing architectural-lighting object to bind.");
-                    command = ArchitectureAuthoringService.Prepare(level, thing, resources, action, index);
+                    command = ArchitectureAuthoringService.Prepare(level, thing, resources, action, index, profile);
                     resources.VerifyUnchanged();
                     // Keep the capture alive through the actual mutation, rather
                     // than closing archive handles between validation and apply.
@@ -84,15 +84,16 @@ internal static class ArchitectureInspector
             }
             finally { committing = false; }
         }
-        void AddButton(string name, string label, string action, bool enabled = true)
+        void AddButton(string name, string label, string action, bool enabled = true, string profile = ArchitecturalLightingAuthoring.BakeProfile)
         {
             var button = new Button { Name = name, Content = label, Margin = new Thickness(4, 0, 4, 4), IsEnabled = enabled };
-            button.Click += (_, _) => Commit(action);
+            button.Click += (_, _) => Commit(action, profile);
             panel.Children.Add(button);
         }
         AddButton("ArchitectureBind", "Bind existing lighting", "bind", thing.ArchLightingIndex < 0 && level.ArchitecturalLighting.Count > 0);
         AddButton("ArchitectureReset", "Reset/rebind lighting to zero", "rebind");
         AddButton("ArchitectureBake", "Bake source lights (unoccluded)", "bake");
+        AddButton("ArchitectureBakeOccluded", "Bake source lights (world shadows)", "bake", profile: ArchitecturalLightingAuthoring.WorldOccludedBakeProfile);
         AddButton("ArchitectureUnbind", "Unbind baked lighting", "unbind", thing.ArchLightingIndex >= 0);
         panel.Children.Add(error);
     }

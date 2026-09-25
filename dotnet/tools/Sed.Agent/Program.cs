@@ -39,6 +39,9 @@ try
                 "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
                 "snapshot" => AgentSnapshotRequest.Schema(),
                 "resources" => AgentWorkspace.ResourceRequestSchema(),
+                "bindings" => AgentWorkspace.BindingsRequestSchema(),
+                "lighting" => AgentWorkspace.LightingRequestSchema(),
+                "assets" => AgentWorkspace.AssetsRequestSchema(),
                 _ => AgentSchema.Patch(args[1]) };
             break;
         case "schema" when args.Length == 1:
@@ -60,6 +63,15 @@ try
             break;
         case "query" when args.Length == 3:
             result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
+            break;
+        case "bindings" when args.Length == 3:
+            result = AgentWorkspace.Bindings(args[1], ReadRequest(args[2]));
+            break;
+        case "lighting" when args.Length == 3:
+            result = AgentWorkspace.DiagnoseLighting(args[1], ReadRequest(args[2]));
+            break;
+        case "assets" when args.Length == 3:
+            result = AgentWorkspace.DiagnoseAssets(args[1], ReadRequest(args[2]));
             break;
         case "select" when args.Length == 3:
             result = AgentWorkspace.Select(args[1], ReadRequest(args[2]));
@@ -125,9 +137,11 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
+    "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",
+    "world-bake-diagnostics", "direct-asset-diagnostics",
     "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
     "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export",
-    "architecture-authoring", "architecture-source-point-bake", "architecture-provenance-readback"];
+    "architecture-authoring", "architecture-source-point-bake", "architecture-world-occluded-bake", "architecture-provenance-readback"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
     Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));

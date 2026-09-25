@@ -11,7 +11,7 @@ samples. It does not turn imported samples into historically verified bakes.
 | --- | --- |
 | Bind existing samples | An unbound eligible thing takes a private copy of an existing, address-compatible object. Current captured model bytes are recorded; sample origin remains unknown. |
 | Reset / rebind | Initialize an unbound thing, or replace its binding, with a private zeroed allocation for the current supported model. The explicit `reset` policy does not retain old samples in the new binding. |
-| Bake source lights | Initialize or replace the selected thing's samples using `source-points-v1`. Previously authored bindings whose model bytes changed require explicit reset/rebind first. |
+| Bake source lights | Initialize or replace the selected thing's samples using explicit `source-points-v1` or `source-points-world-occluded-v1`. Previously authored bindings whose model bytes changed require explicit reset/rebind first. |
 | Unbind | Clear this thing's binding and provenance while retaining the old arrays. |
 
 Every replacement appends an object and changes only the selected thing. Shared
@@ -39,6 +39,28 @@ architectural self-shadow, animation or dynamic lights are included. Preview and
 engine composition remain separate. Generated samples are finite, nonnegative
 and unclamped; finite imported samples, including negative components, remain
 readable and bindable.
+
+EDIT-01 adds opt-in `source-points-world-occluded-v1`. It uses the same falloff
+and independent channels, then rejects a light/sample pair when the existing
+world polygon ray predicate finds a blocker. Open adjoins transmit light unless
+their `BlockLight` bit is set. A source with `NoBlock` bypasses rays. Hits within
+the existing endpoint tolerance and coplanar rays follow that predicate; the new
+profile does not apply the world-corner baker's same-sector shortcut. It requires
+finite planar nondegenerate world faces and live reciprocal adjoins.
+
+This is an editor recipe, not an alpha-aware material or retail light transport
+model. World polygons block regardless of material filename, texture alpha,
+render/fullbright modes or model face materials. Ordinary rendering still uses
+its own material/light-mode rules. No model or self shadows, normals, ambient,
+animation or dynamic lights are added. Changing a material alone therefore does
+not change these shadow samples. Original fixtures cover this boundary.
+
+The original profile and its input digest remain unchanged. The new profile has
+its own digest including ordered world geometry/adjoins, source flags and
+conservative world flags; altering those inputs marks its saved bake stale.
+Both the thing inspector and agent use the same service, provenance and undo
+command. Each GUI bake button names its policy, and agent patches must supply
+the profile explicitly.
 
 Bake/reset support one geometry set. A model with no hierarchy has one implicit
 instance of each mesh; a declared hierarchy must be structurally valid, complete,

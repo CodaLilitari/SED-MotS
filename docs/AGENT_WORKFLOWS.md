@@ -6,6 +6,13 @@ Start with `sed-agent --help`, `sed-agent schema commands`, and `sed-agent schem
 
 For a complete connected-geometry example, run [Test-AgentDesign.ps1](../tools/Test-AgentDesign.ps1) with an explicit `-AgentPath` and fresh `-OutputDirectory`. It discovers face directions, constructs an L-shaped three-room MotS layout through reviewed edits, assigns resource references and UVs, verifies a JK connection, and captures offscreen interior views. Fictional resource names make the test self-contained; no assets or playable episode are implied. `-SkipSnapshot` exercises only the authoring path on machines without Vulkan. Exact requests, results and a receipt remain in the output folder.
 
+For original COG/script-identity fixtures, typed reference rebinding, direct asset
+receipts, world light diagnostics and neighbor UV alignment, run
+[Test-AgentEditing.ps1](../tools/Test-AgentEditing.ps1) with the same explicit
+arguments. It uses the actual agent process and a synthetic one-script archive;
+no GUI, game or third-party plugin executes. See the
+[EDIT-01 request examples](EDITING_FOUNDATIONS.md#agent-contracts).
+
 ## Read, plan, review, apply, read back
 
 This PowerShell 7 example operates on an existing JKL and writes to a destination that does not exist. Choose exact paths first. Its stdin is UTF-8, and the original input remains intact.

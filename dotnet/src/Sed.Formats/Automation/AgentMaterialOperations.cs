@@ -39,6 +39,15 @@ public static partial class AgentWorkspace
                 fittedSurface.RecalcNormal(); // A preceding operation may have moved vertices.
                 command = new AutoTextureCommand(fittedSurface, width, height);
                 return true;
+            case "alignSurfaceTexture":
+                Fields(op, "op", "sector", "surface", "otherSector", "otherSurface");
+                var aligned = Surface();
+                var reference = At(At(doc.Level.Sectors, Integer(op, "otherSector"), "otherSector").Surfaces,
+                    Integer(op, "otherSurface"), "otherSurface");
+                if (AlignTextureToNeighbourCommand.Validate(aligned, reference) is { } problem)
+                    throw FieldError(problem, "otherSurface");
+                command = new AlignTextureToNeighbourCommand(aligned, reference);
+                return true;
             case "setSurfaceUv":
                 Fields(op, "op", "sector", "surface", "uv");
                 var surface = Surface();

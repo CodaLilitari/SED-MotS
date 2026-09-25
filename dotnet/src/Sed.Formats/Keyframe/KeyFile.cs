@@ -37,14 +37,17 @@ public sealed class KeyNode
 
     /// <summary>
     /// The pose at frame <paramref name="n"/>: the entry with the largest frame
-    /// number ≤ n, extrapolated linearly (TKEYNode.GetFrame).
+    /// number ≤ n, extrapolated linearly (TKEYNode.GetFrame). Entries are in
+    /// chronological order. Returns false, with zero outputs, when no entry is
+    /// available at or before n. This preview policy does not extrapolate a
+    /// future entry backwards or claim the engine accepts such an animation.
     /// </summary>
     public bool GetFrame(int n, out double x, out double y, out double z,
         out double pch, out double yaw, out double rol)
     {
         x = y = z = pch = yaw = rol = 0;
-        if (Entries.Count == 0) return false;
-        for (int i = 0; i < Entries.Count; i++)
+        if (Entries.Count == 0 || n < Entries[0].Frame) return false;
+        for (int i = 1; i < Entries.Count; i++)
             if (n < Entries[i].Frame)
             {
                 Entries[i - 1].GetFrame(n, out x, out y, out z, out pch, out yaw, out rol);

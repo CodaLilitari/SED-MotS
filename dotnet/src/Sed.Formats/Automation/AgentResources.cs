@@ -6,7 +6,7 @@ namespace Sed.Formats.Automation;
 
 internal sealed record AgentResourceOptions(IReadOnlyList<ResourceArchiveRequest> Archives, string? ExpectedRevision);
 internal sealed record AgentResourceCapture(IReadOnlyList<ResourceArchiveRequest> Archives, string Revision,
-    IReadOnlyList<string> Models, string OutputSha256);
+    IReadOnlyList<ResourceReadRequest> Requests, string OutputSha256);
 
 public static partial class AgentWorkspace
 {
@@ -23,13 +23,13 @@ public static partial class AgentWorkspace
         return new(ResourceManifest.Parse(archives), revision);
     }
 
-    private static AgentResourceOptions? ParseExportResources(string? text, AgentDocumentSnapshot snapshot)
+    private static AgentResourceOptions? ParseExportResources(string? text, AgentDocumentSnapshot snapshot, params string[] additionalFields)
     {
         if (text is null) return null;
         if (Encoding.UTF8.GetByteCount(text) > MaxRequestBytes) throw new AgentRequestException("Resource request exceeds 1 MiB.");
         using var request = JsonDocument.Parse(text, new JsonDocumentOptions { MaxDepth = 16 });
         var root = request.RootElement;
-        FieldsWithOptional(root, ["sourceRevision", "resourceRevision"], "schemaVersion", "inputSha256", "resourceArchives");
+        FieldsWithOptional(root, ["sourceRevision", "resourceRevision", .. additionalFields], "schemaVersion", "inputSha256", "resourceArchives");
         if (Integer(root, "schemaVersion") != SchemaVersion) throw new AgentRequestException("Unsupported resource schemaVersion.");
         var hash = ResourceManifest.NormalizeHash(String(root, "inputSha256"), "inputSha256");
         if (hash != snapshot.InputSha256) throw new AgentConflictException("The source changed since inspection. Regenerate the resource request.");
@@ -48,9 +48,9 @@ public static partial class AgentWorkspace
     }
 
     private static AgentResourceCapture? CaptureResources(AgentResourceOptions? options,
-        ArchitectureResourceValidationResult validation, string output)
+        ArchitectureResourceValidationResult validation, ExplicitArchiveResources? resources, string output)
         => options is null ? null : new(Array.AsReadOnly(options.Archives.ToArray()), validation.ResourceRevision!,
-            Array.AsReadOnly(validation.UsedResources.Select(e => e.Requested).Distinct(StringComparer.OrdinalIgnoreCase).ToArray()),
+            Array.AsReadOnly(resources!.ReadRequests.ToArray()),
             Hash(Encoding.UTF8.GetBytes(output)));
 
     private static ExplicitArchiveResources? ReopenCapturedResources(PreparedAgentEdit edit)
@@ -61,7 +61,7 @@ public static partial class AgentWorkspace
         var resources = new ExplicitArchiveResources(capture.Archives);
         try
         {
-            foreach (string model in capture.Models) resources.ResolveArchitectureModel(model);
+            foreach (var request in capture.Requests) resources.Read(request.Name, request.Folder);
             if (resources.ResourceRevision != capture.Revision)
                 throw new AgentConflictException("Resource resolution changed after planning. No output was written.");
             return resources;

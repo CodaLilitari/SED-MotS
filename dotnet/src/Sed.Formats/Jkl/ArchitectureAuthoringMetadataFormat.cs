@@ -94,13 +94,13 @@ internal static class ArchitectureAuthoringMetadataFormat
 
     private static void ValidateProvenance(ArchitectureLightingProvenance value)
     {
-        if (value.Origin is not ("bound" or "reset" or ArchitecturalLightingAuthoring.BakeProfile))
+        if (value.Origin is not ("bound" or "reset") && !ArchitecturalLightingAuthoring.IsBakeProfile(value.Origin))
             throw new FormatException("Unsupported architectural authoring origin/profile.");
         if (string.IsNullOrEmpty(value.ModelName) || value.ModelName.Length > 127 ||
             value.ModelName.Any(c => char.IsWhiteSpace(c) || char.IsControl(c) || c == '#'))
             throw new FormatException("Architectural authoring model name must be one bounded token.");
         ValidateHash(value.ModelSha256); ValidateHash(value.SamplesSha256);
-        if (value.Origin == ArchitecturalLightingAuthoring.BakeProfile) ValidateHash(value.InputSha256);
+        if (ArchitecturalLightingAuthoring.IsBakeProfile(value.Origin)) ValidateHash(value.InputSha256);
         else if (value.InputSha256 != string.Empty) throw new FormatException("Unbaked architectural authoring origins cannot assert a bake input digest.");
     }
 

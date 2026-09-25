@@ -4,7 +4,9 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Sed.Core.Editing;
 using Sed.Core.Model;
+using Sed.Core.Validation;
 using Sed.Formats.Cogs;
+using Sed.Formats.Jkl;
 
 namespace Sed.App;
 
@@ -23,6 +25,7 @@ public sealed class CogEditorWindow : Window
     private readonly EditHistory _history;
     private readonly CogScriptLibrary? _scripts;
     private readonly AssetCatalog? _assets;
+    private readonly Func<JklDocument?>? _document;
 
     private readonly ListBox _list;
     private readonly StackPanel _detail;
@@ -30,14 +33,24 @@ public sealed class CogEditorWindow : Window
 
     private Level _level;
     private Cog? _selected;
+    private bool _refreshing;
+    private bool _committing;
+
+    /// <summary>Discard uncommitted control text when its resource providers are replaced.</summary>
+    public void CloseForResourceChange()
+    {
+        _refreshing = true;
+        Close();
+    }
 
     public CogEditorWindow(Level level, EditHistory history, CogScriptLibrary? scripts,
-        AssetCatalog? assets = null)
+        AssetCatalog? assets = null, Func<JklDocument?>? document = null)
     {
         _level = level;
         _history = history;
         _scripts = scripts;
         _assets = assets;
+        _document = document;
 
         Title = "COGs";
         Width = 760;
@@ -124,6 +137,14 @@ public sealed class CogEditorWindow : Window
 
     private void BuildDetail()
     {
+        bool previous = _refreshing;
+        _refreshing = true;
+        try { BuildDetailCore(); }
+        finally { _refreshing = previous; }
+    }
+
+    private void BuildDetailCore()
+    {
         _detail.Children.Clear();
         if (_selected is not { } cog)
         {
@@ -148,12 +169,21 @@ public sealed class CogEditorWindow : Window
         {
             _detail.Children.Add(Note(_scripts is null
                 ? "No game archives open — editing values positionally."
-                : $"Script '{cog.Name}' not found in the open archives — editing values positionally."));
+                : $"Script '{cog.Name}' is missing or ambiguous in the open archives — editing values positionally without guessed types."));
             BuildPositional(cog);
             return;
         }
 
         var symbols = script.LevelValues;
+        var description = CogBindings.Describe(CurrentDocument(), _level.Cogs.IndexOf(cog), script);
+        if (!description.SchemaComplete || description.ParameterCountMatches != true)
+        {
+            _detail.Children.Add(Note("Typed bindings unavailable: " + string.Join(" ", description.Diagnostics.Select(d => d.Message))
+                + " Raw positional edits remain available below; no symbol layout is assumed."));
+            BuildPositional(cog);
+            BuildSymbolReference(script);
+            return;
+        }
         if (symbols.Count == 0)
         {
             _detail.Children.Add(Note("This script takes no values from the level."));
@@ -169,9 +199,31 @@ public sealed class CogEditorWindow : Window
             var value = i < cog.Values.Count ? cog.Values[i] : symbol.Default ?? string.Empty;
 
             var label = $"{symbol.Name}  ({symbol.Type.ToString().ToLowerInvariant()})";
+            var error = Note(string.Empty);
+            error.Name = "CogBindingError";
             var editor = SymbolEditor(symbol.Type, value, text =>
-                Commit(new SetCogValueCommand(cog, index, text.Trim())));
+            {
+                if (_refreshing || _committing || (index < cog.Values.Count && cog.Values[index] == text.Trim())) return;
+                try
+                {
+                    if (symbol.Type is CogSymbolType.Thing or CogSymbolType.Sector or CogSymbolType.Surface or CogSymbolType.Cog)
+                    {
+                        if (!CogReferenceRules.TryIndex(text, out int target)) throw new FormatException("Reference must be a complete decimal index or -1.");
+                        Commit(CogBindings.PrepareRebind(CurrentDocument(), _level.Cogs.IndexOf(cog), index,
+                            symbol.Name, symbol.Type, target, script));
+                    }
+                    else Commit(new SetCogValueCommand(cog, index, text.Trim()));
+                }
+                catch (Exception problem) when (problem is ArgumentException or InvalidOperationException or FormatException)
+                { error.Text = problem.Message; }
+            });
             _detail.Children.Add(InspectorPanel.Row(label, editor));
+            var binding = description.Rows[index];
+            if (binding.Target.Kind != CogReferenceKind.Other)
+                _detail.Children.Add(Note($"{binding.Target.Status}: {binding.Target.Detail ?? "typed reference"}. "
+                    + $"Link ID {symbol.EffectiveLinkId}, mask 0x{symbol.EffectiveMask:X}; "
+                    + (binding.EventLinkCandidate == true ? "event-link candidate (runtime unverified)." : "no verified event-link candidate.")));
+            _detail.Children.Add(error);
 
             if (!string.IsNullOrWhiteSpace(symbol.Description))
                 _detail.Children.Add(new TextBlock
@@ -211,13 +263,19 @@ public sealed class CogEditorWindow : Window
         {
             case CogSymbolType.Thing:
                 return PickerField.Build(this, "Thing", value,
-                    () => PickerField.LevelObjects(_level, Sed.Core.Query.FindKind.Thing), onCommit);
+                    () => _level.Things.Select((thing, index) => new PickerItem(
+                        index.ToString(System.Globalization.CultureInfo.InvariantCulture), $"{index}: {thing.Name} ({thing.Template})")).ToArray(), onCommit);
             case CogSymbolType.Sector:
                 return PickerField.Build(this, "Sector", value,
-                    () => PickerField.LevelObjects(_level, Sed.Core.Query.FindKind.Sector), onCommit);
+                    () => _level.Sectors.Select((sector, index) => new PickerItem(
+                        index.ToString(System.Globalization.CultureInfo.InvariantCulture), $"{index}: Sector ({sector.Surfaces.Count} surfaces)")).ToArray(), onCommit);
             case CogSymbolType.Surface:
                 return PickerField.Build(this, "Surface", value,
-                    () => PickerField.LevelObjects(_level, Sed.Core.Query.FindKind.Surface), onCommit);
+                    () => SurfaceTargets(), onCommit);
+            case CogSymbolType.Cog:
+                return PickerField.Build(this, "Placed COG", value,
+                    () => _level.Cogs.Select((cog, index) => new PickerItem(
+                        index.ToString(System.Globalization.CultureInfo.InvariantCulture), $"{index}: {cog.Name}")).ToArray(), onCommit);
             case CogSymbolType.Template:
                 return PickerField.Build(this, "Template", value,
                     () => PickerField.Templates(_level), onCommit);
@@ -228,6 +286,20 @@ public sealed class CogEditorWindow : Window
                 () => PickerField.Assets(_assets, extension), onCommit);
 
         return InspectorPanel.TextField(value, onCommit);
+    }
+
+    private JklDocument CurrentDocument()
+    {
+        var document = _document?.Invoke();
+        return document is not null && ReferenceEquals(document.Level, _level) ? document : new JklDocument(_level);
+    }
+
+    private IReadOnlyList<PickerItem> SurfaceTargets()
+    {
+        try { return CogBindings.SurfaceTargets(CurrentDocument()).Select(target => new PickerItem(
+            target.Index!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            $"{target.Index}: Sector {target.SectorIndex}, surface {target.SurfaceIndex}")).ToArray(); }
+        catch (CogBindingException problem) { _summary.Text = problem.Message; return Array.Empty<PickerItem>(); }
     }
 
     /// <summary>Fallback editor: numbered rows, used when the script is unknown.</summary>
@@ -295,8 +367,10 @@ public sealed class CogEditorWindow : Window
 
     private void Commit(IEditCommand command)
     {
-        _history.Do(command);
-        Refresh();
+        if (_refreshing || _committing) return;
+        _committing = true;
+        try { _history.Do(command); Refresh(); }
+        finally { _committing = false; }
     }
 
     // ---- view helpers ----

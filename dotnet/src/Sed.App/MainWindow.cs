@@ -427,7 +427,7 @@ public class MainWindow : Window
         _view.Materials = _currentDoc?.Materials ?? new List<string>();
         _view.SetLevel(level, textures, models, paletteRgb, lightTable, colormaps);
         _mapView.SetLevel(level);
-        _consistencyWindow?.Run();
+        _consistencyWindow?.SetLevel(level);
         _findWindow?.SetLevel(level);
         _headerWindow?.SetHeader(level.Header);
         _templateWindow?.SetLevel(level);
@@ -871,6 +871,8 @@ public class MainWindow : Window
 
     private void ResetResourceCaches()
     {
+        _cogWindow?.CloseForResourceChange();
+        _cogWindow = null;
         _cogScripts = null;
         _assetCatalog = null;
         _modelLibrary = null;
@@ -1429,7 +1431,7 @@ public class MainWindow : Window
         _cogScripts ??= new Sed.Formats.Cogs.CogScriptLibrary(
             new[] { _levelArchive }, _materialArchives);
 
-        var window = new CogEditorWindow(level, _view.History, _cogScripts, Assets());
+        var window = new CogEditorWindow(level, _view.History, _cogScripts, Assets(), () => _currentDoc);
         window.Closed += (_, _) => _cogWindow = null;
         _cogWindow = window;
         window.Show(this);

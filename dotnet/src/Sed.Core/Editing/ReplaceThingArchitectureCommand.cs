@@ -31,8 +31,8 @@ public sealed class ReplaceThingArchitectureCommand : IEditCommand
             || !model.Equals(provenance.ModelName, StringComparison.OrdinalIgnoreCase)
             || !ArchitecturalLightingAuthoring.SamplesDigest(samples).Equals(provenance.SamplesSha256, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Architectural lighting provenance does not describe the prepared samples and model.");
-        if (provenance.Origin == ArchitecturalLightingAuthoring.BakeProfile
-            && !ArchitecturalLightingAuthoring.InputsDigest(level, thing).Equals(provenance.InputSha256, StringComparison.OrdinalIgnoreCase))
+        if (ArchitecturalLightingAuthoring.IsBakeProfile(provenance.Origin)
+            && !ArchitecturalLightingAuthoring.InputsDigest(level, thing, provenance.Origin).Equals(provenance.InputSha256, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Architectural lighting inputs changed before the samples were prepared.");
         if (thing.ArchLightingIndex < -1 || thing.ArchLightingIndex >= level.ArchitecturalLighting.Count)
             throw new InvalidOperationException("The previous architectural lighting binding is outside the stored objects.");
@@ -42,8 +42,10 @@ public sealed class ReplaceThingArchitectureCommand : IEditCommand
         _oldHash = thing.ArchLightingSourceModelHash; _oldProvenance = thing.ArchLightingProvenance;
     }
 
-    public string Name => _provenance.Origin == ArchitecturalLightingAuthoring.BakeProfile
-        ? "Bake architectural source-point lighting" : "Replace architectural lighting binding";
+    public string Name => _provenance.Origin == ArchitecturalLightingAuthoring.WorldOccludedBakeProfile
+        ? "Bake architectural world-occluded source-point lighting"
+        : _provenance.Origin == ArchitecturalLightingAuthoring.BakeProfile
+            ? "Bake architectural source-point lighting" : "Replace architectural lighting binding";
 
     public void Apply()
     {
@@ -52,8 +54,8 @@ public sealed class ReplaceThingArchitectureCommand : IEditCommand
             || _thing.ArchLightingIndex != _oldIndex || _thing.ArchLightingSourceModel != _oldModel
             || _thing.ArchLightingSourceModelHash != _oldHash || _thing.ArchLightingProvenance != _oldProvenance)
             throw new InvalidOperationException("Architectural lighting dependencies changed outside undo history; apply was refused before changing data.");
-        if (!_everApplied && _provenance.Origin == ArchitecturalLightingAuthoring.BakeProfile
-            && !ArchitecturalLightingAuthoring.InputsDigest(_level, _thing).Equals(_provenance.InputSha256, StringComparison.OrdinalIgnoreCase))
+        if (!_everApplied && ArchitecturalLightingAuthoring.IsBakeProfile(_provenance.Origin)
+            && !ArchitecturalLightingAuthoring.InputsDigest(_level, _thing, _provenance.Origin).Equals(_provenance.InputSha256, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Architectural lighting inputs changed after preparation; prepare the bake again.");
         var installed = _samples.Clone();
         _level.ArchitecturalLighting.Add(installed);

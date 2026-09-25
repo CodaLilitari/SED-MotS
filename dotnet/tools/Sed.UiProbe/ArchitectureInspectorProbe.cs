@@ -83,6 +83,18 @@ internal static class ArchitectureInspectorProbe
             Check("unsupported pivot refusal stays inside the control", ui.Error("pivot") && ui.Thing.ArchLightingIndex == -1 && ui.Level.ArchitecturalLighting.Count == 2 && !ui.History.CanUndo && ui.Changes == 0, ui.VisibleError());
         }
         catch (Exception error) { Check("unsupported-model refusal completed", false, error.ToString()); }
+
+        try
+        {
+            using var ui = new Fixture();
+            ui.Press("ArchitectureBakeOccluded");
+            Check("world-shadow button selects separate recipe", ui.Thing.ArchLightingProvenance?.Origin == ArchitecturalLightingAuthoring.WorldOccludedBakeProfile && ui.Status("current-inputs"));
+            // This model's x=2 sample lies beyond the room's x=1 wall.
+            Check("world-shadow button blocks both channels behind room wall", ui.Sample() == default);
+            ui.History.Undo(); ui.Drain();
+            Check("world-shadow button produces exactly one undoable edit", ui.Thing.ArchLightingIndex == -1 && !ui.History.CanUndo);
+        }
+        catch (Exception error) { Check("world-shadow UI flow completed", false, error.ToString()); }
     }
 
     private static bool Near(double actual, double expected) => double.IsFinite(actual) && Math.Abs(actual - expected) < 1e-12;
