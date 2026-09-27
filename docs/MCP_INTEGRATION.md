@@ -1,36 +1,37 @@
 # MCP-01: local headless design tools
 
-Status: implementation reviewed, 2026-09-27; final preview-recovery wording
-corrections pass 265 MCP tests and await a new clean Windows package. The first
-verified candidate was `1b784ae6df3b941e7decd25d863eee3e54666f0e`, Windows
-version `0.4.0-mots.13-dev`; it is retained as a superseded candidate.
+Status: completed and independently audited, 2026-09-27. Final source/package
+commit `ce093bdeb2c568b3717a1649775af9721e0a0ddc`, Windows version
+`0.4.0-mots.13-dev`. Completion documentation follows that tested source.
 Andrei accepted the reviewed MCP-first recommendation; ACP remains deferred.
 
-## Initial Windows package checkpoint (2026-09-27, superseded candidate)
+## Final Windows package checkpoint (2026-09-27)
 
-The clean detached checkout passed 1,329 Core and 264 MCP tests, without build
+The clean detached checkout passed 1,329 Core and 265 MCP tests, without build
 warnings/errors. Six packaged CLI workflows passed 272 calls/866 checks plus
 smoke. The actual packaged MCP host passed 65 completed calls and two
 interrupted-write probes, including inline diagnostic/lit previews. Distribution
 verification matched 924 manifested files, exact ZIP membership, corresponding
 source and complete Git history at the same commit. Local handoff:
-`build/packages/SED-MotS-0.4.0-mots.13-dev-1b784ae/`.
+`build/packages/SED-MotS-0.4.0-mots.13-dev-ce093bd/`.
 
 Lilitari's initial source review produced the additional preview validation
 checks below. Her final changed-source follow-up accepted those corrections and
 identified two narrow remaining issues: preview cancellation guidance and
-inbound versus outbound size wording. Both are now corrected; the updated
-source requires a new package and must not be confused with this candidate.
+inbound versus outbound size wording. Both are corrected in this package, with
+an additional cancellation regression and an independent local diff review.
+Review input was checked against source and executed evidence; she did not
+claim to run our tests. The original `1b784ae` candidate is retained separately.
 Independent package audit passed: all 783 source files match Git blobs, all 924
 distribution hashes match disk and ZIP, and a standalone bundle clone passes
-strict Git validation with the exact 344-commit/3,632-object reachable history.
-The normal authenticated push updated remote `main` to `1b784ae`; GitHub metadata
+strict Git validation with the exact 345-commit/3,647-object reachable history.
+The normal authenticated push updated remote `main` to `ce093bd`; GitHub metadata
 remains public while anonymous access returns 404. No binary release was uploaded.
 
 ## Local source checkpoint (2026-09-27)
 
-The corrected adapter passes 265 MCP tests; the preceding integration passed
-1,329 Core tests and the clean package will repeat both suites.
+The corrected adapter passes 265 MCP tests and 1,329 Core tests; the clean
+package repeated both suites successfully.
 The full solution build has no warnings/errors; the actual headless UI probe
 also passes. An actual stdio client negotiated with the official C# SDK host
 and passed 65 completed tool calls plus two intentionally uninspected write
@@ -184,8 +185,8 @@ restart reconciliation, path-policy checks and an image result. Independent
 source review, a Windows package and exact source/binary identities precede
 publication. No raw Discord/forum research or game assets enter the package.
 
-Maya is being assessed separately with Lilitari as a potential model/UV asset
-authoring tool. Its usefulness does not establish a Sith level codec, sector/COG
+Maya remains a possible later model/UV asset authoring tool, outside MCP-01 as
+recommended in the reviewed consultation. Its usefulness does not establish a Sith level codec, sector/COG
 reference model or MotS lighting behavior. No Maya purchase or installation is
 part of the adapter's dependency set.
 

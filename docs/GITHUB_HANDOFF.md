@@ -16,6 +16,14 @@ the only remote branch. Anonymous HTTP remained 404 after the push. Write
 access and public reachability are therefore separate observed states. No
 alternate account, forced update or binary-release upload was used.
 
+The final source-review corrections were subsequently pushed normally as
+`ce093bdeb2c568b3717a1649775af9721e0a0ddc`; both Git and GitHub's authenticated
+branch API returned that commit with `main` still the only branch. The final
+Windows `.13-dev` package, matching source ZIP and complete-history bundle use
+that exact corrective commit. Completion documentation follows separately;
+`build/mcp01-20260927/publication-final.json` records its final push/readback.
+Local artifact delivery does not imply a GitHub binary-release upload.
+
 ## Public source location — September 13, 2026
 
 - Public repository: [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS).

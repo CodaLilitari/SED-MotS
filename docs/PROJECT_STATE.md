@@ -5,30 +5,31 @@ Updated: 2026-09-27. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**MCP-01 first candidate, superseded 2026-09-27:** local source/package commit
-`1b784ae6df3b941e7decd25d863eee3e54666f0e`, Windows `0.4.0-mots.13-dev`.
-Clean build passed 1,329 Core + 264 MCP tests; six packaged CLI workflows passed
+**MCP-01 completed handoff, 2026-09-27:** source/package commit
+`ce093bdeb2c568b3717a1649775af9721e0a0ddc`, Windows `0.4.0-mots.13-dev`.
+Clean build passed 1,329 Core + 265 MCP tests; six packaged CLI workflows passed
 272 calls/866 checks; real packaged stdio MCP passed 65 completed calls and two
 interrupted-write probes, including diagnostic and lit inline images. Exact
 verification matched 924 distribution files with corresponding source/history.
-Handoff: `build/packages/SED-MotS-0.4.0-mots.13-dev-1b784ae/`.
+Handoff: `build/packages/SED-MotS-0.4.0-mots.13-dev-ce093bd/`.
 Independent package audit passed, including all 783 source Git blobs and exact
-complete history. Lilitari's final changed-source review accepted the bounded
-contract and found two residual guidance/documentation issues. Both are now
-corrected, including a preview cancellation regression; 265 MCP tests pass.
-Build a new clean package from the corrective commit before final handoff.
-Normal push succeeded and remote main is verified at `1b784ae`. GitHub metadata is PUBLIC but
+complete history: 345 commits and 3,647 reachable objects. Lilitari's final
+changed-source review accepted the bounded contract and found two residual
+guidance/documentation issues. Both are corrected in this final package,
+including a preview cancellation regression. The initial `1b784ae` package is
+preserved as a superseded candidate.
+Normal push succeeded and remote main is verified at `ce093bd`. GitHub metadata is PUBLIC but
 anonymous fetch returns 404. Use exact source attachments for review and record
 actual publication status without bypassing the reported account restriction.
 
-**Active milestone: [MCP-01](MCP_INTEGRATION.md), started 2026-09-25 from
+**Latest completed milestone: [MCP-01](MCP_INTEGRATION.md), started 2026-09-25 from
 `ef53c33`.** Andrei accepted the independently reviewed MCP recommendation and
-asked for Lilitari's advice on using Maya when worthwhile. Source review is
-complete; the corrected source needs final package verification. Root owns
-integration/publication, with a review coordinator on the existing SED thread.
-Read DEC-20260927-01 and DEC-20260927-02 before resuming.
+asked for Lilitari's advice on using Maya when worthwhile. Source review,
+corrective regression, clean package and independent audit are complete.
+Completion documentation follows the package source in a separate commit.
+Read DEC-20260927-01 through DEC-20260927-03 before further work.
 
-**Latest completed bounded milestone (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
+**Previous completed bounded milestone (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
 public Massassi forum research, implementation of the recommendations and a new
 goal. This explicitly resumes SED development after the completed ENGINE-01
 pause. The phased goal covers robustness, headless texture alignment,
@@ -58,8 +59,10 @@ under `build/edit01-20260925/publication.json`. No binary GitHub release or new
 engine/retail/gameplay qualification is claimed. The three unrelated `.DS_Store`
 deletions remain uncommitted. See DEC-20260925-04 for exact hashes and boundaries.
 
-**Current direction:** expose the headless contracts through the local MCP-01
-adapter, with progressive discovery, structured results and inline previews.
+**Current direction:** the local MCP-01 adapter now exposes the headless
+contracts with progressive discovery, structured results and inline previews.
+A model-driven Codex design acceptance run and durable preview recovery are
+useful subsequent scopes with their own acceptance criteria.
 Shared unsaved GUI sessions and an ACP controller/panel are separate later
 capabilities; neither exists merely because the CLI is automated.
 See [the agent roadmap](AGENT_DESIGN_ROADMAP.md).
@@ -95,7 +98,7 @@ of 691 distribution files, matching source and full history. Python acceptance
 tools pass 75 tests. Final packaged fixture preparation made 43 agent calls;
 all 56 staged files across eight scenarios match the matrix fixture byte for
 byte, and all five packaged companion tools match the matrix-tested source.
-A fresh packaged single-case capture also passed. Current milestone did not
+A fresh packaged single-case capture also passed. That ENGINE-01 milestone did not
 rerun the previous 113-check headless UI probe; no C# UI code changed.
 
 Engine main `74e4657c` already contains the material-row fix and has identical
@@ -158,7 +161,7 @@ implementation/package is `ea4d6f4`; this completion-only checkpoint follows in
 a separate commit. The final push receipt records the resulting remote identity.
 No GitHub binary release was created; the verified Windows ZIP is a local handoff.
 
-## Objective and current milestone
+## Objective and milestone history
 
 Build a modern Windows JKDF2/MotS editor with a shared human and agent authoring model. OpenJKDF2/OpenMotS is the primary engine target; preserve retail compatibility where supported and report independent evidence for it.
 
@@ -196,7 +199,7 @@ and adds the separate bounded runtime capture workflow.
 
 ## Current source and completed ownership
 
-- Current editor branch: `main`; MCP-01 implementation and package status are at the top of this file. The preview-recovery correction follows the first implementation/package `1b784ae`. Previous EDIT-01 implementation/package is `8d047860c576021ea3da22743b97f5e27e15c9cc`.
+- Current editor branch: `main`; MCP-01 implementation/package is `ce093bdeb2c568b3717a1649775af9721e0a0ddc`. Completion documentation follows separately; final publication receipts are local under `build/mcp01-20260927/`. Previous EDIT-01 implementation/package is `8d047860c576021ea3da22743b97f5e27e15c9cc`.
 - Historical ENGINE-01 implementation/package is `ea4d6f4a8c39501198064a52264317b16e5741e0`. Previous ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`.
 - Previous SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`; its completion documentation was `896c808`.
 - Previous GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`.
@@ -237,7 +240,7 @@ general remapping, native output and broader game behavior remain separate.
 | [Static runtime RGB verification (ENGINE-01)](ENGINE_CAPTURE.md) | Original authored fixture, independent coverage/channel controls, metadata invariants, repeated captures and bounded refusal controls | Complete within the documented static RGB scope; simulation is wall-time and only limited world/player state is observed |
 | Instrumented engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Future work, paused |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
-| [Thin MCP adapter (MCP-01)](MCP_INTEGRATION.md) | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Implemented and reviewed; corrected final package pending |
+| [Thin MCP adapter (MCP-01)](MCP_INTEGRATION.md) | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Complete within the documented isolated-file and preview scope; model-driven Codex acceptance and durable preview outcomes remain separate |
 
 ## Existing evidence and boundaries
 
