@@ -421,6 +421,31 @@ public sealed class SedToolsTests
         Assert.Equal(JsonValueKind.Null, Success(await tools.CallAsync("sed_outcome", Args(new { operationId = id }))).GetProperty("outcome").ValueKind);
     }
 
+    [Fact]
+    public async Task CancellationBeforeSnapshotDispatchUsesPreviewRecoveryWithoutCreatingOutputOrReceipt()
+    {
+        using var fixture = new Fixture();
+        fixture.Room();
+        using var tools = fixture.Tools();
+        var result = await tools.CallAsync("sed_snapshot", Args(new {
+            level = "room.jkl", output = "cancelled.png", request = new {
+                schemaVersion = 1, inputSha256 = AgentWorkspace.Hash(File.ReadAllBytes(fixture.PathFor("room.jkl"))),
+                position = new[] { 0.0, -0.8, 0.0 }, target = new[] { 0.0, 1.0, 0.0 }, width = 32, height = 32 }
+        }), new CancellationToken(true));
+
+        Assert.Equal("cancelled", Failure(result));
+        string message = Envelope(result).GetProperty("error").GetProperty("message").GetString()!;
+        Assert.Contains("no durable outcome record", message);
+        Assert.Contains("Inspect the intended PNG path with authorized file/image tools", message);
+        Assert.Contains("never retry blindly", message);
+        Assert.DoesNotContain("sed_outcome", message);
+        Assert.DoesNotContain("operationId", message);
+        Assert.True(System.Text.Encoding.UTF8.GetByteCount(Envelope(result).GetRawText()) < 1024);
+        Assert.False(File.Exists(fixture.PathFor("cancelled.png")));
+        Assert.Empty(Directory.EnumerateFiles(fixture.PathFor(".sed-mcp/receipts")));
+        Assert.False(File.Exists(fixture.Options.AgentPath));
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

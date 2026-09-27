@@ -5,22 +5,28 @@ Updated: 2026-09-27. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**RESUMED by Andrei on 2026-09-27.** MCP-01 has a new active goal covering
-implementation, executed MCP workflows, independent source review and a verified
-Windows/source handoff. The recovered scaffold is incomplete and untested at
-resume. Last verified published main is `ef53c33`; the verified Windows package
-remains EDIT-01 `8d04786` / `0.4.0-mots.12-dev` until new gates pass. Andrei reports
-GitHub is restricted for spam: provide exact source attachments to reviewers,
-record any publication limitation, and do not bypass the account restriction.
+**MCP-01 first candidate, superseded 2026-09-27:** local source/package commit
+`1b784ae6df3b941e7decd25d863eee3e54666f0e`, Windows `0.4.0-mots.13-dev`.
+Clean build passed 1,329 Core + 264 MCP tests; six packaged CLI workflows passed
+272 calls/866 checks; real packaged stdio MCP passed 65 completed calls and two
+interrupted-write probes, including diagnostic and lit inline images. Exact
+verification matched 924 distribution files with corresponding source/history.
+Handoff: `build/packages/SED-MotS-0.4.0-mots.13-dev-1b784ae/`.
+Independent package audit passed, including all 783 source Git blobs and exact
+complete history. Lilitari's final changed-source review accepted the bounded
+contract and found two residual guidance/documentation issues. Both are now
+corrected, including a preview cancellation regression; 265 MCP tests pass.
+Build a new clean package from the corrective commit before final handoff.
+Normal push succeeded and remote main is verified at `1b784ae`. GitHub metadata is PUBLIC but
+anonymous fetch returns 404. Use exact source attachments for review and record
+actual publication status without bypassing the reported account restriction.
 
 **Active milestone: [MCP-01](MCP_INTEGRATION.md), started 2026-09-25 from
 `ef53c33`.** Andrei accepted the independently reviewed MCP recommendation and
-asked for Lilitari's advice on using Maya when worthwhile. Source implementation
-and integration tests now pass; independent final review and the clean Windows
-package remain in progress. EDIT-01 remains the latest completed package below. Root owns the MCP
-host/integration, a worker owns file policy/outcome records, another owns the
-isolated renderer, and a third owns the project-specific Lilitari consultation.
-Keep their source scopes separate and verify ownership before integration.
+asked for Lilitari's advice on using Maya when worthwhile. Source review is
+complete; the corrected source needs final package verification. Root owns
+integration/publication, with a review coordinator on the existing SED thread.
+Read DEC-20260927-01 and DEC-20260927-02 before resuming.
 
 **Latest completed bounded milestone (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
 public Massassi forum research, implementation of the recommendations and a new
@@ -190,7 +196,8 @@ and adds the separate bounded runtime capture workflow.
 
 ## Current source and completed ownership
 
-- Current editor branch: `main`; ENGINE-01 implementation/package is `ea4d6f4a8c39501198064a52264317b16e5741e0`. This completion documentation is a later commit. Previous ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`.
+- Current editor branch: `main`; MCP-01 implementation and package status are at the top of this file. The preview-recovery correction follows the first implementation/package `1b784ae`. Previous EDIT-01 implementation/package is `8d047860c576021ea3da22743b97f5e27e15c9cc`.
+- Historical ENGINE-01 implementation/package is `ea4d6f4a8c39501198064a52264317b16e5741e0`. Previous ARCH-01 implementation/package is `adb0caeab1f6a4f4f089cd1df94bd7dcc2ce9441`.
 - Previous SPATIAL-01 implementation/package is `1fe296a65f331161e13a4dac20f3306d322d3b53`; its completion documentation was `896c808`.
 - Previous GEO-01 implementation/package is `86428871e5b30cdbe4806c86efbfa77d7b01a6b2`, after candidate `9a1f2ce3ac6eebef1be970fc7cd65b67e9f248bc` and hosting checkpoint `65e94af`.
 - Previous LIGHT-01 implementation/package commit: `f6100fe6f5cad1b9e7b57d3518bf2406996f4eaf`; completion documentation was `2a1461a`. Its historical branch name was `codex/mots-dotnet`.
@@ -230,7 +237,7 @@ general remapping, native output and broader game behavior remain separate.
 | [Static runtime RGB verification (ENGINE-01)](ENGINE_CAPTURE.md) | Original authored fixture, independent coverage/channel controls, metadata invariants, repeated captures and bounded refusal controls | Complete within the documented static RGB scope; simulation is wall-time and only limited world/player state is observed |
 | Instrumented engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Future work, paused |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |
-| Thin MCP adapter | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Planned after domain prerequisites |
+| [Thin MCP adapter (MCP-01)](MCP_INTEGRATION.md) | Shared commands, typed discovery/errors/images and explicit identities; compare against CLI on the same task | Implemented and reviewed; corrected final package pending |
 
 ## Existing evidence and boundaries
 
@@ -240,7 +247,7 @@ One nominally matched Rebel Base editor/OpenJK image pair measured 1.211/255 mea
 
 Keep original stock/community corpus inputs separate from WBW conversions. Keep game assets and private consultation transcripts out of source distributions. The local consultation synthesis and sent briefing are in `build/lily-consultation-20260912/`; the work log records technical decisions without depending on access to that conversation.
 
-The current verified Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.11-dev-ea4d6f4/`; use its `verification.json`, five workflow receipts and `SHA256SUMS.txt`. Package source, binaries and complete history identify `ea4d6f4`; its embedded checkpoint describes the build-time state, while this later completion checkpoint records the executed final gates. See `DEC-20260920-19` for hashes and counts. Its `agent-lit-snapshot/architecture-baked.jkl` and `architecture-stale.jkl` demonstrate authoring/readback; `agent-spatial/relay-final.jkl` remains the original eight-room structural fixture. Prior packages remain separate, including the superseded `.11-dev-ed17c14` capture-tool candidate. Current runtime evidence is in `build/engine01-20260920/matrix-02/`, packaged fixture preparation in `fixture-07/`, and the final packaged diagnostic in `diagnostic-08/`. Stock bootstrap assets and the separate engine are not included in the editor package. This is bounded static engine evidence, not retail parity or a playable-level claim.
+The historical ENGINE-01 Windows/source handoff is `build/packages/SED-MotS-0.4.0-mots.11-dev-ea4d6f4/`; its `verification.json`, five workflow receipts and `SHA256SUMS.txt` describe that milestone. Package source, binaries and complete history identify `ea4d6f4`. See `DEC-20260920-19` for its hashes and counts; current MCP source/package status is at the top of this file. The ENGINE-01 package's `agent-lit-snapshot/architecture-baked.jkl` and `architecture-stale.jkl` demonstrate authoring/readback; `agent-spatial/relay-final.jkl` remains the original eight-room structural fixture. Prior packages remain separate, including the superseded `.11-dev-ed17c14` capture-tool candidate. That milestone's runtime evidence is in `build/engine01-20260920/matrix-02/`, packaged fixture preparation in `fixture-07/`, and packaged diagnostic in `diagnostic-08/`. Stock bootstrap assets and the separate engine are not included in the editor package. This is bounded static engine evidence, not retail parity or a playable-level claim.
 
 ## Recovery discipline
 

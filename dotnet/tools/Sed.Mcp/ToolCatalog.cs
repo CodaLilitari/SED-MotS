@@ -5,7 +5,7 @@ namespace Sed.Mcp;
 
 public static class ToolCatalog
 {
-    public const string Instructions = "SED edits isolated level files; it does not control an unsaved GUI document. Discover focused schemas, query/select, plan, then apply to a NEW output using that plan's output hash and resourceRevision. Use one operationId per intended output; after interruption call sed_outcome, never blindly replay with a new ID/path. Snapshots are static previews, not gameplay or retail proof. All paths use configured workspace/read roots.";
+    public const string Instructions = "SED edits isolated level files; it does not control an unsaved GUI document. Discover focused schemas, query/select, plan, then apply to a NEW output using that plan's output hash and resourceRevision. For level commits use one operationId per intended output; after interruption call sed_outcome, never blindly replay with a new ID/path. Previews have no durable outcome record: after interruption inspect the intended PNG path with authorized file/image tools before another preview; never retry blindly. Snapshots are static previews, not gameplay or retail proof. All paths use configured workspace/read roots.";
     public static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
     public static readonly JsonElement OutputSchema = Element(new { type = "object", required = new[] { "schemaVersion", "ok" },
         properties = new { schemaVersion = new { type = "integer" }, ok = new { type = "boolean" }, result = new { type = "object" }, error = new { type = "object" } } });
@@ -40,7 +40,7 @@ public static class ToolCatalog
                 ("expectedInputSha256", new { type = "string", pattern = "^[0-9a-fA-F]{64}$", description = "Required for commit: inputSha256 from the reviewed conversion plan." }),
                 ("expectedSourceRevision", new { type = "string", pattern = "^[0-9a-fA-F]{64}$", description = "Required for commit: sourceRevision from the reviewed conversion plan, including native template dependencies." })),
             Make("sed_archive", "Inspect archive directory metadata with a bounded response; this does not execute or extract content.",true,["archive"],("archive",Text("Explicit .gob/.goo archive path in configured read roots."))),
-            Make("sed_snapshot", "Render static diagnostic/lit PNG from JKL using the fixed isolated worker. Convert native projects first. Returns inline image and source/camera/resource receipt. Writes only a new PNG; not engine/gameplay proof.",false,["level","request","output"],("level",level),("request",Request("Exact snapshot JSON with explicit camera and source identity.")),("output",output)),
+            Make("sed_snapshot", "Render static diagnostic/lit PNG from JKL using the fixed isolated worker. Convert native projects first. Returns inline image and source/camera/resource receipt. Writes only a new PNG with no durable outcome record; after interruption inspect that path with authorized file/image tools before another preview, never retry blindly. Not engine/gameplay proof.",false,["level","request","output"],("level",level),("request",Request("Exact snapshot JSON with explicit camera and source identity.")),("output",output)),
             Make("sed_outcome", "Read durable edit state and current output evidence after completion, cancellation or reconnect. Matching content does not prove this call created it. Never resumes work.",true,["operationId"],("operationId",id))
         ];
     }

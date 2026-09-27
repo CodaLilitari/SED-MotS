@@ -1,12 +1,36 @@
 # MCP-01: local headless design tools
 
-Status: RESUMED at Andrei's explicit request, 2026-09-27, from last verified published `ef53c33`.
+Status: implementation reviewed, 2026-09-27; final preview-recovery wording
+corrections pass 265 MCP tests and await a new clean Windows package. The first
+verified candidate was `1b784ae6df3b941e7decd25d863eee3e54666f0e`, Windows
+version `0.4.0-mots.13-dev`; it is retained as a superseded candidate.
 Andrei accepted the reviewed MCP-first recommendation; ACP remains deferred.
-The existing EDIT-01 package is unchanged until a new clean package is verified.
+
+## Initial Windows package checkpoint (2026-09-27, superseded candidate)
+
+The clean detached checkout passed 1,329 Core and 264 MCP tests, without build
+warnings/errors. Six packaged CLI workflows passed 272 calls/866 checks plus
+smoke. The actual packaged MCP host passed 65 completed calls and two
+interrupted-write probes, including inline diagnostic/lit previews. Distribution
+verification matched 924 manifested files, exact ZIP membership, corresponding
+source and complete Git history at the same commit. Local handoff:
+`build/packages/SED-MotS-0.4.0-mots.13-dev-1b784ae/`.
+
+Lilitari's initial source review produced the additional preview validation
+checks below. Her final changed-source follow-up accepted those corrections and
+identified two narrow remaining issues: preview cancellation guidance and
+inbound versus outbound size wording. Both are now corrected; the updated
+source requires a new package and must not be confused with this candidate.
+Independent package audit passed: all 783 source files match Git blobs, all 924
+distribution hashes match disk and ZIP, and a standalone bundle clone passes
+strict Git validation with the exact 344-commit/3,632-object reachable history.
+The normal authenticated push updated remote `main` to `1b784ae`; GitHub metadata
+remains public while anonymous access returns 404. No binary release was uploaded.
 
 ## Local source checkpoint (2026-09-27)
 
-The adapter checkpoint builds and passes 264 MCP tests plus 1,329 existing unit tests.
+The corrected adapter passes 265 MCP tests; the preceding integration passed
+1,329 Core tests and the clean package will repeat both suites.
 The full solution build has no warnings/errors; the actual headless UI probe
 also passes. An actual stdio client negotiated with the official C# SDK host
 and passed 65 completed tool calls plus two intentionally uninspected write
@@ -19,9 +43,10 @@ and resource-backed lit PNGs. Both modes were visually inspected. The adapter
 now validates the fixed worker's RGBA PNG chunks/CRC, bounded decoded pixels,
 dimensions and pixel hash, plus source/request/camera/resource receipt bindings.
 This accepts the owned encoder subset, not arbitrary PNG encoders or a proof of
-canonical compressed-stream encoding. These are source-checkpoint results, not a new packaged
-release, a model-driven Codex session, engine behavior or retail qualification.
-Current source review and clean packaging remain required.
+canonical compressed-stream encoding. The clean package repeated the unit and
+wire gates above. Neither run is a model-driven Codex design session, engine
+behavior or retail qualification; UI acceptance is the separate 126-check
+headless control probe, not an interactive GUI playtest.
 
 ## Run locally or configure Codex
 
@@ -120,11 +145,14 @@ when available; receipt omission does not imply that no PNG was written.
 
 The adapter admits one domain operation and one independent outcome observation,
 with no queued domain work. Discovery remains small and independent. Limits are
-2 MiB transport frames, 1 MiB domain JSON, 16 MiB level/template inputs, 128 patch
+2 MiB inbound request frames, 1 MiB domain JSON, 16 MiB level/template inputs, 128 patch
 operations, 512 MiB per resource archive/2 GiB aggregate, and 2 MiB structured
-results. The domain's focused schemas may advertise higher CLI limits; these
+envelopes. The domain's focused schemas may advertise higher CLI limits; these
 adapter limits still apply. Images are separately bounded to 16 MiB and the
-domain's pixel/triangle limits. Large jobs should be split into reviewed steps.
+domain's pixel/triangle limits. Complete outbound responses can exceed 2 MiB:
+they include both text and structured representations of the envelope, plus
+base64-encoded image data for a preview. No 2 MiB total outbound frame cap is
+promised. Large jobs should be split into reviewed steps.
 
 Synchronous text/domain calls run on a worker thread and retain admission until
 they finish. Cancellation is cooperative, checked before work and immediately

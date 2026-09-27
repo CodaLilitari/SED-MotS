@@ -9,6 +9,13 @@ external reachability. Source reviews use exact directly attached snapshots.
 Record the actual result of any authorized normal push separately; do not
 describe a local commit, source ZIP or attached review as public delivery.
 
+A normal authenticated push on this date succeeded, updating `main` from
+`ef53c33` to MCP-01 implementation `1b784ae6df3b941e7decd25d863eee3e54666f0e`.
+Git and GitHub's authenticated API independently returned that SHA; `main` was
+the only remote branch. Anonymous HTTP remained 404 after the push. Write
+access and public reachability are therefore separate observed states. No
+alternate account, forced update or binary-release upload was used.
+
 ## Public source location — September 13, 2026
 
 - Public repository: [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS).

@@ -69,7 +69,12 @@ public sealed class SedTools : IDisposable
         catch (SnapshotWorkerException e) { return SnapshotFailure(e); }
         catch (AgentConflictException e) { return Failure("conflict", e.Message, new { e.OperationIndex, e.Operation, e.JsonPointer }); }
         catch (AgentValidationException e) { return Failure("validation_failed", e.Message, e.Issues); }
-        catch (OperationCanceledException) { return Failure("cancelled", "Request cancelled. For a write, query sed_outcome with its operationId; cancellation does not imply rollback."); }
+        catch (OperationCanceledException)
+        {
+            return Failure("cancelled", name == "sed_snapshot"
+                ? "Preview cancelled. Previews have no durable outcome record. Inspect the intended PNG path with authorized file/image tools before another preview; never retry blindly or assume cancellation means no file exists."
+                : "Request cancelled. For a level commit, query sed_outcome with its operationId; cancellation does not imply rollback.");
+        }
         catch (AgentRequestException e) { return Failure("invalid_request", e.Message, new { e.OperationIndex, e.Operation, e.JsonPointer }); }
         catch (JsonException e) { return Failure("invalid_request", e.Message, new { e.Path }); }
         catch (UnauthorizedAccessException e) { return Failure("path_denied", e.Message); }
