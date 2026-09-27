@@ -1,5 +1,21 @@
 # GitHub hosting and source-preserving migration
 
+## Windows prerelease publication — September 27, 2026
+
+Published [v0.4.0-mots.13-dev](https://github.com/CodaLilitari/SED-MotS/releases/tag/v0.4.0-mots.13-dev)
+at `2026-09-27T23:51:18Z`, after Andrei explicitly requested the binaries.
+The tag resolves to tested source `ce093bdeb2c568b3717a1649775af9721e0a0ddc`.
+Authenticated readback confirms `isDraft: false`, `isPrerelease: true` and four
+uploaded assets: the Windows x64 ZIP, corresponding source ZIP, complete-history
+Git bundle and `SHA256SUMS.txt`. GitHub's asset digests and byte counts match all
+four local files. No package rebuild or replacement was needed.
+
+The release page's anonymous GET and Windows asset's anonymous HEAD both still
+return HTTP 404. Successful release publication does not establish outside
+reachability. Exact publication, asset and access receipts remain local under
+`build/mcp01-20260927/release-upload/`. `main` remains the only remote branch;
+the release adds a version tag, not another development branch.
+
 ## Access observation — September 27, 2026
 
 Authenticated GitHub metadata reports `CodaLilitari/SED-MotS` as `PUBLIC` with

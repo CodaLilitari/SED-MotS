@@ -22,6 +22,14 @@ Normal push succeeded and remote main is verified at `ce093bd`. GitHub metadata 
 anonymous fetch returns 404. Use exact source attachments for review and record
 actual publication status without bypassing the reported account restriction.
 
+**Binary release published, 2026-09-27:**
+[v0.4.0-mots.13-dev](https://github.com/CodaLilitari/SED-MotS/releases/tag/v0.4.0-mots.13-dev)
+is a published prerelease tagged at the exact package source `ce093bd`.
+All four uploaded assets match local sizes and SHA256 hashes: Windows ZIP,
+source ZIP, history bundle and checksums. Anonymous release/asset requests still
+return 404. See DEC-20260927-04 and local `build/mcp01-20260927/release-upload/`.
+The earlier no-binary-upload statements describe their historical checkpoints.
+
 **Latest completed milestone: [MCP-01](MCP_INTEGRATION.md), started 2026-09-25 from
 `ef53c33`.** Andrei accepted the independently reviewed MCP recommendation and
 asked for Lilitari's advice on using Maya when worthwhile. Source review,

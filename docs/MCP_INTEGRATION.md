@@ -26,7 +26,11 @@ Independent package audit passed: all 783 source files match Git blobs, all 924
 distribution hashes match disk and ZIP, and a standalone bundle clone passes
 strict Git validation with the exact 345-commit/3,647-object reachable history.
 The normal authenticated push updated remote `main` to `ce093bd`; GitHub metadata
-remains public while anonymous access returns 404. No binary release was uploaded.
+remains public while anonymous access returns 404. The later explicitly requested
+[Windows prerelease](https://github.com/CodaLilitari/SED-MotS/releases/tag/v0.4.0-mots.13-dev)
+was published with matching source/history/checksums on September 27; its tag
+targets the package commit. Uploaded hashes match, but anonymous release/asset
+access still returns 404. See [the hosting record](GITHUB_HANDOFF.md).
 
 ## Local source checkpoint (2026-09-27)
 
