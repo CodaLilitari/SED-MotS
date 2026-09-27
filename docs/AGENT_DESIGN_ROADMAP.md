@@ -1,6 +1,11 @@
 # Agent level-design integration and roadmap
 
-SED MotS exposes its editing model through a local JSON CLI. The repository now ships the [sed-mots skill](../.agents/skills/sed-mots/SKILL.md) to make that workflow discoverable in Codex. The skill uses the same CLI available to other assistants and scripts; it does not introduce a model service, credentials, network listener or screen-control dependency.
+SED MotS exposes its editing model through a local JSON CLI and the new local
+stdio [MCP-01 adapter](MCP_INTEGRATION.md). The repository ships the
+[sed-mots skill](../.agents/skills/sed-mots/SKILL.md) to make either workflow
+discoverable in Codex. Both use shared automation services without a model
+service, credentials, network listener or screen-control dependency. Consult the
+MCP acceptance document for its current source, review and package status.
 
 The installed executable's `--version`, `--help` and focused `schema` responses define its actual capabilities. Consult [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md) for guarantees and [AGENT_WORKFLOWS.md](AGENT_WORKFLOWS.md) for executable examples. This roadmap describes priorities, not a promise that every capability below already exists.
 
@@ -27,17 +32,21 @@ The preview and resource-aware exports now share all-LOD architectural model val
 
 ## Optional MCP transport
 
-A future adapter should be a small C# stdio executable referencing the existing automation library. Expose a few named domain tools for querying, validation, planning, applying, archive inspection, conversion and rendering. Keep schemas and behavior shared with the CLI; avoid an arbitrary-command wrapper or a second implementation of edits.
+MCP-01 implements a small C# stdio executable referencing the existing automation
+library. Its eleven named tools expose focused discovery, readback, selection,
+diagnostics, plan/apply, creation, conversion, archive inspection, preview and
+outcome reconciliation. Domain behavior stays shared with the CLI; protocol
+adaptation adds admission/size bounds, configured file scope and durable intents.
 
 The official C# SDK provides stdio transport and typed tool registration. Send logs to stderr and reserve stdout for protocol messages. The local tool does not need HTTP hosting, OAuth or model sampling. [Official C# SDK getting started](https://csharp.sdk.modelcontextprotocol.io/v1/concepts/getting-started.html)
 
-Codex supports local stdio servers, trusted project configuration in `.codex/config.toml`, tool allowlists and timeouts. Its initialization `instructions` can explain cross-tool constraints; keep the first 512 characters self-contained. An adapter should explain query, plan, reviewed apply and readback, plus the distinction between structural and gameplay evidence. No MCP server is implemented or registered by the skill. [Official Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)
+Codex supports local stdio servers, trusted project configuration in `.codex/config.toml`, tool allowlists and timeouts. The adapter's initialization instructions explain query, plan, reviewed apply and outcome reconciliation, plus the distinction between structural and gameplay evidence. The skill does not register servers or change user configuration; the MCP guide supplies an explicit setup example. [Official Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)
 
 Return actionable domain failures as tool results with `isError: true`, preserving operation indices and field locations. Return structured results with an output schema and a textual JSON representation for compatibility. Preview tools should supply actual image content plus source revision, camera, dimensions and warnings; an image path alone is not an inline image result. [MCP tools specification](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
 
 Choose and pin an SDK deliberately. The `2025-11-25` protocol negotiates versions through `initialize`; the C# SDK v2 documentation describes `2026-07-28` discovery and fallback changes. Those documents do not establish which revision an installed Codex client will negotiate. Before advertising compatibility, record the actual client and negotiated revision and exercise discovery, readback, a refused stale edit, a successful reviewed edit, cancellation and an image result. Do not require the July revision merely because its documentation exists. [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [C# SDK transition behavior](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/stateless/stateless.html)
 
-### Next integration after EDIT-01: MCP first, ACP for a later editor panel
+### Integration direction: MCP first, ACP for a later controller or panel
 
 Public-source comparison on 2026-09-25 identified useful independent precedents.
 [dcc-mcp-maya at 1eff754](https://github.com/dcc-mcp/dcc-mcp-maya/tree/1eff754a0106cb34007d0c6ebdfbf0ee4fba1419)
@@ -67,17 +76,18 @@ Apply the useful interface ideas to SED's own services:
    cancellation and progress on bounded long operations. Record actual negotiated
    protocol and executable identities.
 
-ACP here means **Agent Client Protocol**, whose purpose is connecting an editor
-to an agent. Its session setup can supply MCP servers to that agent. SED could
-later act as an ACP client for an embedded assistant panel while its MCP server
-continues to expose editing tools. That also needs an explicit shared-document
-revision/undo protocol to handle unsaved human edits. Neither protocol provides
-that document model automatically. [ACP introduction](https://agentclientprotocol.com/get-started/introduction),
+ACP here means **Agent Client Protocol**, whose purpose is connecting a client
+to an agent. Its session setup can supply MCP servers to that agent. A future
+background controller or embedded assistant panel could act as the ACP client,
+while SED's MCP server exposes editing tools. Sharing an unsaved GUI document
+would additionally need an explicit revision/undo protocol. Neither protocol
+provides that document model automatically. [ACP introduction](https://agentclientprotocol.com/get-started/introduction),
 [ACP session setup](https://agentclientprotocol.com/protocol/v1/session-setup)
 
-This is the next recommended integration, not an implemented MCP/ACP capability.
-The delivered EDIT-01 Windows package remains usable through `sed-agent` and
-the repository skill without either protocol or screen control.
+The MCP implementation now has source tests and actual stdio workflow evidence;
+its final review/package state is recorded in MCP_INTEGRATION.md. ACP and shared
+GUI sessions remain unimplemented. Earlier EDIT-01 packages continue to use
+`sed-agent` and the repository skill without either protocol or screen control.
 
 ### Independently reviewed first-adapter boundaries
 
@@ -85,10 +95,11 @@ A bounded external architecture review on 2026-09-25 used the existing
 Antigravity Gemini 3.1 Pro / High subscription route and the published source at
 `11550ee9`. No tools were executed by that reviewer. Its recommendations were
 checked against source and the MCP cancellation rules; this is design review,
-not an implemented or client-tested adapter.
+not itself implementation or client-test evidence. The points below record that
+historical proposal; the MCP acceptance document records subsequent execution.
 
 - Reuse `Sed.Formats.Automation` directly for text queries, planning and edits;
-  its public services already exist. Begin with bounded queued work rather than
+  its public services already exist. Begin with bounded admitted work rather than
   assuming all static services support concurrent use. A semaphore controls
   concurrency, not per-request memory or CPU consumption: retain runtime size
   and work limits as well as schema constraints.

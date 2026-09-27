@@ -1,13 +1,17 @@
 {
-  "capturedUtc": "2026-09-09T03:03:24.4760476Z",
-  "scope": "All Sed.App restore packages, including build and non-Windows dependencies; this is a superset of the Windows runtime.",
+  "capturedUtc": "2026-09-27T22:53:43.4189978Z",
+  "scope": "All Sed.App, Sed.Agent and Sed.Mcp restore packages and exact declared runtime-pack downloads, including build and non-Windows dependencies; this is a superset, not a list of deployed components. Runtime-pack identities in published deps manifests are verified separately. dotnet-LICENSE.txt identifies the SDK distribution; runtime-pack directories preserve their separate licenses.",
   "packages": [
     {
       "package": "Avalonia.Angle.Windows.Natives/2.1.27548.20260419",
+      "dependencyType": "package",
       "license": "LICENSE",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/angle/",
       "repositoryCommit": "1c89805903c1482166356d3b950d474973180e61",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Angle.Windows.Natives-2.1.27548.20260419/LICENSE",
@@ -18,10 +22,14 @@
     },
     {
       "package": "Avalonia.BuildServices/11.3.2",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2023-2025 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia.BuildServices",
       "repositoryCommit": "777f975b0a0cecf0311273711d56697212c558c0",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.BuildServices-11.3.2/LICENSE",
@@ -32,10 +40,14 @@
     },
     {
       "package": "Avalonia.Desktop/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Desktop-12.0.4/NOTICE.md",
@@ -51,10 +63,14 @@
     },
     {
       "package": "Avalonia.FreeDesktop.AtSpi/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.FreeDesktop.AtSpi-12.0.4/NOTICE.md",
@@ -70,10 +86,14 @@
     },
     {
       "package": "Avalonia.FreeDesktop/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.FreeDesktop-12.0.4/NOTICE.md",
@@ -89,10 +109,14 @@
     },
     {
       "package": "Avalonia.HarfBuzz/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.HarfBuzz-12.0.4/NOTICE.md",
@@ -108,10 +132,14 @@
     },
     {
       "package": "Avalonia.Native/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Native-12.0.4/NOTICE.md",
@@ -127,10 +155,14 @@
     },
     {
       "package": "Avalonia.Remote.Protocol/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Remote.Protocol-12.0.4/NOTICE.md",
@@ -146,10 +178,14 @@
     },
     {
       "package": "Avalonia.Skia/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Skia-12.0.4/NOTICE.md",
@@ -165,10 +201,14 @@
     },
     {
       "package": "Avalonia.Themes.Fluent/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Themes.Fluent-12.0.4/NOTICE.md",
@@ -184,10 +224,14 @@
     },
     {
       "package": "Avalonia.Win32/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.Win32-12.0.4/NOTICE.md",
@@ -203,10 +247,14 @@
     },
     {
       "package": "Avalonia.X11/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia.X11-12.0.4/NOTICE.md",
@@ -222,10 +270,14 @@
     },
     {
       "package": "Avalonia/12.0.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
       "repositoryCommit": "a8dd6417fd8918570edefdbecd92d16ac7620069",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Avalonia-12.0.4/NOTICE.md",
@@ -241,10 +293,14 @@
     },
     {
       "package": "HarfBuzzSharp.NativeAssets.Linux/8.3.1.3",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "2888c737ad016d584c74525e2d35db5097ea8576",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "HarfBuzzSharp.NativeAssets.Linux-8.3.1.3/LICENSE.txt",
@@ -260,10 +316,14 @@
     },
     {
       "package": "HarfBuzzSharp.NativeAssets.macOS/8.3.1.3",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "2888c737ad016d584c74525e2d35db5097ea8576",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "HarfBuzzSharp.NativeAssets.macOS-8.3.1.3/LICENSE.txt",
@@ -279,10 +339,14 @@
     },
     {
       "package": "HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.3",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "2888c737ad016d584c74525e2d35db5097ea8576",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.3/LICENSE.txt",
@@ -298,10 +362,14 @@
     },
     {
       "package": "HarfBuzzSharp.NativeAssets.Win32/8.3.1.3",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "2888c737ad016d584c74525e2d35db5097ea8576",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.3/LICENSE.txt",
@@ -317,10 +385,14 @@
     },
     {
       "package": "HarfBuzzSharp/8.3.1.3",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "2888c737ad016d584c74525e2d35db5097ea8576",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "HarfBuzzSharp-8.3.1.3/LICENSE.txt",
@@ -331,10 +403,14 @@
     },
     {
       "package": "MicroCom.Runtime/0.11.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Copyright 2021 © Nikita Tsukanov",
       "repository": "https://github.com/kekekeks/MicroCom",
       "repositoryCommit": "28850f85fb586488828ab7267ed4a87e8c970b51",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "MicroCom.Runtime-0.11.4/LICENSE",
@@ -344,11 +420,39 @@
       ]
     },
     {
+      "package": "Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12",
+      "dependencyType": "runtimepack",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.AspNetCore.App.Runtime.win-x64-10.0.12/LICENSE.txt",
+          "source": "nuget:Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12/LICENSE.txt",
+          "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+        },
+        {
+          "file": "Microsoft.AspNetCore.App.Runtime.win-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "307d014f65d8482314f1400ddeae7a0cbabb96c2207bcc77f6233cc10588e5d9"
+        }
+      ]
+    },
+    {
       "package": "Microsoft.DotNet.PlatformAbstractions/3.1.6",
+      "dependencyType": "package",
       "license": "LICENSE.TXT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "git://github.com/dotnet/core-setup",
       "repositoryCommit": "3acd9b0cd16596bad450c82be08780875a73c05c",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent"
+      ],
       "files": [
         {
           "file": "Microsoft.DotNet.PlatformAbstractions-3.1.6/LICENSE.TXT",
@@ -363,11 +467,57 @@
       ]
     },
     {
+      "package": "Microsoft.Extensions.AI.Abstractions/10.5.2",
+      "dependencyType": "package",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/extensions",
+      "repositoryCommit": "2a86d759c251eee39274c191bd9f8e14c58f875a",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.Extensions.AI.Abstractions-10.5.2/LICENSE",
+          "source": "https://raw.githubusercontent.com/dotnet/extensions/2a86d759c251eee39274c191bd9f8e14c58f875a/LICENSE",
+          "sha256": "47f0ad8ba753eae5de6178291cd8f38bbb42d2368b177f8e11714ad17c701275"
+        }
+      ]
+    },
+    {
+      "package": "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7",
+      "dependencyType": "package",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "b16286c2284fecf303dbc12a0bb152476d662e44",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.Extensions.DependencyInjection.Abstractions-10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        },
+        {
+          "file": "Microsoft.Extensions.DependencyInjection.Abstractions-10.0.7/LICENSE.TXT",
+          "source": "https://raw.githubusercontent.com/dotnet/dotnet/b16286c2284fecf303dbc12a0bb152476d662e44/LICENSE.TXT",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        }
+      ]
+    },
+    {
       "package": "Microsoft.Extensions.DependencyModel/9.0.9",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/runtime",
       "repositoryCommit": "893c2ebbd49952ca49e93298148af2d95a61a0a4",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent"
+      ],
       "files": [
         {
           "file": "Microsoft.Extensions.DependencyModel-9.0.9/LICENSE.TXT",
@@ -382,11 +532,98 @@
       ]
     },
     {
+      "package": "Microsoft.Extensions.Logging.Abstractions/10.0.7",
+      "dependencyType": "package",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "b16286c2284fecf303dbc12a0bb152476d662e44",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.Extensions.Logging.Abstractions-10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.Extensions.Logging.Abstractions/10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        },
+        {
+          "file": "Microsoft.Extensions.Logging.Abstractions-10.0.7/LICENSE.TXT",
+          "source": "https://raw.githubusercontent.com/dotnet/dotnet/b16286c2284fecf303dbc12a0bb152476d662e44/LICENSE.TXT",
+          "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
+        }
+      ]
+    },
+    {
+      "package": "Microsoft.NETCore.App.Runtime.win-x64/10.0.12",
+      "dependencyType": "runtimepack",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.12/LICENSE.TXT",
+          "source": "nuget:Microsoft.NETCore.App.Runtime.win-x64/10.0.12/LICENSE.TXT",
+          "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+        },
+        {
+          "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.NETCore.App.Runtime.win-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+        }
+      ]
+    },
+    {
+      "package": "Microsoft.WindowsDesktop.App.Runtime.win-x64/10.0.12",
+      "dependencyType": "runtimepack",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "Microsoft.WindowsDesktop.App.Runtime.win-x64-10.0.12/LICENSE",
+          "source": "nuget:Microsoft.WindowsDesktop.App.Runtime.win-x64/10.0.12/LICENSE",
+          "sha256": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab"
+        }
+      ]
+    },
+    {
+      "package": "ModelContextProtocol.Core/1.4.1",
+      "dependencyType": "package",
+      "license": "Apache-2.0",
+      "copyright": "© Model Context Protocol a Series of LF Projects, LLC.",
+      "repository": "https://github.com/modelcontextprotocol/csharp-sdk",
+      "repositoryCommit": "2b7fd35fbe58dfb9f00eae8b3393e1a7361b5e01",
+      "sourceProjects": [
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
+          "file": "ModelContextProtocol.Core-1.4.1/LICENSE",
+          "source": "https://raw.githubusercontent.com/modelcontextprotocol/csharp-sdk/2b7fd35fbe58dfb9f00eae8b3393e1a7361b5e01/LICENSE",
+          "sha256": "7c6a686d2b34b86ad8c726e0ac4d76903b525f251d73e617f8db3879fa8f11fc"
+        }
+      ]
+    },
+    {
       "package": "Silk.NET.Core/2.23.0",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
       "repositoryCommit": "94605142f7b7bd6e69c9201e8e721d245c69eb7e",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent"
+      ],
       "files": [
         {
           "file": "Silk.NET.Core-2.23.0/LICENSE.md",
@@ -397,10 +634,15 @@
     },
     {
       "package": "Silk.NET.Vulkan.Extensions.KHR/2.23.0",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
       "repositoryCommit": "94605142f7b7bd6e69c9201e8e721d245c69eb7e",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent"
+      ],
       "files": [
         {
           "file": "Silk.NET.Vulkan.Extensions.KHR-2.23.0/LICENSE.md",
@@ -411,10 +653,15 @@
     },
     {
       "package": "Silk.NET.Vulkan/2.23.0",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
       "repositoryCommit": "94605142f7b7bd6e69c9201e8e721d245c69eb7e",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent"
+      ],
       "files": [
         {
           "file": "Silk.NET.Vulkan-2.23.0/LICENSE.md",
@@ -425,10 +672,14 @@
     },
     {
       "package": "SkiaSharp.NativeAssets.Linux/3.119.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "f568ac94dd768ef9a2f593537cfde2dd0d348ef5",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "SkiaSharp.NativeAssets.Linux-3.119.4/LICENSE.txt",
@@ -444,10 +695,14 @@
     },
     {
       "package": "SkiaSharp.NativeAssets.macOS/3.119.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "f568ac94dd768ef9a2f593537cfde2dd0d348ef5",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "SkiaSharp.NativeAssets.macOS-3.119.4/LICENSE.txt",
@@ -463,10 +718,14 @@
     },
     {
       "package": "SkiaSharp.NativeAssets.WebAssembly/3.119.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "f568ac94dd768ef9a2f593537cfde2dd0d348ef5",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "SkiaSharp.NativeAssets.WebAssembly-3.119.4/LICENSE.txt",
@@ -482,10 +741,14 @@
     },
     {
       "package": "SkiaSharp.NativeAssets.Win32/3.119.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "f568ac94dd768ef9a2f593537cfde2dd0d348ef5",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "SkiaSharp.NativeAssets.Win32-3.119.4/LICENSE.txt",
@@ -501,10 +764,14 @@
     },
     {
       "package": "SkiaSharp/3.119.4",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
       "repositoryCommit": "f568ac94dd768ef9a2f593537cfde2dd0d348ef5",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "SkiaSharp-3.119.4/LICENSE.txt",
@@ -515,10 +782,14 @@
     },
     {
       "package": "Tmds.DBus.Protocol/0.92.0",
+      "dependencyType": "package",
       "license": "MIT",
       "copyright": "Tom Deseyn",
       "repository": "https://github.com/tmds/Tmds.DBus.git",
       "repositoryCommit": "282acebca8d4e4e3ba211646ac650911ee94edfd",
+      "sourceProjects": [
+        "Sed.App"
+      ],
       "files": [
         {
           "file": "Tmds.DBus.Protocol-0.92.0/COPYING",

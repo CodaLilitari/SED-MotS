@@ -1,9 +1,26 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-25. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-27. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
+
+**RESUMED by Andrei on 2026-09-27.** MCP-01 has a new active goal covering
+implementation, executed MCP workflows, independent source review and a verified
+Windows/source handoff. The recovered scaffold is incomplete and untested at
+resume. Last verified published main is `ef53c33`; the verified Windows package
+remains EDIT-01 `8d04786` / `0.4.0-mots.12-dev` until new gates pass. Andrei reports
+GitHub is restricted for spam: provide exact source attachments to reviewers,
+record any publication limitation, and do not bypass the account restriction.
+
+**Active milestone: [MCP-01](MCP_INTEGRATION.md), started 2026-09-25 from
+`ef53c33`.** Andrei accepted the independently reviewed MCP recommendation and
+asked for Lilitari's advice on using Maya when worthwhile. Source implementation
+and integration tests now pass; independent final review and the clean Windows
+package remain in progress. EDIT-01 remains the latest completed package below. Root owns the MCP
+host/integration, a worker owns file policy/outcome records, another owns the
+isolated renderer, and a third owns the project-specific Lilitari consultation.
+Keep their source scopes separate and verify ownership before integration.
 
 **Latest completed bounded milestone (2026-09-25): [EDIT-01](EDITING_FOUNDATIONS.md).** Andrei requested
 public Massassi forum research, implementation of the recommendations and a new
@@ -35,10 +52,10 @@ under `build/edit01-20260925/publication.json`. No binary GitHub release or new
 engine/retail/gameplay qualification is claimed. The three unrelated `.DS_Store`
 deletions remain uncommitted. See DEC-20260925-04 for exact hashes and boundaries.
 
-**Next recommended direction:** expose the now-tested headless contracts through
-a thin local MCP adapter, with progressive discovery, structured results and
-inline preview images. Shared unsaved GUI sessions and an ACP agent panel are
-separate later capabilities; neither exists merely because the CLI is automated.
+**Current direction:** expose the headless contracts through the local MCP-01
+adapter, with progressive discovery, structured results and inline previews.
+Shared unsaved GUI sessions and an ACP controller/panel are separate later
+capabilities; neither exists merely because the CLI is automated.
 See [the agent roadmap](AGENT_DESIGN_ROADMAP.md).
 
 **Pre-implementation research checkpoint (2026-09-25):** source was at published

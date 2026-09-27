@@ -1,5 +1,14 @@
 # GitHub hosting and source-preserving migration
 
+## Access observation — September 27, 2026
+
+Authenticated GitHub metadata reports `CodaLilitari/SED-MotS` as `PUBLIC` with
+`isPrivate: false`. An unauthenticated fetch returned HTTP 404. Andrei reports
+an account restriction for spam; the public setting does not currently establish
+external reachability. Source reviews use exact directly attached snapshots.
+Record the actual result of any authorized normal push separately; do not
+describe a local commit, source ZIP or attached review as public delivery.
+
 ## Public source location — September 13, 2026
 
 - Public repository: [CodaLilitari/SED-MotS](https://github.com/CodaLilitari/SED-MotS).

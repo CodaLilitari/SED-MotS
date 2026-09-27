@@ -9,9 +9,11 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Sed.Core.Tests/Sed.Core.Tests.csproj" />
+    <Project Path="tests/Sed.Mcp.Tests/Sed.Mcp.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Sed.Agent/Sed.Agent.csproj" />
+    <Project Path="tools/Sed.Mcp/Sed.Mcp.csproj" />
     <Project Path="tools/Sed.CommunityAudit/Sed.CommunityAudit.csproj" />
     <Project Path="tools/Sed.MotsFormatAudit/Sed.MotsFormatAudit.csproj" />
     <Project Path="tools/Sed.AppShot/Sed.AppShot.csproj" />

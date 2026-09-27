@@ -9,6 +9,19 @@ Use the local `sed-agent` executable for supported level operations. It shares t
 
 ## Discover the installed tools
 
+If the installed MCP adapter is connected, start with `sed_discover` and use its
+focused schemas. It exposes the same domain requests; adapter limits may be
+tighter than the CLI schema. Use `sed_plan` before `sed_apply`, preserve the exact
+reviewed output hash and resource revision, and retain one `operationId` per
+intended write. After an interruption query `sed_outcome`; matching bytes do not
+prove a lost request committed, and an existing ID never resumes an edit.
+`sed_snapshot` returns an inline static image and accepts JKL only; convert
+native projects with reviewed `sed_convert` first.
+Conversion commits also carry `expectedInputSha256` and `expectedSourceRevision`
+from the exact conversion plan, even when normalization keeps output bytes equal.
+See the distributed [MCP guide](../../../docs/MCP_INTEGRATION.md). The CLI remains a complete option
+when the adapter is absent.
+
 Resolve the intended executable from the user's installation or this repository's verified package. A Windows package places it at `agent/sed-agent.exe`. Run `--version` and `--help`; use `schema commands`, `schema query` or a focused operation schema as needed. Installed capabilities are authoritative: do not infer a command's fields from a different build or the roadmap.
 
 Read [the protocol](../../../docs/AGENT_PROTOCOL.md) for input/output contracts and preservation limits, and [the workflows](../../../docs/AGENT_WORKFLOWS.md) for worked CLI examples. These links resolve from this skill in the source tree or complete distribution. If using a separately copied skill, locate those documents in the chosen editor installation.

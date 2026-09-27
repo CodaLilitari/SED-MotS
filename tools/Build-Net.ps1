@@ -59,11 +59,13 @@ $receipt = [ordered]@{
     dotnetSha256 = (Get-FileHash -LiteralPath $dotnetExe -Algorithm SHA256).Hash.ToLowerInvariant()
     status = 'running'
     guiLaunched = $false
+    testProjects = @('Sed.Core.Tests', 'Sed.Mcp.Tests')
 }
 try {
     Invoke-DotNet @('--info') 'sdk-info.log'
     Invoke-DotNet @('build', 'dotnet/Sed.slnx', '--configuration', $Configuration, '--nologo', '--disable-build-servers') 'build.log'
     Invoke-DotNet @('test', 'dotnet/tests/Sed.Core.Tests/Sed.Core.Tests.csproj', '--configuration', $Configuration, '--no-build', '--no-restore', '--nologo', '--logger', 'trx;LogFileName=tests.trx', '--results-directory', $attemptRoot) 'tests.log'
+    Invoke-DotNet @('test', 'dotnet/tests/Sed.Mcp.Tests/Sed.Mcp.Tests.csproj', '--configuration', $Configuration, '--no-build', '--no-restore', '--nologo', '--logger', 'trx;LogFileName=mcp-tests.trx', '--results-directory', $attemptRoot) 'mcp-tests.log'
     $receipt.status = 'passed'
 }
 catch {

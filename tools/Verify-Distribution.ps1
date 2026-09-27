@@ -69,6 +69,59 @@ function Assert-CompleteHeadBundle([string]$Path, [string]$Commit) {
     } finally { $reader.Dispose() }
 }
 
+function Read-ZipJson($Archive, [string]$Path) {
+    $entry = $Archive.GetEntry($Path)
+    if ($null -eq $entry) { throw "Missing JSON distribution member: $Path" }
+    $reader = [IO.StreamReader]::new($entry.Open())
+    try { return $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Dispose() }
+}
+
+function Assert-McpNotices($Archive, [string]$Prefix) {
+    $dependencies = Read-ZipJson $Archive ($Prefix + 'mcp/sed-mcp.deps.json')
+    $inventory = Read-ZipJson $Archive ($Prefix + 'licenses/net/inventory.json')
+    $packages = @($dependencies.libraries.PSObject.Properties | Where-Object { $_.Value.type -in 'package', 'runtimepack' })
+    if ($packages.Count -eq 0 -or !($packages.Name -contains 'ModelContextProtocol.Core/1.4.1')) { throw 'MCP dependency inventory lacks the pinned protocol SDK.' }
+    # Every self-contained component carries a runtime, even though the runtime
+    # is represented as type=runtimepack rather than an ordinary NuGet package.
+    foreach ($component in @('Sed.App.deps.json', 'agent/sed-agent.deps.json')) {
+        $componentDependencies = Read-ZipJson $Archive ($Prefix + $component)
+        $runtimePacks = @($componentDependencies.libraries.PSObject.Properties | Where-Object { $_.Value.type -eq 'runtimepack' })
+        if ($runtimePacks.Count -eq 0) { throw "Self-contained component has no runtime-pack identity: $component" }
+        $packages += $runtimePacks
+    }
+    if (@($dependencies.libraries.PSObject.Properties | Where-Object { $_.Value.type -eq 'runtimepack' }).Count -eq 0) {
+        throw 'Self-contained MCP component has no runtime-pack identity.'
+    }
+    $checked = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($dependency in $packages) {
+        if (!$checked.Add($dependency.Name)) { continue }
+        $packageId = $dependency.Name
+        if ($dependency.Value.type -eq 'runtimepack') {
+            if (!$packageId.StartsWith('runtimepack.', [StringComparison]::Ordinal)) { throw "Unexpected runtime-pack identity: $packageId" }
+            $packageId = $packageId.Substring('runtimepack.'.Length)
+        }
+        $records = @($inventory.packages | Where-Object { $_.package -ceq $packageId })
+        if ($records.Count -ne 1 -or @($records[0].files).Count -eq 0) { throw "Missing/ambiguous notices for packaged MCP dependency $($dependency.Name)." }
+        if ($dependency.Value.type -eq 'runtimepack' -and $records[0].dependencyType -cne 'runtimepack') {
+            throw "The runtime-pack identity $packageId is not identified as a collected runtime pack."
+        }
+        if (@($records[0].files | Where-Object { [IO.Path]::GetFileName($_.file) -match '(?i)licen[sc]e|copying' }).Count -eq 0) {
+            throw "MCP dependency $($dependency.Name) has notices but no package license text."
+        }
+        foreach ($file in $records[0].files) {
+            Assert-SafeZipPath $file.file
+            if ($file.sha256 -cnotmatch '^[0-9a-f]{64}$') { throw "Invalid license hash for $($dependency.Name)." }
+            $entry = $Archive.GetEntry($Prefix + 'licenses/net/' + $file.file)
+            if ($null -eq $entry) { throw "Missing license file $($file.file)." }
+            $stream = $entry.Open()
+            try { $hash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant() }
+            finally { $stream.Dispose() }
+            if ($hash -cne $file.sha256) { throw "License content differs from its inventory: $($file.file)." }
+        }
+    }
+    return $checked.Count
+}
+
 $root = (Resolve-Path -LiteralPath $PackageDirectory).Path
 $checksumPath = Join-Path $root 'SHA256SUMS.txt'
 $binaryZip = @(Get-ChildItem -LiteralPath $root -Filter '*-win-x64.zip' -File)
@@ -130,6 +183,20 @@ try {
     $reader = [IO.StreamReader]::new($provenanceEntry.Open())
     try { $provenance = $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Dispose() }
     if ($provenance.commit -cnotmatch '^(?:[0-9a-f]{40}|[0-9a-f]{64})$' -or $provenance.sourceArchive -cne 'SED-MotS-source.zip' -or $provenance.target -cne 'win-x64' -or $provenance.selfContained -isnot [bool] -or !$provenance.selfContained) { throw 'Invalid or incomplete binary source provenance.' }
+    # Keep the verifier usable for earlier, pre-MCP handoffs. Any new MCP
+    # payload or provenance declaration activates the full MCP requirements.
+    $hasMcp = $seen.Contains($prefix + 'mcp/sed-mcp.exe') -or $null -ne $provenance.PSObject.Properties['packagedMcpWorkflow']
+    $mcpNoticePackages = 0
+    if ($hasMcp) {
+        foreach ($required in @('mcp/sed-mcp.exe','mcp/sed-mcp.dll','mcp/sed-mcp.deps.json','mcp/sed-mcp.runtimeconfig.json',
+            'mcp/coreclr.dll','mcp/ModelContextProtocol.Core.dll','mcp/data/mots.tpl','mcp/data/master.tpl',
+            'tools/test_mcp_workflow.py','docs/MCP_INTEGRATION.md','licenses/net/inventory.json')) {
+            if (!$seen.Contains($prefix + $required)) { throw "The binary ZIP lacks an MCP distribution member: $required" }
+        }
+        if ($provenance.packagedMcpWorkflow -cne 'passed' -or $provenance.packagedMcpSnapshots -isnot [bool] -or
+            $provenance.packagedMcpToolCalls -lt 1) { throw 'MCP package provenance does not record the actual stdio workflow.' }
+        $mcpNoticePackages = Assert-McpNotices $archive $prefix
+    }
 } finally { $archive.Dispose() }
 $sourcePath = Join-Path $root 'SED-MotS-source.zip'
 $sourceCommit = Get-GitArchiveCommit $sourcePath
@@ -139,6 +206,14 @@ try {
     Assert-ZipMemberNames $source
     foreach ($required in @('LICENSE','global.json','dotnet/src/Sed.Formats/Automation/AgentWorkspace.cs','tools/Build-Net.ps1','tools/Package-Windows.ps1','licenses/net/inventory.json')) {
         if ($null -eq $source.GetEntry($required)) { throw "Corresponding source archive lacks $required" }
+    }
+    if ($hasMcp) {
+        foreach ($required in @('dotnet/tools/Sed.Mcp/Sed.Mcp.csproj','dotnet/tools/Sed.Mcp/packages.lock.json',
+            'dotnet/tools/Sed.Mcp/SedTools.cs','dotnet/tools/Sed.Mcp/Infrastructure/McpFilePolicy.cs',
+            'dotnet/tools/Sed.Mcp/Infrastructure/OperationStore.cs','dotnet/tools/Sed.Mcp/Infrastructure/SnapshotWorker.cs',
+            'dotnet/tests/Sed.Mcp.Tests/Sed.Mcp.Tests.csproj','tools/test_mcp_workflow.py','docs/MCP_INTEGRATION.md')) {
+            if ($null -eq $source.GetEntry($required)) { throw "Corresponding source archive lacks $required" }
+        }
     }
 } finally { $source.Dispose() }
 $bundlePath = Join-Path $root 'SED-MotS-history.bundle'
@@ -150,6 +225,7 @@ if ($LASTEXITCODE -ne 0 -or $bundleHeads.Count -ne 1 -or $bundleHeads[0] -cne "$
 [ordered]@{ verifiedUtc=[DateTime]::UtcNow.ToString('o'); topLevelChecksums=$records.Count;
     windowsZip=$binaryZip.Name; verifiedBinaryMembers=$seen.Count; exactBinaryMemberSet=$true;
     sourceArchiveRequiredFiles=$true; sourceArchiveCommit=$sourceCommit; sourceCommitMatchesBinary=$true;
-    gitBundleVerified=$true; completeHistoryHeadMatchesBinary=$true; installersExecuted=$false } |
+    gitBundleVerified=$true; completeHistoryHeadMatchesBinary=$true; installersExecuted=$false;
+    mcpIncluded=[bool]$hasMcp; mcpRuntimeNoticePackages=$mcpNoticePackages } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $root 'verification.json') -Encoding utf8
 Write-Output "Verified $($seen.Count) distribution files, exact ZIP member set, source archive and Git history."

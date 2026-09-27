@@ -1,6 +1,6 @@
 # Windows quick start
 
-Extract the complete `SED-MotS-…-win-x64.zip` into a writable folder and open `Sed.App.exe`. Keep its neighboring runtime files, `data`, `licenses` and `agent` folders together. The distribution includes .NET; Delphi, Ubuntu and WSL are not required.
+Extract the complete `SED-MotS-…-win-x64.zip` into a writable folder and open `Sed.App.exe`. Keep its neighboring runtime files, `data`, `licenses`, `agent` and `mcp` folders together. The distribution includes .NET; Delphi, Ubuntu and WSL are not required.
 
 The 3D viewport needs a Vulkan-capable graphics driver. Agent editing works without a graphics device or desktop window; the optional `snapshot` command uses offscreen Vulkan for diagnostic or textured, lit images. This is an unsigned development build. Exact file hashes are in `SHA256SUMS.txt`, and source provenance is in `PROVENANCE.json`.
 
@@ -28,6 +28,12 @@ Save and Test writes a loose `episode.jk` and `jkl/<name>.jkl`, plus a GOB or Mo
 The validation and launch-contract checks do not constitute a campaign or multiplayer playtest. Export checks the current editor archives; loose files and other runtime overrides may change which resources the engine resolves. Retain original sources and test exports in the intended engine before distributing a finished level.
 
 ## Use an AI agent
+
+The MCP-enabled package also provides `mcp/sed-mcp.exe` for local clients such as
+Codex. See [MCP setup and workflow](MCP_INTEGRATION.md) for explicit workspace
+paths, project-scoped configuration, typed tools, inline previews and interrupted
+operation recovery. This interface uses the same shared editing services as the
+CLI below; it does not synchronize an open GUI's unsaved document.
 
 Point the assistant or script at `agent/sed-agent.exe` and [AGENT_PROTOCOL.md](AGENT_PROTOCOL.md). No AI service, credentials or model is bundled; this is a local executable it can call.
 

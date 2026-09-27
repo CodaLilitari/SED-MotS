@@ -370,20 +370,22 @@ public static partial class AgentWorkspace
             ResourceCapture = CaptureResources(resourceOptions, exported.Validation, resources, text) };
     }
 
-    public static object Commit(PreparedAgentEdit edit, string outputPath)
+    public static object Commit(PreparedAgentEdit edit, string outputPath, CancellationToken cancellationToken = default)
     {
         // Output creation is deliberately no-clobber. An agent can produce a
         // reviewable result without overwriting the user's original project.
+        cancellationToken.ThrowIfCancellationRequested();
         EnsureInputsUnchanged(edit.InputPath, edit.InputSha256, edit.Dependencies);
         using var resources = ReopenCapturedResources(edit);
         WriteNewBytes(outputPath, new UTF8Encoding(false).GetBytes(edit.OutputText), () => {
             EnsureInputsUnchanged(edit.InputPath, edit.InputSha256, edit.Dependencies);
             resources?.VerifyUnchanged();
+            cancellationToken.ThrowIfCancellationRequested();
         });
         return new { schemaVersion = SchemaVersion, written = Path.GetFullPath(outputPath), plan = edit.Report };
     }
 
-    public static object Create(string outputPath, string game)
+    public static (string OutputText, object Report) PrepareNew(string game)
     {
         var level = LevelFactory.CreateUntexturedRoom(game switch
         {
@@ -394,10 +396,29 @@ public static partial class AgentWorkspace
         foreach (var template in JedImporter.LoadTemplates(level.Kind))
             level.Templates[template.Name] = template;
         var text = JklWriter.Build(new JklDocument(level));
-        WriteNew(outputPath, text);
+        return (text, new { schemaVersion = SchemaVersion, game,
+            outputSha256 = Hash(new UTF8Encoding(false).GetBytes(text)), counts = Counts(level),
+            note = "Untextured room scaffold. Add resources, templates, a player start, and an episode before gameplay testing." });
+    }
+
+    public static object Create(string outputPath, string game, CancellationToken cancellationToken = default)
+        => Create(outputPath, game, null, cancellationToken);
+
+    public static object Create(string outputPath, string game, string? expectedOutputSha256,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var prepared = PrepareNew(game);
+        if (expectedOutputSha256 is not null && !string.Equals(
+            Hash(new UTF8Encoding(false).GetBytes(prepared.OutputText)), expectedOutputSha256, StringComparison.OrdinalIgnoreCase))
+            throw new AgentConflictException("The new-level output differs from the reviewed plan. Plan again.");
+        cancellationToken.ThrowIfCancellationRequested();
+        WriteNewBytes(outputPath, new UTF8Encoding(false).GetBytes(prepared.OutputText),
+            cancellationToken.ThrowIfCancellationRequested);
+        var report = JsonSerializer.SerializeToElement(prepared.Report, JsonOptions);
         return new { schemaVersion = SchemaVersion, written = Path.GetFullPath(outputPath),
-            inputSha256 = Hash(new UTF8Encoding(false).GetBytes(text)), counts = Counts(level),
-            note = "Untextured room scaffold. Add resources, templates, a player start, and an episode before gameplay testing." };
+            inputSha256 = report.GetProperty("outputSha256").GetString(), counts = report.GetProperty("counts"),
+            note = report.GetProperty("note").GetString() };
     }
 
     private static void WriteNew(string path, string text)

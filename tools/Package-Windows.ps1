@@ -2,6 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$DotNet,
+    [string]$Python = 'python',
     [string]$Version = '0.4.0-mots.1-dev',
     [string]$OutputDirectory,
     [switch]$RunAgentSnapshots
@@ -10,6 +11,12 @@ $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$') { throw 'Version must be a SemVer-style version without spaces.' }
 $repo = Split-Path -Parent $PSScriptRoot
 $dotnetExe = (Resolve-Path -LiteralPath $DotNet).Path
+if (Test-Path -LiteralPath $Python -PathType Leaf) { $pythonExe = (Resolve-Path -LiteralPath $Python).Path }
+else {
+    $pythonCommand = Get-Command $Python -CommandType Application -ErrorAction SilentlyContinue
+    if (!$pythonCommand) { throw 'Supply -Python with a Python 3.10+ interpreter for the packaged stdio MCP workflow.' }
+    $pythonExe = $pythonCommand.Source
+}
 $head = (& git -C $repo rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or $head -cnotmatch '^(?:[0-9a-f]{40}|[0-9a-f]{64})$') { throw 'Cannot identify the source commit.' }
 function Assert-SourceUnchanged {
@@ -50,12 +57,13 @@ function Invoke-DotNet([string[]]$Arguments, [string]$LogName) {
 & (Join-Path $PSScriptRoot 'Build-Net.ps1') -DotNet $dotnetExe
 Invoke-DotNet @('publish','dotnet/src/Sed.App/Sed.App.csproj','-c','Release','-r','win-x64','--self-contained','true','-p:PublishTrimmed=false',"-p:Version=$Version",'-o',$package,'--nologo') 'publish-editor.log'
 Invoke-DotNet @('publish','dotnet/tools/Sed.Agent/Sed.Agent.csproj','-c','Release','-r','win-x64','--self-contained','true',"-p:Version=$Version",'-o',(Join-Path $package 'agent'),'--nologo') 'publish-agent.log'
-foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent/coreclr.dll')) {
+Invoke-DotNet @('publish','dotnet/tools/Sed.Mcp/Sed.Mcp.csproj','-c','Release','-r','win-x64','--self-contained','true','-p:RestoreLockedMode=true',"-p:Version=$Version",'-o',(Join-Path $package 'mcp'),'--nologo') 'publish-mcp.log'
+foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent/coreclr.dll','mcp/sed-mcp.exe','mcp/sed-mcp.dll','mcp/coreclr.dll','mcp/ModelContextProtocol.Core.dll')) {
     if (!(Test-Path -LiteralPath (Join-Path $package $required) -PathType Leaf)) { throw "Missing published runtime component: $required" }
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/compare_engine_lighting.py tools/test_engine_lighting.py)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/compare_engine_lighting.py tools/test_engine_lighting.py tools/test_mcp_workflow.py)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }
@@ -65,9 +73,11 @@ foreach ($relative in $supportFiles) {
     $null = New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force
     Copy-Item -LiteralPath $sourceFile -Destination $destination
     if ($relative.StartsWith('data/')) {
-        $agentDestination = Join-Path $package ('agent/' + $relative)
-        $null = New-Item -ItemType Directory -Path (Split-Path -Parent $agentDestination) -Force
-        Copy-Item -LiteralPath $sourceFile -Destination $agentDestination
+        foreach ($component in @('agent', 'mcp')) {
+            $componentDestination = Join-Path $package ($component + '/' + $relative)
+            $null = New-Item -ItemType Directory -Path (Split-Path -Parent $componentDestination) -Force
+            Copy-Item -LiteralPath $sourceFile -Destination $componentDestination
+        }
     }
 }
 Copy-Item -LiteralPath (Join-Path $repo 'docs/WINDOWS_QUICKSTART.md') -Destination (Join-Path $package 'START-HERE.md')
@@ -103,12 +113,37 @@ if ($RunAgentSnapshots) {
     & (Join-Path $PSScriptRoot 'Test-AgentLitSnapshot.ps1') -AgentPath $agent -OutputDirectory (Join-Path $output 'agent-lit-snapshot')
 }
 
+# Exercise the packaged stdio host and its packaged worker, not development bin/.
+$mcp = Join-Path $package 'mcp/sed-mcp.exe'
+$mcpEvidence = Join-Path $output 'mcp-workflow'
+$mcpStart = [Diagnostics.ProcessStartInfo]::new()
+$mcpStart.FileName = $pythonExe; $mcpStart.WorkingDirectory = $package
+$mcpArguments = @((Join-Path $package 'tools/test_mcp_workflow.py'), '--server', $mcp, '--agent', $agent, '--output', $mcpEvidence)
+if ($RunAgentSnapshots) { $mcpArguments += '--snapshots' }
+foreach ($argument in $mcpArguments) { $mcpStart.ArgumentList.Add($argument) }
+$mcpStart.UseShellExecute = $false; $mcpStart.CreateNoWindow = $true
+$mcpStart.RedirectStandardOutput = $true; $mcpStart.RedirectStandardError = $true
+$mcpProcess = [Diagnostics.Process]::Start($mcpStart)
+try {
+    $mcpStdout = $mcpProcess.StandardOutput.ReadToEndAsync(); $mcpStderr = $mcpProcess.StandardError.ReadToEndAsync()
+    $mcpProcess.WaitForExit()
+    [IO.File]::WriteAllText((Join-Path $output 'mcp-workflow.log'), $mcpStdout.GetAwaiter().GetResult() + $mcpStderr.GetAwaiter().GetResult())
+    if ($mcpProcess.ExitCode -ne 0) { throw 'Packaged MCP stdio workflow failed; see mcp-workflow.log.' }
+} finally { $mcpProcess.Dispose() }
+$mcpReceipt = Get-Content -LiteralPath (Join-Path $mcpEvidence 'verification.json') -Raw | ConvertFrom-Json
+if ($mcpReceipt.status -cne 'passed' -or $mcpReceipt.snapshotsRequested -ne [bool]$RunAgentSnapshots -or
+    $mcpReceipt.serverSha256 -cne (Get-FileHash -LiteralPath $mcp -Algorithm SHA256).Hash.ToLowerInvariant() -or
+    $mcpReceipt.managedSha256 -cne (Get-FileHash -LiteralPath (Join-Path $package 'mcp/sed-mcp.dll') -Algorithm SHA256).Hash.ToLowerInvariant()) {
+    throw 'MCP workflow receipt does not confirm the packaged executable and managed companion.'
+}
+
 Assert-SourceUnchanged
 $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Version; commit=$head;
     basedOn='https://github.com/davidagnome/SED/tree/908d53d70d6b95784a92e9f1746ab5b13afcfdf0';
     sourceArchive='SED-MotS-source.zip'; target='win-x64'; selfContained=$true;
     guiLaunched=$false; gameLaunched=$false; packagedAgentSmoke='passed'; packagedAgentWorkflow='passed';
     packagedAgentDesign='passed'; packagedAgentSourceLights='passed'; packagedAgentSpatial='passed'; packagedAgentEditing='passed'; packagedAgentSnapshots=[bool]$RunAgentSnapshots;
+    packagedMcpWorkflow='passed'; packagedMcpSnapshots=[bool]$RunAgentSnapshots; packagedMcpToolCalls=$mcpReceipt.toolCalls;
     createdUtc=[DateTime]::UtcNow.ToString('o'); dotnetSha256=(Get-FileHash -LiteralPath $dotnetExe -Algorithm SHA256).Hash.ToLowerInvariant() }
 $provenance | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $package 'PROVENANCE.json') -Encoding utf8
 $manifest = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {

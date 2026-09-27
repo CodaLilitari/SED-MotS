@@ -10,6 +10,15 @@ The fork preserves MotS's independent mono/RGB lighting, architectural arrays an
 
 Agents can discover focused command schemas, query current values in bounded pages, send JSON on stdin, and require an exact reviewed output hash before writing. Native project edits also bind the imported template dependencies. The [agent workflows](docs/AGENT_WORKFLOWS.md) show the inspect, plan, apply and readback loop; no model service or API key is needed.
 
+The local [MCP-01 adapter](docs/MCP_INTEGRATION.md) exposes eleven named tools
+for discovery, querying, geometric selection, diagnostics, reviewed edits,
+conversion, archive inspection, inline previews and outcome reconciliation.
+It runs over stdio without screen control, uses explicit workspace/resource
+roots and retains durable edit receipts across reconnection. Conversion binds
+reviewed source/template identities as well as output bytes. The renderer runs
+in a fixed isolated worker. Neither MCP nor the CLI synchronizes unsaved GUI
+documents; configuration and precise limits are in the MCP guide.
+
 [EDIT-01](docs/EDITING_FOUNDATIONS.md) adds shared neighbor texture alignment,
 point-containment diagnostics, known direct asset receipts, world bake explanations
 and typed COG discovery/rebinding. COG edits require a complete script schema and
@@ -22,7 +31,7 @@ Source lights now retain independent white and RGB intensities from supported JE
 
 The agent can also register material/colormap references, edit surface UVs, extrude rooms and connect matching faces with checked portals. Queries expose surface normals, geometry bounds and neighboring sectors. Spatial `select` finds a room by world point or a face by outward direction and supplies a token bound to the source and containing-sector geometry; ambiguous and stale targeting never silently chooses another object. The [spatial authoring contract](docs/SPATIAL_SELECTION.md) describes its bounded convex-geometry scope. An explicit-camera `snapshot` produces a PNG using offscreen Vulkan without opening a window: diagnostic mode checks geometry, while lit mode loads explicitly hash-bound archives and previews static world/model lighting, MotS mono/RGB channels, compatible ARCHLIGHTING and sector CMPs.
 
-Lit snapshots select `renderProfile: "openjk"` by default, multiplying the base palette color by textured scalar light; `"palette"` selects CMP light-table rows for comparison. This choice is independent of `lightingMode: "game"`, `"mono"` or `"rgb"`. Ordinary model things keep their mono pass even in an RGB world. The preview and resource-aware exports share checks for available native architectural model fingerprints and topology across LODs. These checks do not rebake lighting or add lower-LOD rendering. Dynamic lights, animations and retail pixel parity remain separate work; see [renderer details](docs/RENDERER_LIGHTING.md). The included [Codex skill](.agents/skills/sed-mots/SKILL.md) supports this workflow through the CLI. An MCP adapter is optional future integration; see the [agent design roadmap](docs/AGENT_DESIGN_ROADMAP.md).
+Lit snapshots select `renderProfile: "openjk"` by default, multiplying the base palette color by textured scalar light; `"palette"` selects CMP light-table rows for comparison. This choice is independent of `lightingMode: "game"`, `"mono"` or `"rgb"`. Ordinary model things keep their mono pass even in an RGB world. The preview and resource-aware exports share checks for available native architectural model fingerprints and topology across LODs. These checks do not rebake lighting or add lower-LOD rendering. Dynamic lights, animations and retail pixel parity remain separate work; see [renderer details](docs/RENDERER_LIGHTING.md). The included [Codex skill](.agents/skills/sed-mots/SKILL.md) supports this workflow through CLI or MCP; see the [agent design roadmap](docs/AGENT_DESIGN_ROADMAP.md).
 
 The [background engine capture tools](docs/ENGINE_CAPTURE.md) extend that loop into an existing OpenMotS capture build: prepare an original architectural-lighting fixture with the agent, stage explicitly hashed local engine resources, capture a requested camera in a hidden process, and compare controlled RGB changes with independently projected geometry masks. Each attempt records its inputs, limits and result. The companion tools use Python's standard library and require locally owned game bootstrap assets; no game assets are bundled. This bounded static check does not qualify a playable mission, retail behavior or deterministic simulation.
 
@@ -38,7 +47,7 @@ Use the .NET SDK pinned by `global.json`:
 
 This builds the solution and runs its tests, recording unique logs under `build/dotnet`. It does not start the editor or a game. The checked-in shaders permit a Windows build without a Vulkan SDK; running the 3D viewport needs a Vulkan graphics driver.
 
-After committing the reviewed source, `tools/Package-Windows.ps1` creates a self-contained Windows editor, self-contained agent, corresponding source ZIP, Git history bundle, notices and SHA256 manifests. It requires PowerShell 7 and smoke-tests the packaged agent. `tools/Collect-NetNotices.ps1` collects notices from restored packages and their pinned upstream sources.
+After committing the reviewed source, `tools/Package-Windows.ps1` creates a self-contained Windows editor, agent and MCP adapter, corresponding source ZIP, Git history bundle, notices and SHA256 manifests. Packaging requires PowerShell 7.4+ and Python 3.10+ (`-Python` selects an interpreter) for the actual packaged stdio workflow. End users do not need Python for normal GUI, CLI or MCP use. `tools/Collect-NetNotices.ps1` collects notices from restored packages and their pinned upstream sources.
 
 ## Provenance
 
