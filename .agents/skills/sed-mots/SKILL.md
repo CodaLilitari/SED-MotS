@@ -45,6 +45,21 @@ For architectural lighting, discover `schema bindThingArchitecture`, `schema reb
 
 For actual engine inspection, read [ENGINE-01](../../../docs/ENGINE_CAPTURE.md). The Python companion tools prepare an original fixture through the real agent and invoke only an explicitly supplied capture-v1 engine with an exact bootstrap manifest in a new working directory. Use the isolated single-case diagnostic before the complete differential matrix. Keep authored geometry masks independent of observed pixel differences; include RGB swap, valid zero reset, unbound fallback, white-only changes, metadata removal/interleaving and clean-process repeats. Inspect the image and acceptance receipts. Final staged hashes and archive-name collision checks are launcher evidence; capture-v1 does not observe resolved resource bytes, effective camera, loaded ARCH arrays or deterministic simulation. A passing static matrix is not retail or gameplay qualification. A normal engine executable and ordinary launch-plan flags cannot substitute for the capture build.
 
+For movers and mission logic, discover `setThingFrames` and `addCog` and read
+[PLAY-01](../../../docs/PLAYABLE_AUTHORING.md). Frames are ordered absolute poses
+on a path mover; changing frame order changes behavior. Query the repeated
+`sourceParameters`, because a dictionary can show only the last `frame`.
+COG placement requires the exact script hash and complete named typed bindings
+from explicit archives; adding a placed COG must preserve existing references.
+Save/reopen and inspect the actual portal chain and bindings before runtime work.
+The optional PLAY engine records normal control input, physical state and COG
+dispatches. Its offline fixture test checks gate blockage, activation, movement,
+portal crossings and objective transitions with fault controls. Adapt those
+predicates to the authored level rather than treating one corridor's receipt as
+general gameplay proof. MotS `MoveToFrame` scales its speed argument by `0.1`.
+The tested exit-room goal does not establish campaign transition, and the
+wall-clock input schedule does not provide deterministic simulation.
+
 MotS stores separate mono/RGB corner lighting and architectural data. Preserved baked lighting is not newly calculated lighting. Unknown sections and COG values can contain references; do not approximate unsupported delete/reorder or topology changes by rewriting raw numbers. Existing malformed levels may remain readable while edits are refused; report the actual diagnostics and supported repair options.
 
 Source lights also distinguish white intensity from a nullable RGB override. Discover `schema setLight` and query stored and effective values before editing. Omitted fields preserve state; `rgbIntensity: null` relinks RGB to white, while explicit zero or an equal value remains independent. `legacyRgbRange` is retained metadata, not a second bake falloff. Native imports save into extended JKL; keep the native source, because extension-unaware editors can drop authoring metadata. A validated metadata binding describes the current indexed rows, not preservation history or runtime compatibility.

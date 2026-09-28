@@ -80,6 +80,38 @@ public static partial class AgentWorkspace
         ExplicitArchiveResources? resources, out IEditCommand? command)
     {
         command = null;
+        if (String(op, "op") == "addCog")
+        {
+            Fields(op, ["op", .. OperationFields["addCog"]]);
+            if (resources is null) throw new AgentRequestException("COG creation requires explicit resourceArchives and scriptSha256.");
+            string name = Token(op, "script");
+            string expectedHash = ResourceManifest.NormalizeHash(String(op, "scriptSha256"), "scriptSha256");
+            var resolved = ReadCogScript(resources, name);
+            if (resolved.Sha256 != expectedHash)
+                throw new AgentConflictException("The COG script is missing or differs from the reviewed bytes.", jsonPointer: "/scriptSha256");
+            var rows = op.GetProperty("bindings");
+            if (rows.ValueKind != JsonValueKind.Array || rows.GetArrayLength() > CogBindings.MaxAuthoredBindings)
+                throw FieldError($"bindings must be an array of at most {CogBindings.MaxAuthoredBindings} named references.", "bindings");
+            var bindings = new List<CogNamedReference>();
+            int rowIndex = 0;
+            foreach (var row in rows.EnumerateArray())
+            {
+                try
+                {
+                    Fields(row, "symbol", "kind", "targetIndex");
+                    bindings.Add(new(Token(row, "symbol"), CogReferenceType(row), Integer(row, "targetIndex")));
+                }
+                catch (AgentRequestException error)
+                {
+                    throw new AgentRequestException(error.Message, jsonPointer: $"/bindings/{rowIndex}" + error.JsonPointer);
+                }
+                rowIndex++;
+            }
+            try { command = CogBindings.PrepareAdd(doc, name, resolved.Script, bindings,
+                existingName => ReadCogScript(resources, existingName).Script); }
+            catch (CogBindingException error) { throw new AgentRequestException($"{error.Code}: {error.Message}"); }
+            return true;
+        }
         if (String(op, "op") != "rebindCogReference") return false;
         Fields(op, ["op", .. OperationFields["rebindCogReference"]]);
         if (resources is null) throw new AgentRequestException("Typed COG edits require explicit resourceArchives and a reviewed scriptSha256 from bindings.");
@@ -89,21 +121,23 @@ public static partial class AgentWorkspace
         var script = ReadCogScript(resources, cog.Name);
         if (expected != script.Sha256)
             throw new AgentConflictException("The resolved COG script is missing or differs from the reviewed schema. Query bindings again.", jsonPointer: "/scriptSha256");
-        var kind = String(op, "kind") switch
-        {
-            "thing" => CogSymbolType.Thing, "sector" => CogSymbolType.Sector,
-            "surface" => CogSymbolType.Surface, "cog" => CogSymbolType.Cog,
-            _ => throw FieldError("kind must be thing, sector, surface or cog.", "kind"),
-        };
+        var kind = CogReferenceType(op);
         try { command = CogBindings.PrepareRebind(doc, index, Integer(op, "parameter"),
             Token(op, "symbol"), kind, Integer(op, "targetIndex"), script.Script); }
         catch (CogBindingException error) { throw new AgentRequestException($"{error.Code}: {error.Message}"); }
         return true;
     }
 
-    private static object CogOperationEffect(JklDocument doc, JsonElement op)
+    private static CogSymbolType CogReferenceType(JsonElement value) => String(value, "kind") switch
     {
-        int index = Integer(op, "cog");
+        "thing" => CogSymbolType.Thing, "sector" => CogSymbolType.Sector,
+        "surface" => CogSymbolType.Surface, "cog" => CogSymbolType.Cog,
+        _ => throw FieldError("kind must be thing, sector, surface or cog.", "kind"),
+    };
+
+    private static object CogOperationEffect(JklDocument doc, JsonElement op, int? created = null)
+    {
+        int index = created ?? Integer(op, "cog");
         var cog = At(doc.Level.Cogs, index, "cog");
         return new { target = new { kind = "cog", index }, state = new { cog.Name, values = cog.Values.ToArray() } };
     }

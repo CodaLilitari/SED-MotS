@@ -46,7 +46,7 @@ REQUIRED_BINARIES = {"openjkdf2-64.exe": "engine", "OpenAL32.dll": "runtime",
                      "libGameNetworkingSockets.dll": "runtime"}
 RESERVED = {"capture.ppm", "capture.ppm.json", "capture-request.txt", "request.json",
             "launcher-receipt.json", "manifest-before.json", "manifest-after.json", "manifest-prelaunch.json",
-            "stdout.log", "stderr.log", ".openjkdf2-capture-session"}
+            "stdout.log", "stderr.log", ".openjkdf2-capture-session", "play-request.txt", "play-telemetry.json"}
 
 
 class CaptureError(ValueError):
@@ -122,7 +122,7 @@ def is_link(path):
 
 def validate_request(request):
     exact_keys(request, {"schemaVersion", "episode", "map", "camera", "files"},
-               {"frame", "engineTimeoutMs", "runnerTimeoutMs", "logLimitBytes"}, "request")
+               {"frame", "engineTimeoutMs", "runnerTimeoutMs", "logLimitBytes", "gameplay"}, "request")
     require(type(request["schemaVersion"]) is int and request["schemaVersion"] == 1, "Unsupported request schemaVersion.")
     episode, level = request["episode"], request["map"]
     require(isinstance(episode, str) and re.fullmatch(r"[A-Za-z0-9_-]{1,31}", episode), "Invalid episode name.")
@@ -175,9 +175,13 @@ def validate_request(request):
                 f"episode/{episode}/jkl/{level}": "scenario"}
     for dest, role in required.items():
         require(dest in by_dest and by_dest[dest]["role"] == role, f"Missing required {role} input: {dest}")
-    return {"schemaVersion": 1, "episode": episode, "map": level, "camera": normalized, "frame": frame,
+    result = {"schemaVersion": 1, "episode": episode, "map": level, "camera": normalized, "frame": frame,
             "engineTimeoutMs": engine_timeout, "runnerTimeoutMs": runner_timeout, "logLimitBytes": log_limit,
             "files": result_files}
+    if "gameplay" in request:
+        from engine_play_contract import validate_gameplay
+        result["gameplay"] = validate_gameplay(request["gameplay"], engine_timeout)
+    return result
 
 
 def validate_config(path, destination):
@@ -573,6 +577,14 @@ def run_capture(request_path, output, *, executor=supervise, _before_final_stage
         names = {"SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA", "APPDATA", "HOMEDRIVE", "HOMEPATH"}
         environment = {k: v for k, v in os.environ.items() if k.upper() in names}
         environment["OPENJKDF2_CAPTURE_REQUEST"] = str(capture_request)
+        if "gameplay" in request:
+            from engine_play_contract import gameplay_text
+            play_request = output / "play-request.txt"
+            with play_request.open("x", encoding="ascii", newline="\n") as stream:
+                stream.write(gameplay_text(request["gameplay"], output / "play-telemetry.json"))
+            receipt["gameplayRequestSha256"] = sha256(play_request)
+            receipt["requestedGameplay"] = request["gameplay"]
+            environment["OPENJKDF2_PLAY_REQUEST"] = str(play_request)
         if executor is supervise:
             require(os.name == "nt", "Actual capture is supported only on Windows.")
         receipt["failureStage"] = "resource-closure"
@@ -597,6 +609,11 @@ def run_capture(request_path, output, *, executor=supervise, _before_final_stage
         receipt["failureStage"] = "capture-validation"
         check_generated_budget(output, {item["destination"]: item for item in before})
         receipt.update(validate_capture(output, request))
+        if "gameplay" in request:
+            from engine_play_contract import validate_telemetry
+            receipt["gameplay"] = validate_telemetry(output / "play-telemetry.json", request["gameplay"])
+            require(sha256(output / "play-request.txt") == receipt["gameplayRequestSha256"],
+                    "Generated gameplay request changed during execution.")
         receipt["status"] = "completed"
         receipt["failureStage"] = None
     except (Exception, KeyboardInterrupt) as exc:

@@ -63,7 +63,7 @@ foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/compare_engine_lighting.py tools/test_engine_lighting.py tools/test_mcp_workflow.py)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/engine_play_contract.py tools/compare_engine_lighting.py tools/test_engine_lighting.py tools/test_mcp_workflow.py tools/new_playable_fixture.py tools/test_playable_workflow.py)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }
@@ -137,6 +137,39 @@ if ($mcpReceipt.status -cne 'passed' -or $mcpReceipt.snapshotsRequested -ne [boo
     throw 'MCP workflow receipt does not confirm the packaged executable and managed companion.'
 }
 
+# Author the original playable exercise with the packaged tools; engine execution
+# is a separate opt-in test requiring the user's explicit game-resource manifest.
+$playEvidence = Join-Path $output 'play-authoring'
+$playStart = [Diagnostics.ProcessStartInfo]::new()
+$playStart.FileName = $pythonExe; $playStart.WorkingDirectory = $package
+foreach ($argument in @((Join-Path $package 'tools/new_playable_fixture.py'), '--server', $mcp, '--agent', $agent, '--output', $playEvidence)) {
+    $playStart.ArgumentList.Add($argument)
+}
+$playStart.UseShellExecute = $false; $playStart.CreateNoWindow = $true
+$playStart.RedirectStandardOutput = $true; $playStart.RedirectStandardError = $true
+$playProcess = [Diagnostics.Process]::Start($playStart)
+try {
+    $playStdout = $playProcess.StandardOutput.ReadToEndAsync(); $playStderr = $playProcess.StandardError.ReadToEndAsync()
+    $playProcess.WaitForExit()
+    [IO.File]::WriteAllText((Join-Path $output 'play-authoring.log'), $playStdout.GetAwaiter().GetResult() + $playStderr.GetAwaiter().GetResult())
+    if ($playProcess.ExitCode -ne 0) { throw 'Packaged PLAY authoring failed; see play-authoring.log.' }
+} finally { $playProcess.Dispose() }
+$playReceipt = Get-Content -LiteralPath (Join-Path $playEvidence 'authoring-receipt.json') -Raw | ConvertFrom-Json
+if ($playReceipt.status -cne 'authored' -or $playReceipt.gameLaunched -ne $false -or
+    $playReceipt.serverSha256 -cne (Get-FileHash -LiteralPath $mcp -Algorithm SHA256).Hash.ToLowerInvariant() -or
+    $playReceipt.agentSha256 -cne (Get-FileHash -LiteralPath $agent -Algorithm SHA256).Hash.ToLowerInvariant()) {
+    throw 'PLAY authoring receipt does not confirm the packaged tools.'
+}
+foreach ($assembly in $playReceipt.managedAssemblies) {
+    if ($assembly.sha256 -cne (Get-FileHash -LiteralPath $assembly.path -Algorithm SHA256).Hash.ToLowerInvariant()) {
+        throw 'A managed tool assembly changed after PLAY authoring.'
+    }
+}
+if ($playReceipt.managedAssemblies.Count -ne 6 -or $playReceipt.variants.Count -ne 4 -or
+    @($playReceipt.variants | Where-Object { $_.reopenedTopologyMatches -ne $true }).Count -ne 0) {
+    throw 'PLAY authoring receipt lacks complete managed identities or reopened topology evidence.'
+}
+
 Assert-SourceUnchanged
 $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Version; commit=$head;
     basedOn='https://github.com/davidagnome/SED/tree/908d53d70d6b95784a92e9f1746ab5b13afcfdf0';
@@ -144,6 +177,7 @@ $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Ve
     guiLaunched=$false; gameLaunched=$false; packagedAgentSmoke='passed'; packagedAgentWorkflow='passed';
     packagedAgentDesign='passed'; packagedAgentSourceLights='passed'; packagedAgentSpatial='passed'; packagedAgentEditing='passed'; packagedAgentSnapshots=[bool]$RunAgentSnapshots;
     packagedMcpWorkflow='passed'; packagedMcpSnapshots=[bool]$RunAgentSnapshots; packagedMcpToolCalls=$mcpReceipt.toolCalls;
+    packagedPlayAuthoring='passed'; packagedPlayToolCalls=$playReceipt.calls.Count;
     createdUtc=[DateTime]::UtcNow.ToString('o'); dotnetSha256=(Get-FileHash -LiteralPath $dotnetExe -Algorithm SHA256).Hash.ToLowerInvariant() }
 $provenance | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $package 'PROVENANCE.json') -Encoding utf8
 $manifest = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {

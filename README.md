@@ -19,6 +19,14 @@ reviewed source/template identities as well as output bytes. The renderer runs
 in a fixed isolated worker. Neither MCP nor the CLI synchronizes unsaved GUI
 documents; configuration and precise limits are in the MCP guide.
 
+The [PLAY-01 authoring workflow](docs/PLAYABLE_AUTHORING.md) adds typed COG
+placement and ordered path frames through those same shared commands. Its
+original four-room MotS exercise has passed hidden gameplay runs in a separately
+instrumented OpenMotS build, including activation, gate motion, traversal and
+objective state, with four fault controls. The editor distribution itself does
+not bundle that engine or game assets; the guide distinguishes authoring,
+static preview and runtime evidence.
+
 [EDIT-01](docs/EDITING_FOUNDATIONS.md) adds shared neighbor texture alignment,
 point-containment diagnostics, known direct asset receipts, world bake explanations
 and typed COG discovery/rebinding. COG edits require a complete script schema and

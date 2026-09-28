@@ -1,3 +1,5 @@
+using Sed.Core.Editing;
+using Sed.Formats.Cogs;
 using Sed.Formats.Resources;
 
 namespace Sed.Formats.Automation;
@@ -27,6 +29,16 @@ public static class AgentSchema
                     "targetIndex" => new { type = "integer", minimum = -1, maximum = int.MaxValue },
                     "kind" => new Dictionary<string, object> { ["enum"] = new[] { "thing", "sector", "surface", "cog" } },
                     "scriptSha256" => new { type = "string", pattern = "^[0-9a-fA-F]{64}$" },
+                    "script" => new { type = "string", minLength = 5, maxLength = CogBindings.MaxAuthoredScriptName, pattern = "^(?!.*[/\\\\:])[!$-~]+\\.[cC][oO][gG]$",
+                        description = "ASCII .cog basename; path separators and colon are refused." },
+                    "bindings" => new { type = "array", minItems = 0, maxItems = CogBindings.MaxAuthoredBindings,
+                        items = new { type = "object", additionalProperties = false, required = new[] { "symbol", "kind", "targetIndex" },
+                            properties = new { symbol = Token(), kind = new Dictionary<string, object> { ["enum"] = new[] { "thing", "sector", "surface", "cog" } },
+                                targetIndex = new { type = "integer", minimum = -1, maximum = int.MaxValue } } } },
+                    "frames" => new { type = "array", minItems = 1, maxItems = SetThingFramesCommand.MaxFrames,
+                        items = new { type = "object", additionalProperties = false, required = new[] { "position", "orientation" },
+                            properties = new { position = Vector(-SetThingFramesCommand.MaxCoordinate, SetThingFramesCommand.MaxCoordinate),
+                                orientation = Vector(-SetThingFramesCommand.MaxCoordinate, SetThingFramesCommand.MaxCoordinate) } } },
                     "policy" => new Dictionary<string, object> { ["const"] = "reset" },
                     "profile" => new Dictionary<string, object> { ["enum"] = new[] { "source-points-v1", "source-points-world-occluded-v1" } },
                     "position" or "center" or "orientation" => Vector(-1_000_000, 1_000_000),
@@ -74,7 +86,7 @@ public static class AgentSchema
             ["allOf"] = new object[] { new Dictionary<string, object> {
                 ["if"] = new { properties = new { operations = new { contains = new {
                     required = new[] { "op" }, properties = new { op = new Dictionary<string, object> {
-                        ["enum"] = new[] { "bindThingArchitecture", "rebindThingArchitecture", "bakeThingArchitecture", "rebindCogReference" } } } } } } },
+                        ["enum"] = new[] { "bindThingArchitecture", "rebindThingArchitecture", "bakeThingArchitecture", "rebindCogReference", "addCog" } } } } } } },
                 ["then"] = new { required = new[] { "resourceArchives" } },
             } },
             ["properties"] = new Dictionary<string, object>
@@ -99,7 +111,9 @@ public static class AgentSchema
         "setThingName" => "Set the thing's display name without changing its template.",
         "setThingTemplate" => "Use an existing template from query templates. Clear an incompatible architecture binding explicitly first.",
         "setThingValue" => "Set one named thing parameter. Inspect values before editing; this is not a COG reference-remapping operation.",
+        "setThingFrames" => "Replace an existing move=path thing's ordered absolute position/orientation frames and numframes together. Uses 1..256 frames within +/-1000000, preserves complete effective parameter records and exact undo. The final touched thing must still resolve move=path, have coherent frame/count records, and be unbound from ARCH. Does not change current position, test collisions or certify engine capacity. Query things sourceParameters for ordered readback.",
         "clearThingArchitecture" => "Explicitly clear a thing's architectural lighting binding; retain the stored lighting arrays.",
+        "addCog" => "Append a COG from an exact hash-bound archive script with a complete symbol schema. Supply every external thing/sector/global-surface/placed-COG reference once by name/type; declaration order controls serialization. Existing placed COG scripts also require complete schemas and exact parameter layouts in the explicit archives; append refuses every existing non-static unchecked runtime/template COG reference because it can capture or shift its allocation. Closure inspection is bounded to 4096 existing COGs and 100000 parameters. No inferred defaults or unsupported scalar/resource bindings. Requires resourceArchives and scriptSha256. Returns appended index through plan readback; no script execution.",
         "rebindCogReference" => "Rebind one existing typed thing/sector/global-surface/placed-COG parameter (or -1 null) through the shared undoable command. Requires the exact complete script schema, parameter count, symbol, kind and scriptSha256 from bindings. resourceArchives are mandatory; scripts and other values are preserved. Static/runtime COG links and guessed layouts are refused.",
         "bindThingArchitecture" => "Bind an unbound MotS architecture thing to a private copy of compatible stored samples. Requires resourceArchives; records current model acceptance, not historical bake origin. Read indices using query architecture.",
         "rebindThingArchitecture" => "Explicitly reset this MotS architecture thing to a private zeroed allocation for the captured current model. Requires policy reset and resourceArchives. Retains old arrays; does not bake. Single-LOD static layouts only.",

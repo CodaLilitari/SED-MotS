@@ -197,6 +197,18 @@ try {
             $provenance.packagedMcpToolCalls -lt 1) { throw 'MCP package provenance does not record the actual stdio workflow.' }
         $mcpNoticePackages = Assert-McpNotices $archive $prefix
     }
+    $hasPlay = $seen.Contains($prefix + 'tools/new_playable_fixture.py') -or
+        $null -ne $provenance.PSObject.Properties['packagedPlayAuthoring']
+    if ($hasPlay) {
+        foreach ($required in @('tools/new_playable_fixture.py','tools/new_engine_lighting_fixture.py',
+            'tools/test_playable_workflow.py','tools/engine_play_contract.py','tools/invoke_engine_capture.py',
+            'tools/engine_resource_closure.py','docs/PLAYABLE_AUTHORING.md')) {
+            if (!$seen.Contains($prefix + $required)) { throw "The binary ZIP lacks a PLAY companion: $required" }
+        }
+        if (!$hasMcp -or $provenance.packagedPlayAuthoring -cne 'passed' -or $provenance.packagedPlayToolCalls -lt 1) {
+            throw 'PLAY package provenance does not record the actual authoring workflow.'
+        }
+    }
 } finally { $archive.Dispose() }
 $sourcePath = Join-Path $root 'SED-MotS-source.zip'
 $sourceCommit = Get-GitArchiveCommit $sourcePath
@@ -215,6 +227,14 @@ try {
             if ($null -eq $source.GetEntry($required)) { throw "Corresponding source archive lacks $required" }
         }
     }
+    if ($hasPlay) {
+        foreach ($required in @('dotnet/src/Sed.Core/Editing/SetThingFramesCommand.cs',
+            'dotnet/src/Sed.Formats/Automation/AgentThingFrameOperations.cs',
+            'dotnet/tests/Sed.Core.Tests/PlayableAuthoringTests.cs',
+            'tools/tests/test_engine_play_contract.py','tools/tests/test_playable_topology.py')) {
+            if ($null -eq $source.GetEntry($required)) { throw "Corresponding PLAY source archive lacks $required" }
+        }
+    }
 } finally { $source.Dispose() }
 $bundlePath = Join-Path $root 'SED-MotS-history.bundle'
 Assert-CompleteHeadBundle $bundlePath $provenance.commit
@@ -226,6 +246,6 @@ if ($LASTEXITCODE -ne 0 -or $bundleHeads.Count -ne 1 -or $bundleHeads[0] -cne "$
     windowsZip=$binaryZip.Name; verifiedBinaryMembers=$seen.Count; exactBinaryMemberSet=$true;
     sourceArchiveRequiredFiles=$true; sourceArchiveCommit=$sourceCommit; sourceCommitMatchesBinary=$true;
     gitBundleVerified=$true; completeHistoryHeadMatchesBinary=$true; installersExecuted=$false;
-    mcpIncluded=[bool]$hasMcp; mcpRuntimeNoticePackages=$mcpNoticePackages } |
+    mcpIncluded=[bool]$hasMcp; mcpRuntimeNoticePackages=$mcpNoticePackages; playAuthoringIncluded=[bool]$hasPlay } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $root 'verification.json') -Encoding utf8
 Write-Output "Verified $($seen.Count) distribution files, exact ZIP member set, source archive and Git history."

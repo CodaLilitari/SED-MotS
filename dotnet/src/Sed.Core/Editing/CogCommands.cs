@@ -98,6 +98,7 @@ public sealed class SetCogScriptCommand : IEditCommand
 public sealed class CreateCogCommand : IEditCommand
 {
     private readonly Level _level;
+    private readonly int _oldNumber;
 
     public Cog Cog { get; }
 
@@ -105,25 +106,21 @@ public sealed class CreateCogCommand : IEditCommand
     {
         _level = level;
         Cog = cog;
+        _oldNumber = cog.Num;
     }
 
     public string Name => $"Add COG {Cog.Name}";
 
     public void Apply()
     {
+        Cog.Num = _level.Cogs.Count;
         _level.Cogs.Add(Cog);
-        Renumber();
     }
 
     public void Revert()
     {
         _level.Cogs.Remove(Cog);
-        Renumber();
-    }
-
-    private void Renumber()
-    {
-        for (int i = 0; i < _level.Cogs.Count; i++) _level.Cogs[i].Num = i;
+        Cog.Num = _oldNumber;
     }
 }
 

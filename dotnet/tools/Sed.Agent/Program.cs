@@ -138,6 +138,7 @@ static string ReadRequest(string path)
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
     "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",
+    "typed-cog-creation", "ordered-thing-frame-authoring",
     "world-bake-diagnostics", "direct-asset-diagnostics",
     "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
     "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export",

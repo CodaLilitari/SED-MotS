@@ -1,9 +1,29 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-27. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-28. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
+
+**Active milestone: [PLAY-01](PLAYABLE_AUTHORING.md), 2026-09-28.** Andrei approved
+the proposed small playable MotS workflow. Shared `addCog` and `setThingFrames`
+are implemented locally. Original authoring/reopen passed in `fixture-04/`,
+and `build/play01-20260928/runtime-05/acceptance.json` passed three positive and
+four discriminating fault-control processes using the separate engine candidate
+`engine-build-02/runtime/openjkdf2-64.exe` (SHA256 `f85d015451ea805f52a648440efd65c227023ace9dfd1420fe02c1b1ab7c4879`).
+A separate checker independently audited all seven raw traces. The engine source
+is in `C:\Users\Andrei\.codex\worktrees\play01-runtime\openmots`, base `74e4657c`
+plus the recorded PLAY diff. Real-time normal inputs and physical/COG/inventory
+observations establish this original scenario, not retail or campaign parity.
+Lilitari's completed editor review exposed existing-reference capture, exact
+in-memory undo numbering and missing final mover eligibility. Corrections pass
+1,376 Core + 269 MCP tests. `fixture-05` completed 139 real stdio calls and
+verifies the exact reciprocal four-room chain after save/reopen; its level/asset
+bytes match the runtime-tested fixture exactly. Python tools pass 100 tests.
+Native/oracle and focused corrective-source reviews are running separately.
+The release candidate is ready for clean packaging and packaged-runtime checks.
+No new source publication or release is claimed yet. Current published package
+remains MCP-01 below. Unrelated `.DS_Store` deletions stay excluded.
 
 **MCP-01 completed handoff, 2026-09-27:** source/package commit
 `ce093bdeb2c568b3717a1649775af9721e0a0ddc`, Windows `0.4.0-mots.13-dev`.

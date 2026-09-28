@@ -127,6 +127,66 @@ Resource-free editing remains available with an explicitly unverified ARCH resul
 
 Each plan change includes the targeted object, its `before` state, the state `afterOperation`, and `serializedFinal` read back from the generated JKL. Simple appended objects have a null `before` and an explicit new target index. Extrusion instead reports its source sector before editing and both the source and appended sector afterward. Later operations may intentionally replace an earlier value; the final readback is checked against the final model. If the affected state cannot survive serialization, planning fails instead of advertising an edit that will disappear on save.
 
+### Placed COG and movement-path authoring
+
+Discover `schema addCog` and `schema setThingFrames` in the chosen build. These
+shared patch operations also use the existing MCP plan/apply tools; older
+packages that lack them must not be given the new requests.
+
+```json
+{"op":"addCog","script":"original.cog","scriptSha256":"SCRIPT_HASH","bindings":[{"symbol":"gate","kind":"thing","targetIndex":0},{"symbol":"trigger","kind":"surface","targetIndex":4},{"symbol":"exitroom","kind":"sector","targetIndex":3}]}
+```
+
+`addCog` requires explicit hash-bound `resourceArchives`, the exact script hash
+and a complete symbols schema. New script basenames are limited to 31 ASCII
+characters including `.cog`, fitting the legacy-compatible script-name field;
+existing longer names are still readable. Supply every external symbol exactly once by
+name and declared kind. Declaration order determines the saved positional
+values, independent of request order. Supported external kinds are `thing`,
+`sector`, global `surface` and existing placed `cog`; `-1` explicitly writes
+null. Static/runtime COG targets, unsupported symbol kinds, missing/duplicate
+bindings and inferred defaults are refused. A fully local script accepts an
+empty binding list. There are at most 256 bindings. The new index appears in
+the plan and can be addressed by later operations in that plan. Scripts are
+neither rewritten nor executed, and a correct binding is not gameplay proof.
+
+Appending also resolves every existing placed COG's complete symbol schema from
+the supplied archives and requires its exact parameter count. The operation
+refuses existing non-static unchecked numeric COG references. Increasing the
+placed count can capture one directly, or shift a later runtime/template
+instance's allocation even while its index remains outside the placed list.
+Such a value is not assumed to be invalid. Inspect and resolve the binding
+explicitly before appending. Missing or incomplete existing schemas
+are refused because raw numeric values cannot safely be guessed to be references.
+This inspection is bounded to 4,096 existing COGs and 100,000 existing parameters;
+these are editor work limits. The plan's resource revision covers the scripts
+read for this check as well as the new script.
+
+```json
+{"op":"setThingFrames","thing":0,"frames":[{"position":[0,0,0],"orientation":[0,0,0]},{"position":[0,0,0.3],"orientation":[0,0,0]}]}
+```
+
+`setThingFrames` takes 1 through 256 absolute frames, with finite position and
+pitch/yaw/roll components in +/-1,000,000. These are editor budgets, not engine
+capacity claims. The selected thing must have direct or inherited `move=path`
+and no architectural lighting binding. The shared undoable command replaces
+`numframes` and ordered repeated `frame` records together, placing the count
+before frames and keeping the dictionary's last-frame projection consistent.
+Unrelated imported records keep their values and relative order; undo restores
+both original representations exactly. Current thing position/orientation are
+unchanged. This does not test swept collision, attachment, path traversal or
+gameplay. `query things` exposes ordered `sourceParameters`; the operation's
+`serializedFinal.state.pathParameters` supplies exact saved path readback.
+Its `effectiveParameters` and canonical `values` also verify complete unrelated
+parameter preservation through serialization. The final batch must still leave
+every frame-authored thing eligible for path authoring, with a valid frame/count
+pair. Later template, move-mode or ARCH changes cannot leave an invalid mover;
+an explicit later repair may restore a valid final state.
+
+Both operations preserve normal source/resource revision checks, reviewed output
+hashes and new-output-only commit. They do not create scripts, goal strings,
+episodes or custom-resource packages automatically.
+
 Operations cover thing position/orientation/name/template/parameter, vertex position and lighting, surface material/flags/UV/render modes, sector flags/scalar ambient/colormap, gravity, resource-name registration, extrusion, adjoining, and appending boxes, things and editor lights. `schema` is the authoritative field reference; `schema setThingPosition`, for example, returns only that operation's patch schema. Templates must already exist. Geometry uses engine world units; orientation is pitch/yaw/roll in degrees. Editor-light RGB fields contain three values in [0,1]; colored editor lights require MotS. Sector ambient is a scalar as stored in JK/MotS JKL.
 
 `registerMaterial` and `registerColormap` append unique `.mat` and `.cmp` basenames, returning their indices. Existing names are refused so clients query and reuse their indices. This registers references only: it does not find, verify or copy assets. `setSurfaceMaterial` selects a registered material; `setSectorColormap` selects a registered palette. `fitSurfaceTexture` fits UVs to caller-supplied dimensions in texels; `setSurfaceUv` takes one `[u,v]` pair per corner in query order. `setSurfaceRenderModes` sets geometry, lighting and texture modes explicitly; zero geometry mode hides the face.

@@ -47,6 +47,12 @@ The supplied `tools/Test-AgentDesign.ps1` demonstrates a connected room layout, 
 
 For source lights, discover `schema setLight` and query the current `lights` collection. `tools/Test-AgentSourceLights.ps1` demonstrates native conversion, reviewed control edits, nullable RGB intensity and preservation readback using synthetic input. It needs no graphics device; see [the workflow guide](AGENT_WORKFLOWS.md#repeatable-source-light-workflow).
 
+For gameplay authoring, discover `schema addCog` and `schema setThingFrames`.
+They create a script instance with exact typed bindings and an ordered mover
+path through the same guarded plan/apply workflow. The [PLAY-01 guide](PLAYABLE_AUTHORING.md)
+includes an original four-room exercise, save/reopen checks and a separate
+hidden engine acceptance tool. Generating it does not launch the editor or game.
+
 For a lit preview, use `schema snapshot` and supply `mode: "lit"`, an explicit camera, and exact GOB/GOO paths with their SHA-256 values. The default `renderProfile: "openjk"` follows the accelerated engine's static lighting; `"palette"` is a separate CMP comparison profile. `lightingMode` selects game-default, mono or RGB world lighting, while ordinary models remain mono. Strict asset validation is on by default. `tools/Test-AgentLitSnapshot.ps1` demonstrates the complete process with synthetic assets. These are static previews: runtime lights, COG, animations and full retail transparency are still outside the tested behavior. See [MOTS_LIGHTING_STATUS.md](MOTS_LIGHTING_STATUS.md) for the tested features and remaining work.
 
 ## Source and notices

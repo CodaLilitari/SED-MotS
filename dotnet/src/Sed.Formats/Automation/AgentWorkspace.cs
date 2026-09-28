@@ -312,7 +312,7 @@ public static partial class AgentWorkspace
                 var command = PrepareOperation(doc, boundOperation, resources);
                 int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
                     "registerMaterial" => doc.Materials.Count, "registerColormap" => doc.Level.ColorMaps.Count,
-                    "addLight" => doc.Level.Lights.Count, _ => null };
+                    "addLight" => doc.Level.Lights.Count, "addCog" => doc.Level.Cogs.Count, _ => null };
                 object? oldValue = created is null || name == "extrudeSurface" ? OperationEffect(doc, boundOperation, null) : null;
                 history.Do(command);
                 changes.Add((boundOperation, created, command.Name, oldValue, OperationEffect(doc, boundOperation, created), selections));
@@ -329,6 +329,8 @@ public static partial class AgentWorkspace
             }
             operationIndex++;
         }
+        var boundOperations = changes.Select(c => c.operation).ToArray();
+        ValidateFinalThingFrames(doc, boundOperations);
         var issues = ConsistencyChecker.Check(doc.Level);
         if (issues.Any(i => i.Severity == IssueSeverity.Error))
             throw new AgentValidationException("The proposed edits do not pass level validation. No file was written.", DescribeIssues(issues));
@@ -336,11 +338,13 @@ public static partial class AgentWorkspace
         var text = exported.OutputText;
         CheckResourceRevision(resourceOptions, exported.Validation.ResourceRevision);
         var reopened = JklParser.ParseDocument(text);
+        ValidateFinalThingFrames(reopened, boundOperations);
         var roundTripIssues = ConsistencyChecker.Check(reopened.Level);
         if (roundTripIssues.Any(i => i.Severity == IssueSeverity.Error))
             throw new AgentValidationException("The serialized level does not pass validation. No file was written.", DescribeIssues(roundTripIssues));
-        if (reopened.Level.Sectors.Count != doc.Level.Sectors.Count || reopened.Level.Things.Count != doc.Level.Things.Count)
-            throw new AgentValidationException("The serialized level changed its sector or thing count.", Array.Empty<object>());
+        if (reopened.Level.Sectors.Count != doc.Level.Sectors.Count || reopened.Level.Things.Count != doc.Level.Things.Count
+            || reopened.Level.Cogs.Count != doc.Level.Cogs.Count)
+            throw new AgentValidationException("The serialized level changed its sector, thing or COG count.", Array.Empty<object>());
         var effects = new List<object>();
         for (int index = 0; index < changes.Count; index++)
         {
@@ -481,6 +485,8 @@ public static partial class AgentWorkspace
                 var key = Token(op, "key");
                 if (!key.All(c => char.IsAsciiLetterOrDigit(c) || c == '_')) throw new AgentRequestException("Invalid template parameter key.");
                 return new SetThingValueCommand(Thing(), key, Token(op, "value"));
+            case "setThingFrames":
+                return PrepareThingFrames(doc, op);
             case "clearThingArchitecture":
                 Fields(op, "op", "thing");
                 return new ClearThingArchitectureCommand(Thing());
@@ -533,7 +539,9 @@ public static partial class AgentWorkspace
         ["setThingPosition"] = ["thing", "position", "sector"], ["setThingOrientation"] = ["thing", "orientation"],
         ["setThingName"] = ["thing", "name"], ["setThingTemplate"] = ["thing", "template"],
         ["setThingValue"] = ["thing", "key", "value"], ["setVertexPosition"] = ["sector", "vertex", "position"],
+        ["setThingFrames"] = ["thing", "frames"],
         ["clearThingArchitecture"] = ["thing"],
+        ["addCog"] = ["script", "scriptSha256", "bindings"],
         ["rebindCogReference"] = ["cog", "parameter", "symbol", "kind", "targetIndex", "scriptSha256"],
         ["bindThingArchitecture"] = ["thing", "lightingIndex"],
         ["rebindThingArchitecture"] = ["thing", "policy"],
@@ -558,7 +566,8 @@ public static partial class AgentWorkspace
     {
         string name = String(op, "op");
         var level = doc.Level;
-        if (name == "rebindCogReference") return CogOperationEffect(doc, op);
+        if (name is "rebindCogReference" or "addCog") return CogOperationEffect(doc, op, created);
+        if (name == "setThingFrames") return ThingFramesEffect(doc, op);
         if (name is "bindThingArchitecture" or "rebindThingArchitecture" or "bakeThingArchitecture")
             return ArchitectureOperationEffect(doc, op);
         if (name is "registerMaterial" or "registerColormap" or "setSectorColormap" or "fitSurfaceTexture" or "alignSurfaceTexture" or "setSurfaceUv" or "setSurfaceRenderModes")

@@ -29,6 +29,79 @@ public sealed class SedToolsTests
         Assert.False(File.Exists(fixture.Options.AgentPath));
     }
 
+    [Fact]
+    public async Task SharedCogAndFrameAuthoringUseOrdinaryReviewedMcpCommit()
+    {
+        using var fixture = new Fixture();
+        string input = fixture.Room();
+        var document = AgentWorkspace.Load(input).Document;
+        var mover = new Template { Name = "original_mover", Parent = "none" };
+        mover.Values["move"] = "path"; mover.Values["type"] = "cog";
+        document.Level.Templates.Add(mover.Name, mover);
+        var thing = document.Level.NewThing(); thing.Name = "gate"; thing.Template = mover.Name;
+        thing.Sector = document.Level.Sectors[0];
+        File.WriteAllText(input, JklWriter.Build(document));
+        const string script = "symbols\nthing gate nolink\nsector exitroom\nmessage startup\nend\ncode\nstartup:\nreturn;\nend\n";
+        string archive = fixture.PathFor("original.goo");
+        GobWriter.Build(archive, [("cog/original.cog", Encoding.ASCII.GetBytes(script))]);
+        using var tools = fixture.Tools();
+        var discovered = Success(await tools.CallAsync("sed_discover", Args(new { topic = "addCog" })));
+        Assert.Contains("addCog", discovered.GetRawText());
+        var request = new Dictionary<string, object> {
+            ["schemaVersion"] = 1, ["inputSha256"] = AgentWorkspace.Hash(File.ReadAllBytes(input)),
+            ["resourceArchives"] = new[] { new { path = archive, sha256 = AgentWorkspace.Hash(File.ReadAllBytes(archive)) } },
+            ["operations"] = new object[] {
+                new { op = "setThingFrames", thing = 0, frames = new[] {
+                    new { position = new[] { 0.0, 0.0, 0.0 }, orientation = new[] { 0.0, 0.0, 0.0 } },
+                    new { position = new[] { 0.0, 0.0, 0.2 }, orientation = new[] { 0.0, 0.0, 0.0 } } } },
+                new { op = "addCog", script = "original.cog", scriptSha256 = AgentWorkspace.Hash(Encoding.ASCII.GetBytes(script)),
+                    bindings = new[] { new { symbol = "exitroom", kind = "sector", targetIndex = 0 },
+                        new { symbol = "gate", kind = "thing", targetIndex = 0 } } } } };
+        byte[] original = File.ReadAllBytes(input);
+        var plan = Success(await tools.CallAsync("sed_plan", Args(new { level = input, request })));
+        request["resourceRevision"] = plan.GetProperty("resourceRevision").GetString()!;
+        string id = Guid.NewGuid().ToString();
+        var committed = Success(await tools.CallAsync("sed_apply", Args(new { level = input, request,
+            output = "playable.jkl", expectedOutputSha256 = plan.GetProperty("outputSha256").GetString(), operationId = id })));
+        Assert.Equal("committed", committed.GetProperty("outcome").GetProperty("observedState").GetString());
+        Assert.Equal(original, File.ReadAllBytes(input));
+        var reopened = AgentWorkspace.Load(fixture.PathFor("playable.jkl")).Document;
+        Assert.Equal(new[] { "0", "0" }, Assert.Single(reopened.Level.Cogs).Values);
+        Assert.Equal(new[] { "(0/0/0:0/0/0)", "(0/0/0.2:0/0/0)" },
+            reopened.Level.Things[0].SourceParameters.Where(p => p.Key == "frame").Select(p => p.Value));
+        var bindings = Success(await tools.CallAsync("sed_diagnose", Args(new { level = "playable.jkl", kind = "bindings",
+            request = new { schemaVersion = 1, inputSha256 = AgentWorkspace.Hash(File.ReadAllBytes(fixture.PathFor("playable.jkl"))),
+                resourceArchives = new[] { new { path = archive, sha256 = AgentWorkspace.Hash(File.ReadAllBytes(archive)) } }, cog = 0 } })));
+        Assert.True(bindings.GetProperty("parameterCountMatches").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData(false, "incompleteExistingCogSchema", "1")]
+    [InlineData(true, "existingCogReferenceCapture", "1")]
+    [InlineData(true, "existingCogRuntimeReference", "2")]
+    public async Task CogAppendClosureRefusalsRemainStructuredAndDoNotWrite(bool includeExistingScript, string diagnostic, string rawReference)
+    {
+        using var fixture = new Fixture(); string input = fixture.Room();
+        var document = AgentWorkspace.Load(input).Document;
+        var existing = new Cog {Name="existing.cog"}; existing.Values.Add(rawReference); document.Level.Cogs.Add(existing);
+        File.WriteAllText(input,JklWriter.Build(document)); byte[] original=File.ReadAllBytes(input);
+        const string script="symbols\nend\n";
+        var entries=new List<(string,byte[])> {("cog/new.cog",Encoding.ASCII.GetBytes(script))};
+        if (includeExistingScript) entries.Add(("cog/existing.cog",Encoding.ASCII.GetBytes("symbols\ncog future\nend\n")));
+        string archive=fixture.PathFor("closure.goo"); GobWriter.Build(archive,entries);
+        using var tools=fixture.Tools();
+        var result=await tools.CallAsync("sed_plan",Args(new {level=input,request=new {
+            schemaVersion=1,inputSha256=AgentWorkspace.Hash(original),
+            resourceArchives=new[] {new {path=archive,sha256=AgentWorkspace.Hash(File.ReadAllBytes(archive))}},
+            operations=new[] {new {op="addCog",script="new.cog",scriptSha256=AgentWorkspace.Hash(Encoding.ASCII.GetBytes(script)),
+                bindings=Array.Empty<object>()}}}}));
+        Assert.Equal("invalid_request",Failure(result));
+        Assert.Contains(diagnostic,Envelope(result).GetProperty("error").GetProperty("message").GetString());
+        Assert.Equal(original,File.ReadAllBytes(input));
+        Assert.Single(Directory.GetFiles(fixture.Root,"*.jkl"));
+        Assert.Empty(Directory.GetFiles(fixture.Root,".sed-agent-*.tmp"));
+    }
+
     [Theory]
     [InlineData("jk", ProjectType.JediKnight)]
     [InlineData("mots", ProjectType.MysteriesOfTheSith)]
