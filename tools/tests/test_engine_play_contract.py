@@ -192,6 +192,36 @@ class TelemetryContractTests(unittest.TestCase):
                 trace = independent_trace(); trace['samples'][0][key]['forward'] = 1
                 with self.assertRaises(runner.CaptureError): self.validate(trace)
 
+    def test_control_counters_cannot_decrease_inside_a_step(self):
+        for key in ('forward', 'strafe', 'turn', 'pitch', 'activationEdges'):
+            with self.subTest(counter=key):
+                trace = independent_trace()
+                # Both observations belong to the activation step, with a
+                # previously consumed edge and positive axis read counters.
+                sample = next(s for s in trace['samples'] if s['wallElapsedMs'] == 1600)
+                sample['controlReads'][key] = 0
+                with self.assertRaisesRegex(runner.CaptureError, 'counters decreased'):
+                    self.validate(trace)
+
+    def test_activation_edges_are_bounded_to_eligible_steps(self):
+        for step, count in ((0, 1), (2, 2), (3, 1), (7, 1)):
+            with self.subTest(step=step, count=count):
+                trace = independent_trace()
+                for sample in trace['samples']:
+                    if sample['step'] == step: sample['controlReads']['activationEdges'] = count
+                with self.assertRaisesRegex(runner.CaptureError, 'Activation edges require'):
+                    self.validate(trace)
+
+    def test_raw_contract_allows_unconsumed_activation_and_idle_axis_reads(self):
+        trace = independent_trace()
+        for sample in trace['samples']:
+            sample['controlReads']['activationEdges'] = 0
+        result = self.validate(trace)
+        idle = [s for s in result['observed']['samples'] if s['step'] == 3]
+        self.assertTrue(all(s['input']['forward'] == 0 and s['controlReads']['forward'] > 0 for s in idle))
+        # Schema validity does not itself establish successful interaction.
+        self.assertFalse(workflow.evaluate(result['observed'])['checks']['scheduledControlsConsumed'])
+
     def test_player_identity_cannot_change_mid_trace(self):
         trace = independent_trace(); trace['samples'][-1]['player']['index'] = 2
         with self.assertRaises(runner.CaptureError): self.validate(trace)
@@ -243,6 +273,104 @@ class CausalOracleTests(unittest.TestCase):
     def assert_rejected(self, trace):
         result = workflow.evaluate(trace)
         self.assertFalse(result['passed'], result['checks'])
+
+    def test_continuous_crossing_before_arrival_is_not_open_gate_traversal(self):
+        trace = independent_trace()
+        for sample in trace['samples']:
+            t = sample['wallElapsedMs']
+            if t > 1550:
+                y = max(sample['player']['position'][1], .38 + min(.27, .0007 * (t - 1550)))
+                sample['player']['position'][1] = y
+                sample['player']['sector'] = sum(y >= boundary for boundary in (.5, 1.5, 2.5))
+        result = workflow.evaluate(trace)
+        # This is an ordinary-speed portal crossing, not a teleport or a bad
+        # sector label. Its failure is specifically the unopened gate.
+        self.assertTrue(result['checks']['continuousIntendedPortalCrossings'])
+        self.assertTrue(result['checks']['realPathMotionAndArrival'])
+        self.assertTrue(result['checks']['causalPhaseTransitions'])
+        self.assertFalse(result['checks']['firstGateCrossingAfterOpen'])
+        self.assertFalse(result['passed'])
+
+    def test_arrival_alone_does_not_replace_a_terminal_open_witness(self):
+        trace = independent_trace()
+        for sample in trace['samples']:
+            if 3200 <= sample['wallElapsedMs'] <= 3700:
+                sample['mover']['pathFlags'] = 1
+        result = workflow.evaluate(trace)
+        self.assertTrue(result['checks']['continuousIntendedPortalCrossings'])
+        self.assertTrue(result['checks']['realPathMotionAndArrival'])
+        self.assertFalse(result['checks']['firstGateCrossingAfterOpen'])
+        self.assertFalse(result['passed'])
+
+    def test_skipped_or_premature_phase_two_cannot_be_repaired_by_later_arrival(self):
+        for early_from in (1550, 2500):
+            with self.subTest(early_from=early_from):
+                trace = independent_trace()
+                for sample in trace['samples']:
+                    if early_from <= sample['wallElapsedMs'] < 3200: sample['cog']['value'] = 2
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['checks']['realPathMotionAndArrival'])
+                self.assertTrue(result['checks']['firstGateCrossingAfterOpen'])
+                self.assertFalse(result['checks']['causalPhaseTransitions'])
+                self.assertFalse(result['passed'])
+
+    def test_phase_one_needs_an_observed_active_path_to_frame_one(self):
+        for field in ('goalFrame', 'pathFlags'):
+            with self.subTest(field=field):
+                trace = independent_trace()
+                for sample in trace['samples']:
+                    if sample['cog']['value'] == 1: sample['mover'][field] = 0
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['checks']['continuousAuthoredMoverPath'])
+                self.assertFalse(result['checks']['causalPhaseTransitions'])
+                self.assertFalse(result['passed'])
+
+    def test_each_phase_transition_must_bracket_its_dispatch(self):
+        for phase, event_index in ((1, 1), (2, 2), (3, 3), (4, 4)):
+            for offset in (-100, 100):
+                with self.subTest(phase=phase, offset=offset):
+                    trace = independent_trace()
+                    boundary = trace['events'][event_index]['wallElapsedMs']
+                    for sample in trace['samples']:
+                        t = sample['wallElapsedMs']
+                        if offset < 0 and boundary + offset <= t < boundary:
+                            sample['cog']['value'] = phase
+                        elif offset > 0 and boundary <= t < boundary + offset:
+                            sample['cog']['value'] = phase - 1
+                    result = workflow.evaluate(trace)
+                    self.assertFalse(result['checks']['causalPhaseTransitions'])
+                    self.assertFalse(result['passed'])
+
+    def test_dispatch_between_samples_or_at_the_changed_sample_is_valid(self):
+        for offset in (0, -1, -25):
+            with self.subTest(offset=offset):
+                trace = independent_trace()
+                for event in trace['events']:
+                    event['wallElapsedMs'] += offset
+                    event['gameTimeMs'] += offset
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['passed'], result['checks'])
+
+    def test_traversal_needs_consumed_forward_controls_in_every_walk_step(self):
+        for step in (1, 4, 5, 6):
+            with self.subTest(step=step):
+                trace = independent_trace()
+                for sample in trace['samples']:
+                    if sample['step'] == step: sample['controlReads']['forward'] = 0
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['checks']['continuousIntendedPortalCrossings'])
+                self.assertTrue(result['checks']['firstGateCrossingAfterOpen'])
+                self.assertFalse(result['checks']['scheduledControlsConsumed'])
+                self.assertFalse(result['passed'])
+
+    def test_fixture_rejects_an_extra_activation_edge_during_idle(self):
+        trace = independent_trace()
+        for sample in trace['samples']:
+            if sample['step'] == 3: sample['controlReads']['activationEdges'] = 1
+        result = workflow.evaluate(trace)
+        self.assertTrue(result['checks']['actualActivationTargetAndDispatch'])
+        self.assertFalse(result['checks']['scheduledControlsConsumed'])
+        self.assertFalse(result['passed'])
 
     def test_activation_intent_without_physical_hit_is_insufficient(self):
         trace = independent_trace(); trace['events'] = trace['events'][1:]

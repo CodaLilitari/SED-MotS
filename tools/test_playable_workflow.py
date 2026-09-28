@@ -29,6 +29,12 @@ def evaluate(trace):
     samples=trace['samples']; events=trace['events']
     first=samples[0]; final=samples[-1]
     ended={s['step']:s for s in samples if s['phase']=='step-complete'}
+    def terminal_open(sample):
+        mover=sample['mover']
+        # Native path arrival clears the movement bits (0x17); unrelated bits
+        # are not treated as movement. The goal frame resets on native arrival.
+        return (mover['currentFrame']==1 and mover['pathFlags'] & 0x17 == 0
+                and math.dist(mover['position'],[0,.499,1.4])<.005)
     checks={}
     checks['initialClosedIncomplete']=(first['player']['index']==1 and first['player']['sector']==0
         and abs(first['player']['position'][1]-.30)<.02
@@ -41,6 +47,10 @@ def evaluate(trace):
         and blocked['player']['sector']==0 and .32<blocked['player']['position'][1]<.45
         and math.dist(blocked['mover']['position'],[0,.499,.3])<.005
         and blocked['goalValue']==1 and blocked['cog']['value']==0)
+    checks['scheduledControlsConsumed']=(all(ended[index]['controlReads']['forward']>0 for index in (1,4,5,6))
+        and ended[2]['controlReads']['activationEdges']==1
+        and all(s['controlReads']['activationEdges'] in (0,1)
+                and (s['step']==2 or s['controlReads']['activationEdges']==0) for s in samples))
     hits=[e for e in events if e['kind']=='activation-hit' and e['targetType']==1
           and e['targetIndex']==0 and e['sourceIndex']==first['player']['index']]
     dispatch=[e for e in events if e['kind']=='cog-dispatch' and e['cogIndex']==0]
@@ -96,6 +106,16 @@ def evaluate(trace):
                               'beforeMs':a['wallElapsedMs'],'afterMs':b['wallElapsedMs']})
     checks['continuousIntendedPortalCrossings']=(continuous and trace['samplingMaxGapMs']<=200
         and len(crossings)==3 and all(c['valid'] for c in crossings))
+    terminal_witnesses=([s for s in samples if s['wallElapsedMs']>=arrivals[0]['wallElapsedMs']
+                         and s['cog']['value']==2 and terminal_open(s)] if len(arrivals)==1 else [])
+    checks['firstGateCrossingAfterOpen']=(len(arrivals)==1 and bool(terminal_witnesses)
+        and bool(crossings) and crossings[0]['from']==0 and crossings[0]['to']==1
+        # A crossing happens somewhere inside its observation interval. Require
+        # the entire interval after both witnesses, not just its later endpoint.
+        and crossings[0]['beforeMs']>=arrivals[0]['wallElapsedMs']
+        and crossings[0]['beforeMs']>=terminal_witnesses[0]['wallElapsedMs']
+        and all(s['player']['sector']==0 and s['player']['position'][1]<.5
+                for s in samples if s['wallElapsedMs']<arrivals[0]['wallElapsedMs']))
     completed=[s for s in samples if int(s['goalValue']) & 2]
     objective_events=[e for e in dispatch if e['message']==6 and e['senderIndex']==2
                       and e['senderType']==5 and e['sourceType']==3
@@ -117,6 +137,25 @@ def evaluate(trace):
         and len(crossings)==3 and crossings[2]['beforeMs']<=exit_events[0]['wallElapsedMs']<=crossings[2]['afterMs']
         and events.index(objective_events[0])<events.index(exit_events[0])
         and completed[0]['wallElapsedMs']<=exit_events[0]['wallElapsedMs']<=final['wallElapsedMs'])
+    transitions=[]
+    for index,s in enumerate(samples):
+        if not transitions or s['cog']['value']!=samples[transitions[-1]]['cog']['value']:
+            transitions.append(index)
+    phase_sequence=[samples[index]['cog']['value'] for index in transitions]
+    phase_one=[s for s in samples if s['cog']['value']==1]
+    causal_phases=(phase_sequence==[0,1,2,3,4]
+        and all(len(group)==1 for group in (activations,arrivals,objective_events,exit_events)))
+    if causal_phases:
+        transition_events=[activations[0],arrivals[0],objective_events[0],exit_events[0]]
+        # Dispatch is logged before handler execution; the first changed sample
+        # is after the update. Equal timestamps at millisecond resolution are valid.
+        causal_phases=all(samples[index-1]['wallElapsedMs']<=event['wallElapsedMs']<=samples[index]['wallElapsedMs']
+                          for index,event in zip(transitions[1:],transition_events))
+        causal_phases=(causal_phases and bool(phase_one)
+            and all(s['mover']['goalFrame']==1 and s['mover']['pathFlags'] & 0x17 != 0 for s in phase_one)
+            and any(.31<s['mover']['position'][2]<1.39 for s in phase_one)
+            and terminal_open(samples[transitions[2]]))
+    checks['causalPhaseTransitions']=causal_phases
     checks['playerAlive']=all(s['player']['health']>0 for s in samples)
     return {'passed':all(checks.values()),'checks':checks,'sectors':sectors,'crossings':crossings,
             'sampleCount':len(samples),'eventCount':len(events),'samplingMaxGapMs':trace['samplingMaxGapMs'],

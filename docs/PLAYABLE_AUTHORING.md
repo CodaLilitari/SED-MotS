@@ -1,7 +1,8 @@
 # PLAY-01: background MotS mission authoring
 
-Status: shared authoring and native gameplay acceptance passed locally on
-2026-09-28; exact source review and distribution handoff are in progress.
+Status: shared authoring and the initial native gameplay matrix passed locally
+on 2026-09-28. Source review exposed acceptance false positives; corrective
+validation and a new immutable distribution handoff are in progress.
 
 The milestone connects the existing shared editor/CLI/MCP authoring operations
 to a small original gameplay exercise. Four rooms run along a single corridor.
@@ -73,6 +74,10 @@ and negative tests continue to apply when gameplay is absent.
    the gate and the objective is incomplete.
 3. Activate through ordinary player controls, observe real path motion and
    arrival, then travel through the doorway and objective and exit sectors.
+   Tie the first portal crossing to the observed ARRIVED dispatch and a terminal
+   open-state sample, rather than inferring the order from the input schedule.
+   Require the script's full phase progression and the movement handler's
+   consumed-input counters; scheduled inputs alone are not consumption evidence.
 4. Run the same input without activation: the player must remain blocked and
    the objective incomplete.
 5. Run a separately authored wrong-objective binding: the gate and traversal
@@ -93,7 +98,7 @@ logs, copied forum posts and retail assets remain private/local.
 The corrected development editor passed 1,376 Core and 269 MCP tests. Fixture
 generation performed 139 actual stdio calls, creating four variants and checking
 exact ordered frames, binding targets, complete corridor topology and a second
-save/reopen. The Python tool suite passed 104 tests, including 39 independent
+save/reopen. The Python tool suite passed 115 tests, including 50 independent
 PLAY contract/oracle tests and nine topology counterexamples. The corrected
 authoring run's four level files and resource archives match the exact bytes
 used in the successful runtime matrix below.
@@ -150,6 +155,21 @@ tests include both a single spike and a retained monotonic offset; monotonicity
 alone would not fix the speed loophole. Revalidation of all seven original raw
 runtime traces retained the expected three positive and four negative results.
 This counterexample concerned the evaluator, not a native teleport capability.
+
+The later native review found additional synthetic traces accepted by the
+clock-corrected evaluator despite missing causal links: early crossing during
+gate travel, skipped phase 1, traversal without recorded forward-input reads,
+and an activation edge during idle. All four were independently reproduced.
+The corrected oracle accepts the exact unchanged baseline and rejects each
+unchanged attack on its intended predicate. It brackets every phase transition
+with the corresponding dispatch, requires an active path during phase 1 and
+a terminal-open witness before the first crossing, and checks consumed traversal
+inputs and per-step counter monotonicity. Numeric INT/FLOAT representations
+remain valid: the interpreter can copy a new numeric type on assignment.
+Publication remains held until fresh packaged acceptance and the corrected
+native identity/independent audit checks pass. Review findings and locally
+executed checks are separate; a timed-out secondary editor review supplies no
+verdict.
 
 ## Reproduce the authoring exercise
 

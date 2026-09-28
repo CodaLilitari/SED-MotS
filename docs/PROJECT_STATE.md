@@ -19,13 +19,35 @@ Lilitari's completed editor review exposed existing-reference capture, exact
 in-memory undo numbering and missing final mover eligibility. Corrections pass
 1,376 Core + 269 MCP tests. `fixture-05` completed 139 real stdio calls and
 verifies the exact reciprocal four-room chain after save/reopen; its level/asset
-bytes match the runtime-tested fixture exactly. Python tools pass 104 tests.
+bytes match the runtime-tested fixture exactly. Python tools now pass 115 tests.
 Independent oracle review found and reproduced simulation-clock inflation of the
 mover speed allowance. The corrected wall-only motion bound rejects both clock
 counterexamples while all seven real traces retain their expected outcomes.
-Native and focused corrective-source reviews are running separately.
-The first clean package at `370a881` passed its checks but is superseded by this
-oracle correction; create a new immutable package and run its actual matrix.
+The completed native source review independently exposed additional oracle
+false positives: early gate crossing, a skipped phase-1 witness, unconsumed
+traversal controls and an activation edge during idle. These were reproduced
+against the clock-corrected code. The corrected Python oracle preserves the
+unchanged saved baseline and rejects each unchanged attack on its intended
+predicate. All seven prior actual traces retain their expected results under
+offline revalidation. Native COG-identity hardening and fresh runtime evidence
+remain in progress; candidate03's first diagnostic exposed an incorrect
+count-versus-highest-index assumption and is preserved as a failed attempt.
+The focused Claude editor review reached its 1,200-second deadline without an
+answer; delivery remains uncertain and no approval or retry is claimed.
+The first clean package at `370a881` passed its checks but is superseded by the
+oracle correction. Corrected source/package `6533ff826b95f6fece1425595ea4de105aaba001`
+is prepared at `build/packages/SED-MotS-0.4.0-mots.14-dev-6533ff8/`; its independent
+audit passed 930 manifested files, all 794 source Git blobs and complete history.
+`runtime-packaged-01` then passed all seven actual engine processes using the
+shipped Python tools and packaged authoring output; a second checker independently
+verified all raw traces, staged hashes and expected outcomes (maximum gap 48 ms).
+The native companion and exact source snapshot are in `engine-package-01/`;
+all 2,611 tracked engine files map to new local commit `fec82961` without a rebuild.
+The original example ZIP is independently verified in `example-handoff-01/`.
+Nine release assets and notes were prepared in `release-upload/`, not uploaded.
+They are now provisional: the native review findings require new source freezes,
+immutable packages and acceptance evidence before normal pushes/publication.
+Preserve the previous packages/audits; never substitute their hashes silently.
 No new source publication or release is claimed yet. Current published package
 remains MCP-01 below. Unrelated `.DS_Store` deletions stay excluded.
 

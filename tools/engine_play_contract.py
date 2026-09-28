@@ -75,6 +75,8 @@ def validate_telemetry(path, play):
     active_step=0
     step_start=0
     player_index=None
+    previous_control_step=None
+    previous_controls=None
     for i,s in enumerate(samples):
         exact_keys(s,{'phase','step','wallElapsedMs','stepElapsedMs','gameTimeMs','input','controlReads',
                       'player','mover','cog','goalValue'},set(),'sample')
@@ -88,11 +90,24 @@ def validate_telemetry(path, play):
         previous_game=game
         integer(s['stepElapsedMs'],0,90000,'stepElapsedMs')
         step=integer(s['step'],-1,len(play['steps'])-1,'sample step')
+        controls=s['controlReads']
+        exact_keys(controls,{'forward','strafe','turn','pitch','activationEdges'},set(),'controlReads')
+        for v in controls.values(): integer(v,0,2**31-1,'control read count')
+        if step==previous_control_step:
+            require(all(controls[key]>=previous_controls[key] for key in controls),
+                    'Gameplay control read counters decreased within one step.')
+        # The provider can offer at most one edge per activate-enabled step.
+        # A zero count remains valid raw telemetry when controls were not read.
+        eligible_edge=play['steps'][step]['activate'] if step>=0 else 0
+        require(controls['activationEdges']<=eligible_edge,
+                'Activation edges require an activate-enabled step and cannot exceed one.')
+        previous_control_step=step
+        previous_controls=controls
         if i == 0:
             require(s['phase']=='initial' and step==-1,'Telemetry must begin with an uninjected initial sample.')
             require(wall==0 and s['stepElapsedMs']==0,'Initial sample must establish elapsed time zero.')
             require(s['input']==dict(durationMs=0,forward=0,strafe=0,turn=0,pitch=0,activate=0)
-                    and all(v==0 for v in s['controlReads'].values()),'Initial sample must precede injected controls.')
+                    and all(v==0 for v in controls.values()),'Initial sample must precede injected controls.')
         else:
             require(s['phase']!='initial' and step>=0,'Invalid repeated initial sample.')
             require(step==active_step,'Active gameplay step skipped, regressed or continued after completion.')
@@ -123,8 +138,6 @@ def validate_telemetry(path, play):
         require(type(c['valueType']) is int and c['valueType'] in (2,3),'Observed COG symbol is not numeric.')
         number(c['value'],-1e12,1e12,'cog value')
         number(s['goalValue'],-1e12,1e12,'goal value')
-        exact_keys(s['controlReads'],{'forward','strafe','turn','pitch','activationEdges'},set(),'controlReads')
-        for v in s['controlReads'].values(): integer(v,0,2**31-1,'control read count')
     require(completions==list(range(len(play['steps']))),'Missing, duplicate or reordered step completion.')
     require(trace['samplingMaxGapMs'] >= max_gap,'Reported sample-gap bound understates observations.')
     previous=-1
