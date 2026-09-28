@@ -5,6 +5,32 @@ Updated: 2026-09-28. This is the short recovery entry point. Read this file, the
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
+**PAUSED at Andrei's request, 2026-09-28 11:36 UTC.** Stop implementation,
+publication and review polling until he resumes. The tested local handoff below
+is the stopping point. No PLAY-01 source push, release creation or asset upload
+has occurred. The previously published `.13-dev` remains unchanged.
+Final Lilitari correction review was delivered once at 11:32:32 UTC in the saved
+SED conversation and was still running at the last observation; leave it
+uninterrupted. Exact job/message/attachment identities and resume instructions
+are ignored/local in `build/play01-20260928/reviews/lilitari-corrections-01/`.
+On resume, inspect that existing reply before any retry, triage findings, then
+use the independently audited nine-asset selection in `release-upload-02/`.
+The older `release-upload/` has an explicit publication hold and is superseded.
+
+**Latest PLAY-01 handoff candidate:** corrected editor source/package
+`00e7741990aa2b3e48e938136da0a383c5241782`,
+`build/packages/SED-MotS-0.4.0-mots.14-dev-00e7741/`. Its independent audit passes
+930 manifested files, all 794 source files, and exact 350-commit/3,731-object
+history. Clean Release tests pass 1,376 Core + 269 MCP; Python passes 115.
+The clean native companion is `d18ecc2a931586d5e57237cb0d301c9d07b89336`,
+candidate04 EXE SHA256 `72170044bcd951c80c48adc434c879e41d18aab1e53c39280c9aafdf27f401d0`.
+Actual packaged `runtime-packaged-02` passes three positive and four fault-control
+processes with the stronger oracle (maximum observed state gap 50 ms). The v2
+independent audit also passes, including primary-verdict gates and explicit
+staged EXE/OpenAL/GNS coverage; freeglut is separately packaged.
+Final focused source review and publication remain pending while paused. Earlier candidate
+paragraphs below are retained as development history, not upload selections.
+
 **Active milestone: [PLAY-01](PLAYABLE_AUTHORING.md), 2026-09-28.** Andrei approved
 the proposed small playable MotS workflow. Shared `addCog` and `setThingFrames`
 are implemented locally. Original authoring/reopen passed in `fixture-04/`,
