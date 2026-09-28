@@ -69,6 +69,7 @@ def validate_telemetry(path, play):
             and len(samples)+len(events) <= 10000,'Invalid gameplay record count.')
     integer(trace['samplingMaxGapMs'],0,90000,'samplingMaxGapMs')
     previous=-1
+    previous_game=-1
     completions=[]
     max_gap=0
     active_step=0
@@ -82,7 +83,9 @@ def validate_telemetry(path, play):
         require(wall >= previous,'Gameplay samples are not monotonic.')
         if previous >= 0: max_gap=max(max_gap,wall-previous)
         previous=wall
-        integer(s['gameTimeMs'],0,2**32-1,'gameTimeMs')
+        game=integer(s['gameTimeMs'],0,2**32-1,'gameTimeMs')
+        require(game >= previous_game,'Gameplay sample game clock regressed or wrapped during the bounded run.')
+        previous_game=game
         integer(s['stepElapsedMs'],0,90000,'stepElapsedMs')
         step=integer(s['step'],-1,len(play['steps'])-1,'sample step')
         if i == 0:
@@ -125,6 +128,7 @@ def validate_telemetry(path, play):
     require(completions==list(range(len(play['steps']))),'Missing, duplicate or reordered step completion.')
     require(trace['samplingMaxGapMs'] >= max_gap,'Reported sample-gap bound understates observations.')
     previous=-1
+    previous_game=samples[0]['gameTimeMs']
     for e in events:
         require(isinstance(e,dict),'Gameplay event must be an object.')
         kind=e.get('kind')
@@ -135,6 +139,8 @@ def validate_telemetry(path, play):
         require(wall >= previous,'Gameplay events are not monotonic.')
         previous=wall
         for key in fields: integer(e[key],-1,2**31-1,key)
-        integer(e['gameTimeMs'],0,2**32-1,'event gameTimeMs')
+        game=integer(e['gameTimeMs'],0,samples[-1]['gameTimeMs'],'event gameTimeMs')
+        require(game >= previous_game,'Gameplay event game clock regressed or lies before the initial sample.')
+        previous_game=game
     return {'telemetrySha256':hashlib.sha256(raw).hexdigest(),'observed':trace,
             'claim':'Raw native state/events, not an engine-issued success verdict.'}

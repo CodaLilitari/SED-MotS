@@ -66,7 +66,9 @@ def evaluate(trace):
     path_valid=True
     for a,b in zip(samples,samples[1:]):
         pa,pb=a['mover']['position'],b['mover']['position']
-        dt=max(b['wallElapsedMs']-a['wallElapsedMs'],b['gameTimeMs']-a['gameTimeMs'])/1000
+        # The fixture's motion budget is tied to observed wall time. A jump in
+        # the independently reported simulation clock cannot excuse a teleport.
+        dt=(b['wallElapsedMs']-a['wallElapsedMs'])/1000
         if (abs(pb[0])>.005 or abs(pb[1]-.499)>.005 or not .295<=pb[2]<=1.405
                 or pb[2]+.005<pa[2] or math.dist(pa,pb)>.9*dt+.015): path_valid=False
     checks['continuousAuthoredMoverPath']=(path_valid and len(arrivals)==1 and len(activations)==1

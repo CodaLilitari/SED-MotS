@@ -93,6 +93,22 @@ def independent_trace():
             'completed': True, 'samplingMaxGapMs': 50}
 
 
+def clock_inflated_teleport(retain_offset):
+    trace = independent_trace()
+    for s in trace['samples']:
+        t = s['wallElapsedMs']
+        if t == 1600:
+            s['mover']['position'][2] = 1.35
+            s['gameTimeMs'] += 1000000
+        elif t > 1600:
+            s['mover']['position'][2] = 1.4
+            if retain_offset: s['gameTimeMs'] += 1000000
+    if retain_offset:
+        for e in trace['events']:
+            if e['wallElapsedMs'] >= 1600: e['gameTimeMs'] += 1000000
+    return trace
+
+
 class RequestContractTests(unittest.TestCase):
     def test_bounded_program_and_text_preserve_nontrivial_axis_precision(self):
         program = independent_program()
@@ -188,6 +204,24 @@ class TelemetryContractTests(unittest.TestCase):
         trace = independent_trace(); trace['events'][0] = None
         with self.assertRaises(runner.CaptureError): self.validate(trace)
 
+    def test_sample_game_clock_spike_followed_by_regression_refused(self):
+        with self.assertRaisesRegex(runner.CaptureError, 'sample game clock regressed'):
+            self.validate(clock_inflated_teleport(False))
+
+    def test_event_game_clock_must_be_ordered_within_sample_interval(self):
+        for index, time in ((1, 10000), (0, 9999), (4, 999999)):
+            with self.subTest(index=index, time=time):
+                trace = independent_trace(); trace['events'][index]['gameTimeMs'] = time
+                with self.assertRaises(runner.CaptureError): self.validate(trace)
+
+    def test_monotonic_simulation_clock_jump_is_not_physical_motion_evidence(self):
+        # Monotonicity alone cannot close this false-success path. The raw
+        # observation schema may accept an offset; the fixture oracle must not
+        # use that offset to inflate its wall-clock physical-motion allowance.
+        trace = clock_inflated_teleport(True)
+        observed = self.validate(trace)['observed']
+        self.assertFalse(workflow.evaluate(observed)['passed'])
+
     def test_digest_identifies_parsed_bytes_if_file_replaced_during_parse(self):
         trace = independent_trace()
         raw = json.dumps(trace).encode('utf-8'); self.path.write_bytes(raw)
@@ -272,6 +306,14 @@ class CausalOracleTests(unittest.TestCase):
         for s in trace['samples']:
             if 2000 <= s['wallElapsedMs'] <= 2500: s['mover']['position'][0] = 1
         self.assert_rejected(trace)
+
+    def test_game_clock_cannot_expand_mover_speed_allowance(self):
+        for retain_offset in (False, True):
+            with self.subTest(retain_offset=retain_offset):
+                trace = clock_inflated_teleport(retain_offset)
+                result = workflow.evaluate(trace)
+                self.assertFalse(result['checks']['continuousAuthoredMoverPath'])
+                self.assertFalse(result['passed'])
 
     def test_sector_labels_do_not_hide_discontinuous_player_motion(self):
         trace = independent_trace()

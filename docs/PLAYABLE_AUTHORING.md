@@ -93,7 +93,7 @@ logs, copied forum posts and retail assets remain private/local.
 The corrected development editor passed 1,376 Core and 269 MCP tests. Fixture
 generation performed 139 actual stdio calls, creating four variants and checking
 exact ordered frames, binding targets, complete corridor topology and a second
-save/reopen. The Python tool suite passed 100 tests, including 35 independent
+save/reopen. The Python tool suite passed 104 tests, including 39 independent
 PLAY contract/oracle tests and nine topology counterexamples. The corrected
 authoring run's four level files and resource archives match the exact bytes
 used in the successful runtime matrix below.
@@ -140,6 +140,16 @@ records participate in roundtrip verification, and final batch validation keeps
 authored movers eligible. Multi-sector and retained-global-order tests distinguish
 surface indices from sector-local addresses. Source reviewers did not execute
 the local tests or game processes; those are separate evidence.
+
+A separate oracle review exposed a synthetic false success: an inflated
+simulation-clock delta could relax the mover speed check enough to accept a
+teleport. The fixture now uses observed wall time alone for physical motion
+allowances. Raw trace validation also refuses regressing/wrapped sample game
+clocks and event game clocks outside the ordered sample interval. Regression
+tests include both a single spike and a retained monotonic offset; monotonicity
+alone would not fix the speed loophole. Revalidation of all seven original raw
+runtime traces retained the expected three positive and four negative results.
+This counterexample concerned the evaluator, not a native teleport capability.
 
 ## Reproduce the authoring exercise
 

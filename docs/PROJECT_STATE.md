@@ -19,9 +19,13 @@ Lilitari's completed editor review exposed existing-reference capture, exact
 in-memory undo numbering and missing final mover eligibility. Corrections pass
 1,376 Core + 269 MCP tests. `fixture-05` completed 139 real stdio calls and
 verifies the exact reciprocal four-room chain after save/reopen; its level/asset
-bytes match the runtime-tested fixture exactly. Python tools pass 100 tests.
-Native/oracle and focused corrective-source reviews are running separately.
-The release candidate is ready for clean packaging and packaged-runtime checks.
+bytes match the runtime-tested fixture exactly. Python tools pass 104 tests.
+Independent oracle review found and reproduced simulation-clock inflation of the
+mover speed allowance. The corrected wall-only motion bound rejects both clock
+counterexamples while all seven real traces retain their expected outcomes.
+Native and focused corrective-source reviews are running separately.
+The first clean package at `370a881` passed its checks but is superseded by this
+oracle correction; create a new immutable package and run its actual matrix.
 No new source publication or release is claimed yet. Current published package
 remains MCP-01 below. Unrelated `.DS_Store` deletions stay excluded.
 
