@@ -574,3 +574,13 @@ anonymous hosting/staging and portfolio deployment remain release gates. No new
 retail gameplay or engine parity is claimed. PLAY-01's separate handoff remains
 paused. See `RESEARCH_UPDATE_MILESTONE.md`, `UPDATING.md` and
 `DYNAMIC_VERTEX_COLORS.md` for the contracts.
+
+The independent source-archive audit found that a clean clone inherited the
+Windows Git installation's `core.autocrlf=true`, whereas the working repository
+used a local false setting. Its first export contained all 864 Git files, but
+532 text files had LF-to-CRLF conversions; 332 files matched exactly and no
+other byte differences were found. The new level-workflow skill files remained
+byte-identical. Packaging now passes `-c core.autocrlf=false` explicitly to
+`git archive`, making this export independent of the clone's inherited setting.
+The discovery does not change the frozen package; final source and package
+bytes require a fresh independent audit after the release is rebuilt.

@@ -234,7 +234,7 @@ $manifest = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object Ful
 }
 $manifest | Set-Content -LiteralPath (Join-Path $package 'SHA256SUMS.txt') -Encoding utf8
 Compress-Archive -LiteralPath $package -DestinationPath (Join-Path $output "$name.zip") -CompressionLevel Optimal
-& git -C $repo archive --format=zip "--output=$(Join-Path $output 'SED-MotS-source.zip')" $head
+& git -C $repo -c core.autocrlf=false archive --format=zip "--output=$(Join-Path $output 'SED-MotS-source.zip')" $head
 if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive creation failed.' }
 & git -C $repo bundle create (Join-Path $output 'SED-MotS-history.bundle') HEAD
 if ($LASTEXITCODE -ne 0) { throw 'Source history bundle creation failed.' }
