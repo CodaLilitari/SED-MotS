@@ -1208,6 +1208,8 @@ public class MainWindow : Window
             () => _view.AutoTextureSelected()));
         texturing.Items.Add(Item(CommandKeys.AlignTextureNeighbour, "Align to _Neighbour", new KeyGesture(Key.T, KeyModifiers.Control | KeyModifiers.Shift),
             () => _view.AlignSelectedTextureToNeighbour()));
+        texturing.Items.Add(new Separator());
+        texturing.Items.Add(Item(null, "Selection UV _Workbench…", null, ShowTextureWorkbench));
 
         return texturing;
     }
@@ -1225,6 +1227,7 @@ public class MainWindow : Window
         tools.Items.Add(Item(CommandKeys.CheckConsistency, "_Check Consistency\u2026", new KeyGesture(Key.F8), ShowConsistency));
         tools.Items.Add(new Separator());
         tools.Items.Add(Item(null, "_Key Bindings…", null, ShowKeyBindings));
+        tools.Items.Add(Item(null, "Place Thing / Light _Array…", null, ShowArrayPlacement));
         tools.Items.Add(Item(null, "_Episode Editor…", null, ShowEpisodeEditor));
         tools.Items.Add(Item(null, "3_DO Model Viewer…", null, ShowThreeDoViewer));
         tools.Items.Add(new Separator());
@@ -1457,6 +1460,30 @@ public class MainWindow : Window
         window.Closed += (_, _) => _templateWindow = null;
         _templateWindow = window;
         window.Show(this);
+    }
+
+    /// <summary>Edits the captured surface selection through shared undoable UV commands.</summary>
+    private async void ShowTextureWorkbench()
+    {
+        if (_currentLevel is null || _view.Selection.Surfaces.Count == 0)
+        {
+            _status.Text = "Select one or more surfaces, then open the UV workbench.";
+            return;
+        }
+        await new TextureWorkbenchWindow(_view.Selection.Surfaces.ToArray(), _view.History).ShowDialog(this);
+    }
+
+    private async void ShowArrayPlacement()
+    {
+        if (_currentLevel is not { } level)
+        {
+            _status.Text = "Open a level before placing an array.";
+            return;
+        }
+        _cogScripts ??= new Sed.Formats.Cogs.CogScriptLibrary(new[] { _levelArchive }, _materialArchives);
+        var scripts = _cogScripts;
+        await new ArrayPlacementWindow(level, _view.History,
+            () => Sed.Formats.Cogs.CogThingAppendGuard.Validate(level, scripts.Get)).ShowDialog(this);
     }
 
     /// <summary>Opens (or re-runs) the find dialog for the loaded level.</summary>

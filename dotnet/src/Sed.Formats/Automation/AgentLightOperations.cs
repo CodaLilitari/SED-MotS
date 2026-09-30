@@ -12,6 +12,8 @@ public static partial class AgentWorkspace
     {
         ["addLight"] = ["rgbIntensity", "legacyRgbRange", "flags", "layer"],
         ["setLight"] = ["position", "rgb", "intensity", "range", "rgbIntensity", "legacyRgbRange", "flags", "layer"],
+        ["addThingArray"] = ["sector", "orientation", "layer"],
+        ["addLightArray"] = ["rgbIntensity", "legacyRgbRange", "flags", "layer"],
     };
 
     private static bool TryPrepareLightOperation(JklDocument doc, JsonElement op, out IEditCommand? command)

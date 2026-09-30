@@ -1,12 +1,45 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-28. This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (TOOL-01 first slice accepted; local package pending). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**PAUSED at Andrei's request, 2026-09-28 11:36 UTC.** Stop implementation,
-publication and review polling until he resumes. The tested local handoff below
+**TOOL-01 shared editing workbench, first slice implemented.** Andrei approved proceeding after
+the plug-in audit. The first implementation slice adds exact query predicates,
+selection-wide UV projection/transforms, deterministic bounded new thing/light
+arrays, GUI dialogs and the corresponding existing CLI/MCP contracts. Release
+tests pass 1,517 Core and 270 MCP; headless GUI probes pass 149 checks. The first
+actual CLI workflow passed 118 calls and 619 checks, with 14 expected refusals;
+its evidence predates the final nested UV error-pointer correction. The
+independent workflow review prompted stronger full-object assertions before
+the final package run. The strengthened `cli-workflow-02` now passes 132 calls
+and 1,099 checks against the corrected runtime, with all original inputs,
+outputs and captured I/O identities verified. Local Windows packaging is pending;
+no package or publication is claimed by this source-freeze checkpoint.
+All implementation is original; the source-informed audit is not described as
+a formal clean-room process. PLAY-01's separate pending review/release remains
+paused; no older package or publication receipt is replaced. See
+[TOOL_WORKBENCH.md](TOOL_WORKBENCH.md) for the scope and acceptance contract.
+
+**Plug-in research completed, 2026-09-30:** Andrei requested a broad JED/SED
+plug-in functionality survey. This resumed that research scope only. The
+[capability audit](audit/JED_SED_PLUGIN_AUDIT_20260930.md) and
+[structured catalog](audit/JED_SED_PLUGIN_CATALOG_20260930.json) cover 45 legacy
+plug-in/companion families, three adjacent importer families, 25 pinned public
+repositories and public forum discoveries. Proposed TOOL-01 adds shared
+selection/UV/placement/prefab/gameplay recipes; material/model-aware lighting
+remains a separate proposed milestone. No implementation, downloaded-binary
+execution, release/reviewer polling or publication occurred. The existing
+PLAY-01 handoff below remains paused. Original reports, downloads, raw public
+forum pages and hash receipts are external at
+`C:\Users\Andrei\Documents\ChatGPT\sed-editor-audit\plugin-audit-20260930\`.
+Repository documents contain original summaries and public links only, without
+raw Discord logs or copied forum posts. See DEC-20260930-01 for coverage,
+source-license distinctions, independent corrections and actual validation.
+
+**PLAY-01 handoff PAUSED at Andrei's request, 2026-09-28 11:36 UTC.** Stop its
+publication and review polling until he resumes that handoff. The tested local handoff below
 is the stopping point. No PLAY-01 source push, release creation or asset upload
 has occurred. The previously published `.13-dev` remains unchanged.
 Final Lilitari correction review was delivered once at 11:32:32 UTC in the saved

@@ -63,7 +63,7 @@ foreach ($required in @('Sed.App.exe','coreclr.dll','agent/sed-agent.exe','agent
 }
 # A clean git status excludes ignored files. Copy the tracked support-file set only,
 # so a local ignored asset or private scratch document cannot enter the handoff.
-$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/engine_play_contract.py tools/compare_engine_lighting.py tools/test_engine_lighting.py tools/test_mcp_workflow.py tools/new_playable_fixture.py tools/test_playable_workflow.py)
+$supportFiles = @(& git -C $repo -c core.quotepath=false ls-files -- LICENSE README.md AGENTS.md .agents docs licenses data tools/Test-AgentWorkflow.ps1 tools/Test-AgentDesign.ps1 tools/Test-AgentLitSnapshot.ps1 tools/Test-AgentSourceLights.ps1 tools/Test-AgentSpatial.ps1 tools/Test-AgentEditing.ps1 tools/new_engine_lighting_fixture.py tools/invoke_engine_capture.py tools/engine_resource_closure.py tools/engine_play_contract.py tools/compare_engine_lighting.py tools/test_engine_lighting.py tools/test_mcp_workflow.py tools/new_playable_fixture.py tools/test_playable_workflow.py tools/test_tool_workbench.py)
 if ($LASTEXITCODE -ne 0 -or $supportFiles.Count -eq 0) { throw 'Cannot enumerate tracked distribution support files.' }
 foreach ($relative in $supportFiles) {
     if ($relative -match '["\r\n]' -or [IO.Path]::IsPathRooted($relative) -or $relative.Split('/') -contains '..') { throw "Unsupported tracked support-file path: $relative" }
@@ -170,6 +170,53 @@ if ($playReceipt.managedAssemblies.Count -ne 6 -or $playReceipt.variants.Count -
     throw 'PLAY authoring receipt lacks complete managed identities or reopened topology evidence.'
 }
 
+# Exercise selection, batch UVs, arrays and refusal controls with the packaged
+# CLI and original synthetic fixtures. This is authoring/serialization evidence;
+# it does not start the editor or a game, or qualify runtime/retail behavior.
+$workbenchScript = Join-Path $package 'tools/test_tool_workbench.py'
+$workbenchEvidence = Join-Path $output 'agent-tool-workbench'
+$workbenchStart = [Diagnostics.ProcessStartInfo]::new()
+$workbenchStart.FileName = $pythonExe; $workbenchStart.WorkingDirectory = $package
+foreach ($argument in @('-B', $workbenchScript, '--agent', $agent, '--output-dir', $workbenchEvidence)) {
+    $workbenchStart.ArgumentList.Add($argument)
+}
+$workbenchStart.UseShellExecute = $false; $workbenchStart.CreateNoWindow = $true
+$workbenchStart.RedirectStandardOutput = $true; $workbenchStart.RedirectStandardError = $true
+$workbenchProcess = [Diagnostics.Process]::Start($workbenchStart)
+try {
+    $workbenchStdout = $workbenchProcess.StandardOutput.ReadToEndAsync(); $workbenchStderr = $workbenchProcess.StandardError.ReadToEndAsync()
+    $workbenchProcess.WaitForExit()
+    [IO.File]::WriteAllText((Join-Path $output 'agent-tool-workbench.log'), $workbenchStdout.GetAwaiter().GetResult() + $workbenchStderr.GetAwaiter().GetResult())
+    if ($workbenchProcess.ExitCode -ne 0) { throw 'Packaged TOOL-01 CLI workflow failed; see agent-tool-workbench.log.' }
+} finally { $workbenchProcess.Dispose() }
+$workbenchReceipt = Get-Content -LiteralPath (Join-Path $workbenchEvidence 'receipt.json') -Raw | ConvertFrom-Json
+if ($workbenchReceipt.status -cne 'passed' -or
+    $workbenchReceipt.gameLaunched -isnot [bool] -or $workbenchReceipt.gameLaunched -ne $false -or
+    $workbenchReceipt.guiLaunched -isnot [bool] -or $workbenchReceipt.guiLaunched -ne $false -or
+    [IO.Path]::GetFullPath($workbenchReceipt.agent) -ine [IO.Path]::GetFullPath($agent) -or
+    $workbenchReceipt.scriptSha256 -cne (Get-FileHash -LiteralPath $workbenchScript -Algorithm SHA256).Hash.ToLowerInvariant()) {
+    throw 'TOOL-01 receipt does not confirm the packaged CLI workflow and script identity.'
+}
+$workbenchRuntimeNames = @('sed-agent.exe', 'sed-agent.dll', 'sed-agent.deps.json', 'sed-agent.runtimeconfig.json',
+    'Sed.Core.dll', 'Sed.Formats.dll', 'Sed.Rendering.dll', 'Sed.Rendering.Vulkan.dll')
+if (@($workbenchReceipt.runtimeHashes).Count -ne $workbenchRuntimeNames.Count) {
+    throw 'TOOL-01 receipt lacks the complete packaged executable and managed runtime identities.'
+}
+foreach ($runtimeName in $workbenchRuntimeNames) {
+    $runtimePath = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $agent) $runtimeName))
+    $runtimeRecords = @($workbenchReceipt.runtimeHashes | Where-Object { [IO.Path]::GetFullPath($_.path) -ieq $runtimePath })
+    if ($runtimeRecords.Count -ne 1 -or
+        $runtimeRecords[0].sha256 -cne (Get-FileHash -LiteralPath $runtimePath -Algorithm SHA256).Hash.ToLowerInvariant()) {
+        throw "TOOL-01 receipt does not bind the exact packaged runtime: $runtimeName"
+    }
+}
+if ($workbenchReceipt.callCount -lt 1 -or $workbenchReceipt.callCount -ne @($workbenchReceipt.calls).Count -or
+    $workbenchReceipt.checkCount -lt 1 -or $workbenchReceipt.checkCount -ne @($workbenchReceipt.checks).Count -or
+    @($workbenchReceipt.checks | Where-Object { $_.passed -isnot [bool] -or $_.passed -ne $true }).Count -ne 0 -or
+    @($workbenchReceipt.calls | Where-Object { $_.timedOut -eq $true -or $_.exitCode -ne $_.expectedExit }).Count -ne 0) {
+    throw 'TOOL-01 receipt lacks complete passing CLI calls and authoring checks.'
+}
+
 Assert-SourceUnchanged
 $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Version; commit=$head;
     basedOn='https://github.com/davidagnome/SED/tree/908d53d70d6b95784a92e9f1746ab5b13afcfdf0';
@@ -178,6 +225,7 @@ $provenance = [ordered]@{ product='SED MotS .NET development build'; version=$Ve
     packagedAgentDesign='passed'; packagedAgentSourceLights='passed'; packagedAgentSpatial='passed'; packagedAgentEditing='passed'; packagedAgentSnapshots=[bool]$RunAgentSnapshots;
     packagedMcpWorkflow='passed'; packagedMcpSnapshots=[bool]$RunAgentSnapshots; packagedMcpToolCalls=$mcpReceipt.toolCalls;
     packagedPlayAuthoring='passed'; packagedPlayToolCalls=$playReceipt.calls.Count;
+    packagedToolWorkbench='passed'; packagedToolWorkbenchCalls=$workbenchReceipt.callCount;
     createdUtc=[DateTime]::UtcNow.ToString('o'); dotnetSha256=(Get-FileHash -LiteralPath $dotnetExe -Algorithm SHA256).Hash.ToLowerInvariant() }
 $provenance | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $package 'PROVENANCE.json') -Encoding utf8
 $manifest = Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {

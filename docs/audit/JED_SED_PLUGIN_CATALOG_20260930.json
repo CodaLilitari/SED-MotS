@@ -1,0 +1,1946 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-09-30",
+  "editor_source_commit": "83b158ce9e1aa9d79bb5bc51d3b3b25633e3357c",
+  "status": "Research completed; capability priorities are proposals, not implemented or runtime-tested features.",
+  "scope": {
+    "legacy_catalog_families": 45,
+    "adjacent_importer_families": 3,
+    "source_capability_candidates": 24,
+    "public_repository_trees": 25,
+    "forum_only_discovery_records": 6,
+    "counts_overlap": true,
+    "massassi_plugin_source_links": 39,
+    "jkdf2_tool_index_pages": 14,
+    "jkdf2_jed_plugin_detail_pages": 50,
+    "jkarchive_jed_plugin_zip_entries": 56,
+    "forum_index_pages": 96,
+    "forum_distinct_thread_titles": 46806,
+    "forum_thread_pages_acquired": 81,
+    "all_forum_posts_read": false,
+    "legacy_physical_archive_records": 62,
+    "legacy_distinct_archive_hashes": 56,
+    "legacy_distinct_archives_passing_integrity": 54,
+    "legacy_additional_zip_downloads": 26,
+    "legacy_new_hashes_vs_original_36_files": 20,
+    "source_lane_recoveries_excluded_from_legacy_counts": true
+  },
+  "privacy": "Original summaries, public links, public-source identities and hashes only. No Discord logs, copied forum posts, private correspondence, local archive paths or game assets.",
+  "legacy_families": [
+    {
+      "id": "legacy-01",
+      "name": "Adjoin Jiffy",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Fit and connect two equal-vertex-count portal faces, including separated shapes.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-adjoin-jiffy/",
+      "archive_sha256s": [
+        "4c03d7cb255df5d03d5bd95f0500c3eb69fa13513a8cc34d003045f62d2b6724"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "4c03d7cb255df5d03d5bd95f0500c3eb69fa13513a8cc34d003045f62d2b6724",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-02",
+      "name": "Vertex Assassin",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Remove redundant vertices from selected surfaces.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-vertex-assassin/",
+      "archive_sha256s": [
+        "6417bddb3af8c9997164a0dec85683d08a4f15d0adc14a34df2841a8c9924837"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "6417bddb3af8c9997164a0dec85683d08a4f15d0adc14a34df2841a8c9924837",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-03",
+      "name": "Awesome Arrays",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Duplicate sectors, things and lights along linear, grid or circular patterns.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-awesome-arrays/",
+      "archive_sha256s": [
+        "8182939226feaf9dee074f572f42e73036229274b33c5a136e70b4032b067765"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "8182939226feaf9dee074f572f42e73036229274b33c5a136e70b4032b067765",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-04",
+      "name": "Beam Me In Jed",
+      "versions": "3",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Merge complete JED levels or prefabricated geometry into another project.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-beam-me-in-jed-version-3/",
+      "archive_sha256s": [
+        "322d439c5a10596acec6f849eba03191cfc49216d8e48471fcf328d2b05de6cd"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "322d439c5a10596acec6f849eba03191cfc49216d8e48471fcf328d2b05de6cd",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-05",
+      "name": "Cleave2VX",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Split a selected surface between two explicit vertices.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-cleave2vx/",
+      "archive_sha256s": [
+        "b712307b37812bfcbfbf11930bed9fcccac78b0062eb996212d107d724863831"
+      ],
+      "source_members_found": [
+        {
+          "archive": "cleave2vx.zip",
+          "members": [
+            "Cleave2VX.dpr"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "b712307b37812bfcbfbf11930bed9fcccac78b0062eb996212d107d724863831",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Massassi description says surfaces, but original Pascal header and JKDF2 detail correctly say two vertices."
+      ]
+    },
+    {
+      "id": "legacy-06",
+      "name": "CleaveLight",
+      "versions": "0.1b",
+      "author": "Orkin Man",
+      "function": "Subdivide surfaces along shadow boundaries before a lighting calculation.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-cleavelight-0-1b/",
+      "archive_sha256s": [
+        "550566453b87fc6031a7d414aec4a1df7a1fd87ef82f92892b1941be64401ca9"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "550566453b87fc6031a7d414aec4a1df7a1fd87ef82f92892b1941be64401ca9",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Readme reports slow complex cases, unnecessary cleaves and no undo; retain as comparison, prefer bounded modern bake design.",
+        "source_members_found describes catalog ZIPs only; supplemental_source records the separate recovered C++ archive."
+      ],
+      "supplemental_source": {
+        "url": "http://gln64.emulation64.com/CleaveLight%20Source.zip",
+        "sha256": "bec4a634b545857257f658e77a4ffaaca40944f85eac47c788fb4195cf11b6db",
+        "bytes": 140807,
+        "archive_entries": 15,
+        "classification": "C++ source recovered separately; no reuse grant found",
+        "candidate_id": "cleavelight",
+        "runtime_tested": false
+      }
+    },
+    {
+      "id": "legacy-07",
+      "name": "Copy_SF",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Transfer surface attributes and UVs between matching vertex sequences.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-copy_sf-version-1/",
+      "archive_sha256s": [
+        "149f7946e48ee38f778c94c570a604b86e6827db9e5d580edd12683988a96e58"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "149f7946e48ee38f778c94c570a604b86e6827db9e5d580edd12683988a96e58",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-08",
+      "name": "DXF Import",
+      "versions": "1.0 beta 2",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Import AutoCAD R12+ ASCII DXF 3D geometry as sectors.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-dxf-import-v1-0-beta-2/",
+      "archive_sha256s": [
+        "116ced8c49de27302f5115f628551e1db8f43dcaf701034dccbf91dbebd5189e"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "116ced8c49de27302f5115f628551e1db8f43dcaf701034dccbf91dbebd5189e",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-09",
+      "name": "Flagman",
+      "versions": "1.0",
+      "author": "Ted Thompson",
+      "function": "Copy surface flags to every surface sharing the chosen material.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-flagman-v1-0/",
+      "archive_sha256s": [
+        "9ead59c1e4b8155bef23d261669f9e63f174b92b2d48ceb2bc0b08d8a275fdbd"
+      ],
+      "source_members_found": [
+        {
+          "archive": "flagman1.zip",
+          "members": [
+            "Flagman.js"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "9ead59c1e4b8155bef23d261669f9e63f174b92b2d48ceb2bc0b08d8a275fdbd",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Full flag copying can remove floor behavior; expose per-bit masks and exclusions."
+      ]
+    },
+    {
+      "id": "legacy-10",
+      "name": "Free Sector",
+      "versions": "1.02a.safe",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Draw a polygon or circle profile and extrude it into a sector.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-free-sector-1-02a-safe/",
+      "archive_sha256s": [
+        "0448724b7604d357ca8ad3118c9e66d7ea5be00ac54e4cc43581220be79b3d5c"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "0448724b7604d357ca8ad3118c9e66d7ea5be00ac54e4cc43581220be79b3d5c",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Archive freesector102.zip is byte-identical to freesector102asafe.zip."
+      ]
+    },
+    {
+      "id": "legacy-11",
+      "name": "Get Bent",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Sweep a surface profile into curved or straight pipes.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-get-bent-version-1/",
+      "archive_sha256s": [
+        "0ad8ad1aafc1ed204bf3412a179d1e56db537b22cf00dedd18998f74236b152e"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "0ad8ad1aafc1ed204bf3412a179d1e56db537b22cf00dedd18998f74236b152e",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-12",
+      "name": "Goal!",
+      "versions": "1.1; 1.2 beta",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Author objective events and completion actions; generate COG and cogstrings and install bindings.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-goal-version-1-2-beta/",
+      "archive_sha256s": [
+        "8f051ce2283994fcd50dc63fdc5bcedc19bc9a97e6a4a1ddd307a86a3002c35f",
+        "c260005e9732a7e34ce4b39178d2567ecce9fe20a5a7f172793adc43cf23925c"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "8f051ce2283994fcd50dc63fdc5bcedc19bc9a97e6a4a1ddd307a86a3002c35f",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "c260005e9732a7e34ce4b39178d2567ecce9fe20a5a7f172793adc43cf23925c",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-13",
+      "name": "Go Rotate",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Revolve a drawn profile into domes and circular architecture with convexity checks.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-go-rotate-version-1/",
+      "archive_sha256s": [
+        "fbecd980b676f72a1401dc7dddec0d20101724ad729562e2525c234d46c06c95"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "fbecd980b676f72a1401dc7dddec0d20101724ad729562e2525c234d46c06c95",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-14",
+      "name": "Hotkey Enforcer",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Edit plugin command names and shortcuts; find and repair conflicting hotkeys.",
+      "priority_judgment": "low",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-hotkey-enforcer-version-1/",
+      "archive_sha256s": [
+        "1a70e97877cb62067637c019995016d74491fb0085598d660843fb6fc690c5ca"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "1a70e97877cb62067637c019995016d74491fb0085598d660843fb6fc690c5ca",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-15",
+      "name": "JED2PRJ",
+      "versions": "0.1",
+      "author": "Alexei Novikov",
+      "function": "Export a JED level to Ace_DXF project format.",
+      "priority_judgment": "low",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-jed2prj-version-0-1/",
+      "archive_sha256s": [
+        "8572b641d690d5a46838b05809c7d7ab473250503f822c140d38958389f05293"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "8572b641d690d5a46838b05809c7d7ab473250503f822c140d38958389f05293",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-16",
+      "name": "JedP / Layer Everything",
+      "versions": "1",
+      "author": "JK Meteor",
+      "function": "Report level information and group things into layers.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-layer-everything-version-1/",
+      "archive_sha256s": [
+        "779ebf0e66e7b058a0ded3956ac7dd606353e89bda9daf3a8e6cddd84547afe8"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "779ebf0e66e7b058a0ded3956ac7dd606353e89bda9daf3a8e6cddd84547afe8",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Layer Everything download is byte-identical to JedP; one family, not two."
+      ]
+    },
+    {
+      "id": "legacy-17",
+      "name": "VecCalc for Jed",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Calculate a unit direction from two chosen things for conveyor or thrust scripts.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-veccalc-for-jed-version-1/",
+      "archive_sha256s": [
+        "aed1073f037c05d49e7606a8cf5e9a7cb92be0395f66d1dd6148153871e29510"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "aed1073f037c05d49e7606a8cf5e9a7cb92be0395f66d1dd6148153871e29510",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-18",
+      "name": "JKTree",
+      "versions": "JED 0.81 era",
+      "author": "Alexei Novikov",
+      "function": "Arrange a flat project into the resource subdirectories expected in a GOB.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-jktree/",
+      "archive_sha256s": [
+        "7a39e7be5f3b19a9ed53e3d50f00096be6c2793fcb0eb35ecf711679f77a4858"
+      ],
+      "source_members_found": [
+        {
+          "archive": "jed-plugins-jktree.zip",
+          "members": [
+            "jktree.dpr"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "7a39e7be5f3b19a9ed53e3d50f00096be6c2793fcb0eb35ecf711679f77a4858",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-19",
+      "name": "KeyMaster",
+      "versions": "beta .1",
+      "author": "Tom Smallwood",
+      "function": "Generate simple one-mesh KEY motion for vehicles or cameras.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-keymaster-beta-1/",
+      "archive_sha256s": [
+        "9731e1885e52786abc1764eb4ee10b1afb1c84c84438fb1ef7dc5b059ab51336"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "9731e1885e52786abc1764eb4ee10b1afb1c84c84438fb1ef7dc5b059ab51336",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-20",
+      "name": "Light Fantastic",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Place lights at individual or grouped sector centers and derive range from their extents.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugin-light-fantastic-version-1/",
+      "archive_sha256s": [
+        "6d55a94649dba96f83289bdab3d6259e68b5f976863c23ca7bca587ee78ea678"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "6d55a94649dba96f83289bdab3d6259e68b5f976863c23ca7bca587ee78ea678",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-21",
+      "name": "MiniPlugins: StatMan, CMP Fix, Mat Replace",
+      "versions": "0.5",
+      "author": "Mark Jones",
+      "function": "Count topology and templates; normalize sector colormaps; replace a material globally.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-miniplugins-version-0-5/",
+      "archive_sha256s": [
+        "5cdaee0b1043a4be2959588b52c19a55dd3a4226ad6798cff8c608096360a9b3"
+      ],
+      "source_members_found": [
+        {
+          "archive": "miniplugins.zip",
+          "members": [
+            "MatReplace.js",
+            "cmpfix.js",
+            "stats.js"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "5cdaee0b1043a4be2959588b52c19a55dd3a4226ad6798cff8c608096360a9b3",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-22",
+      "name": "Mirror Madness",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Reflect selected sectors, things and lights through a chosen surface plane.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-mirror-madness/",
+      "archive_sha256s": [
+        "d33c1e695ff18fcf4244e642118334cf9186cbfc987ccc5fdea43fd4f387c439"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "d33c1e695ff18fcf4244e642118334cf9186cbfc987ccc5fdea43fd4f387c439",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-23",
+      "name": "MoveSC2VX",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Align a sector using an arbitrary source vertex and target vertex.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-movesc2vx/",
+      "archive_sha256s": [
+        "1504dccefd73526cc931e0175f3a5252f9ab8119a6b8ff661181a86b3df06ad4"
+      ],
+      "source_members_found": [
+        {
+          "archive": "movesc2vx.zip",
+          "members": [
+            "MoveSC2VX.dpr"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "1504dccefd73526cc931e0175f3a5252f9ab8119a6b8ff661181a86b3df06ad4",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-24",
+      "name": "Mr Sector",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Create polyhedral primitives with chosen position, size and texture.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-mr-sector-version-1/",
+      "archive_sha256s": [
+        "e32d024738c3d00257f613029c1b0078c7fcc250afb3709bdb238cce8ce99d03"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "e32d024738c3d00257f613029c1b0078c7fcc250afb3709bdb238cce8ce99d03",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-25",
+      "name": "OnPar",
+      "versions": "1.2",
+      "author": "BoBo Fett",
+      "function": "Export selected vertices as a particle cloud and generate its template with calculated radius.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-onpar-version-1-2/",
+      "archive_sha256s": [
+        "f1d4d838687d23e01d5e5dfba9bb2204b94f13c9a2f25b73e1364cca3f5a26d1"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "f1d4d838687d23e01d5e5dfba9bb2204b94f13c9a2f25b73e1364cca3f5a26d1",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-26",
+      "name": "PathFinder",
+      "versions": "1.01",
+      "author": "BigBosskMan",
+      "function": "Generate actor patrol COGs from authored frame paths.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-pathfinder-v1-01/",
+      "archive_sha256s": [
+        "a55dc8d06cc14f95a2125ddff019fcc1b6c1cab30b4cdf987d43953acdbc7f1a"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "a55dc8d06cc14f95a2125ddff019fcc1b6c1cab30b4cdf987d43953acdbc7f1a",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Readme says automatic COG placement was disabled due to a JED bug. New implementation should atomically author path, COG and typed bindings."
+      ]
+    },
+    {
+      "id": "legacy-27",
+      "name": "Point Extruder",
+      "versions": "unspecified",
+      "author": "unresolved",
+      "function": "Collapse a surface extrusion toward a point.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.massassi.net/jedplugs/",
+      "archive_sha256s": [
+        "669545d8fe5bd10ce8f1c3a5c494fa8dea26521ba4dadab4cfea6ead70eabb07"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "669545d8fe5bd10ce8f1c3a5c494fa8dea26521ba4dadab4cfea6ead70eabb07",
+          "zip_test_exit_code": 2
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Point Extruder.doc fails CRC; binary not executed. Author and detailed options unresolved."
+      ]
+    },
+    {
+      "id": "legacy-28",
+      "name": "Ripper",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Fan-subdivide a surface around an offset center, useful for rock forms or UV control.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-ripper-version-1/",
+      "archive_sha256s": [
+        "9a1589ff94c2e358d1e1d77d62a05ce561227ad04c29cd6c46cf0eb430057a93"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "9a1589ff94c2e358d1e1d77d62a05ce561227ad04c29cd6c46cf0eb430057a93",
+          "zip_test_exit_code": 2
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Ripper.exe.dsc has header error in both hash-identical mirrors; executable not executed."
+      ]
+    },
+    {
+      "id": "legacy-29",
+      "name": "Vxs Sec Cleave / SecCleave",
+      "versions": "1.0",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Split selected sectors by a plane through any three chosen vertices.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-vxs-sec-cleave-v1-0/",
+      "archive_sha256s": [
+        "c7d65809a510e324fc7ef219e168698ef16205cbdbdd8baef46f239781d8e488",
+        "8fdf88c137ae9a811d920b7ffb12c1b6541c4cadb0eb1de2b4c2d18b67643c53"
+      ],
+      "source_members_found": [
+        {
+          "archive": "jed-plugins-vxs-sec-cleave-v1-0-source-code.zip",
+          "members": [
+            "SecCleave.dpr",
+            "pPlugin.pas"
+          ]
+        }
+      ],
+      "license_status": "Source README grants reuse but forbids making money; incompatible with an unrestricted GPL code import.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "c7d65809a510e324fc7ef219e168698ef16205cbdbdd8baef46f239781d8e488",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "8fdf88c137ae9a811d920b7ffb12c1b6541c4cadb0eb1de2b4c2d18b67643c53",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-30",
+      "name": "Shatter",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Configure both sides of glass portals, including breakable COG bindings and magnetic sealing.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-shatter-version-1/",
+      "archive_sha256s": [
+        "96ddeb0ab37e1960c35ca692e1a8275c21d0a508d92304522a7287be47c66abb"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "96ddeb0ab37e1960c35ca692e1a8275c21d0a508d92304522a7287be47c66abb",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-31",
+      "name": "Sky Flagger",
+      "versions": "1.0a",
+      "author": "Michael Rishka Koger",
+      "function": "Apply sky flags to all surfaces using a chosen material.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-sky-flagger-v1-0a/",
+      "archive_sha256s": [
+        "7a0f5548a03ed4a750cc5a4827ed36aa6a7a66c02c89bc7ff19c877e19910870"
+      ],
+      "source_members_found": [
+        {
+          "archive": "skyflagger.zip",
+          "members": [
+            "SkyFlagger.js"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "7a0f5548a03ed4a750cc5a4827ed36aa6a7a66c02c89bc7ff19c877e19910870",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Legacy behavior overwrites unrelated flags; implement masked edits and an explicit preview instead."
+      ]
+    },
+    {
+      "id": "legacy-32",
+      "name": "Stair Crazy",
+      "versions": "2 catalog label",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Generate stairs from selected floor faces.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-stair-crazy-version-2/",
+      "archive_sha256s": [
+        "7a698415c88a29f635f8290daaa8789d2858275fd126104d23e6fa93db0251d4"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "7a698415c88a29f635f8290daaa8789d2858275fd126104d23e6fa93db0251d4",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "JKDF2 v2 ZIP is byte-identical to existing Massassi ZIP; not a new payload upgrade."
+      ]
+    },
+    {
+      "id": "legacy-33",
+      "name": "Statter!",
+      "versions": "unspecified",
+      "author": "DebtPayer (Kevin Fee)",
+      "function": "Display counts of geometry, things, lights and chosen templates.",
+      "priority_judgment": "low",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-statter/",
+      "archive_sha256s": [
+        "e9005366630fb86be6d0e3c4401975b8215eec2d0d931d71001cf101bc601986"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "e9005366630fb86be6d0e3c4401975b8215eec2d0d931d71001cf101bc601986",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-34",
+      "name": "Thing Pack: Move2SC, Move2SF, Rotate2SF",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Place things at sector or face centers and align their orientation to a surface normal.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-thing-pack-version-1/",
+      "archive_sha256s": [
+        "5e7b50905883b49ad04f4ce2e2867a1de5b9f60a2cf06567eb910fd724b2867d"
+      ],
+      "source_members_found": [
+        {
+          "archive": "thingpack.zip",
+          "members": [
+            "Move2SC.dpr",
+            "Move2SF.dpr",
+            "Rotate2SF.dpr"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "5e7b50905883b49ad04f4ce2e2867a1de5b9f60a2cf06567eb910fd724b2867d",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-35",
+      "name": "Transsectoral",
+      "versions": "unspecified",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Build outer shell sectors around a sector, useful for dome thickness.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-transsectoral/",
+      "archive_sha256s": [
+        "9a6412711d749938affc2bcf2ee29352858395b1d6922a3ab0862a4d7184ee90"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "9a6412711d749938affc2bcf2ee29352858395b1d6922a3ab0862a4d7184ee90",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-36",
+      "name": "Vinkel",
+      "versions": "1.0; 1.01 archive label / 1.1 source history",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Set or clear floor flags according to surface slope; later DLL version adds undo.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-vinkel-v1-01/",
+      "archive_sha256s": [
+        "264780d061ed8612ffd6fdfc8d3af68dde152df8d0e3e2c536bae3bfde14da07",
+        "83d828a439075a03f13eba0c1f6eedbc6b9f512d0bb00aaddcdee804bd9fcd65",
+        "3e91b8778323a0b1348f4812335c93db9b96377ba006fe10677b5c3aaf40d664",
+        "adc53f4c5c34106a2ebf51231f78332b82524ec758bca3835f1c1fd9e8ff7b4a"
+      ],
+      "source_members_found": [
+        {
+          "archive": "jed-plugins-vinkel-1-0-source-code.zip",
+          "members": [
+            "vinkel.dpr"
+          ]
+        },
+        {
+          "archive": "jed-plugins-vinkel-v1-01-source-code.zip",
+          "members": [
+            "vinkel_main.pas",
+            "vinkel.dpr"
+          ]
+        }
+      ],
+      "license_status": "Both recovered source versions require asking the author before using source.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "264780d061ed8612ffd6fdfc8d3af68dde152df8d0e3e2c536bae3bfde14da07",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "83d828a439075a03f13eba0c1f6eedbc6b9f512d0bb00aaddcdee804bd9fcd65",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "3e91b8778323a0b1348f4812335c93db9b96377ba006fe10677b5c3aaf40d664",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "adc53f4c5c34106a2ebf51231f78332b82524ec758bca3835f1c1fd9e8ff7b4a",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-37",
+      "name": "Water Works",
+      "versions": "1",
+      "author": "Craig Urquhart (UGG_BOOT)",
+      "function": "Configure underwater sectors, tint, sound and portal water surfaces.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-water-works-version-1/",
+      "archive_sha256s": [
+        "b1f35c55bd4ba13aa10202e1b1a70c62eeaa200beceae92259c37a5ceeb0f299"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "b1f35c55bd4ba13aa10202e1b1a70c62eeaa200beceae92259c37a5ceeb0f299",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-38",
+      "name": "CreateVertex",
+      "versions": "1",
+      "author": "Darth Slaw",
+      "function": "Insert free vertices into a sector for explicit surface and sector construction.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-createvertex-version-1/",
+      "archive_sha256s": [
+        "cb4e99b829268f8ad3111c35e9813dd235c78b8de2a852f42285d2ddf07c6276"
+      ],
+      "source_members_found": [
+        {
+          "archive": "jed-plugins-createvertex-version-1.zip",
+          "members": [
+            "CreateVertex.cpp"
+          ]
+        }
+      ],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "cb4e99b829268f8ad3111c35e9813dd235c78b8de2a852f42285d2ddf07c6276",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-39",
+      "name": "Lighter",
+      "versions": ".7 catalog label; readme 2005-02-04",
+      "author": "Sige",
+      "function": "Layer-scoped portal-aware shadow subdivision and lighting, including ambient and MotS RGB channels.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-lighter-version-7/",
+      "archive_sha256s": [
+        "c70db9e70814ad3932a11b5306d68dce5ece1cd7997c378da6eb1570f42d04a9"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "c70db9e70814ad3932a11b5306d68dce5ece1cd7997c378da6eb1570f42d04a9",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Readme documents JED plugin API G-to-B corruption for RGB; do not copy this behavior. Recalculation with JED loses ambient and undo. No source found in these archives."
+      ]
+    },
+    {
+      "id": "legacy-40",
+      "name": "ForceRemap",
+      "versions": "1.1",
+      "author": "Geoff Archer",
+      "function": "Edit 3DO UVs, planar auto-mapping, texture scale and material replacement without changing geometry.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-forceremap-1-1/",
+      "archive_sha256s": [
+        "475d243dab76539095ac93604100f094d407a439d7121143d10d1e91ebe2ef1d"
+      ],
+      "source_members_found": [],
+      "license_status": "Binary README explicitly GNU GPL; LICENSE contains GPL v2 text. Author announced a source release, but matching implementation source was not recovered.",
+      "recommended_route": "Consider source port only after matching source recovery and grant/version verification; otherwise recreate the documented feature.",
+      "archive_integrity": [
+        {
+          "sha256": "475d243dab76539095ac93604100f094d407a439d7121143d10d1e91ebe2ef1d",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "Companion editor, not an in-process JED plugin; legacy version lacks multi-LOD and GOB-contained 3DO loading."
+      ],
+      "source_candidate_id": "forceremap"
+    },
+    {
+      "id": "legacy-41",
+      "name": "Terraining / 3DO Heightmap Generator",
+      "versions": "0.3",
+      "author": "Hellcat",
+      "function": "Generate a 3DO terrain mesh from a 16, 32 or 64 pixel square BMP heightmap.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-terraining-ver-0-3-jan-2004/",
+      "archive_sha256s": [
+        "ca50331570cc90bf49c2656991b8969ced963e2b7179a5212562ae670da2e2f6"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "ca50331570cc90bf49c2656991b8969ced963e2b7179a5212562ae670da2e2f6",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-42",
+      "name": "Jedi Knight Calculator",
+      "versions": "unspecified",
+      "author": "Brandon Bull",
+      "function": "Calculate lengths, UV scales, distances, rotations and field of view.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-jedi-knight-calculator/",
+      "archive_sha256s": [
+        "af895100aaf93c4891ad060c99217ee42ed8ae2233719bff34d5427a6945dc36"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "af895100aaf93c4891ad060c99217ee42ed8ae2233719bff34d5427a6945dc36",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-43",
+      "name": "Fun3DO",
+      "versions": "0.41 beta; 0.5 changelog-only broken update",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Assemble meshes and JED sectors into textured 3DO hierarchies with pivot controls.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-fun3do-version-0-41-beta/",
+      "archive_sha256s": [
+        "f45140c0434160863077c42849ab58b08187c22410a81e63fa205bcc244ca087",
+        "c66d75b3f918d30cb40673093554e137011a226690383751fc1def39f8f3e600"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "f45140c0434160863077c42849ab58b08187c22410a81e63fa205bcc244ca087",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "c66d75b3f918d30cb40673093554e137011a226690383751fc1def39f8f3e600",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": [
+        "0.5 update archive contains empty fun3do.exe; treat only its history.txt as evidence. No usable 0.5 binary recovered here."
+      ]
+    },
+    {
+      "id": "legacy-44",
+      "name": "JOKE",
+      "versions": "0.7.7",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Edit 3DO geometry, hierarchy, surface attributes and textures, including GOB/GOO resources.",
+      "priority_judgment": "medium",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-joke-version-0-7-7/",
+      "archive_sha256s": [
+        "ca66aec31161397b0d44f380597d56f40aafe413d689e39ca8cc845b231975f6"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "ca66aec31161397b0d44f380597d56f40aafe413d689e39ca8cc845b231975f6",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-45",
+      "name": "EWOK Killer",
+      "versions": "2001-10-26 readme",
+      "author": "BAH_Strike",
+      "function": "Repair suspicious visible portal faces matching specific geometry and flag values.",
+      "priority_judgment": "high",
+      "category": "catalog_plugin_or_companion",
+      "source_url": "https://www.jkdf2.net/download/jed-plugins-ewok-killer/",
+      "archive_sha256s": [
+        "fa3225f7be9773201546d4d3c3fc1309824acfa979edbc4853f1e4723346cbf8"
+      ],
+      "source_members_found": [],
+      "license_status": "Readme forbids using executable as a base and includes contradictory distribution boilerplate. Treat reuse/redistribution as unresolved; recreate documented repair.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "fa3225f7be9773201546d4d3c3fc1309824acfa979edbc4853f1e4723346cbf8",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-46",
+      "name": "JKL Import for JK2Radiant / GtkRadiant",
+      "versions": "1.2b",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Convert JKL/GOB/GOO to brush geometry and textures; Gtk build also transfers walkplayers and source lights.",
+      "priority_judgment": "medium",
+      "category": "adjacent_external_tool",
+      "source_url": "https://jkdf2.net/JKBot/JKArchive/?dir=JKDF2/JKDF2/Game%20Files/tools/JKE/JED%20Plugins",
+      "archive_sha256s": [
+        "ea08a887af4cf6bdaf8ec31cea1573e60c2dabbaf142a94fabd36a9c84a2fe85",
+        "d951ed01fc97d9c951e6e58e66119d93a800a70688eed98af9bebb71f7b63810",
+        "d875c16768e494473f95ec456a5f3ab25c5471c5e1b4eb3c441b5be84f040954"
+      ],
+      "source_members_found": [
+        {
+          "archive": "archive-src_jklimport12b.zip",
+          "members": [
+            "P_vec.pas",
+            "FConvTex.dfm",
+            "FConvTex.pas",
+            "FGobDlg.dfm",
+            "FGobDlg.pas",
+            "FStatus.dfm",
+            "FStatus.pas",
+            "gtkJKLimport.dpr",
+            "jk2JKLimport.dpr",
+            "main.pas",
+            "O_brush.pas",
+            "O_ComEnt.pas",
+            "O_geo.pas",
+            "O_jkc.pas",
+            "O_jkl.pas",
+            "O_jkt.pas",
+            "P_str.pas",
+            "GTKRadiant_Plugins.pas",
+            "QERadiant_Plugins.pas"
+          ]
+        }
+      ],
+      "license_status": "Source README disallows commercial use and conditions freeware reuse on informing author.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "ea08a887af4cf6bdaf8ec31cea1573e60c2dabbaf142a94fabd36a9c84a2fe85",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "d951ed01fc97d9c951e6e58e66119d93a800a70688eed98af9bebb71f7b63810",
+          "zip_test_exit_code": 0
+        },
+        {
+          "sha256": "d875c16768e494473f95ec456a5f3ab25c5471c5e1b4eb3c441b5be84f040954",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-47",
+      "name": "MilkShape 3DO Importer (dr0id)",
+      "versions": "R1",
+      "author": "Andre Di Geronimo (dr0id)",
+      "function": "Import Jedi Knight 3DO models into MilkShape.",
+      "priority_judgment": "low",
+      "category": "adjacent_external_tool",
+      "source_url": "https://jkdf2.net/JKBot/JKArchive/?dir=JKDF2/JKDF2/Game%20Files/tools/3DO",
+      "archive_sha256s": [
+        "e5658a70b420e94d83349a4c03f4949fee9565d2df5de6a6776132983657692c"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "e5658a70b420e94d83349a4c03f4949fee9565d2df5de6a6776132983657692c",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    },
+    {
+      "id": "legacy-48",
+      "name": "MilkShape 3DO Importer (Zymotico)",
+      "versions": "unspecified",
+      "author": "Zymotico",
+      "function": "Import 3DO UVs and convert MAT textures to TGA for MilkShape.",
+      "priority_judgment": "low",
+      "category": "adjacent_external_tool",
+      "source_url": "https://jkdf2.net/JKBot/JKArchive/?dir=JKDF2/JKDF2/Game%20Files/tools/3DO",
+      "archive_sha256s": [
+        "07c8d55bb6d02ad963bfd0db17a104c81573f86a2604a34a30d693b1fd88671a"
+      ],
+      "source_members_found": [],
+      "license_status": "No reuse grant established from inspected material; source availability is not a license.",
+      "recommended_route": "Recreate functionality in shared Core commands unless a separately verified compatible source grant is available.",
+      "archive_integrity": [
+        {
+          "sha256": "07c8d55bb6d02ad963bfd0db17a104c81573f86a2604a34a30d693b1fd88671a",
+          "zip_test_exit_code": 0
+        }
+      ],
+      "runtime_tested": false,
+      "caveats": []
+    }
+  ],
+  "source_capability_candidates": [
+    {
+      "id": "material_light_bake",
+      "repo": "LadyEebs/JED-Light-Baker",
+      "commit": "84823b26afeb876f2c8f57bebbff618712e82f96",
+      "url": "https://github.com/LadyEebs/JED-Light-Baker/tree/84823b26afeb876f2c8f57bebbff618712e82f96",
+      "capability": "Sun, sky, emissive, transmitted and indirect light baking",
+      "priority": "P1",
+      "reuse_evidence": "source_available_no_grant_found",
+      "qualification": "Recreate capability or clarify grant; independent white/RGB, decoded MAT colors, snapshot compute and atomic apply; no engine parity claim.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "legacy_plugin_abi",
+      "repo": "smlu/SED",
+      "commit": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "url": "https://github.com/smlu/SED/tree/c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "capability": "Native JED/SED bridge API and plugin developer mode",
+      "priority": "P1",
+      "reuse_evidence": "explicit_GPLv3_file",
+      "qualification": "Review as existing GPL baseline; distinguish ANSI IJED and modern ISed layouts, calling conventions and x86/x64.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "legacy_rgb_getter",
+      "repo": "smlu/SED",
+      "commit": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "url": "https://github.com/smlu/SED/tree/c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "capability": "Regression: legacy getter returns green in blue channel",
+      "priority": "P1",
+      "reuse_evidence": "explicit_GPLv3_file",
+      "qualification": "Static defect src/JED_COM.PAS:762-769; setter fixed. Recreate original unequal-channel regression before any compatibility host.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "surface_tools",
+      "repo": "JKBoBoFett/SurfaceTools-Plug-in",
+      "commit": "463493851f23e0d744d805e154983cd4685851c5",
+      "url": "https://github.com/JKBoBoFett/SurfaceTools-Plug-in/tree/463493851f23e0d744d805e154983cd4685851c5",
+      "capability": "Scale, inset, move and extrude surfaces",
+      "priority": "P1",
+      "reuse_evidence": "binary_only_no_grant_found",
+      "qualification": "One-blob README tree; release assets contain no source/license. Recreate shared Core operations with reciprocal portal checks.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "njed_surface_obj",
+      "repo": "JKBoBoFett/NJED",
+      "commit": "6fa7ac5be28638fda7495ff62fe6834d86600e39",
+      "url": "https://github.com/JKBoBoFett/NJED/tree/6fa7ac5be28638fda7495ff62fe6834d86600e39",
+      "capability": "Surface editing and OBJ/UV import",
+      "priority": "P1",
+      "reuse_evidence": "source_available_no_grant_found",
+      "qualification": "Community branch, not default README branch. Fixed arrays/global selection/negative OBJ indices are prior verified static risks.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "cog_diagnostics",
+      "repo": "colin-hurley/parsec",
+      "commit": "60d93597bb70d255f9b72264f92f29ef0e35a67a",
+      "url": "https://github.com/colin-hurley/parsec/tree/60d93597bb70d255f9b72264f92f29ef0e35a67a",
+      "capability": "COG syntax/type/verb diagnostics and command-line checking",
+      "priority": "P1",
+      "reuse_evidence": "source_available_no_grant_found",
+      "qualification": "Current internal readme says1.8.0 FreeBASIC despite historical repository description1.7.0. Recreate checks against engine profiles; typing config admits false positives.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "cog_compiler",
+      "repo": "jdmclark/gorc",
+      "commit": "a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+      "url": "https://github.com/jdmclark/gorc/tree/a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+      "capability": "Grammar, AST, semantic analysis and compiler diagnostics",
+      "priority": "P1",
+      "reuse_evidence": "explicit_Apache_2_0",
+      "qualification": "Source candidate, not proof of complete MotS semantics; preserve notices and test real engine contract.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "cog_reference",
+      "repo": "colin-hurley/datamaster",
+      "commit": "eddc4ce9a118f179982a801a9d0e2affd7363ae5",
+      "url": "https://github.com/colin-hurley/datamaster/tree/eddc4ce9a118f179982a801a9d0e2affd7363ae5",
+      "capability": "COG verbs, message and flag reference",
+      "priority": "P2",
+      "reuse_evidence": "documentation_no_grant_found",
+      "qualification": "Use discovery/citations, not wholesale text republication or semantic oracle.972-file tree.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "blender_assets",
+      "repo": "smlu/blender-sith",
+      "commit": "ecc90131bcfdeabd400225e8a72ce94cbff1ec5c",
+      "url": "https://github.com/smlu/blender-sith/tree/ecc90131bcfdeabd400225e8a72ce94cbff1ec5c",
+      "capability": "3DO/KEY import-export; hierarchy, vertex colors, MAT cells",
+      "priority": "P2",
+      "reuse_evidence": "explicit_GPL_3_0_or_later",
+      "qualification": "Blender5.0 minimum at pin. Asset bridge only; no JKL roundtrip claim.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "blender_level_import",
+      "repo": "Ecki81/jediknight2blender",
+      "commit": "88aed6f7182dad72d5042d2f70d5eef0b7ed6b78",
+      "url": "https://github.com/Ecki81/jediknight2blender/tree/88aed6f7182dad72d5042d2f70d5eef0b7ed6b78",
+      "capability": "JKL/GOB/GOO geometry, materials, things import",
+      "priority": "P2",
+      "reuse_evidence": "entrypoint_GPL_3_0_or_later",
+      "qualification": "WIP importer with explicit entrypoint grant despite null GitHub license. No complete level exporter.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "material_authoring",
+      "repo": "bahstrike/Matt",
+      "commit": "5df4ed4bc72396b796b9d377ee4c2a9bcd355e35",
+      "url": "https://github.com/bahstrike/Matt/tree/5df4ed4bc72396b796b9d377ee4c2a9bcd355e35",
+      "capability": "MAT format conversion, palette selection, dithering and emissive palette protection",
+      "priority": "P1",
+      "reuse_evidence": "explicit_GPLv3_file",
+      "qualification": "Newer parent than smlu fork; README itself warns stale features. Harden parser and prove white/RGB/emission semantics.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "material_older_fork",
+      "repo": "smlu/Matt",
+      "commit": "dd92c0d386fdb5f0e9c488eb14e7c08e9bdea394",
+      "url": "https://github.com/smlu/Matt/tree/dd92c0d386fdb5f0e9c488eb14e7c08e9bdea394",
+      "capability": "Earlier C# MAT utility fork",
+      "priority": "P3",
+      "reuse_evidence": "explicit_GPLv3_file",
+      "qualification": "Do not mistake for newest parent; inspect parent delta before choosing code baseline.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "gimp_material",
+      "repo": "smlu/gimp-ijim",
+      "commit": "29186a41aa764c6b198755d270eb0f73771e737e",
+      "url": "https://github.com/smlu/gimp-ijim/tree/29186a41aa764c6b198755d270eb0f73771e737e",
+      "capability": "GIMP3 MAT texture import-export",
+      "priority": "P2",
+      "reuse_evidence": "explicit_MIT",
+      "qualification": "LICENSE actuallyMIT despite NOASSERTION metadata; IJIM format/naming assumptions require JK/MotS-specific tests.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "geometry_export",
+      "repo": "tyduptyler13/JKL2OBJ",
+      "commit": "03e207df13e2e8f9825bd0961cd3d15d6bca0334",
+      "url": "https://github.com/tyduptyler13/JKL2OBJ/tree/03e207df13e2e8f9825bd0961cd3d15d6bca0334",
+      "capability": "JS JKL geometry/UV export",
+      "priority": "P2",
+      "reuse_evidence": "explicit_MIT",
+      "qualification": "One-way geometry utility, not a semantic level roundtrip; distinct from other tools of same name.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "ijim_cli",
+      "repo": "smlu/Urgon",
+      "commit": "35b98178787c33957886d701f31e3a86ee0a8fd3",
+      "url": "https://github.com/smlu/Urgon/tree/35b98178787c33957886d701f31e3a86ee0a8fd3",
+      "capability": "CLI CND/NDY, GOB and MAT asset conversion",
+      "priority": "P3",
+      "reuse_evidence": "GPLv2_family_component_review_required",
+      "qualification": "IJIM-centric; version compatibility with GPLv3 project not presumed.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "mat16_reference",
+      "repo": "JKBoBoFett/MAT16",
+      "commit": "444721680d07c239e6b7979eea972982309699c8",
+      "url": "https://github.com/JKBoBoFett/MAT16/tree/444721680d07c239e6b7979eea972982309699c8",
+      "capability": "MAT16 format documentation",
+      "priority": "P2",
+      "reuse_evidence": "documentation_only_no_grant_found",
+      "qualification": "Seven docs/images; no converter source in repository.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "ole_wrappers",
+      "repo": "colin-hurley/jedlib",
+      "commit": "cbf97a3673ab5e712d76e57824fd06991e8c8c76",
+      "url": "https://github.com/colin-hurley/jedlib/tree/cbf97a3673ab5e712d76e57824fd06991e8c8c76",
+      "capability": "Named Java/SWT wrappers over JED OLE",
+      "priority": "P2",
+      "reuse_evidence": "explicit_MIT",
+      "qualification": "Win32 OLE wrapper reference, not standalone serializer or crossplatform headless host.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "gob_java",
+      "repo": "colin-hurley/jklib",
+      "commit": "c0480dee654f59aa8277ef50fbceb13ffff62526",
+      "url": "https://github.com/colin-hurley/jklib/tree/c0480dee654f59aa8277ef50fbceb13ffff62526",
+      "capability": "Java GOB archive library and Maven support",
+      "priority": "P3",
+      "reuse_evidence": "source_available_no_grant_found",
+      "qualification": "Small13-blob tree focused onGOB, not complete level editor despite general description.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "smith_plugin_api",
+      "repo": "bahstrike/SmithPlugin",
+      "commit": "8bdd1d2dc434ee502d2db711c56648232cd44f53",
+      "url": "https://github.com/bahstrike/SmithPlugin/tree/8bdd1d2dc434ee502d2db711c56648232cd44f53",
+      "capability": "Engine extension callback interface",
+      "priority": "P3",
+      "reuse_evidence": "source_available_no_grant_found",
+      "qualification": "SMITH engine API, not IJED/ISed; useful extension design comparison only.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "smith_normals",
+      "repo": "bahstrike/smithBumpmapGenerator",
+      "commit": "6ebc89c91927aa795f0445d05a4ee18f36c6cf74",
+      "url": "https://github.com/bahstrike/smithBumpmapGenerator/tree/6ebc89c91927aa795f0445d05a4ee18f36c6cf74",
+      "capability": "RGB-to-normal preprocessing",
+      "priority": "P3",
+      "reuse_evidence": "GPLv2_family_component_review_required",
+      "qualification": "ioquake-derived attributed algorithm; does not enable native retailMotS normalmaps.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "smith_upscale",
+      "repo": "bahstrike/smithTextureUpscale",
+      "commit": "9ac9160bd8ec42e3d4e6e7e58095321b3cfd27e0",
+      "url": "https://github.com/bahstrike/smithTextureUpscale/tree/9ac9160bd8ec42e3d4e6e7e58095321b3cfd27e0",
+      "capability": "xBR texture preprocessing",
+      "priority": "P3",
+      "reuse_evidence": "explicit_LGPL_2_1_or_later_algorithm",
+      "qualification": "Not a drop-in editor plugin; dependency/notice audit required forreuse.",
+      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "cleavelight",
+      "repo": null,
+      "commit": null,
+      "url": "http://gln64.emulation64.com/CleaveLight%20Source.zip",
+      "sha256": "bec4a634b545857257f658e77a4ffaaca40944f85eac47c788fb4195cf11b6db",
+      "capability": "Adaptive shadow-boundary surface subdivision",
+      "priority": "P2",
+      "reuse_evidence": "source_archive_recovered_no_grant_found",
+      "qualification": "15entries actualC++source. Author described oldproof ofconcept; uses undo asalgorithmic scratch. Separate from Sige Lighter.",
+      "verification": "download_archive_inventory_and_selected_source_static_review",
+      "runtime_tested": false
+    },
+    {
+      "id": "forceremap",
+      "repo": null,
+      "commit": null,
+      "url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_11833_page_1.html",
+      "capability": "Six-direction projection and manual UV-coordinate editing for3DO",
+      "priority": "P2",
+      "reuse_evidence": "author_GPL_testimony_exact_source_unrecovered",
+      "qualification": "Originalwebsite403; oneWaybackCDX requesttimedout. Exactlicense/sourceversion notverified.",
+      "verification": "author_post_plus_bounded_failed_source_recovery",
+      "runtime_tested": false
+    },
+    {
+      "id": "puppetjedi",
+      "repo": null,
+      "commit": null,
+      "url": "https://www.massassi.net/oldnews/old18.htm",
+      "capability": "KEY animation editor",
+      "priority": "P3",
+      "reuse_evidence": "historical_author_terms_require_free_distribution_and_credit",
+      "qualification": "Historical announcement is not GPL grant. ExactarchiveLicense.txt should be recovered before considering sourcecopy; prefer GPLblender-sith assetbridge.",
+      "verification": "historical_primary_announcement_read",
+      "runtime_tested": false
+    }
+  ],
+  "repository_pins": [
+    {
+      "repo": "smlu/SED",
+      "url": "https://github.com/smlu/SED",
+      "branch": "main",
+      "sha": "c3b6c0e59f192e96dc6df2daf698fb179e63603a",
+      "date": "2026-08-08T20:22:27Z",
+      "tree_truncated": false,
+      "blob_count": 227
+    },
+    {
+      "repo": "LadyEebs/JED-Light-Baker",
+      "url": "https://github.com/LadyEebs/JED-Light-Baker",
+      "branch": "main",
+      "sha": "84823b26afeb876f2c8f57bebbff618712e82f96",
+      "date": "2026-02-16T18:53:50Z",
+      "tree_truncated": false,
+      "blob_count": 33
+    },
+    {
+      "repo": "JKBoBoFett/NJED",
+      "url": "https://github.com/JKBoBoFett/NJED",
+      "branch": "Community",
+      "sha": "6fa7ac5be28638fda7495ff62fe6834d86600e39",
+      "date": "2025-10-11T23:53:08Z",
+      "tree_truncated": false,
+      "blob_count": 188
+    },
+    {
+      "repo": "anov/JED",
+      "url": "https://github.com/anov/JED",
+      "branch": "main",
+      "sha": "8993c1dea4ba766a08cb5269d165b4c808f25824",
+      "date": "2021-11-09T04:51:41Z",
+      "tree_truncated": false,
+      "blob_count": 155
+    },
+    {
+      "repo": "davidagnome/SED",
+      "url": "https://github.com/davidagnome/SED",
+      "branch": "main",
+      "sha": "908d53d70d6b95784a92e9f1746ab5b13afcfdf0",
+      "date": "2026-08-13T00:13:27Z",
+      "tree_truncated": false,
+      "blob_count": 445
+    },
+    {
+      "repo": "jscaltreto/SED",
+      "url": "https://github.com/jscaltreto/SED",
+      "branch": "main",
+      "sha": "28d9e46a51874aa94c447f1b6fc3dfe917bd76cd",
+      "date": "2025-04-21T22:05:07Z",
+      "tree_truncated": false,
+      "blob_count": 227
+    },
+    {
+      "repo": "LadyEebs/SED",
+      "url": "https://github.com/LadyEebs/SED",
+      "branch": "main",
+      "sha": "784b7351a19d44590be36d83c75c8ddee8e6d0da",
+      "date": "2025-10-13T16:39:52Z",
+      "tree_truncated": false,
+      "blob_count": 227
+    },
+    {
+      "repo": "thekovic/SED",
+      "url": "https://github.com/thekovic/SED",
+      "branch": "main",
+      "sha": "67aa632c4bcaaa0589388b77e684c1f37e20b1b7",
+      "date": "2025-11-16T17:12:50Z",
+      "tree_truncated": false,
+      "blob_count": 227
+    },
+    {
+      "repo": "colin-hurley/jedlib",
+      "url": "https://github.com/colin-hurley/jedlib",
+      "branch": "main",
+      "sha": "cbf97a3673ab5e712d76e57824fd06991e8c8c76",
+      "date": "2020-07-10T00:10:24Z",
+      "tree_truncated": false,
+      "blob_count": 44
+    },
+    {
+      "repo": "smlu/blender-sith",
+      "url": "https://github.com/smlu/blender-sith",
+      "branch": "master",
+      "sha": "ecc90131bcfdeabd400225e8a72ce94cbff1ec5c",
+      "date": "2026-04-05T19:47:08Z",
+      "tree_truncated": false,
+      "blob_count": 81
+    },
+    {
+      "repo": "Ecki81/jediknight2blender",
+      "url": "https://github.com/Ecki81/jediknight2blender",
+      "branch": "develop",
+      "sha": "88aed6f7182dad72d5042d2f70d5eef0b7ed6b78",
+      "date": "2021-10-28T19:14:48Z",
+      "tree_truncated": false,
+      "blob_count": 16
+    },
+    {
+      "repo": "tyduptyler13/JKL2OBJ",
+      "url": "https://github.com/tyduptyler13/JKL2OBJ",
+      "branch": "master",
+      "sha": "03e207df13e2e8f9825bd0961cd3d15d6bca0334",
+      "date": "2017-11-07T04:57:53Z",
+      "tree_truncated": false,
+      "blob_count": 7
+    },
+    {
+      "repo": "bahstrike/SmithPlugin",
+      "url": "https://github.com/bahstrike/SmithPlugin",
+      "branch": "master",
+      "sha": "8bdd1d2dc434ee502d2db711c56648232cd44f53",
+      "date": "2024-12-28T21:56:25Z",
+      "tree_truncated": false,
+      "blob_count": 9
+    },
+    {
+      "repo": "bahstrike/smithBumpmapGenerator",
+      "url": "https://github.com/bahstrike/smithBumpmapGenerator",
+      "branch": "main",
+      "sha": "6ebc89c91927aa795f0445d05a4ee18f36c6cf74",
+      "date": "2021-12-23T23:58:56Z",
+      "tree_truncated": false,
+      "blob_count": 10
+    },
+    {
+      "repo": "bahstrike/smithTextureUpscale",
+      "url": "https://github.com/bahstrike/smithTextureUpscale",
+      "branch": "master",
+      "sha": "9ac9160bd8ec42e3d4e6e7e58095321b3cfd27e0",
+      "date": "2021-12-23T23:36:37Z",
+      "tree_truncated": false,
+      "blob_count": 12
+    },
+    {
+      "repo": "bahstrike/Matt",
+      "url": "https://github.com/bahstrike/Matt",
+      "branch": "main",
+      "sha": "5df4ed4bc72396b796b9d377ee4c2a9bcd355e35",
+      "date": "2024-04-01T00:39:19Z",
+      "tree_truncated": false,
+      "blob_count": 23
+    },
+    {
+      "repo": "smlu/Matt",
+      "url": "https://github.com/smlu/Matt",
+      "branch": "main",
+      "sha": "dd92c0d386fdb5f0e9c488eb14e7c08e9bdea394",
+      "date": "2021-10-27T21:25:20Z",
+      "tree_truncated": false,
+      "blob_count": 20
+    },
+    {
+      "repo": "jdmclark/gorc",
+      "url": "https://github.com/jdmclark/gorc",
+      "branch": "develop",
+      "sha": "a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+      "date": "2020-12-21T02:34:31Z",
+      "tree_truncated": false,
+      "blob_count": 2445
+    },
+    {
+      "repo": "smlu/gimp-ijim",
+      "url": "https://github.com/smlu/gimp-ijim",
+      "branch": "master",
+      "sha": "29186a41aa764c6b198755d270eb0f73771e737e",
+      "date": "2025-05-22T21:24:07Z",
+      "tree_truncated": false,
+      "blob_count": 10
+    },
+    {
+      "repo": "JKBoBoFett/MAT16",
+      "url": "https://github.com/JKBoBoFett/MAT16",
+      "branch": "main",
+      "sha": "444721680d07c239e6b7979eea972982309699c8",
+      "date": "2022-12-21T23:36:03Z",
+      "tree_truncated": false,
+      "blob_count": 7
+    },
+    {
+      "repo": "smlu/Urgon",
+      "url": "https://github.com/smlu/Urgon",
+      "branch": "master",
+      "sha": "35b98178787c33957886d701f31e3a86ee0a8fd3",
+      "date": "2025-09-28T20:44:58Z",
+      "tree_truncated": false,
+      "blob_count": 205
+    },
+    {
+      "repo": "JKBoBoFett/SurfaceTools-Plug-in",
+      "url": "https://github.com/JKBoBoFett/SurfaceTools-Plug-in",
+      "branch": "main",
+      "sha": "463493851f23e0d744d805e154983cd4685851c5",
+      "date": "2023-01-15T14:44:46Z",
+      "tree_truncated": false,
+      "blob_count": 1
+    },
+    {
+      "repo": "colin-hurley/parsec",
+      "url": "https://github.com/colin-hurley/parsec",
+      "branch": "main",
+      "sha": "60d93597bb70d255f9b72264f92f29ef0e35a67a",
+      "date": "2024-08-14T04:24:22Z",
+      "tree_truncated": false,
+      "blob_count": 6
+    },
+    {
+      "repo": "colin-hurley/datamaster",
+      "url": "https://github.com/colin-hurley/datamaster",
+      "branch": "main",
+      "sha": "eddc4ce9a118f179982a801a9d0e2affd7363ae5",
+      "date": "2025-11-16T16:26:00Z",
+      "tree_truncated": false,
+      "blob_count": 972
+    },
+    {
+      "repo": "colin-hurley/jklib",
+      "url": "https://github.com/colin-hurley/jklib",
+      "branch": "main",
+      "sha": "c0480dee654f59aa8277ef50fbceb13ffff62526",
+      "date": "2019-07-15T03:05:11Z",
+      "tree_truncated": false,
+      "blob_count": 13
+    }
+  ],
+  "forum_only_candidates": [
+    {
+      "id": "historical_obj_export",
+      "name": "BoBo_Fett JED OBJ exporter",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_29622_page_1.html",
+      "capability": "World geometry and UV export to OBJ; keep distinct from other same-name exporters until attribution/bytes establish linkage.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    },
+    {
+      "id": "darth_slaw_ewok",
+      "name": "Darth Slaw EWOK script",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_30298_page_1.html",
+      "capability": "JScript/OLE cleanup of accidentally visible portal walls; intentional secret walls, glass and grates require explicit exceptions.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    },
+    {
+      "id": "cutmaster2",
+      "name": "CutMaster2",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_32362_page_1.html",
+      "capability": "Timeline-based cutscene COG generation with actors, camera, sounds and waits.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    },
+    {
+      "id": "cogginator",
+      "name": "Cogginator",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_32362_page_1.html",
+      "capability": "Historical COG development tool; use as a feature lead, not a verified modern semantic checker.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    },
+    {
+      "id": "coggit",
+      "name": "Coggit",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_32362_page_1.html",
+      "capability": "COG object bank and reusable code extraction.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    },
+    {
+      "id": "vb_cog_parser",
+      "name": "Historical VB COG parser module",
+      "source_url": "https://forums.massassi.net/Editing_Forums/Jedi_Knight_and_Mysteries_of_the_Sith_Editing_Forum/thread_32362_page_1.html",
+      "capability": "Author-announced parser source; exact archive and reuse grant not established in this pass.",
+      "verification": "Public author announcement; implementation/reuse not established in this audit.",
+      "runtime_tested": false
+    }
+  ],
+  "limitations": [
+    "Enumerated reachable public catalogs and selected source, not a guarantee of every lost/private plugin.",
+    "Twenty-five repository trees do not mean twenty-five complete code audits or drop-in plugins.",
+    "Public source availability alone does not establish reuse permission.",
+    "No legacy executable, plugin or downloaded build script was run.",
+    "The current managed plugin host does not load native IJED/ISed DLLs.",
+    "Named capability families and source candidates overlap; do not sum them as unique products.",
+    "Code Alliance, old author/JKHub sites, bounded archive queries and restricted GitHub search leave recovery gaps.",
+    "Source/static, archive integrity, GUI availability, agent availability and engine/retail proof are different observations.",
+    "Paused PLAY-01 review/publication was not resumed."
+  ]
+}

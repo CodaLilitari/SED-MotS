@@ -99,7 +99,7 @@ not establish a playable episode or game-resource availability.
 
 ## Discover exact targets
 
-Use `query` collections `sectors`, `things`, `lights`, `templates`, and `materials` for bounded discovery. `surfaces` and `vertices` require a `sector` index. `summary` includes header values and counts. Templates expose existing definitions; things expose current position, orientation, and parameters. Use `search` only with `things`, `templates`, or `materials`.
+Use `query` collections `sectors`, `things`, `lights`, `templates`, and `materials` for bounded discovery. `surfaces` and `vertices` require a `sector` index. `summary` includes header values and counts. Templates expose existing definitions; things expose current position, orientation, and parameters. Discover `schema query` for the collections supporting substring `search` and exact `filter` predicates. The [TOOL-01 workflow](TOOL_WORKBENCH.md) combines these predicates with shared UV edits and bounded object arrays; its executable Python check runs without a GUI or game.
 
 Requests use `offset` and `limit` (maximum 200). Continue from the returned `nextOffset` until it is null; response-size limits may shorten a page before the requested limit. Returned indices identify objects in the original collection, even after a search. Bind selectors to the returned input hash and source revision; never treat a page position as an object index.
 

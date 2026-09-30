@@ -298,6 +298,7 @@ public static partial class AgentWorkspace
         var history = new EditHistory();
         var changes = new List<(JsonElement operation, int? createdIndex, string command, object? before, object? after, object? selections)>();
         int operationIndex = 0;
+        int batchUvCorners = 0, arrayOutputs = 0;
         foreach (var operation in operations.EnumerateArray())
         {
             // Build each command against the current isolated model so later
@@ -309,10 +310,22 @@ public static partial class AgentWorkspace
                 // Bind once at this operation's turn. Receipts must retain these
                 // concrete addresses, never resolve a spatial predicate again.
                 var (boundOperation, selections) = AgentSelections.BindOperation(snapshot, operation);
+                if (name is "projectSurfaceUv" or "transformSurfaceUv")
+                {
+                    batchUvCorners = checked(batchUvCorners + BatchUvTargets(doc, boundOperation).Sum(t => t.value.Corners.Count));
+                    if (batchUvCorners > MaxBatchUvCornersPerPatch)
+                        throw FieldError($"Batch UV edits may address at most {MaxBatchUvCornersPerPatch} corners per patch, counting repeated edits.", "surfaces");
+                }
+                if (name is "addThingArray" or "addLightArray")
+                {
+                    arrayOutputs = checked(arrayOutputs + ArrayOperationCount(boundOperation));
+                    if (arrayOutputs > MaxArrayOutputsPerPatch)
+                        throw FieldError($"Array edits may create at most {MaxArrayOutputsPerPatch} objects per patch.", "layout");
+                }
                 var command = PrepareOperation(doc, boundOperation, resources);
-                int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" => doc.Level.Things.Count,
+                int? created = name switch { "addBox" or "extrudeSurface" => doc.Level.Sectors.Count, "addThing" or "addThingArray" => doc.Level.Things.Count,
                     "registerMaterial" => doc.Materials.Count, "registerColormap" => doc.Level.ColorMaps.Count,
-                    "addLight" => doc.Level.Lights.Count, "addCog" => doc.Level.Cogs.Count, _ => null };
+                    "addLight" or "addLightArray" => doc.Level.Lights.Count, "addCog" => doc.Level.Cogs.Count, _ => null };
                 object? oldValue = created is null || name == "extrudeSurface" ? OperationEffect(doc, boundOperation, null) : null;
                 history.Do(command);
                 changes.Add((boundOperation, created, command.Name, oldValue, OperationEffect(doc, boundOperation, created), selections));
@@ -452,6 +465,8 @@ public static partial class AgentWorkspace
 
     private static IEditCommand PrepareOperation(JklDocument doc, JsonElement op, ExplicitArchiveResources? resources)
     {
+        if (TryPrepareBatchUvOperation(doc, op, out var batchUvCommand)) return batchUvCommand!;
+        if (TryPrepareArrayOperation(doc, op, resources, out var arrayCommand)) return arrayCommand!;
         if (TryPrepareArchitectureOperation(doc, op, resources, out var architectureCommand)) return architectureCommand!;
         if (TryPrepareCogOperation(doc, op, resources, out var cogCommand)) return cogCommand!;
         if (TryPrepareLightOperation(doc, op, out var lightCommand)) return lightCommand!;
@@ -555,6 +570,10 @@ public static partial class AgentWorkspace
         ["registerMaterial"] = ["name"], ["registerColormap"] = ["name"], ["setSectorColormap"] = ["sector", "colormapIndex"],
         ["fitSurfaceTexture"] = ["sector", "surface", "width", "height"], ["setSurfaceUv"] = ["sector", "surface", "uv"],
         ["alignSurfaceTexture"] = ["sector", "surface", "otherSector", "otherSurface"],
+        ["projectSurfaceUv"] = ["surfaces", "direction", "origin", "texelsPerUnit"],
+        ["transformSurfaceUv"] = ["surfaces", "pivot", "scale", "rotationDegrees", "offset"],
+        ["addThingArray"] = ["template", "namePrefix", "layout"],
+        ["addLightArray"] = ["layout", "rgb", "intensity", "range"],
         ["setSurfaceRenderModes"] = ["sector", "surface", "geometryMode", "lightMode", "textureMode"],
         ["extrudeSurface"] = ["sector", "surface", "distance"], ["adjoinSurfaces"] = ["sector", "surface", "otherSector", "otherSurface"],
     };
@@ -566,6 +585,8 @@ public static partial class AgentWorkspace
     {
         string name = String(op, "op");
         var level = doc.Level;
+        if (name is "projectSurfaceUv" or "transformSurfaceUv") return BatchUvEffect(doc, op);
+        if (name is "addThingArray" or "addLightArray") return ArrayOperationEffect(doc, op, created);
         if (name is "rebindCogReference" or "addCog") return CogOperationEffect(doc, op, created);
         if (name == "setThingFrames") return ThingFramesEffect(doc, op);
         if (name is "bindThingArchitecture" or "rebindThingArchitecture" or "bakeThingArchitecture")

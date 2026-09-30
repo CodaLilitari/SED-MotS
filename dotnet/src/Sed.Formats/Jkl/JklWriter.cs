@@ -126,7 +126,7 @@ public static class JklWriter
             ("HEADER", GenerateHeader(level), true), ("MATERIALS", GenerateMaterials(doc, materials), materials.Count > 0),
             ("GEORESOURCE", geo, true), ("SECTORS", sectors, true),
             ("TEMPLATES", GenerateTemplates(level), level.Templates.Count > 0),
-            ("THINGS", GenerateThings(level), level.Things.Count > 0),
+            ("THINGS", GenerateThings(level), level.Things.Count > 0 || level.ThingCapacity > 0),
             ("LIGHTS", GenerateLights(level), level.Lights.Count > 0),
             (SourceLightMetadataFormat.SectionName, SourceLightMetadataFormat.Build(level), SourceLightMetadataFormat.Needed(level)),
             ("COGS", GenerateCogs(level), level.Cogs.Count > 0),

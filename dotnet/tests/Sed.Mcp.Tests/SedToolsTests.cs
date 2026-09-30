@@ -14,6 +14,42 @@ namespace Sed.Mcp.Tests;
 public sealed class SedToolsTests
 {
     [Fact]
+    public async Task WorkbenchOperationsUseExistingMcpPlanApplyQueryAndOutcome()
+    {
+        using var fixture = new Fixture();
+        string input = fixture.Room();
+        var doc = AgentWorkspace.Load(input).Document;
+        var addresses = doc.Level.Sectors[0].Surfaces.Select((s, i) => (s, i))
+            .Where(x => System.Math.Abs(x.s.Normal.Z) > .9).Select(x => new { sector = 0, surface = x.i }).ToArray();
+        Assert.Equal(2, addresses.Length);
+        using var tools = fixture.Tools();
+        var schema = Success(await tools.CallAsync("sed_discover", Args(new { topic = "projectSurfaceUv" })));
+        Assert.Contains("texelsPerUnit", schema.GetRawText());
+        var request = new {
+            schemaVersion = 1, inputSha256 = AgentWorkspace.Hash(File.ReadAllBytes(input)),
+            operations = new object[] {
+                new { op = "projectSurfaceUv", surfaces = addresses, direction = "+z", origin = new[] { 0, 0, 0 }, texelsPerUnit = 64 },
+                new { op = "addLightArray", rgb = new[] { .25, .5, .75 }, intensity = 1, rgbIntensity = 0,
+                    range = 2, flags = 5, layout = new { kind = "linear", origin = new[] { 0, 0, 0 }, step = new[] { .1, 0, 0 }, count = 3 } }
+            }
+        };
+        byte[] original = File.ReadAllBytes(input);
+        var plan = Success(await tools.CallAsync("sed_plan", Args(new { level = input, request })));
+        string operationId = Guid.NewGuid().ToString();
+        var committed = Success(await tools.CallAsync("sed_apply", Args(new { level = input, request,
+            output = "workbench.jkl", expectedOutputSha256 = plan.GetProperty("outputSha256").GetString(), operationId })));
+        Assert.Equal("committed", committed.GetProperty("outcome").GetProperty("observedState").GetString());
+        var page = Success(await tools.CallAsync("sed_query", Args(new { level = "workbench.jkl",
+            request = new { schemaVersion = 1, collection = "lights", filter = new { flags = new { all = 5, none = 2 } } } })));
+        Assert.Equal(3, page.GetProperty("items").GetArrayLength());
+        var reopened = AgentWorkspace.Load(fixture.PathFor("workbench.jkl")).Document;
+        Assert.All(reopened.Level.Lights, light => Assert.Equal(0, light.RgbIntensity));
+        Assert.Equal(original, File.ReadAllBytes(input));
+        var outcome = Success(await tools.CallAsync("sed_outcome", Args(new { operationId })));
+        Assert.Contains("committed", outcome.GetRawText());
+    }
+
+    [Fact]
     public async Task DiscoveryReturnsCompactCapabilitiesAndFocusedSchemasWithoutWorkerLaunch()
     {
         using var fixture = new Fixture();

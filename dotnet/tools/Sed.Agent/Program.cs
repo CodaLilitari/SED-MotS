@@ -137,6 +137,7 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
+    "exact-query-filters", "batch-surface-uv", "bounded-placement-arrays",
     "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",
     "typed-cog-creation", "ordered-thing-frame-authoring",
     "world-bake-diagnostics", "direct-asset-diagnostics",

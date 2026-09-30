@@ -10,6 +10,13 @@ The fork preserves MotS's independent mono/RGB lighting, architectural arrays an
 
 Agents can discover focused command schemas, query current values in bounded pages, send JSON on stdin, and require an exact reviewed output hash before writing. Native project edits also bind the imported template dependencies. The [agent workflows](docs/AGENT_WORKFLOWS.md) show the inspect, plan, apply and readback loop; no model service or API key is needed.
 
+The [TOOL-01 workbench](docs/TOOL_WORKBENCH.md) adds exact query filters,
+shared multi-surface UV projection and transforms, and bounded linear, grid or
+radial arrays of new things and lights. Windows dialogs and agent operations use
+the same undoable commands. MotS arrays preserve independent white/RGB source
+lighting; thing placement checks containment, capacity and typed placed-COG
+references before appending.
+
 The local [MCP-01 adapter](docs/MCP_INTEGRATION.md) exposes eleven named tools
 for discovery, querying, geometric selection, diagnostics, reviewed edits,
 conversion, archive inspection, inline previews and outcome reconciliation.

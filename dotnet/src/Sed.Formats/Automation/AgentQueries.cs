@@ -27,7 +27,7 @@ public static class AgentQueries
     {
         ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
         ["title"] = "SED MotS agent query version 1",
-        ["description"] = "Read-only pages. Indices are from the unfiltered collection and bound to sourceRevision. Surface and vertex indices are local to the selected sector. Search is case-insensitive; things match name or template, other named collections match name. Responses retain full fields, may shorten a page to fit 1 MiB, and expose nextOffset; one oversized item is refused.",
+        ["description"] = "Read-only pages. Indices are from the unfiltered collection and bound to sourceRevision. Surface and vertex indices are local to the selected sector. Search is case-insensitive; things match name or template, other named collections match name. Optional exact filters are collection-specific and AND with search; offset counts filtered matches. Responses retain full fields, may shorten a page to fit 1 MiB, and expose nextOffset; one oversized item is refused.",
         ["type"] = "object", ["additionalProperties"] = false,
         ["required"] = new[] { "schemaVersion", "collection" },
         ["properties"] = new Dictionary<string, object>
@@ -40,6 +40,7 @@ public static class AgentQueries
             ["lightingIndex"] = new { type = "integer", minimum = 0, maximum = int.MaxValue },
             ["mesh"] = new { type = "integer", minimum = 0, maximum = int.MaxValue },
             ["search"] = new { type = "string", minLength = 1, maxLength = 127, pattern = @"\S" },
+            ["filter"] = new { type = "object", minProperties = 1 },
         },
         ["allOf"] = new object[]
         {
@@ -60,10 +61,19 @@ public static class AgentQueries
                 ["if"] = new { properties = new { collection = new Dictionary<string, object> { ["enum"] = NamedCollections } } },
                 ["else"] = new { properties = new { search = false } },
             },
-        },
+            new Dictionary<string, object>
+            {
+                ["if"] = new { properties = new { collection = new Dictionary<string, object> { ["enum"] = AgentQueryFilter.Collections } } },
+                ["else"] = new { properties = new { filter = false } },
+            },
+        }.Concat(AgentQueryFilter.Collections.Select(collection => (object)new Dictionary<string, object>
+        {
+            ["if"] = new { properties = new { collection = new Dictionary<string, object> { ["const"] = collection } } },
+            ["then"] = new { properties = new Dictionary<string, object> { ["filter"] = AgentQueryFilter.Schema(collection) } },
+        })).ToArray(),
     };
 
-    private sealed record Request(string Collection, int Offset, int Limit, int? Sector, string? Search, int? LightingIndex, int? Mesh);
+    private sealed record Request(string Collection, int Offset, int Limit, int? Sector, string? Search, int? LightingIndex, int? Mesh, AgentQueryFilter? Filter);
     private sealed record Catalog(int Count, Func<int, object> Item, Func<int, bool>? Matches = null);
 
     internal static object Run(string path, string requestText)
@@ -80,6 +90,7 @@ public static class AgentQueries
             sourceRevision = snapshot.SourceRevision, dependencies = snapshot.Dependencies,
             sourceLightMetadata = AgentWorkspace.DescribeSourceLightMetadata(snapshot.Document),
             collection = request.Collection, sector = request.Sector, search = request.Search,
+            filter = request.Filter?.Json,
             lightingIndex = request.LightingIndex, mesh = request.Mesh,
             total = indices.Length, sourceTotal = catalog.Count, offset = request.Offset,
             limit = request.Limit, returnedCount = count,
@@ -114,7 +125,7 @@ public static class AgentQueries
         var root = json.RootElement;
         if (root.ValueKind != JsonValueKind.Object) throw new AgentRequestException("Query must be a JSON object.");
         var names = new HashSet<string>(StringComparer.Ordinal);
-        string[] allowed = ["schemaVersion", "collection", "offset", "limit", "sector", "search", "lightingIndex", "mesh"];
+        string[] allowed = ["schemaVersion", "collection", "offset", "limit", "sector", "search", "lightingIndex", "mesh", "filter"];
         foreach (var property in root.EnumerateObject())
             if (!names.Add(property.Name) || !allowed.Contains(property.Name, StringComparer.Ordinal))
                 throw new AgentRequestException($"Duplicate or unsupported query property '{property.Name}'.");
@@ -147,7 +158,8 @@ public static class AgentQueries
             throw new AgentRequestException("architecturalVertices requires lightingIndex and mesh from query architecture.");
         if (!samples && (lightingIndex is not null || mesh is not null))
             throw new AgentRequestException("lightingIndex and mesh are only valid for architecturalVertices.");
-        return new Request(collection, offset, limit, sector, search, lightingIndex, mesh);
+        var filter = root.TryGetProperty("filter", out var filterField) ? AgentQueryFilter.Parse(filterField, collection) : null;
+        return new Request(collection, offset, limit, sector, search, lightingIndex, mesh, filter);
     }
 
     private static int Integer(JsonElement root, string name, int? fallback, int minimum, int maximum)
@@ -162,6 +174,8 @@ public static class AgentQueries
     private static Catalog BuildCatalog(JklDocument document, Request request)
     {
         var level = document.Level;
+        if (request.Filter?.MaterialIndex is int materialIndex && materialIndex >= document.Materials.Count)
+            throw new AgentRequestException($"filter.materialIndex {materialIndex} is outside the current material table ({document.Materials.Count} materials).");
         bool Match(string text) => request.Search is null || text.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
         Sector SelectedSector()
         {
@@ -189,7 +203,7 @@ public static class AgentQueries
                         boundBox = Bounds(sector.BoundBox), center = sector.Center is Vec3 center ? Position(center) : null,
                         sector.Radius, sector.HasCollideBox, collideBox = sector.HasCollideBox ? Bounds(sector.CollideBox) : null,
                     };
-                });
+                }, i => request.Filter?.Matches(level.Sectors[i]) ?? true);
             case "things":
                 return new Catalog(level.Things.Count, i =>
                 {
@@ -203,7 +217,7 @@ public static class AgentQueries
                         thing.ArchLightingIndex, thing.ArchLightingSourceModel, thing.ArchLightingSourceModelHash,
                         architecture = AgentWorkspace.DescribeArchitecture(level, thing),
                     };
-                }, i => Match(level.Things[i].Name) || Match(level.Things[i].Template));
+                }, i => (Match(level.Things[i].Name) || Match(level.Things[i].Template)) && (request.Filter?.Matches(level.Things[i]) ?? true));
             case "thingContainment":
                 return new Catalog(level.Things.Count, i =>
                 {
@@ -217,7 +231,7 @@ public static class AgentQueries
                         result.Candidates, result.Tolerance, result.Detail,
                         scope = "Point position in verified convex sectors; no collision-volume or runtime transition claim. Unsupported geometry makes candidates incomplete and therefore unavailable.",
                     };
-                }, i => Match(level.Things[i].Name) || Match(level.Things[i].Template));
+                }, i => (Match(level.Things[i].Name) || Match(level.Things[i].Template)) && (request.Filter?.Matches(level.Things[i]) ?? true));
             case "cogs":
                 return new Catalog(level.Cogs.Count, i => new { index = i, level.Cogs[i].Name,
                     values = level.Cogs[i].Values.ToArray(), bindingStatus = "unverified-use-bindings-with-explicit-resources" });
@@ -229,7 +243,7 @@ public static class AgentQueries
                         rgb = Rgb(light.Color), light.Intensity, light.Range, light.RgbIntensity,
                         light.EffectiveRgbIntensity, light.LegacyRgbRange,
                         rgbIntensityInherited = !light.RgbIntensity.HasValue };
-                });
+                }, i => request.Filter?.Matches(level.Lights[i]) ?? true);
             case "architecture":
                 return new Catalog(level.ArchitecturalLighting.Count, i => new {
                     index = i, meshVertexCounts = level.ArchitecturalLighting[i].Meshes.Select(m => m.Vertices.Count).ToArray(),
@@ -267,7 +281,7 @@ public static class AgentQueries
                     surface.RecalcNormal();
                     return new
                     {
-                        index = i, sector = request.Sector, surface.Num, surface.Material, surface.MaterialIndex,
+                        index = i, sector = request.Sector, layer = surface.Sector.Layer, surface.Num, surface.Material, surface.MaterialIndex,
                         surface.SurfFlags, surface.FaceFlags, surface.Geo, surface.Light, surface.Tex,
                         surface.ExtraLightIntensity, surface.AdjoinFlags,
                         normal = Position(surface.Normal), geometryBounds = GeometryBounds(surface.Corners.Select(c => c.Vertex.Position)),
@@ -281,7 +295,7 @@ public static class AgentQueries
                             rgb = Rgb(corner.Intensity),
                         }).ToArray(),
                     };
-                });
+                }, i => request.Filter?.Matches(surfaceSector.Surfaces[i]) ?? true);
             case "vertices":
                 var vertexSector = SelectedSector();
                 return new Catalog(vertexSector.Vertices.Count, i => new { index = i, sector = request.Sector,

@@ -191,6 +191,15 @@ Operations cover thing position/orientation/name/template/parameter, vertex posi
 
 `registerMaterial` and `registerColormap` append unique `.mat` and `.cmp` basenames, returning their indices. Existing names are refused so clients query and reuse their indices. This registers references only: it does not find, verify or copy assets. `setSurfaceMaterial` selects a registered material; `setSectorColormap` selects a registered palette. `fitSurfaceTexture` fits UVs to caller-supplied dimensions in texels; `setSurfaceUv` takes one `[u,v]` pair per corner in query order. `setSurfaceRenderModes` sets geometry, lighting and texture modes explicitly; zero geometry mode hides the face.
 
+The [TOOL-01 workbench](TOOL_WORKBENCH.md) adds `projectSurfaceUv` and
+`transformSurfaceUv` for explicit lists of surface addresses, plus
+`addThingArray` and `addLightArray` with deterministic linear/grid/radial layouts.
+Discover each focused schema for exact bounds. Queries can use collection-specific
+exact `filter` predicates, ANDed with one another and existing `search`.
+Array things require valid containment/capacity and complete placed-COG reference
+schemas when COGs exist; they do not clone an existing object's reference payload.
+The same commands are available through the existing MCP adapter.
+
 An imported sector's colormap slot is retained when its name still matches, even if names repeat. `setSectorColormap` honors the explicitly requested index, including switching between identical names. Name-only assignments retain an existing matching slot or require an unambiguous match. Invalid imported colormap references prevent geometry regeneration; the existing zero-colormap-table/slot-zero untextured scaffold remains supported. Same-level geometry copies retain the selection; cross-level clipboard copies discard the source-local numeric binding and resolve the destination by name.
 
 `extrudeSurface` extends a closed convex sector outward by a positive distance and appends a room with inward-facing surfaces and a reciprocal open portal. It refuses existing adjoins, malformed/nonconvex geometry, possible overlap with another sector and unknown sections that may contain topology references. Its conservative overlap check can refuse separated rotated shapes. `adjoinSurfaces` joins complete coincident opposite boundaries in distinct valid sectors. Both create `Geo=0` portal faces with visible/move adjoin flags. `addBox` creates an unconnected sector and uses the same section preflight. Validated `SED_SOURCE_LIGHTS` metadata is supported by all three operations.

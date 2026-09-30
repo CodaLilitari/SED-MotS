@@ -17,6 +17,14 @@ The vertex inspector edits MotS's mono, red, green and blue channels independent
 
 The light inspector also exposes separate white and RGB source intensity. Check "RGB follows white" for inherited intensity; uncheck it to enter an independent value, including zero to disable only the RGB contribution. Legacy RGB range is preserved metadata; leave that field blank to remove it. Both channels use the primary range during a MotS bake. These edits support undo and do not automatically rebake the level. Additional controls imported from native projects are retained in the JKL's `SED_SOURCE_LIGHTS` editor section. Keep the original project: older editors may drop that section, and retail acceptance remains unverified.
 
+For shared UV edits, select surfaces and open **Texturing > Selection UV
+Workbench**. Projection uses a common world origin and texel density; transforms
+use an explicit shared UV pivot. **Tools > Place Thing / Light Array** places
+new objects in linear, grid or radial layouts, with an inline preview and one
+undo step per Apply. See [the tool workbench](TOOL_WORKBENCH.md) for coordinate
+conventions, MotS controls, capacity and COG-reference limits. These commands are
+also available through the existing CLI and MCP plan/apply interfaces.
+
 ## Test with OpenJKDF2 or retail
 
 Use Test Setup to choose the executable and engine profile for the selected game. Auto recognizes standard names; explicitly choose a profile for renamed executables. OpenJKDF2 MotS launches receive `-motsCompat`; retail launches do not.
