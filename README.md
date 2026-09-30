@@ -62,6 +62,11 @@ Use the .NET SDK pinned by `global.json`:
 
 This builds the solution and runs its tests, recording unique logs under `build/dotnet`. It does not start the editor or a game. The checked-in shaders permit a Windows build without a Vulkan SDK; running the 3D viewport needs a Vulkan graphics driver.
 
+The test sources retain LF line endings through `.gitattributes`, including on
+Windows, because their C# raw strings contain byte-sensitive original fixtures.
+For an exact source-byte packaging checkout, clone with `git -c core.autocrlf=false
+clone ...` (or configure the new clone equivalently before checkout).
+
 After committing the reviewed source, `tools/Package-Windows.ps1` creates a self-contained Windows editor, agent and MCP adapter, corresponding source ZIP, Git history bundle, notices and SHA256 manifests. Packaging requires PowerShell 7.4+ and Python 3.10+ (`-Python` selects an interpreter) for the actual packaged stdio workflow. End users do not need Python for normal GUI, CLI or MCP use. `tools/Collect-NetNotices.ps1` collects notices from restored packages and their pinned upstream sources.
 
 ## Provenance

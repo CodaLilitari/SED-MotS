@@ -1,0 +1,2 @@
+# Raw C# fixture strings must retain their authored LF bytes on Windows too.
+/dotnet/tests/**/*.cs text eol=lf
