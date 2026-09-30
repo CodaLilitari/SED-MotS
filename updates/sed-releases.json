@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "version": "0.4.0-mots.16-dev",
+      "channel": "preview",
+      "platform": "win-x64",
+      "packageUrl": "https://gitlab.com/api/v4/projects/86965025/packages/generic/sed-mots/0.4.0-mots.16-dev/SED-MotS-0.4.0-mots.16-dev-win-x64.zip",
+      "sha256": "80ea64ac8640792e72c2a561ed2edfa2b9330e1a830cc82b4882f3e82550d639",
+      "sizeBytes": 158261511,
+      "entryDirectory": "SED-MotS-0.4.0-mots.16-dev-win-x64"
+    }
+  ]
+}
