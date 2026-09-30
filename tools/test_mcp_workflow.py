@@ -50,6 +50,21 @@ def fixture_scaffold(source: Path, templates: str = "World templates 0") -> str:
     return text
 
 
+def fixture_single_thing(text: str, row: str) -> str:
+    """Populate exactly one empty generated THINGS section, retaining its capacity."""
+    sections = list(re.finditer(r"^SECTION:[ \t]*THINGS[ \t]*\r?\n(?P<body>.*?)^end[ \t]*$",
+        text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL))
+    assert len(sections) == 1, "Expected exactly one generated THINGS section"
+    match = sections[0]
+    records = [line.split("#", 1)[0].strip() for line in match.group("body").splitlines()]
+    records = [line for line in records if line]
+    assert len(records) == 1, "Generated scaffold must not already contain placed things or unrecognized THINGS records"
+    header = re.fullmatch(r"World\s+things\s+([0-9]+)", records[0], flags=re.IGNORECASE)
+    assert header is not None and int(header.group(1)) > 0, "Generated scaffold must retain a positive declared thing capacity"
+    replacement = f"SECTION: THINGS\nWorld things {int(header.group(1))}\n{row}\nend"
+    return text[:match.start()] + replacement + text[match.end():]
+
+
 def typed_cog_workflow(client, workspace: Path, scaffold: Path):
     source = workspace / "typed-cog-source.jkl"
     text = fixture_scaffold(scaffold)
@@ -172,9 +187,9 @@ END
     source = workspace / "architecture-source.jkl"
     text = fixture_scaffold(scaffold,
         "World templates 1\nmcp_panel none type=cog thingflags=0x8 model3d=mcp_original.3do")
-    assert not re.search(r"^SECTION:\s*(MODELS|THINGS)\b", text, flags=re.MULTILINE | re.IGNORECASE)
-    text += ("\nSECTION: MODELS\nWorld models 1\n0: mcp_original.3do\nend\n"
-        "SECTION: THINGS\nWorld things 1\n0: mcp_panel MCPPanel 0 0 0.2 0 0 0 0 -1\nend\n")
+    assert not re.search(r"^SECTION:\s*MODELS\b", text, flags=re.MULTILINE | re.IGNORECASE)
+    text = fixture_single_thing(text, "0: mcp_panel MCPPanel 0 0 0.2 0 0 0 0 -1")
+    text += "\nSECTION: MODELS\nWorld models 1\n0: mcp_original.3do\nend\n"
     source.write_text(text, encoding="utf-8", newline="\n")
     source_hash = sha(source)
     schema, _ = client.call("sed_discover", {"topic": "bakeThingArchitecture"})
