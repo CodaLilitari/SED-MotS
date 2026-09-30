@@ -584,3 +584,21 @@ byte-identical. Packaging now passes `-c core.autocrlf=false` explicitly to
 `git archive`, making this export independent of the clone's inherited setting.
 The discovery does not change the frozen package; final source and package
 bytes require a fresh independent audit after the release is rebuilt.
+
+The final MCP interruption acceptance exposed an observer-induced Windows file
+race: Python directly opened the receipt while its owner atomically replaced it.
+The output hash matched the intended write, but the receipt conservatively
+recorded unknown after access was denied. A separate Windows fixture reproduced
+replacement failure while a reader held the destination and immediate success
+after closing it, including an explicit delete-sharing reader on this host.
+The probe now observes `sed_outcome` through the supported protocol, whose store
+gate serializes receipt observation with completion. It retains the ten-second
+deadline, never uses the original write reply to decide the outcome, and still
+reconnects after termination to verify the durable receipt and safe replay.
+The cancellation branch remains separate. Three focused repetitions passed all
+six interruption/reconciliation cases with the actual final-candidate binaries;
+the original failure and private diagnostic evidence remain preserved. This is
+a test observer correction; no production journal behavior or timeout changed.
+The complete packaged stdio MCP workflow then passed with 67 tool calls in a
+fresh output directory, including both interruption probes; snapshots were not
+requested for that run.

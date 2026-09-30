@@ -362,15 +362,17 @@ def interrupted_write_workflow(server: Path, worker: Path, directory: Path):
                 client.rpc("tools/list", {})
                 client.close()
             else:
-                # Test-only observation fixes the interruption after the durable commit.
-                # The application deliberately never inspects this tools/call reply.
-                receipt_path = directory / ".sed-mcp" / "receipts" / (operation_id.replace("-", "") + ".json")
+                # Observe through the supported API: polling the receipt file can
+                # deny its atomic replacement on Windows and create the failure
+                # the probe is trying to observe. The original write reply is
+                # still never inspected to decide its outcome.
                 deadline = time.monotonic() + 10
                 while True:
-                    if receipt_path.exists():
-                        saved = json.loads(receipt_path.read_text(encoding="utf-8"))
-                        if saved["receipt"]["state"] == "committed":
-                            break
+                    observed, _ = client.call("sed_outcome", {"operationId": operation_id})
+                    outcome = observed["outcome"]
+                    if outcome is not None and outcome["observedState"] == "committed":
+                        break
+                    assert outcome is None or outcome["observedState"] not in ("failed", "unknown"), outcome
                     assert client.process.poll() is None, "Host exited before commit receipt"
                     assert time.monotonic() < deadline, "No durable commit within bounded probe"
                     time.sleep(0.01)
@@ -401,7 +403,7 @@ def interrupted_write_workflow(server: Path, worker: Path, directory: Path):
             records.append({"operationId": operation_id, "cancellationRequested": cancel,
                 "originalReplyUsedToDecideOutcome": False, "outcome": outcome,
                 "outputExists": target.exists(), "unmatchedResponses": client.unmatched_responses,
-                "limit": "A late cancellation may commit. The first probe kills only after observing the durable commit; it does not simulate every crash boundary."})
+                "limit": "A late cancellation may commit. The first probe kills only after sed_outcome observes the durable commit; it does not simulate every crash boundary."})
             sessions.append(reconnected.calls)
         finally:
             reconnected.close()
