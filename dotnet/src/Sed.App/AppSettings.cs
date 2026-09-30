@@ -40,6 +40,11 @@ public sealed class AppSettings
     /// <summary>Autosave interval in minutes (the original's SaveInterval).</summary>
     public int AutoSaveIntervalMinutes { get; set; } = 5;
 
+    /// <summary>Once-per-day metadata check; installation always requires an explicit action.</summary>
+    public bool CheckForUpdates { get; set; } = true;
+    /// <summary>Current SED releases use the preview channel. Stable never opts into preview automatically.</summary>
+    public string UpdateChannel { get; set; } = EditorUpdater.DefaultChannel;
+
     /// <summary>Recently opened loose level files (most recent first).</summary>
     public List<string> RecentFiles { get; set; } = new();
 

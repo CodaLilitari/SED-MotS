@@ -1,0 +1,4 @@
+interface:
+  display_name: "JK / MotS Level Workflow"
+  short_description: "Headless SED design and source-backed level research"
+  default_prompt: "Use $jk-mots-level-workflow to improve this level through SED's headless tools and verify the result."

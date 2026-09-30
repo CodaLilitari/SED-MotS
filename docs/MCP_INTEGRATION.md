@@ -100,7 +100,7 @@ claim that a model-driven Codex design session was executed.
 | `sed_discover` | Compact capability list or exact focused domain schema |
 | `sed_query` | Paginated source-identified readback |
 | `sed_select` | Geometry-based selectors, with explicit ambiguity |
-| `sed_diagnose` | Validation, direct assets, lighting or typed COG bindings |
+| `sed_diagnose` | Validation, direct assets, lighting, [MotS vertex-color storage](DYNAMIC_VERTEX_COLORS.md) (`kind: "vertexColors"`) or typed COG bindings |
 | `sed_plan` | Recompute edits on an isolated document; return effects/hash |
 | `sed_apply` | Commit a reviewed patch into a new JKL |
 | `sed_new` | Plan or commit a JK/MotS room scaffold |

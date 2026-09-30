@@ -125,8 +125,9 @@ public sealed class SedTools : IDisposable
                     "validate" => AgentWorkspace.Validate(level, request),
                     "assets" when request is not null => AgentWorkspace.DiagnoseAssets(level, request),
                     "lighting" when request is not null => AgentWorkspace.DiagnoseLighting(level, request),
+                    "vertexColors" when request is not null => AgentWorkspace.DiagnoseVertexColors(level, request),
                     "bindings" when request is not null => AgentWorkspace.Bindings(level, request),
-                    _ => throw new AgentRequestException("kind must be validate/assets/lighting/bindings; only validate may omit request.") };
+                    _ => throw new AgentRequestException("kind must be validate/assets/lighting/vertexColors/bindings; only validate may omit request.") };
                 var checkedResult = BoundedElement(diagnosed);
                 return kind == "validate" && checkedResult.TryGetProperty("valid", out var valid) && !valid.GetBoolean()
                     ? Failure("validation_failed", "Level diagnostics found errors.", checkedResult) : Success(checkedResult);
@@ -265,6 +266,7 @@ public sealed class SedTools : IDisposable
         "query" => AgentQueries.Schema(), "select" => AgentSelections.Schema(), "patch" => AgentSchema.Patch(),
         "snapshot" => AgentSnapshotRequest.Schema(), "resources" => AgentWorkspace.ResourceRequestSchema(),
         "bindings" => AgentWorkspace.BindingsRequestSchema(), "lighting" => AgentWorkspace.LightingRequestSchema(),
+        "vertexColors" => AgentWorkspace.VertexColorsRequestSchema(),
         "assets" => AgentWorkspace.AssetsRequestSchema(), _ => AgentSchema.Patch(topic) };
 
     private static void ValidateArguments(string name, IDictionary<string, JsonElement> args)

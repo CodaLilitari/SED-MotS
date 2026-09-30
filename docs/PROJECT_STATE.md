@@ -1,9 +1,51 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (TOOL-01 first slice locally packaged and independently audited). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (research/update milestone in progress; last completed package remains TOOL-01). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
+
+**Active goal:** [research and updates](RESEARCH_UPDATE_MILESTONE.md). Andrei
+authorized an editor updater, a maintained research corpus/workflow and a Codex
+skill. The slice also implements the already-approved dynamic vertex-color
+readiness report. Source work and focused tests are in progress; do not infer a
+new public release from configured update URLs. The portfolio can serve the
+small metadata/research assets; large Windows ZIPs use the verified public
+GitLab project. The existing portfolio source is staged in a separate checkout
+to preserve the modeling workflow's latest publication.
+
+The canonical workflow is `.agents/skills/jk-mots-level-workflow`. Its private
+index lives outside Git, references acquired files in place and keeps review
+events separate from search coverage. The first independent workflow test run
+passed all 25 final tests (corpus/refusal/update behavior). This is not editor or retail
+runtime validation. Raw community captures remain private.
+
+**Current research correction:** the announced Qt/C++ SED rewrite must remain
+in the active comparison plan. The newest checked author report is September
+28, describes approaching release, and includes MotS ARCH editing and baked
+illumination. No new rewrite build/source was obtained through the checked
+routes. Keep it separate from Delphi SED, Mudhorn and a separately discussed
+material/lighting utility. See [UPSTREAM_COMPARISON.md](UPSTREAM_COMPARISON.md)
+for twelve stable comparison items and evidence states. Exact community
+references, captures and a structured lead ledger remain in the private
+research directory outside Git; no raw posts are included here.
+
+The re-audit repaired lost prior findings as well as a newer-message gap:
+MAT16's V1.04 implementation was already acquired, the first Leia feature
+document was already reviewed, and current ARCH authoring already supports
+world-polygon occlusion. Research/announcement evidence does not advance code,
+runtime, release or external-review acceptance. See DEC-20260930-03.
+
+**Next approved compatibility slice:** dynamic vertex-color readiness against
+actual proposed serialized output, followed by an original controlled retail
+fixture before any automatic preparation. An unchanged source section can
+retain scalar rows even though regenerated MotS rows use four values per
+corner. Preserve independent white/RGB values and test final float32 values.
+Implementation resumed with the research/update milestone. Conversion-boundary
+disagreements between direct float32 and double-to-float32 parsing are reported
+as retail unknown until the inspected numeric conversion path is qualified.
+The broader workbench queue below remains valid; no additional generic MCP
+wrapper is needed for these shared authoring operations.
 
 **TOOL-01 shared editing workbench, first slice implemented.** Andrei approved proceeding after
 the plug-in audit. The first implementation slice adds exact query predicates,
@@ -31,7 +73,7 @@ preservation, query results and positive/refused COG-reference cases. Evidence:
 Source follow-up commits which only update this checkpoint are not substituted
 for the frozen package identity. Nothing was pushed or uploaded.
 
-**Next implementation scope:** masked property batches and report-first repair
+**Broader workbench queue:** masked property batches and report-first repair
 helpers, then reference-safe prefabs/connected stairs and gameplay recipes.
 Material/model-aware lighting remains separate. Preserve the two failed package
 attempts: one exposed checkout EOL-dependent original fixtures; the other an
@@ -370,7 +412,7 @@ general remapping, native output and broader game behavior remain separate.
 | Milestone | Acceptance target | State |
 |---|---|---|
 | [Spatial selection and authoring (SPATIAL-01)](SPATIAL_SELECTION.md) | Build and revise an eight-sector outpost without serialized-index arithmetic; ambiguous/stale selection refuses | Complete within the documented convex-geometry/token scope |
-| [Architectural lighting authoring (ARCH-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback | Complete within the unoccluded single-LOD recipe; shadowed baking and LOD correspondence remain separate |
+| [Architectural lighting authoring (ARCH-01 and EDIT-01)](ARCHITECTURE_AUTHORING.md) | Bind/reset/bake with captured resources, exact undo, saved provenance and stale readback; `source-points-v1` and opt-in `source-points-world-occluded-v1` | Single-LOD rest-pose recipes; the latter tests world polygon blockers, including BlockLight portals and NoBlock sources. Model/self shadows, alpha-aware tracing, ambient, animation, dynamic lights and LOD correspondence remain separate; no retail parity claim |
 | [Static runtime RGB verification (ENGINE-01)](ENGINE_CAPTURE.md) | Original authored fixture, independent coverage/channel controls, metadata invariants, repeated captures and bounded refusal controls | Complete within the documented static RGB scope; simulation is wall-time and only limited world/player state is observed |
 | Instrumented engine verification | Defined initialized state, frozen renders and bounded stepping; actual resource resolution and effective camera recorded | Future work, paused |
 | Human and agent playable workflow | Panel, door/lift, pickup and exit; build/play/revise/reopen via both interfaces | Planned |

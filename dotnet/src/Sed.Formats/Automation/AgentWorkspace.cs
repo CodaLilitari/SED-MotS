@@ -381,6 +381,8 @@ public static partial class AgentWorkspace
             sourceLightMetadata = DescribeSourceLightMetadata(doc),
             outputSourceLightMetadata = DescribeSourceLightMetadata(reopened),
             before, after = Counts(reopened.Level), changes = effects, issues = DescribeIssues(roundTripIssues),
+            dynamicVertexColors = reopened.Level.Kind == ProjectType.MysteriesOfTheSith
+                ? JklDynamicVertexColors.EvaluateSerialized(text).Summary() : null,
             preservationWarnings = doc.PreservationWarnings,
             note = "Planning uses the GUI's Core commands. Explicit archives add current all-LOD architectural model validation; missing historical baselines remain unknown. Other asset closure and gameplay are not tested. Moved models may require relighting.",
         }) { SourceRevision = snapshot.SourceRevision, Dependencies = snapshot.Dependencies,

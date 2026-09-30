@@ -14,6 +14,29 @@ namespace Sed.Mcp.Tests;
 public sealed class SedToolsTests
 {
     [Fact]
+    public async Task DynamicVertexColorsUsesSharedReadOnlyDiagnosticWithBoundedSourceBoundPages()
+    {
+        using var fixture = new Fixture();
+        string input = fixture.Room();
+        byte[] original = File.ReadAllBytes(input);
+        using var tools = fixture.Tools();
+        var schema = Success(await tools.CallAsync("sed_discover", Args(new { topic = "vertexColors" })));
+        Assert.Contains("schemaVersion", schema.GetRawText());
+        var page = Success(await tools.CallAsync("sed_diagnose", Args(new { level = input, kind = "vertexColors",
+            request = new { schemaVersion = 1, offset = 1, limit = 2 } })));
+        Assert.Equal("assessed", page.GetProperty("status").GetString());
+        Assert.Equal(AgentWorkspace.Hash(original), page.GetProperty("sourceRevision").GetString());
+        Assert.Equal(2, page.GetProperty("returnedCount").GetInt32());
+        Assert.All(page.GetProperty("items").EnumerateArray(), row => {
+            Assert.Equal("Compacted", row.GetProperty("retail").GetString());
+            Assert.Equal("Retained", row.GetProperty("openMots").GetString());
+        });
+        Assert.Equal(original, File.ReadAllBytes(input));
+        Assert.Single(Directory.GetFiles(fixture.Root, "*.jkl"));
+        Assert.False(File.Exists(fixture.Options.AgentPath));
+    }
+
+    [Fact]
     public async Task WorkbenchOperationsUseExistingMcpPlanApplyQueryAndOutcome()
     {
         using var fixture = new Fixture();

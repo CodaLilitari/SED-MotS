@@ -1548,13 +1548,32 @@
     {
       "id": "mat16_reference",
       "repo": "JKBoBoFett/MAT16",
-      "commit": "444721680d07c239e6b7979eea972982309699c8",
-      "url": "https://github.com/JKBoBoFett/MAT16/tree/444721680d07c239e6b7979eea972982309699c8",
-      "capability": "MAT16 format documentation",
+      "commit": "3b53c7c20d2e5feb761ea6895bd2a1cb92eee6b7",
+      "url": "https://github.com/JKBoBoFett/MAT16/tree/3b53c7c20d2e5feb761ea6895bd2a1cb92eee6b7",
+      "capability": "MAT16 format documentation and selected V1.04 Delphi implementation for GUI material recipes and batch conversion",
       "priority": "P2",
-      "reuse_evidence": "documentation_only_no_grant_found",
-      "qualification": "Seven docs/images; no converter source in repository.",
-      "verification": "live_repository_metadata_tree_and_selected_source_static_review",
+      "reuse_evidence": "selected_source_and_documentation_no_grant_found",
+      "qualification": "Default main at 444721680d07c239e6b7979eea972982309699c8 has seven docs/images; V1.04 contains implementation, with three source files acquired on 2026-09-25 and rehashed on 2026-09-30. The inspected entry point and mat16s batch handlers are GUI-driven. This is not a complete build acquisition, verified unattended CLI or executed conversion. Master at e0c860b113a061822b0550f224e7ce90b60bda48 was inventoried through metadata only; the separately acquired Mat16 1.1 binary is a distinct artifact.",
+      "documentation_commit": "444721680d07c239e6b7979eea972982309699c8",
+      "implementation_tag": "V1.04",
+      "selected_source_files": [
+        {
+          "path": "Mat16.DPR",
+          "bytes": 2072,
+          "sha256": "86cd7f63938e344b6950b4f2081da91eff43e9177400fcf269493026e235c512"
+        },
+        {
+          "path": "MAIN.PAS",
+          "bytes": 35768,
+          "sha256": "0453980699897ff75051235d52097cc128e8cd8f1a2d7770acaae92861ba6aa6"
+        },
+        {
+          "path": "EditMTS.pas",
+          "bytes": 1212,
+          "sha256": "34356beb5af89426a7d3a4fec2da6f50d6aa659a4664b2bbca5050c7494e94ea"
+        }
+      ],
+      "verification": "retained_pinned_repository_metadata_and_selected_source_static_review_with_fresh_file_hashes",
       "runtime_tested": false
     },
     {

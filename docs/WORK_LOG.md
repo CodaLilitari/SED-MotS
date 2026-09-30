@@ -471,3 +471,106 @@ The new independent package audit matches 930 manifested/931 physical files, 794
 Independent audit `build/tool01-20260930/package-audit-01/audit.json` (SHA256 `ab1e11b6780419fc006de0467be6672b77b77b73fbff809d4b3b38ec733018dc`) matches 934 manifested/935 physical distribution files, exact binary ZIP membership/bytes, all 818 source Git blobs and all 818 physical build-input files. The self-sufficient history bundle passes strict fsck and contains the exact reachable set of 354 commits/3,807 objects. Actual agent/MCP version output and editor PE product version identify `.15-dev+f85aec0...`. The independent checker imports none of the primary acceptance implementation: it recomputes 44 complete thing/light rows, UV mathematics, original vertices, filters and COG append preservation, verifies all fourteen intended refusal controls, and matches 396 raw request/stdout/stderr hashes/sizes plus eight runtime identities. It writes only its own ignored audit folder.
 
 Windows ZIP SHA256: `58dc1ed7cac640957946fccf5ff3bb4988afd46188b744628f7c83be0187b71f`; source ZIP: `8e08bf06c4639c5a6bfcd644818df6fccdd2819c6ab750b5bced6710a1e0fc72`; history bundle: `cf0abb93c546eef0232f3d6dff7dc92cc0380c66d65854ac2119953d2fbf25fd`. The source freeze is local on main; no new branch, push, release upload, forum post, external AI review or game/retail run is claimed. The older PLAY-01 release/reviewer pause and `.14-dev` handoff remain intact. Documentation-only checkpoint commits after the freeze do not change these package identities. The next useful work is masked property batches/report-first repairs, then reference-safe prefabs and connected geometry; advanced material/model-aware lighting remains its own milestone.
+
+## DEC-20260930-03 — Repair community research coverage and preserve rewrite comparison
+
+**Scope and correction:** Andrei requested deeper community research after a
+MotS vertex-color example was missed, then pointed out the upcoming C++ SED
+rewrite. The February rewrite announcement was present in the September 25
+research but dropped from later synthesis; a September 28 direct author reply
+also postdated the old archive and was missed in the earlier follow-up. The
+latest checked report says release is approaching and explicitly includes MotS
+ARCH editing and baked illumination. It remains announcement evidence: no new
+Qt/C++ build/source was obtained through the checked routes. Public Delphi SED,
+the future rewrite, Mudhorn and a separate material/lighting utility now have
+distinct entries in [UPSTREAM_COMPARISON.md](UPSTREAM_COMPARISON.md).
+
+**Actual bounded review:** authenticated background Chrome captured seven SED
+search pages (154 bodies) and ten recent Editing pages (242 bodies), with exact
+positions and stable per-query totals. Independent workers read every returned
+main body in those sets. Thirty broader editor-search pages yielded 741 rows;
+all were read, but displayed totals changed between 744 and 741 and three rows
+repeat, leaving 738 distinct IDs. This is exhausted reachable pagination with
+an explicit non-atomic limitation, not a complete 744-message snapshot or an
+entire-server review. These three sets have 1,085 distinct IDs, 637 absent from
+the frozen 27,744-message Editing archive. Those counts are acquisition, not
+technical-discovery counts. Root additionally read 167 selected historical
+candidate bodies and eight surrounding windows (88 occurrences); the larger
+749-match lexical index is not represented as fully semantically reviewed.
+Timestamp inconsistencies and attachment-review limits remain in private
+receipts. No participant was contacted.
+
+**Source-backed repairs:** MAT16 default main is documentation-only, but V1.04
+contains Delphi implementation and three previously acquired files rehash to
+their recorded identities. The public audit/catalog now retain both pins and
+the GUI/source/runtime qualifications. The first Leia feature document was
+already acquired and visually reviewed; its repeated acquisition is not called
+new. Current ARCH authoring supports world-polygon occlusion, so the current
+capability row is corrected without rewriting historical milestone evidence.
+The writer retains unchanged original sections; only regenerated MotS surface
+rows are necessarily four-channel. A future readiness diagnostic must inspect
+actual output and final parsed float32 values, not infer row layout from the
+project kind or compare unrounded decimal text.
+
+**Useful follow-up contracts:** piecewise comparisons now include ARCH and
+dynamic RGB, qualified negative-space decomposition, discoverable cleave snaps
+and topology budgets, deterministic placement brushes, asymmetric UV diagnostics,
+view/resource lifetimes, explicit launch profiles, material/reimport recipes,
+named scopes and COG/dependency validation. Existing file-oriented MCP remains
+the interface for shared authoring operations. A live unsaved document or
+engine-observation protocol needs a separate concrete contract, not another
+generic wrapper. User feedback and other-editor failures are fixture seeds,
+not reproduced defects in this fork.
+
+**Validation and boundary:** independent review corrected the diagnostic plan
+to state final float32 W/R/G equality, blue exclusion and unverified scalar-row
+retail behavior explicitly. The corrected catalog parses, its semantic delta
+is limited to MAT16, source sizes/hashes match, and documentation whitespace
+checks pass. Only original analysis, public references and source hashes enter
+the repository; raw Discord, copied forum posts and private attachments remain
+outside Git. No implementation, editor/game execution, rebuild, new gameplay or
+retail result, commit, push, release upload or external-provider verdict is
+claimed. The exact `.15-dev` package and separate PLAY-01 handoff remain intact.
+
+## DEC-20260930-04: research workflow, dynamic-color diagnostics and portable updates
+
+Andrei authorized the next milestone's updater, private research corpus and
+Codex skill. Shared GUI/CLI/MCP dynamic-color diagnostics now inspect actual
+proposed serialized JKL rows with exact candidate hashes. Source retention,
+scalar/4N layouts, independent white/RGB, blue exclusion, geometry failures and
+ambiguous decimal conversions remain explicit. A boundary-sensitive conversion
+is retail unknown, not silently normalized. No epsilon preparation is performed.
+
+The portable updater uses fixed portfolio/GitLab routes, bounded downloads and
+SHA256, explicit stable/preview selection and a new installation directory.
+Restart preserves a recovery JKL and requires parsed-recovery acknowledgement
+before closing the old editor. Independent review found and corrected missing
+cancellation propagation, inadequate process-survival confirmation and final-LF
+acceptance in version/hash regexes. Corrupt cache handling and encoded URL
+normalization also received executed counterexamples.
+
+The new `jk-mots-level-workflow` skill is installed locally and has a canonical
+repository source, a standalone MIT-licensed pack and reference-only updates.
+The private index references 398 source files in place: 29,595 indexed records
+and documents, 31,864 occurrences, 1,301 explicitly hash-bound review events and
+19 carried-forward leads. Acquisition is not reading or technical verification.
+Original community captures, private locators, receipts and game assets remain
+outside public Git and downloadable packs. Six native accessibility captures
+are indexed as documents rather than invented normalized messages.
+
+Focused source validation at freeze: 36 dynamic-color tests, 41 updater tests,
+one MCP dispatcher test and eight CLI calls; the full headless GUI probe passes
+169 checks, including 16 recovery checks. The workflow's final 25 Python tests
+pass independently. An original self-contained fixture proves updater staging,
+process launch, preservation and equal-version refusal. The lighting review
+from Claude Code was received and reconciled against actual dependencies:
+additional tests cover real saved bytes, permuted surface ownership, mixed-case
+headers, scalar MotS identification and distinguishing last corners. The source
+predicate's floating-point comparisons support signed-zero equality.
+
+This entry freezes source for clean packaging, not a publication receipt. The
+external updater review, complete release suite, exact-package byte audit,
+anonymous hosting/staging and portfolio deployment remain release gates. No new
+retail gameplay or engine parity is claimed. PLAY-01's separate handoff remains
+paused. See `RESEARCH_UPDATE_MILESTONE.md`, `UPDATING.md` and
+`DYNAMIC_VERTEX_COLORS.md` for the contracts.

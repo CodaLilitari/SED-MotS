@@ -1,2 +1,7 @@
 # Raw C# fixture strings must retain their authored LF bytes on Windows too.
 /dotnet/tests/**/*.cs text eol=lf
+
+# Research-update baselines bind exact bytes on every platform. Keep package
+# and immutable reference payloads unchanged by checkout EOL conversion.
+/.agents/skills/jk-mots-level-workflow/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/updates/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "name": "jk-mots-level-workflow",
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 1500,
+      "sha256": "25632d27c5047aa5d9564c0bb58fbded27177b29c7bb0c07ea8b87b3ae656052"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1185,
+      "sha256": "a054c7c324a0b41581d7665d7674fabf9ea9424ca500a75ba1a92bd796b7538b"
+    },
+    {
+      "path": "SKILL.md",
+      "bytes": 6827,
+      "sha256": "424bb003cdaa566bd6db47a36d38348911d5c7805c7e5ce90c2ae8260feb9145"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "bytes": 252,
+      "sha256": "88e3eed703e3fb242d94d2530b6070e80e6495a35b2d32fc1c26201c9028cabf"
+    },
+    {
+      "path": "references/compatibility-and-testing.md",
+      "bytes": 3925,
+      "sha256": "38f31d88bef3c4e004dc21b4c05925418fc5cbe1d8d8aaae933a35a69478b34c"
+    },
+    {
+      "path": "references/findings.json",
+      "bytes": 9332,
+      "sha256": "fb79c113c2263c72a62c37762d9541e3fd700833bca71ba1b2aa50ee5c8feee0"
+    },
+    {
+      "path": "references/headless-design.md",
+      "bytes": 4112,
+      "sha256": "d5225ad39acbbc6c6d468968ed5ff94751f05e609f1bf6a63e0cc8c89b026fa1"
+    },
+    {
+      "path": "references/private-corpus.md",
+      "bytes": 3805,
+      "sha256": "3a425387f1a36422a73158f891963fc397fa99d9a2436a25841456c796c5de43"
+    },
+    {
+      "path": "references/research-index.md",
+      "bytes": 2094,
+      "sha256": "8fa7cfe70f610844f1e540ace6b7bd4c4233017d8f27f95e8ee184a98e94e857"
+    },
+    {
+      "path": "references/updates.md",
+      "bytes": 2632,
+      "sha256": "9586101c953ed1c74d2911ce82a0b820b2da7841b488607319b71b0e7da621bc"
+    },
+    {
+      "path": "scripts/build_bundle.py",
+      "bytes": 3457,
+      "sha256": "30ac01945fcd50510d8a6aa778b48f0ea093949c142b645b7d11bafa11d64338"
+    },
+    {
+      "path": "scripts/corpus.py",
+      "bytes": 18400,
+      "sha256": "8af3990a2f8fe0a6c86dc04562a784e532a4596087453075ea7b195f709411eb"
+    },
+    {
+      "path": "scripts/probe_tools.py",
+      "bytes": 2233,
+      "sha256": "6b0bb8ac91e45ef59c51765bc4a93ab8d24cf2ad9bc5f822bcf5ccaa9f028aa0"
+    },
+    {
+      "path": "scripts/research_updates.py",
+      "bytes": 11523,
+      "sha256": "9819c62520cd4753fe3bd65675619f63e1e57182eb812f70c97f3fd4b530670e"
+    }
+  ]
+}

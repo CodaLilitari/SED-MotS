@@ -37,7 +37,8 @@ public sealed class ConsistencyWindow : Window
     private readonly TextBlock _summary;
     private readonly CheckBox _containment;
 
-    public ConsistencyWindow(Level level, Func<ConsistencyOptions?>? options = null)
+    public ConsistencyWindow(Level level, Func<ConsistencyOptions?>? options = null,
+        Func<Sed.Formats.Jkl.JklDocument?>? document = null)
     {
         _level = level;
         _options = options;
@@ -69,12 +70,20 @@ public sealed class ConsistencyWindow : Window
         var controls = new StackPanel { Orientation = Orientation.Horizontal };
         controls.Children.Add(recheck);
         controls.Children.Add(_containment);
+        var bottom = new StackPanel();
+        bottom.Children.Add(controls);
+        if (document is not null)
+        {
+            var colors = new Button { Name = "CheckDynamicVertexColors", Content = "MotS dynamic vertex-color readiness…", Margin = new Thickness(10, 0, 10, 6) };
+            colors.Click += (_, _) => new DynamicVertexColorsWindow(document).Show(this);
+            bottom.Children.Add(colors);
+        }
 
         var root = new DockPanel();
         DockPanel.SetDock(_summary, Dock.Top);
         root.Children.Add(_summary);
-        DockPanel.SetDock(controls, Dock.Bottom);
-        root.Children.Add(controls);
+        DockPanel.SetDock(bottom, Dock.Bottom);
+        root.Children.Add(bottom);
         root.Children.Add(_list);
         Content = root;
 

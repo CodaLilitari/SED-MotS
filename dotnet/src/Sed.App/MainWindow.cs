@@ -23,7 +23,7 @@ namespace Sed.App;
 /// mirroring the original editor's per-game path options; loose .jkl/.gob files
 /// can also be opened directly via File ▸ Open.
 /// </summary>
-public class MainWindow : Window
+public partial class MainWindow : Window
 {
     private readonly AppSettings _settings;
     private readonly CommandKeys _bindings;
@@ -184,6 +184,7 @@ public class MainWindow : Window
         TryAutoOpenConfiguredGame();
         StartAutosave();
         PromptForAutosaveRecovery();
+        InitializeUpdates();
     }
 
     // ---- game install flow ----
@@ -805,6 +806,7 @@ public class MainWindow : Window
     {
         Opened += async (_, _) =>
         {
+            if (UpdateRecoveryPath is not null) return;
             var dir = Path.Combine(_settings.ResolvedProjectDir(), "autosave");
             if (!Directory.Exists(dir)) return;
             var newest = Directory.EnumerateFiles(dir, "*.jkl")
@@ -1072,6 +1074,7 @@ public class MainWindow : Window
 
         var help = new MenuItem { Header = "_Help" };
         help.Items.Add(new MenuItem { Header = "About SED" });
+        help.Items.Add(BuildUpdatesMenuItem());
 
         var menu = new Menu();
         menu.Items.Add(file);
@@ -1565,7 +1568,7 @@ public class MainWindow : Window
 
         _cogScripts ??= new Sed.Formats.Cogs.CogScriptLibrary(new[] { _levelArchive }, _materialArchives);
         var window = new ConsistencyWindow(level, () => Sed.Formats.Cogs.CogValidation.Options(_cogScripts,
-            _settings.TestEngineFor(level.Kind) == GameEngineProfile.Retail))
+            _settings.TestEngineFor(level.Kind) == GameEngineProfile.Retail), () => _currentDoc)
         {
             IssueSelected = (sector, surface) =>
             {

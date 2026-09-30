@@ -10,6 +10,21 @@ The fork preserves MotS's independent mono/RGB lighting, architectural arrays an
 
 Agents can discover focused command schemas, query current values in bounded pages, send JSON on stdin, and require an exact reviewed output hash before writing. Native project edits also bind the imported template dependencies. The [agent workflows](docs/AGENT_WORKFLOWS.md) show the inspect, plan, apply and readback loop; no model service or API key is needed.
 
+The [Codex level workflow](.agents/skills/jk-mots-level-workflow/SKILL.md)
+connects those operations to curated research and an optional private evidence
+index. Its separately maintained reference updates preserve local research and
+notes. Raw Discord captures, copied forum posts and original game assets are
+excluded from shared bundles. The [upstream comparison plan](docs/UPSTREAM_COMPARISON.md)
+tracks the announced C++ SED rewrite independently from the existing Delphi line.
+
+The Windows [updater](docs/UPDATING.md) checks portfolio metadata with a GitLab
+fallback, verifies the ZIP's size and SHA256, and prepares a separate portable
+installation. Opening the new version is an explicit action that preserves a
+recovery copy of the current level and retains the old installation for rollback.
+The [dynamic vertex-color diagnostic](docs/DYNAMIC_VERTEX_COLORS.md) reports
+target-specific storage readiness against the exact proposed serialized output;
+it does not change channel values or certify runtime behavior.
+
 The [TOOL-01 workbench](docs/TOOL_WORKBENCH.md) adds exact query filters,
 shared multi-surface UV projection and transforms, and bounded linear, grid or
 radial arrays of new things and lights. Windows dialogs and agent operations use

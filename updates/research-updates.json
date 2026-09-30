@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "scope": "research-only",
+  "version": "1.0.0",
+  "requires_skill_version": "1.0.0",
+  "research_revision": 1,
+  "files": [
+    {
+      "path": "references/compatibility-and-testing.md",
+      "bytes": 3925,
+      "sha256": "38f31d88bef3c4e004dc21b4c05925418fc5cbe1d8d8aaae933a35a69478b34c"
+    },
+    {
+      "path": "references/findings.json",
+      "bytes": 9332,
+      "sha256": "fb79c113c2263c72a62c37762d9541e3fd700833bca71ba1b2aa50ee5c8feee0"
+    },
+    {
+      "path": "references/headless-design.md",
+      "bytes": 4112,
+      "sha256": "d5225ad39acbbc6c6d468968ed5ff94751f05e609f1bf6a63e0cc8c89b026fa1"
+    },
+    {
+      "path": "references/private-corpus.md",
+      "bytes": 3805,
+      "sha256": "3a425387f1a36422a73158f891963fc397fa99d9a2436a25841456c796c5de43"
+    },
+    {
+      "path": "references/research-index.md",
+      "bytes": 2094,
+      "sha256": "8fa7cfe70f610844f1e540ace6b7bd4c4233017d8f27f95e8ee184a98e94e857"
+    },
+    {
+      "path": "references/updates.md",
+      "bytes": 2632,
+      "sha256": "9586101c953ed1c74d2911ce82a0b820b2da7841b488607319b71b0e7da621bc"
+    }
+  ]
+}

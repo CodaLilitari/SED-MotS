@@ -5,6 +5,11 @@ description: Inspect, design, edit, convert and validate Jedi Knight Dark Forces
 
 # SED MotS level work
 
+For research retrieval, evidence states, upstream comparisons and curated research
+updates, start with the companion [level workflow](../jk-mots-level-workflow/SKILL.md).
+This entrypoint retains the detailed SED operation guidance and remains usable
+with existing integrations.
+
 Use the local `sed-agent` executable for supported level operations. It shares the editor's model and Core commands and can work without opening a window. Follow the user's chosen game, project and authorized scope.
 
 ## Discover the installed tools

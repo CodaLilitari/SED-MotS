@@ -41,6 +41,7 @@ try
                 "resources" => AgentWorkspace.ResourceRequestSchema(),
                 "bindings" => AgentWorkspace.BindingsRequestSchema(),
                 "lighting" => AgentWorkspace.LightingRequestSchema(),
+                "vertexColors" => AgentWorkspace.VertexColorsRequestSchema(),
                 "assets" => AgentWorkspace.AssetsRequestSchema(),
                 _ => AgentSchema.Patch(args[1]) };
             break;
@@ -63,6 +64,9 @@ try
             break;
         case "query" when args.Length == 3:
             result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
+            break;
+        case "vertex-colors" when args.Length == 3:
+            result = AgentWorkspace.DiagnoseVertexColors(args[1], ReadRequest(args[2]));
             break;
         case "bindings" when args.Length == 3:
             result = AgentWorkspace.Bindings(args[1], ReadRequest(args[2]));
@@ -140,7 +144,7 @@ static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schem
     "exact-query-filters", "batch-surface-uv", "bounded-placement-arrays",
     "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",
     "typed-cog-creation", "ordered-thing-frame-authoring",
-    "world-bake-diagnostics", "direct-asset-diagnostics",
+    "world-bake-diagnostics", "direct-asset-diagnostics", "dynamic-vertex-color-readiness",
     "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
     "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export",
     "architecture-authoring", "architecture-source-point-bake", "architecture-world-occluded-bake", "architecture-provenance-readback"];

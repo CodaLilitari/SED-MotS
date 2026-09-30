@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="../../src/Sed.Core/Sed.Core.csproj" /></ItemGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- This original fixture also exercises launching the fixed portable executable name. -->
+    <AssemblyName>Sed.App</AssemblyName>
+  </PropertyGroup>
+</Project>

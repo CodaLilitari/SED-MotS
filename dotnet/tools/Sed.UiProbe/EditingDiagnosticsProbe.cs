@@ -40,6 +40,28 @@ internal static class EditingDiagnosticsProbe
         catch (Exception error) { report("editing diagnostics: containment UI flow", false, error.ToString()); }
         finally { checkWindow.Close(); }
 
+        JklDocument? colorsDocument = new(LevelFactory.CreateUntexturedRoom(ProjectType.MysteriesOfTheSith));
+        var colorsWindow = new DynamicVertexColorsWindow(() => colorsDocument);
+        try
+        {
+            string before = JklWriter.Build(colorsDocument);
+            colorsWindow.Show(); Dispatcher.UIThread.RunJobs();
+            var rows = colorsWindow.GetVisualDescendants().OfType<ListBox>().Single(c => c.Name == "VertexColorRows");
+            Check("dynamic colors reports per-surface loader divergence", rows.Items.Count == 6 &&
+                rows.Items.OfType<string>().All(s => s.Contains("Retail: Compacted; OpenMotS: Retained")));
+            Check("dynamic colors does not edit the candidate", before == JklWriter.Build(colorsDocument));
+            colorsDocument.Level.Sectors[0].Surfaces[0].Corners[0].MonoIntensity = .5f;
+            var recheck = colorsWindow.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "RecheckVertexColors");
+            recheck.Focus(); colorsWindow.KeyPressQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            colorsWindow.KeyReleaseQwerty(PhysicalKey.Space, RawInputModifiers.None); Dispatcher.UIThread.RunJobs();
+            Check("dynamic colors keyboard recheck observes edits", rows.Items.OfType<string>().First().Contains("Retail: Retained; OpenMotS: Retained"));
+            colorsDocument = null; colorsWindow.Run(); Dispatcher.UIThread.RunJobs();
+            Check("dynamic colors drops old results after document closes", rows.Items.Count == 0 &&
+                colorsWindow.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text?.Contains("No active level document") == true));
+        }
+        catch (Exception error) { report("editing diagnostics: dynamic colors UI flow", false, error.ToString()); }
+        finally { colorsWindow.Close(); }
+
         string directory = Path.Combine(Path.GetTempPath(), "sed-cog-ui-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         try

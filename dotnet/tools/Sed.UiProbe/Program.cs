@@ -288,6 +288,7 @@ await session.Dispatch(() =>
     SectorColormapProbe.Run(Check);
     ArchitectureInspectorProbe.Run(Check);
     EditingDiagnosticsProbe.Run(Check);
+    UpdateRecoveryProbe.Run(Check);
     TextureWorkbenchProbe.Run(Check);
     ArrayPlacementProbe.Run(Check);
 

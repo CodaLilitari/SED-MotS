@@ -10,11 +10,12 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 | --- | --- |
 | `help [command]`, `--help`, `-h` | Compact JSON command help; also returned when no command is supplied |
 | `--version` | Executable build version and supported capabilities |
-| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|bindings\|lighting\|assets\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
+| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|bindings\|lighting\|vertexColors\|assets\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
 | `inspect <level.jkl> [sector-index]` | Source hash, game, counts, materials, sector and thing indices; optional detailed geometry |
 | `query <level> <query.json\|->` | Bounded, paged readback of fields used by existing edits, including templates and lighting |
 | `bindings <level> <bindings.json\|->` | One placed COG's typed binding page, complete-schema status, modifiers and exact current-world target addresses; explicit archives required |
 | `lighting <level> <lighting.json\|->` | Read-only world-corner bake explanation per source light: facing, range, shadow and contribution counts |
+| `vertex-colors <level> <request.json\|->` | Read-only, paginated MotS RGB storage inference against actual proposed serialized rows; [scope and outcomes](DYNAMIC_VERTEX_COLORS.md) |
 | `assets <level> <assets.json\|->` | Bounded direct resource scan with origins and exact captured entry receipts; explicit archives required; recursive closure stays unverified |
 | `select <level> <selection.json\|->` | Select a sector by world point or a face by outward direction; return a token only for a unique match |
 | `snapshot <level> <snapshot.json\|-> <new-output.png>` | Explicit-camera diagnostic or static lit PNG, rendered offscreen; no window or game |
