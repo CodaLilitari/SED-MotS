@@ -1,6 +1,6 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (TOOL-01 first slice accepted; local package pending). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (TOOL-01 first slice locally packaged and independently audited). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
@@ -8,15 +8,36 @@ The incidental `openmots` checkout is a separate engine project.
 **TOOL-01 shared editing workbench, first slice implemented.** Andrei approved proceeding after
 the plug-in audit. The first implementation slice adds exact query predicates,
 selection-wide UV projection/transforms, deterministic bounded new thing/light
-arrays, GUI dialogs and the corresponding existing CLI/MCP contracts. Release
-tests pass 1,517 Core and 270 MCP; headless GUI probes pass 149 checks. The first
-actual CLI workflow passed 118 calls and 619 checks, with 14 expected refusals;
-its evidence predates the final nested UV error-pointer correction. The
-independent workflow review prompted stronger full-object assertions before
-the final package run. The strengthened `cli-workflow-02` now passes 132 calls
-and 1,099 checks against the corrected runtime, with all original inputs,
-outputs and captured I/O identities verified. Local Windows packaging is pending;
-no package or publication is claimed by this source-freeze checkpoint.
+arrays, GUI dialogs and the corresponding existing CLI/MCP contracts. The final
+clean Release suite passes **1,517 Core + 270 MCP** tests; headless GUI probes
+pass **149** checks. The actual self-contained package passes the strengthened
+TOOL-01 workflow (**132 CLI calls, 1,099 checks, 14 expected refusals**) and
+**63 MCP stdio calls**. Existing original authoring checks also pass. These are
+authoring/serialization results, not new engine or retail gameplay proof.
+
+**Latest local Windows package:** `0.4.0-mots.15-dev`, built from exact commit
+`f85aec0deda71bff59435b061aed8a7fad4ff53c`, at
+`build/packages/SED-MotS-0.4.0-mots.15-dev-f85aec0/`.
+The Windows ZIP SHA256 is
+`58dc1ed7cac640957946fccf5ff3bb4988afd46188b744628f7c83be0187b71f`.
+Matching `SED-MotS-source.zip`, `SED-MotS-history.bundle` and `SHA256SUMS.txt`
+are alongside it. The independent audit passes 934 manifested/935 physical
+files, exact ZIP payload, all 818 source Git blobs and all 818 compiler-input
+files, plus a standalone 354-commit/3,807-object history with strict fsck.
+It independently recomputed 44 complete thing/light rows, UV math, vertex
+preservation, query results and positive/refused COG-reference cases. Evidence:
+`build/tool01-20260930/package-audit-01/audit.json`, SHA256
+`ab1e11b6780419fc006de0467be6672b77b77b73fbff809d4b3b38ec733018dc`.
+Source follow-up commits which only update this checkpoint are not substituted
+for the frozen package identity. Nothing was pushed or uploaded.
+
+**Next implementation scope:** masked property batches and report-first repair
+helpers, then reference-safe prefabs/connected stairs and gameplay recipes.
+Material/model-aware lighting remains separate. Preserve the two failed package
+attempts: one exposed checkout EOL-dependent original fixtures; the other an
+old MCP fixture assumption invalidated by correct empty-room capacity saving.
+Both are corrected and the final clean package passes. See DEC-20260930-02.
+
 All implementation is original; the source-informed audit is not described as
 a formal clean-room process. PLAY-01's separate pending review/release remains
 paused; no older package or publication receipt is replaced. See
