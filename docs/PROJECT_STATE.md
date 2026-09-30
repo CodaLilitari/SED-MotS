@@ -1,18 +1,25 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (research/update milestone in progress; last completed package remains TOOL-01). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (research/update milestone completed and published). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
 
-**Active goal:** [research and updates](RESEARCH_UPDATE_MILESTONE.md). Andrei
-authorized an editor updater, a maintained research corpus/workflow and a Codex
-skill. The slice also implements the already-approved dynamic vertex-color
-readiness report. Source work and focused tests are in progress; do not infer a
-new public release from configured update URLs. The portfolio can serve the
-small metadata/research assets; large Windows ZIPs use the verified public
-GitLab project. The existing portfolio source is staged in a separate checkout
-to preserve the modeling workflow's latest publication.
+**Completed milestone:** [research and updates](RESEARCH_UPDATE_MILESTONE.md).
+The Windows updater, dynamic vertex-color readiness report, private research
+index and reusable Codex skill are implemented and verified. The public
+[.16 release](releases/0.4.0-mots.16-dev.md) binds Windows/source/history to
+`e3379f233e98f3c5ed88c039ed8011bd5114d108`. Windows ZIP SHA256:
+`80ea64ac8640792e72c2a561ed2edfa2b9330e1a830cc82b4882f3e82550d639`.
+The clean build passed 1,594 Core +271 MCP tests; packaged workflows and
+independent source/archive checks passed. Both public feed URLs were exercised
+by the real Core updater, with old files preserved and equal versions refused.
+Portfolio version42 hosts the skill/research and primary metadata; GitLab hosts
+the large Windows ZIP and fallback metadata. Main and the immutable .16 tag are
+published. The final notes disclose the timed-out external updater review;
+local independent review completed. No full new-editor GUI restart or new
+retail gameplay result is claimed. The next useful compatibility proof is an
+original controlled retail dynamic-color fixture, before automatic preparation.
 
 The canonical workflow is `.agents/skills/jk-mots-level-workflow`. Its private
 index lives outside Git, references acquired files in place and keeps review
@@ -36,12 +43,12 @@ document was already reviewed, and current ARCH authoring already supports
 world-polygon occlusion. Research/announcement evidence does not advance code,
 runtime, release or external-review acceptance. See DEC-20260930-03.
 
-**Next approved compatibility slice:** dynamic vertex-color readiness against
+**Implemented compatibility slice:** dynamic vertex-color readiness against
 actual proposed serialized output, followed by an original controlled retail
 fixture before any automatic preparation. An unchanged source section can
 retain scalar rows even though regenerated MotS rows use four values per
 corner. Preserve independent white/RGB values and test final float32 values.
-Implementation resumed with the research/update milestone. Conversion-boundary
+Implementation completed with the research/update milestone. Conversion-boundary
 disagreements between direct float32 and double-to-float32 parsing are reported
 as retail unknown until the inspected numeric conversion path is qualified.
 The broader workbench queue below remains valid; no additional generic MCP
@@ -57,7 +64,7 @@ TOOL-01 workflow (**132 CLI calls, 1,099 checks, 14 expected refusals**) and
 **63 MCP stdio calls**. Existing original authoring checks also pass. These are
 authoring/serialization results, not new engine or retail gameplay proof.
 
-**Latest local Windows package:** `0.4.0-mots.15-dev`, built from exact commit
+**Previous TOOL-01 Windows package:** `0.4.0-mots.15-dev`, built from exact commit
 `f85aec0deda71bff59435b061aed8a7fad4ff53c`, at
 `build/packages/SED-MotS-0.4.0-mots.15-dev-f85aec0/`.
 The Windows ZIP SHA256 is
@@ -71,7 +78,8 @@ preservation, query results and positive/refused COG-reference cases. Evidence:
 `build/tool01-20260930/package-audit-01/audit.json`, SHA256
 `ab1e11b6780419fc006de0467be6672b77b77b73fbff809d4b3b38ec733018dc`.
 Source follow-up commits which only update this checkpoint are not substituted
-for the frozen package identity. Nothing was pushed or uploaded.
+for the frozen package identity. That earlier handoff was local-only at its checkpoint;
+the subsequent .16 milestone above is now published.
 
 **Broader workbench queue:** masked property batches and report-first repair
 helpers, then reference-safe prefabs/connected stairs and gameplay recipes.

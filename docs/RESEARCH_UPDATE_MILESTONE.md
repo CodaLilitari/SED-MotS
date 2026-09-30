@@ -1,7 +1,8 @@
 # Research and update milestone
 
-Status: in progress, 2026-09-30. This document records the authorized next slice;
-it does not certify a build or publication before the evidence is added.
+Status: completed and published, 2026-09-30. The exact artifact identity,
+validation and remaining runtime limits are recorded in
+[the .16 release](releases/0.4.0-mots.16-dev.md).
 
 ## Acceptance
 
@@ -51,3 +52,14 @@ The installed user skill is a copy, not an independent source fork. The legacy
 `sed-mots` entrypoint remains for compatibility and routes to the broader workflow.
 See `PROJECT_STATE.md`, `WORK_LOG.md` and `UPSTREAM_COMPARISON.md` for the prior
 checkpoint, evidence boundaries and forthcoming upstream C++ comparison plan.
+
+## Publication receipt
+
+Windows release `v0.4.0-mots.16-dev` and its immutable assets are public on
+[GitLab](https://gitlab.com/codalilitari/SED-MotS/-/releases/v0.4.0-mots.16-dev).
+The [portfolio workflow page](https://richard-pemberton-research.darkahn.chatgpt.site/projects/jk-mots-level-workflow/)
+serves the skill, research payloads and primary feeds. Site version42, source
+`f5d91d353d92d8cc8347eeb4ae6c6c63118d8d1b`, published successfully.
+Anonymous byte verification and real Core updater staging passed through
+both feed URLs. The private corpus/installed skill point to the final .16
+package; none of the private captures were added to the research payloads.

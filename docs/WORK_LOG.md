@@ -602,3 +602,39 @@ a test observer correction; no production journal behavior or timeout changed.
 The complete packaged stdio MCP workflow then passed with 67 tool calls in a
 fresh output directory, including both interruption probes; snapshots were not
 requested for that run.
+
+
+## DEC-20260930-05 — Published research/update milestone
+
+Final package/source/history freeze: `e3379f233e98f3c5ed88c039ed8011bd5114d108`,
+version `0.4.0-mots.16-dev`. Clean 1,594 Core +271 MCP tests pass with zero
+warnings/errors. Final packaged diagnostic validation passes 40 assertions,
+11 CLI calls and 8 MCP calls. The package's general MCP workflow passes 67 calls,
+PLAY 139 and TOOL 132. Independent verification matches 957 manifested Windows
+files (958 physical), all 864 source Git blobs and the complete HEAD history.
+The initial EOL-transform export and observer-race package attempts remain
+preserved as failed evidence, rather than being relabeled successful.
+
+The standalone 1.0.0 skill remains the frozen 17-member archive, SHA256
+`62b5833badf07f1345f7d98b3a8925b646d267b9d21be06973c8974977b96ba7`.
+The installed skill points to the final .16 executables and its fresh capability
+probe recognizes 19 CLI commands. Private corpus: 398 sources, 29,595 indexed
+records (29,295 message IDs +300 documents), 31,864 occurrences, 1,301 review
+events and 19 known leads. These counts do not imply exhaustive reading.
+Its 25 tests pass; private captures and copied forum posts remain outside Git.
+
+GitLab main, tag and five release links are public. Anonymous downloads verify
+26 metadata/research/source/skill payloads exactly, plus the workflow HTML with
+Cloudflare's added script. The actual packaged Core DLL downloaded and staged
+the 158,261,511-byte Windows ZIP through each public feed, preserved both old
+marker files and refused equal versions. The original fixture covers launch;
+169 headless GUI checks include recovery acknowledgement. The live package
+probe did not launch the GUI. Portfolio version 42/source f5d91d3 deployed
+successfully, retaining adjacent modeling/WBW content. Hash-bound portfolio
+assets also retain exact Git bytes across line-ending settings.
+
+The external diagnostic review was reconciled with executed counterexamples.
+The external updater request timed out after 900 seconds without an answer;
+no completion or approval is claimed. Independent local source review and
+updater tests completed. The separate PLAY-01 review handoff stays paused.
+See `releases/0.4.0-mots.16-dev.md` for public identities and exact limitations.
