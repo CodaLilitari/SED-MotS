@@ -1,6 +1,17 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (research/update milestone published; PLAY-01 review handoff resumed). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (PLAY-01 goal-causality review closed; .17 release preparation). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+
+**Current release work:** Andrei requested the next milestone, updates to the
+portfolio, GitLab and GitHub, then a pause. Lilitari's completed follow-up closes
+the specific goal-causality finding in correction `c935187`, within the original
+fixture and recorded-sample contract. An independent local sweep reproduced all
+235 candidate transition boundaries (only index166 passes), rejected all472
+single-sample fractional/opposite-value mutations, and accepted numeric1.0/3.0.
+Seven historical capture classifications remain unchanged. These are offline
+checks. The next step is a clean .17 package, fresh seven-process acceptance,
+independent artifact audit and publication; none is implied by review closure.
+See [the .17 notes](releases/0.4.0-mots.17-dev.md).
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
