@@ -72,7 +72,8 @@ def independent_trace():
             'mover': {'sector': 0, 'position': [0, .499, z], 'currentFrame': int(t >= 3200),
                       'goalFrame': int(t >= 1550), 'pathFlags': int(1550 <= t < 3200)},
             'cog': {'valueType': 2, 'value': phase},
-            'goalValue': 0 if t == 0 else 1 if sector < 2 else 3})
+            # STARTUP has already set goal 0's displayed bit before observation.
+            'goalValue': 1 if sector < 2 else 3})
     objective_ms = next(s['wallElapsedMs'] for s in samples if s['player']['sector'] == 2)
     exit_ms = next(s['wallElapsedMs'] for s in samples if s['player']['sector'] == 3)
     events = [
@@ -412,6 +413,88 @@ class CausalOracleTests(unittest.TestCase):
     def test_objective_dispatch_before_actual_entry_is_insufficient(self):
         trace = independent_trace(); trace['events'][3]['wallElapsedMs'] = 3500
         self.assert_rejected(trace)
+
+    def test_goal_completion_cannot_lag_phase_three_even_until_one_sample_later(self):
+        for only_first in (True, False):
+            with self.subTest(only_first=only_first):
+                trace = independent_trace()
+                phase_three = [s for s in trace['samples'] if s['cog']['value'] == 3]
+                for sample in phase_three[:1] if only_first else phase_three[:-1]: sample['goalValue'] = 1
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['checks']['exactObjectiveGoalSequence'])
+                self.assertTrue(result['checks']['causalPhaseTransitions'])
+                self.assertFalse(result['checks']['objectiveGoalAlignedWithPhaseThree'])
+                self.assertFalse(result['passed'])
+
+    def test_equal_millisecond_observations_still_require_same_sample_boundary(self):
+        trace = independent_trace()
+        index = next(i for i, s in enumerate(trace['samples']) if s['cog']['value'] == 3)
+        delayed = copy.deepcopy(trace['samples'][index]); delayed['goalValue'] = 1
+        trace['samples'].insert(index, delayed)
+        # Two observations have the same millisecond and phase but different
+        # goal state. The raw observer contract permits the timestamp tie.
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'tied-observations.json'; path.write_text(json.dumps(trace))
+            observed = contract.validate_telemetry(path, independent_program())['observed']
+        result = workflow.evaluate(observed)
+        self.assertTrue(result['checks']['exactObjectiveGoalSequence'])
+        self.assertTrue(result['checks']['causalPhaseTransitions'])
+        self.assertFalse(result['checks']['objectiveGoalAlignedWithPhaseThree'])
+        self.assertFalse(result['passed'])
+
+    def test_completed_goal_cannot_regress_during_objective_or_exit_phase(self):
+        for phase in (3, 4):
+            with self.subTest(phase=phase):
+                trace = independent_trace()
+                candidates = [s for s in trace['samples'] if s['cog']['value'] == phase]
+                candidates[len(candidates)//2]['goalValue'] = 1
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['checks']['objectiveTransitionAfterEntry'])
+                self.assertTrue(result['checks']['exitAfterObjective'])
+                self.assertFalse(result['checks']['exactObjectiveGoalSequence'])
+                self.assertFalse(result['passed'])
+
+    def test_fractional_goal_is_raw_observation_but_never_positive_flag_evidence(self):
+        for position in ('first-phase3', 'middle-phase3', 'middle-phase4'):
+            with self.subTest(position=position):
+                trace = independent_trace()
+                candidates = [s for s in trace['samples'] if s['cog']['value'] == (4 if position.endswith('4') else 3)]
+                candidates[0 if position.startswith('first') else len(candidates)//2]['goalValue'] = 2.5
+                with tempfile.TemporaryDirectory() as temp:
+                    path = Path(temp) / 'fractional.json'; path.write_text(json.dumps(trace))
+                    observed = contract.validate_telemetry(path, independent_program())['observed']
+                result = workflow.evaluate(observed)
+                self.assertFalse(result['checks']['exactObjectiveGoalSequence'])
+                self.assertFalse(result['passed'])
+
+    def test_goal_cannot_precede_phase_three_or_its_objective_dispatch(self):
+        trace = independent_trace()
+        index = next(i for i, s in enumerate(trace['samples']) if s['cog']['value'] == 3)
+        trace['samples'][index-1]['goalValue'] = 3
+        result = workflow.evaluate(trace)
+        self.assertTrue(result['checks']['exactObjectiveGoalSequence'])
+        self.assertFalse(result['checks']['objectiveGoalAlignedWithPhaseThree'])
+        self.assertFalse(result['passed'])
+
+    def test_goal_and_phase_transition_accept_both_event_bracket_endpoints(self):
+        for endpoint in (-1, 0):
+            with self.subTest(endpoint=endpoint):
+                trace = independent_trace()
+                index = next(i for i, s in enumerate(trace['samples']) if s['cog']['value'] == 3)
+                event = trace['events'][3]
+                event['wallElapsedMs'] = trace['samples'][index+endpoint]['wallElapsedMs']
+                event['gameTimeMs'] = trace['samples'][index+endpoint]['gameTimeMs']
+                result = workflow.evaluate(trace)
+                self.assertTrue(result['passed'], result['checks'])
+
+    def test_initial_goal_must_be_exactly_initialized_not_just_missing_completion_bit(self):
+        for value in (0, .5, 4, 5):
+            with self.subTest(value=value):
+                trace = independent_trace(); trace['samples'][0]['goalValue'] = value
+                result = workflow.evaluate(trace)
+                self.assertFalse(result['checks']['initialClosedIncomplete'])
+                self.assertFalse(result['checks']['exactObjectiveGoalSequence'])
+                self.assertFalse(result['passed'])
 
     def test_exit_requires_real_entered_dispatch_not_final_phase_alone(self):
         trace = independent_trace(); trace['events'].pop()

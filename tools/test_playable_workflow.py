@@ -40,7 +40,7 @@ def evaluate(trace):
         and abs(first['player']['position'][1]-.30)<.02
         and math.dist(first['mover']['position'],[0,.499,.3])<.005
         and first['mover']['currentFrame']==0 and first['cog']['value']==0
-        and int(first['goalValue']) & 2 == 0)
+        and first['goalValue']==1)
     checks['postInitializationIncomplete']=(ended[0]['goalValue']==1 and ended[0]['cog']['value']==0)
     blocked=ended[1]
     checks['closedForwardAttemptBlocked']=(blocked['controlReads']['forward']>0
@@ -116,7 +116,17 @@ def evaluate(trace):
         and crossings[0]['beforeMs']>=terminal_witnesses[0]['wallElapsedMs']
         and all(s['player']['sector']==0 and s['player']['position'][1]<.5
                 for s in samples if s['wallElapsedMs']<arrivals[0]['wallElapsedMs']))
-    completed=[s for s in samples if int(s['goalValue']) & 2]
+    # The authored startup ORs bit 1 into goal 0. Objective ENTERED ORs bit 2
+    # immediately before assigning phase 3, with no intervening yield; the exit
+    # changes goal 1, not this observed bin. Do not truncate a flex value into a
+    # plausible flag: 2.5, late completion, or a later regression is not this run.
+    goal_transitions=[]
+    for index,s in enumerate(samples):
+        if not goal_transitions or s['goalValue']!=samples[goal_transitions[-1]]['goalValue']:
+            goal_transitions.append(index)
+    goal_sequence=[samples[index]['goalValue'] for index in goal_transitions]
+    checks['exactObjectiveGoalSequence']=goal_sequence==[1,3]
+    completed=[s for s in samples if s['goalValue']==3]
     objective_events=[e for e in dispatch if e['message']==6 and e['senderIndex']==2
                       and e['senderType']==5 and e['sourceType']==3
                       and e['sourceIndex']==first['player']['index'] and e['linkId']==2]
@@ -142,6 +152,13 @@ def evaluate(trace):
         if not transitions or s['cog']['value']!=samples[transitions[-1]]['cog']['value']:
             transitions.append(index)
     phase_sequence=[samples[index]['cog']['value'] for index in transitions]
+    checks['objectiveGoalAlignedWithPhaseThree']=(goal_sequence==[1,3]
+        and phase_sequence==[0,1,2,3,4] and len(objective_events)==1
+        and goal_transitions[1]==transitions[3]
+        # Compare sample indices as well as inclusive timestamps. Millisecond
+        # ties do not excuse observing phase 3 before its goal has completed.
+        and samples[goal_transitions[1]-1]['wallElapsedMs']<=objective_events[0]['wallElapsedMs']
+            <=samples[goal_transitions[1]]['wallElapsedMs'])
     phase_one=[s for s in samples if s['cog']['value']==1]
     causal_phases=(phase_sequence==[0,1,2,3,4]
         and all(len(group)==1 for group in (activations,arrivals,objective_events,exit_events)))
