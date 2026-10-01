@@ -1,6 +1,6 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (research/update milestone completed and published). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-09-30 (research/update milestone published; PLAY-01 review handoff resumed). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
 
 Current workspace: `C:\Users\Andrei\Documents\ChatGPT\SED-MotS-Net`.
 The incidental `openmots` checkout is a separate engine project.
@@ -89,8 +89,8 @@ old MCP fixture assumption invalidated by correct empty-room capacity saving.
 Both are corrected and the final clean package passes. See DEC-20260930-02.
 
 All implementation is original; the source-informed audit is not described as
-a formal clean-room process. PLAY-01's separate pending review/release remains
-paused; no older package or publication receipt is replaced. See
+a formal clean-room process. PLAY-01's separate review handoff has resumed;
+companion publication remains held for the new oracle correction below. See
 [TOOL_WORKBENCH.md](TOOL_WORKBENCH.md) for the scope and acceptance contract.
 
 **Plug-in research completed, 2026-09-30:** Andrei requested a broad JED/SED
@@ -102,26 +102,50 @@ repositories and public forum discoveries. Proposed TOOL-01 adds shared
 selection/UV/placement/prefab/gameplay recipes; material/model-aware lighting
 remains a separate proposed milestone. No implementation, downloaded-binary
 execution, release/reviewer polling or publication occurred. The existing
-PLAY-01 handoff below remains paused. Original reports, downloads, raw public
+PLAY-01 handoff below has resumed. Original reports, downloads, raw public
 forum pages and hash receipts are external at
 `C:\Users\Andrei\Documents\ChatGPT\sed-editor-audit\plugin-audit-20260930\`.
 Repository documents contain original summaries and public links only, without
 raw Discord logs or copied forum posts. See DEC-20260930-01 for coverage,
 source-license distinctions, independent corrections and actual validation.
 
-**PLAY-01 handoff PAUSED at Andrei's request, 2026-09-28 11:36 UTC.** Stop its
-publication and review polling until he resumes that handoff. The tested local handoff below
-is the stopping point. No PLAY-01 source push, release creation or asset upload
-has occurred. The previously published `.13-dev` remains unchanged.
-Final Lilitari correction review was delivered once at 11:32:32 UTC in the saved
-SED conversation and was still running at the last observation; leave it
-uninterrupted. Exact job/message/attachment identities and resume instructions
-are ignored/local in `build/play01-20260928/reviews/lilitari-corrections-01/`.
-On resume, inspect that existing reply before any retry, triage findings, then
-use the independently audited nine-asset selection in `release-upload-02/`.
-The older `release-upload/` has an explicit publication hold and is superseded.
+**PLAY-01 review handoff resumed at Andrei's request, 2026-09-30.** The existing
+saved reply was recovered before any new request. It closed the prior editor,
+topology and native findings in its bounded source packet, but found one new
+acceptance-oracle defect: delayed or reverted objective completion could pass.
+Independent local replay reproduced this, including a fractional goal value.
+The correction in local commit `c935187e4ff32b3e0fd79f07de17b84e22dd0160`
+requires exact sampled goal sequence `1 -> 3`, its transition
+in the same adjacent sample pair as phase `2 -> 3`, and the objective dispatch
+inside that pair's inclusive time bounds. The generic numeric telemetry schema
+remains unchanged. Review delivery and test receipts are recorded privately in
+`build/play01-20260928/reviews/resume-20260930/`; do not confuse a delivered
+follow-up with a returned approval. The focused follow-up was delivered on
+September 30 at 20:37 EDT in the same saved SED conversation with the visible
+6 Pro selection. All five returned attachment previews and 58 embedded payloads
+match the exact local snapshots. The last observed response state was active;
+do not resend or claim approval. This local correction is not in the immutable
+published .16 package, and no new native or retail run occurred.
 
-**Latest PLAY-01 handoff candidate:** corrected editor source/package
+The corrected primary suite passes 57 tests, with 32 launcher and nine topology
+tests also passing. The separately written checker passes eight test methods,
+15 invalid mutations and five valid boundary controls. Isolated re-extraction
+of the actual review packet passes all 65 primary/independent tests, reproduces
+all 20 mutation hashes, and preserves all seven historical outcomes. Both
+corrected evaluators reject the three exact saved counterexamples which the old
+evaluators accepted. Independent checks of bytes and replay remain distinct
+from the pending external review and a future packaged runtime acceptance.
+
+The published editor is now `.16` as described above. All 14 complete editor
+files in the earlier correction packet remain identical in that release;
+all 36 files in the four `.16` PLAY fixture variants match `fixture-05`, and
+all 56 scenario bindings from the seven recorded processes match those files.
+These are byte comparisons, not new engine executions. The old nine-asset
+selection in `release-upload-02/` remains historical and must not be uploaded
+unchanged as the current handoff. Native/example publication stays held until
+the oracle correction is reviewed and a refreshed selection is verified.
+
+**Historical PLAY-01 runtime evidence:** corrected editor source/package
 `00e7741990aa2b3e48e938136da0a383c5241782`,
 `build/packages/SED-MotS-0.4.0-mots.14-dev-00e7741/`. Its independent audit passes
 930 manifested files, all 794 source files, and exact 350-commit/3,731-object
@@ -132,10 +156,12 @@ Actual packaged `runtime-packaged-02` passes three positive and four fault-contr
 processes with the stronger oracle (maximum observed state gap 50 ms). The v2
 independent audit also passes, including primary-verdict gates and explicit
 staged EXE/OpenAL/GNS coverage; freeglut is separately packaged.
-Final focused source review and publication remain pending while paused. Earlier candidate
-paragraphs below are retained as development history, not upload selections.
+Those v2 verdicts predate the newly reproduced goal-transition gap. Preserve
+the seven raw captures and their original receipts; evaluate the corrected
+predicate separately without rewriting old evidence or claiming fresh runs.
+Earlier candidate paragraphs below are development history, not upload selections.
 
-**Active milestone: [PLAY-01](PLAYABLE_AUTHORING.md), 2026-09-28.** Andrei approved
+**Historical implementation milestone: [PLAY-01](PLAYABLE_AUTHORING.md), 2026-09-28.** Andrei approved
 the proposed small playable MotS workflow. Shared `addCog` and `setThingFrames`
 are implemented locally. Original authoring/reopen passed in `fixture-04/`,
 and `build/play01-20260928/runtime-05/acceptance.json` passed three positive and

@@ -638,3 +638,62 @@ The external updater request timed out after 900 seconds without an answer;
 no completion or approval is claimed. Independent local source review and
 updater tests completed. The separate PLAY-01 review handoff stays paused.
 See `releases/0.4.0-mots.16-dev.md` for public identities and exact limitations.
+
+## DEC-20260930-06 — Resumed PLAY-01 review and objective-goal correction
+
+Andrei resumed the separate handoff. The existing saved correction review had
+completed during the pause; it was recovered without resending its request.
+It closed the prior editor, topology and native findings within that packet,
+and exposed a further acceptance-oracle false success: goal completion could
+be delayed well after its objective dispatch or revert while phase remained 3.
+
+The canonical original COG sets goal 0's completion flag and phase 3 together
+in one unsuspended handler; exit changes goal 1. The native implementation ORs
+flags into inventory, and the selected observer samples the two values outside
+handler execution. Local replay reproduced the delayed 6956 ms transition,
+`1 -> 3 -> 1 -> 3` reversion and transient `2.5` cases against the untouched
+positive-1 capture. All passed the old primary and independent v2 evaluators
+as well as generic telemetry ingestion. Exact old source and mutant bytes were
+preserved before editing.
+
+Local source commit `c935187e4ff32b3e0fd79f07de17b84e22dd0160` requires exact
+sampled goal sequence `[1,3]`, the same adjacent sample pair for goal and phase-3
+transitions, and the objective event inside that pair's inclusive wall-time
+interval. Completion no longer truncates flex observations into flags. The
+synthetic baseline now reflects the already-initialized goal value 1. Separate
+regressions cover equal-millisecond split observations, both valid interval
+endpoints, delayed/premature completion, reversion in phase 3/4 and fractional
+values. This is a fixture oracle change, not a generic inventory restriction.
+
+Validation: 57 focused primary tests, 32 launcher tests and nine topology tests
+pass. Independent v3 uses separately expressed predicates and no primary
+oracle import; eight methods and 20 mutation/boundary cases pass (15 invalid
+cases rejected, five valid controls accepted). Boolean/string mutants expose
+standalone v2 weaknesses but are already rejected by generic ingestion; they
+are not end-to-end ingestion bypasses. Game-clock containment is diagnostic
+only. All seven original captures retain their expected offline outcomes.
+These are recorded-sample checks, not proof of unobserved behavior.
+
+A second audit extracted the final review packet, verified all four bundle
+hashes and 58 payloads, reran 57 +8 tests with only those extracted sources,
+recreated all 20 deterministic mutation hashes, and cross-checked the three
+exact attacks and seven originals through old/new evaluators. Full source
+inspection, byte checks and offline replay remain separate evidence types.
+
+The focused follow-up was sent once in the established SED review conversation
+on September 30 at 20:37 EDT, with 6 Pro visibly selected. Five attached files
+were returned by the provider preview and independently matched the local
+snapshots, including all 58 embedded payloads. The original review contribution
+was acknowledged in the same message. Last observed review state: active;
+there is no new external verdict. Exact request, observed mode, message/file
+identities, original reply and delivery proof are private under
+`build/play01-20260928/reviews/resume-20260930/`.
+
+The .16 integration comparison found all 14 complete prior editor correction
+files unchanged, all 36 scenario files byte-identical and 56/56 recorded
+scenario bindings matching current authored output. The new Python correction
+is local and is not substituted into .16's immutable package. Candidate04,
+older packages, traces and upload selections stay historical. No fresh engine
+process, retail test, source push, replacement release or companion publication
+was performed for this handoff. Await the actual focused response before
+refreezing and publishing the optional native/example companion.
