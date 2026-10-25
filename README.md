@@ -116,3 +116,10 @@ See the [Releases](https://github.com/smlu/SED/releases) page for the latest ver
 ## License
 
 This project is licensed under the terms of the license detailed in [LICENSE](LICENSE).
+
+
+## Lessons credited to SM Sith Lord
+
+See [the original integration and validation notes](docs/SM_SITH_LORD_APPLICATION_NOTES.md) for lessons
+from SM Sith Lord / COG Factory applied to this project. Source inspection,
+automated authoring checks and actual game observations remain separate.
