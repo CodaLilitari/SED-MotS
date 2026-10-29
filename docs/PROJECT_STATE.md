@@ -1,6 +1,40 @@
 # SED MotS project checkpoint
 
-Updated: 2026-09-30 (PLAY-01 goal-causality review closed; .17 release preparation). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-10-29 (native Linux conversion). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+
+## Native Linux work
+
+The native Linux x64 port is isolated on `feature/linux-native`, based on
+GitHub `CodaLilitari/SED-MotS` commit `ff88182`. It keeps the existing .NET 10,
+Avalonia, Vulkan and shared Core/Formats architecture. The editor remains a
+desktop application; the CLI and local stdio MCP server perform ordinary
+authoring without a display, graphics device, game installation or API key.
+See [the Linux guide](LINUX_QUICKSTART.md) and
+[the Linux release notes](releases/0.4.0-mots.17-linux.1.md).
+
+Implemented seams include native game executable discovery and direct argv,
+desktop file arguments, Unix path/settings behavior, the native default MCP
+preview worker, atomic create-only Linux publication, and an early check for
+the renderer's existing 160-byte push-constant requirement. Linux build,
+portable package, relocated verification, optional per-user desktop setup and
+CI entrypoints are in `tools/` and `.github/workflows/linux.yml`.
+
+Observed integration evidence includes **1,615 Core +273 MCP tests**, the
+preserved Windows launch contract under an explicit Windows policy, native
+synthetic launch tests and **175 headless UI checks**. SwiftShader's measured
+128-byte push-constant limit is insufficient for the existing renderer; Mesa
+lavapipe exposes 256 bytes and is the selected CPU rendering path. These are
+authoring/editor tests, not retail or engine gameplay results. The final
+handoff's `build-receipt.json`, `package-receipt.json`, verification report and
+`SHA256SUMS.txt` bind its exact clean commit and actual package checks; verify
+those artifacts rather than inferring publication from this checkpoint.
+
+The user has requested pushes with the GitHub and GitLab CLIs to CodaLilitari.
+Use the dedicated branch and verify each remote ref after authentication. This
+checkpoint does not assert a remote push or CI run. The automatic updater
+remains Windows-only; install Linux packages in separate versioned directories.
+
+## Previous Windows milestone and research state
 
 **Current release work:** Andrei requested the next milestone, updates to the
 portfolio, GitLab and GitHub, then a pause. Lilitari's completed follow-up closes

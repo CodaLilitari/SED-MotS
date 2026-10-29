@@ -32,18 +32,18 @@
 **Files:** `dotnet/src/Sed.Formats/Launching/GameLauncher.cs`, relevant `dotnet/src/Sed.App` settings/startup/dialog files, launch tests and UI probe.
 **Interfaces:** Existing LaunchRequest/GameLaunchPlan and AppSettings; maintain defaults and JSON compatibility where possible. New shared platform helpers only where behavior needs them.
 
-- [ ] Add meaningful failing tests for native executable planning and Unix path/config behavior.
-- [ ] Implement native names/selection and direct argv launch through shared planner; retain explicit existing shell templates.
-- [ ] Verify Windows launch contract plus new Linux cases and headless UI behaviors.
+- [x] Add meaningful failing tests for native executable planning and Unix path/config behavior.
+- [x] Implement native names/selection and direct argv launch through shared planner; retain explicit existing shell templates.
+- [x] Verify Windows launch contract plus new Linux cases and headless UI behaviors.
 
 ## Task 2: CLI/MCP and Linux regression repair
 
 **Files:** `dotnet/tools/Sed.Mcp/HostOptions.cs`, project runtime declarations, relevant Core/Formats or tests only where Linux failures establish need.
 **Interfaces:** Default worker is packaged sibling `../agent/sed-agent` on Linux; preserve explicit `--agent` and version binding.
 
-- [ ] Run baseline Core/MCP tests and record actual portability failures.
-- [ ] Add/run a failing default Linux worker regression; implement platform-specific apphost naming.
-- [ ] Fix demonstrated Linux parsing/resource/test assumptions with discriminating regressions.
+- [x] Run baseline Core/MCP tests and record actual portability failures.
+- [x] Add/run a failing default Linux worker regression; implement platform-specific apphost naming.
+- [x] Fix demonstrated Linux parsing/resource/test assumptions with discriminating regressions.
 - [ ] Exercise a complete no-display authoring and real stdio MCP workflow.
 
 ## Task 3: Native build and portable distribution
@@ -51,10 +51,10 @@
 **Files:** new Linux build/package/verification/desktop-integration tooling under `tools`, Linux guide, CI workflow.
 **Interfaces:** Package root has `Sed.App`, `agent/sed-agent`, `mcp/sed-mcp`, `bin/sed-mots`, `bin/sed-agent`, `bin/sed-mcp`; all self-contained x64. Launchers preserve cwd and argv. Tools use explicit dotnet path or PATH.
 
-- [ ] Implement reproducible build and package scripts with readable usage, deterministic source binding, no existing-output replacement, dependency notices and hashes.
-- [ ] Add executable user-level launchers and optional desktop entry installation without root requirements.
+- [x] Implement reproducible build and package scripts with readable usage, deterministic source binding, no existing-output replacement, dependency notices and hashes.
+- [x] Add executable user-level launchers and optional desktop entry installation without root requirements.
 - [ ] Verify actual relocated package from paths containing spaces, without DISPLAY; exercise CLI and MCP worker.
-- [ ] Add Linux CI using the same scripts and document install/run/dependency/software-render instructions.
+- [x] Add Linux CI using the same scripts and document install/run/dependency/software-render instructions.
 
 ## Task 4: Integrated evidence and delivery
 

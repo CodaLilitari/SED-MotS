@@ -697,3 +697,77 @@ older packages, traces and upload selections stay historical. No fresh engine
 process, retail test, source push, replacement release or companion publication
 was performed for this handoff. Await the actual focused response before
 refreezing and publishing the optional native/example companion.
+
+## DEC-20261029-01 — Native Linux conversion and demonstrated portability fixes
+
+Andrei requested a human-usable Linux conversion optimized for Lilitari's
+environment, followed by GitHub and GitLab CLI pushes to CodaLilitari. The
+source baseline is GitHub `ff88182`, isolated on `feature/linux-native`.
+The existing modern .NET/Avalonia/Vulkan application is retained. The legacy
+Pascal sources remain provenance; no engine or game assets enter this port.
+
+The native launch seam recognizes `openjkdf2`/`openjkdf2-64`, supports renamed
+native binaries with an explicit profile, checks execute permissions and
+preserves direct argv through Save and Test. Existing explicit Wine templates
+remain deliberate shell templates. Desktop file arguments, Unix recent-file
+identity and user-profile project fallback have regressions. Initial new unit
+tests failed nine expected cases with two controls passing; the actual GUI
+probe failed four new checks before implementation. After implementation,
+43 focused launch tests and 175 no-Vulkan UI checks passed. Synthetic process
+receipts exercise spaces, apostrophes and shell metacharacters; no real game
+was launched. The Windows contract is tested with an explicit host policy.
+
+The MCP default worker now selects `sed-agent` on Unix and `sed-agent.exe` on
+Windows, while explicit paths and version binding remain unchanged. Both
+Windows and Linux package-lock targets are retained. The full MCP suite
+passes 273 tests after the Linux regressions are fixed.
+
+A pre-existing competing receipt test exposed a real Linux create-only race:
+the current .NET Unix File.Move(overwrite:false) implementation can check
+destination absence and then call an overwriting rename. A synchronized
+four-contender test using different bytes reported four successful writers
+in the initial failing run. Shared AtomicFilePromotion now uses Linux
+renameat2 with RENAME_NOREPLACE for new agent output, snapshots, operation
+receipts and resource exports. Thirty-two rounds of four contenders retain
+exactly one winner. There is no unsafe copy/rename fallback; unsupported
+filesystems fail explicitly. Existing Windows-only update publication paths
+are unchanged. References: [the runtime implementation](https://source.dot.net/System.Private.CoreLib/src/runtime/src/libraries/System.Private.CoreLib/src/System/IO/FileSystem.Unix.cs.html)
+and [Linux rename semantics](https://man7.org/linux/man-pages/man2/rename.2.html).
+
+The supplied SwiftShader ICD could create a Vulkan instance but segfaulted
+during scene rendering. A native property probe measured only 128 bytes of
+push-constant capacity; SceneRenderer uses its existing 160-byte layout.
+The same precompiled 175-check GUI probe passed with Mesa lavapipe, whose
+reported limit is 256. This is a device-capability mismatch, not evidence of
+an Avalonia or font-stack fault. RendererDeviceRequirements checks the limit
+before scene resource allocation. Three below-limit unit cases initially
+failed and three supported-limit controls passed; the full Core suite then
+passed 1,615 tests. VulkanSmoke reports the device limit. Vulkan 1.0–1.3 only
+guarantees 128 bytes, so API version alone is not a sufficient gate:
+[Khronos version/limit guidance](https://docs.vulkan.org/guide/latest/versions.html).
+
+The Linux tools compile only required entrypoints for linux-x64, package
+self-contained apphosts from a clean committed source snapshot, preserve
+caller cwd/argv, include notices/source/history, refuse existing outputs and
+record hashes. Relocated package verification intentionally removes DISPLAY
+and the SDK, exercises reviewed edits and refusals, and checks the default
+sibling MCP snapshot worker when graphics are requested. Actual build,
+package, rendering and native desktop results belong to their generated
+receipts and handoff report; this implementation log does not assert a push,
+remote CI run or gameplay result.
+
+Further native controls separate capability refusal from rendering success:
+the guarded UI probe passes all 175 checks on both SwiftShader and Mesa.
+The simpler triangle renderer produces 8,192/65,536 non-background pixels on
+both drivers, while the full SceneRenderer produces 33,195/307,200 lit pixels
+with Mesa on the original synthetic cube. Those controls isolate the failing
+160-byte scene path from general loader, font and triangle rendering behavior.
+
+Independent review found that Git archive inherited core.autocrlf and could
+transform source and shell shebangs. The Linux archiver now pins LF settings,
+checks each payload against its exact committed blob object ID and requires
+complete tracked-file coverage. Regressions cover autocrlf=true, export-subst
+and export-ignore. A second finding distinguished a working UI shell from
+actual scene rendering: the graphics build gate now includes SceneProbe's
+non-background pixel check. The optional desktop installer also ignores empty
+or relative XDG_DATA_HOME values in favor of the documented home directory.
