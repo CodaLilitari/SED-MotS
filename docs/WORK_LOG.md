@@ -837,3 +837,13 @@ The [guide](RESOURCE_PACKAGING.md) documents the human workflow and exact limits
 Final package, source/history and remote publication identities belong to the
 handoff receipts. Static dependency inspection is not runtime closure, rendering,
 player-start validation or gameplay evidence.
+
+The clean package at `4b630ce115aadd9f2bf9c1821a01c60aaed96aa2` subsequently
+passed all release gates: 1,801 Core, 293 MCP, 23 Linux tooling, 175 headless UI,
+and 120 other Python tests with two Windows-only skips. The real new-package
+workflow passed 28 CLI/MCP calls; broad workbench acceptance passed 132 calls
+and 1,099 checks. Independent source/runtime/history audits passed. Both remote
+branch identities were verified through the GitHub and GitLab CLIs after the
+normal authenticated pushes. The [release notes](releases/0.4.0-mots.17-linux.2.md)
+record exact artifact hashes and the unchanged validation limits. This later
+documentation checkpoint does not alter the packaged source identity.

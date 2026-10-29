@@ -33,6 +33,18 @@ are the release/publication evidence; this source checkpoint does not substitute
 for those receipts or assert a remote CI run. Runtime closure, gameplay, a new
 GUI packaging dialog, and existing-archive updates remain outside this increment.
 
+The completed `0.4.0-mots.17-linux.2` package binds clean source
+`4b630ce115aadd9f2bf9c1821a01c60aaed96aa2`. Release gates repeated 1,801 Core,
+293 MCP, 23 Linux-tooling and 175 headless UI checks; the Python suite passed
+120 cases and skipped two Windows-only process checks. The new original package
+workflow passed 28 actual CLI/MCP calls, and the broad editing workbench passed
+132 calls/1,099 checks. Independent audits matched all 901 source blobs, 1,061
+manifested runtime entries and the complete 4,122-object history bundle. Both
+authenticated CLI APIs verified the pushed feature commit on GitHub and GitLab.
+See [the release handoff](releases/0.4.0-mots.17-linux.2.md) for exact hashes.
+Later documentation-only commits record that evidence without changing the
+packaged source identity. No fresh graphics/gameplay or remote CI success is claimed.
+
 ## Native Linux work
 
 The native Linux x64 port is isolated on `feature/linux-native`, based on

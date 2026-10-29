@@ -67,11 +67,11 @@ new MCP package tests, existing process-tool discovery expectation.
 ## Task 4 — Integrated delivery (root plus independent reviewer)
 
 - [x] Write human command examples and update protocol, workflow and MCP docs.
-- [ ] Run Core and MCP suites; verify real CLI/MCP processes without a display.
+- [x] Run Core and MCP suites; verify real CLI/MCP processes without a display.
 - [x] Independently review the complete diff against the five review risks.
 - [x] Record actual results and remaining limits in PROJECT_STATE and WORK_LOG.
-- [ ] Commit/checkpoint the feature branch; build and verify the native deliverable.
-- [ ] Push using authenticated CLIs and verify remote commit identities.
+- [x] Commit/checkpoint the feature branch; build and verify the native deliverable.
+- [x] Push using authenticated CLIs and verify remote commit identities.
 
 Implementation is authorized by the user's continuation instruction; routine
 choices and reversible fixes proceed without an additional approval round.
