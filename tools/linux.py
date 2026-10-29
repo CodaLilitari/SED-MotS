@@ -34,6 +34,7 @@ PROJECTS = {
     "ui": "dotnet/tools/Sed.UiProbe/Sed.UiProbe.csproj",
     "appshot": "dotnet/tools/Sed.AppShot/Sed.AppShot.csproj",
     "vulkan": "dotnet/tools/Sed.VulkanSmoke/Sed.VulkanSmoke.csproj",
+    "scene": "dotnet/tools/Sed.SceneProbe/Sed.SceneProbe.csproj",
 }
 
 
@@ -341,11 +342,11 @@ def build(repo, dotnet, output, configuration="Release", no_restore=False, graph
         if not graphics:
             headless.update(VK_ICD_FILENAMES=str(output / "no-driver.json"),
                             VK_DRIVER_FILES=str(output / "no-driver.json"))
-        for name in (["ui", "vulkan", "appshot"] if graphics else ["ui"]):
+        for name in (["ui", "vulkan", "scene", "appshot"] if graphics else ["ui"]):
             arguments = [dotnet, "run", "--project", PROJECTS[name], "-c", configuration, "-r", RID,
                          "--self-contained", "false", "--no-build", "--no-restore"]
-            if name == "appshot":
-                arguments += ["--", output / "appshot.png"]
+            if name in ("scene", "appshot"):
+                arguments += ["--", output / f"{name}.png"]
             run_logged(arguments, repo, output / f"{name}.log", headless, timeout=180)
         receipt["status"] = "passed"
     except Exception as error:
@@ -709,8 +710,10 @@ def main(argv=None):
         command.add_argument("--full-workflows", action="store_true", help="Also run the existing broad MCP and editing-workbench acceptance scripts")
     for command in (verify_parser, install_parser):
         command.add_argument("--package", type=Path, required=True, help="Extracted package root containing Sed.App and bin/")
+    xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
+    user_data = Path(xdg_data_home) if xdg_data_home and Path(xdg_data_home).is_absolute() else Path.home() / ".local/share"
     install_parser.add_argument("--applications-dir", type=Path,
-        default=Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))) / "applications")
+        default=user_data / "applications")
     install_parser.add_argument("--bin-dir", type=Path, default=Path.home() / ".local/bin")
     args = parser.parse_args(argv)
     if not sys.platform.startswith("linux"):

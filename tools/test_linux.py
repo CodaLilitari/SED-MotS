@@ -12,6 +12,7 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 
 
 DRIVER = Path(__file__).with_name("linux.py")
@@ -266,16 +267,36 @@ class LinuxToolsTests(unittest.TestCase):
         self.assertFalse((applications / "sed-mots.desktop").exists())
         self.assertFalse((binaries / "sed-mots").exists())
 
-    def fake_sdk(self, fail=False):
+    def test_installer_defaults_ignore_empty_or_relative_xdg_data_home(self):
+        previous_directory = Path.cwd()
+        os.chdir(self.root)
+        self.addCleanup(os.chdir, previous_directory)
+        package = self.root / "package"
+        self.executable(package / "Sed.App", "pass\n")
+        self.tools.write_launchers(package)
+        for label, xdg_value in (("empty", ""), ("relative", "relative data"),
+                                 ("absolute", str(self.root / "absolute data"))):
+            with self.subTest(xdg_data_home=xdg_value):
+                home = self.root / (label + " home")
+                expected = ((self.root / "absolute data") if label == "absolute" else home / ".local/share")
+                with mock.patch.object(self.tools.Path, "home", return_value=home), \
+                     mock.patch.dict(os.environ, {"XDG_DATA_HOME": xdg_value}):
+                    result = self.tools.main(["install-desktop", "--package", str(package),
+                                              "--bin-dir", str(self.root / (label + " commands"))])
+                self.assertEqual(result, 0)
+                self.assertTrue((expected / "applications/sed-mots.desktop").is_file())
+
+    def fake_sdk(self, fail=False, scene_exit=0):
         records = self.root / "sdk calls.jsonl"
         sdk = self.executable(self.root / "SDK with spaces/dotnet",
             "import json, os, sys\n"
             f"with open({str(records)!r}, 'a') as log: log.write(json.dumps({{'args': sys.argv[1:], 'cwd': os.getcwd(), 'root': os.environ.get('DOTNET_ROOT'), 'icd': os.environ.get('VK_ICD_FILENAMES')}}) + '\\n')\n"
             "print('10.0.401' if '--version' in sys.argv else 'Fixture SDK output')\n"
+            f"if 'run' in sys.argv and 'dotnet/tools/Sed.SceneProbe/Sed.SceneProbe.csproj' in sys.argv: sys.exit({scene_exit})\n"
             + ("sys.exit(17 if 'build' in sys.argv else 0)\n" if fail else ""))
         return sdk, records
 
-    def test_build_uses_explicit_sdk_linux_runtime_and_records_tests(self):
+    def build_repository(self):
         repo = self.repository()
         (repo / "tools/tests").mkdir(parents=True)
         (repo / "tools/test_linux.py").write_text("print('fixture tooling checks')\n", encoding="utf-8")
@@ -283,6 +304,10 @@ class LinuxToolsTests(unittest.TestCase):
             "import unittest\nfrom pathlib import Path\nclass Fixture(unittest.TestCase):\n"
             "    def test_original_source(self):\n"
             "        self.assertEqual(Path('LICENSE').read_text(), 'Original fixture license\\n')\n", encoding="utf-8")
+        return repo
+
+    def test_build_uses_explicit_sdk_linux_runtime_and_records_tests(self):
+        repo = self.build_repository()
         sdk, records = self.fake_sdk()
         output = self.root / "build evidence"
         self.tools.build(repo, sdk, output, no_restore=True)
@@ -291,7 +316,7 @@ class LinuxToolsTests(unittest.TestCase):
         self.assertEqual(receipt["runtime"], "linux-x64")
         calls = [json.loads(line) for line in records.read_text().splitlines()]
         builds = [row for row in calls if row["args"][0] == "build"]
-        self.assertEqual(len(builds), 8)
+        self.assertEqual(len(builds), 9)
         for row in builds:
             self.assertEqual(row["cwd"], str(repo))
             self.assertEqual(row["root"], str(sdk.parent))
@@ -305,6 +330,31 @@ class LinuxToolsTests(unittest.TestCase):
         probes = [row for row in calls if row["args"][0] == "run"]
         self.assertEqual(len(probes), 1)
         self.assertEqual(probes[0]["icd"], str(output / "no-driver.json"))
+
+    def test_graphics_build_runs_actual_scene_probe_with_image_evidence_path(self):
+        repo = self.build_repository()
+        sdk, records = self.fake_sdk()
+        output = self.root / "graphics evidence"
+        self.tools.build(repo, sdk, output, graphics=True)
+        calls = [json.loads(line)["args"] for line in records.read_text().splitlines()]
+        scene_project = "dotnet/tools/Sed.SceneProbe/Sed.SceneProbe.csproj"
+        scene_builds = [args for args in calls if args[0] == "build" and scene_project in args]
+        scene_runs = [args for args in calls if args[0] == "run" and scene_project in args]
+        self.assertEqual(len(scene_builds), 1)
+        self.assertEqual(len(scene_runs), 1)
+        self.assertEqual(scene_runs[0][-2:], ["--", str(output / "scene.png")])
+        self.assertIn("--no-build", scene_runs[0])
+        self.assertTrue((output / "scene.log").is_file())
+
+    def test_graphics_build_fails_when_scene_rendering_probe_fails(self):
+        repo = self.build_repository()
+        sdk, _ = self.fake_sdk(scene_exit=23)
+        output = self.root / "failed graphics evidence"
+        with self.assertRaises(self.tools.ToolError):
+            self.tools.build(repo, sdk, output, graphics=True)
+        receipt = json.loads((output / "build-receipt.json").read_text())
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("scene.log", receipt["error"])
 
     def test_build_failure_stops_and_keeps_failed_receipt(self):
         repo = self.repository()
