@@ -29,11 +29,13 @@ public sealed class LaunchContractTests
         ProjectType game = ProjectType.MysteriesOfTheSith) => new(game, Game, Path.Combine(Game, "project"), "test.jkl", executable, engine);
     private static Files OpenJkFiles(string? game = null) => new Files().Add(game ?? Game,
         "openjkdf2-64.exe", "jkm.exe", Path.Combine("resource", "jk_.cd"));
+    private static GameLaunchPlan PrepareWindowsLaunch(LaunchRequest request, ILaunchFileSystem fileSystem) =>
+        GameLauncher.PrepareLaunch(request, fileSystem, GameLaunchHost.Windows);
 
     [Fact]
     public void AutoPrefersOpenJkAndUsesMotsCompatAndLooseFiles()
     {
-        var plan = GameLauncher.PrepareLaunch(Request(), OpenJkFiles());
+        var plan = PrepareWindowsLaunch(Request(), OpenJkFiles());
         Assert.Equal(GameEngineProfile.OpenJKDF2, plan.Engine);
         Assert.EndsWith("openjkdf2-64.exe", plan.Executable);
         Assert.Equal(new[] { "-devmode", "-debug", "log", "-motsCompat", "-path", "project" }, plan.Arguments);
@@ -46,7 +48,7 @@ public sealed class LaunchContractTests
     [Fact]
     public void JkOpenJkDoesNotEnableMots()
     {
-        var plan = GameLauncher.PrepareLaunch(Request(game: ProjectType.JediKnight), OpenJkFiles());
+        var plan = PrepareWindowsLaunch(Request(game: ProjectType.JediKnight), OpenJkFiles());
         Assert.DoesNotContain("-motsCompat", plan.Arguments);
     }
 
@@ -54,7 +56,7 @@ public sealed class LaunchContractTests
     public void RetailProfileIsStrictAndDoesNotNeedOpenJkMarker()
     {
         var files = new Files().Add(Game, "jkm.exe", "openjkdf2-64.exe");
-        var plan = GameLauncher.PrepareLaunch(Request(GameEngineProfile.Retail), files);
+        var plan = PrepareWindowsLaunch(Request(GameEngineProfile.Retail), files);
         Assert.Equal(GameEngineProfile.Retail, plan.Engine);
         Assert.EndsWith("jkm.exe", plan.Executable);
         Assert.DoesNotContain("-motsCompat", plan.Arguments);
@@ -63,7 +65,7 @@ public sealed class LaunchContractTests
     [Fact]
     public void AutoCanFallbackToRetail()
     {
-        var plan = GameLauncher.PrepareLaunch(Request(), new Files().Add(Game, "jkm.exe"));
+        var plan = PrepareWindowsLaunch(Request(), new Files().Add(Game, "jkm.exe"));
         Assert.Equal(GameEngineProfile.Retail, plan.Engine);
     }
 
@@ -71,14 +73,14 @@ public sealed class LaunchContractTests
     [InlineData(GameEngineProfile.OpenJKDF2, "jkm.exe")]
     [InlineData(GameEngineProfile.Retail, "openjkdf2-64.exe")]
     public void ExplicitProfileNeverFallsBack(GameEngineProfile profile, string onlyExecutable)
-        => Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(Request(profile), new Files().Add(Game, onlyExecutable)));
+        => Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(Request(profile), new Files().Add(Game, onlyExecutable)));
 
     [Fact]
     public void CustomExecutableRequiresKnownEngineAndWorksWhenExplicit()
     {
         var files = new Files().Add(Game, "custom.exe", Path.Combine("resource", "jk_.cd"));
-        Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(Request(executable: "custom.exe"), files));
-        var plan = GameLauncher.PrepareLaunch(Request(GameEngineProfile.OpenJKDF2, "custom.exe"), files);
+        Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(Request(executable: "custom.exe"), files));
+        var plan = PrepareWindowsLaunch(Request(GameEngineProfile.OpenJKDF2, "custom.exe"), files);
         Assert.EndsWith("custom.exe", plan.Executable);
         Assert.Contains("-motsCompat", plan.Arguments);
     }
@@ -88,25 +90,25 @@ public sealed class LaunchContractTests
     [InlineData("jkm.exe -devmode")]
     [InlineData("test.cmd")]
     public void ExecutableFieldRejectsCommands(string executable)
-        => Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(Request(executable: executable), OpenJkFiles()));
+        => Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(Request(executable: executable), OpenJkFiles()));
 
     [Fact]
     public void OpenJkRequiresMarkerSoCwdCannotBeSilentlyRerouted()
-        => Assert.Contains("jk_.cd", Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(Request(),
+        => Assert.Contains("jk_.cd", Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(Request(),
             new Files().Add(Game, "openjkdf2-64.exe"))).Message);
 
     [Fact]
     public void RelativeProjectWorksUnderSpaceBearingInstall()
     {
         string game = Path.Combine(Game, "game with spaces");
-        var plan = GameLauncher.PrepareLaunch(Request() with { GameDirectory = game, ProjectDirectory = Path.Combine(game, "project") }, OpenJkFiles(game));
+        var plan = PrepareWindowsLaunch(Request() with { GameDirectory = game, ProjectDirectory = Path.Combine(game, "project") }, OpenJkFiles(game));
         Assert.Equal("project", plan.ProjectPathToken);
         Assert.Contains("game with spaces", plan.Executable);
     }
 
     [Fact]
     public void SameFolderUsesDot()
-        => Assert.Equal(".", GameLauncher.PrepareLaunch(Request() with { ProjectDirectory = Game }, OpenJkFiles()).ProjectPathToken);
+        => Assert.Equal(".", PrepareWindowsLaunch(Request() with { ProjectDirectory = Game }, OpenJkFiles()).ProjectPathToken);
 
     [Fact]
     public void ResourceSuffixReservesExact127ByteBoundary()
@@ -115,8 +117,8 @@ public sealed class LaunchContractTests
         int tokenLength = GameLauncher.MaximumResourcePathBytes - resource.Length - 1;
         string token = new('a', tokenLength);
         var request = Request() with { ProjectDirectory = Path.Combine(Game, token) };
-        Assert.Equal(token, GameLauncher.PrepareLaunch(request, OpenJkFiles()).ProjectPathToken);
-        Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(request with { ProjectDirectory = Path.Combine(Game, token + "a") }, OpenJkFiles()));
+        Assert.Equal(token, PrepareWindowsLaunch(request, OpenJkFiles()).ProjectPathToken);
+        Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(request with { ProjectDirectory = Path.Combine(Game, token + "a") }, OpenJkFiles()));
     }
 
     [Fact]
@@ -124,7 +126,7 @@ public sealed class LaunchContractTests
     {
         var files = OpenJkFiles();
         files.ShortName = "C:\\TEST~1";
-        var plan = GameLauncher.PrepareLaunch(Request() with { ProjectDirectory = Path.Combine(Game, "test with spaces") }, files);
+        var plan = PrepareWindowsLaunch(Request() with { ProjectDirectory = Path.Combine(Game, "test with spaces") }, files);
         Assert.Equal(files.ShortName, plan.ProjectPathToken);
     }
 
@@ -140,19 +142,19 @@ public sealed class LaunchContractTests
     public void ShellMetacharactersRemainLiteralArguments()
     {
         const string token = "test&%!(x)";
-        var plan = GameLauncher.PrepareLaunch(Request() with { ProjectDirectory = Path.Combine(Game, token) }, OpenJkFiles());
+        var plan = PrepareWindowsLaunch(Request() with { ProjectDirectory = Path.Combine(Game, token) }, OpenJkFiles());
         Assert.Equal(token, plan.Arguments.Last());
         Assert.DoesNotContain("cmd.exe", JsonSerializer.Serialize(plan));
     }
 
     [Fact]
     public void MissingDirectoriesAreReportedWithoutWrites()
-        => Assert.Throws<ArgumentException>(() => GameLauncher.PrepareLaunch(Request(), new Files { DirectoriesExist = false }));
+        => Assert.Throws<ArgumentException>(() => PrepareWindowsLaunch(Request(), new Files { DirectoriesExist = false }));
 
     [Fact]
     public void PlanAndPerGameProfilesRoundTripAsJson()
     {
-        var plan = GameLauncher.PrepareLaunch(Request(), OpenJkFiles());
+        var plan = PrepareWindowsLaunch(Request(), OpenJkFiles());
         var restored = JsonSerializer.Deserialize<GameLaunchPlan>(JsonSerializer.Serialize(plan))!;
         Assert.Equal(plan.Arguments, restored.Arguments);
         var settings = new AppSettings { JediKnightTestExecutable = "jk.exe", MysteriesTestExecutable = "mine.exe",

@@ -65,7 +65,10 @@ public partial class MainWindow : Window
     /// <summary>The editable document; also usable by isolated headless integration tests.</summary>
     public JklDocument? CurrentDocument => _currentDoc;
 
-    public MainWindow(AppSettings? settings = null)
+    public MainWindow(AppSettings? settings = null) : this(settings, null) { }
+
+    /// <summary>Gives an explicit caller file priority over startup game selection and autosave prompts.</summary>
+    public MainWindow(AppSettings? settings, string? startupPath)
     {
         _settings = settings ?? AppSettings.Load();
         _bindings = new CommandKeys(_settings);
@@ -181,9 +184,10 @@ public partial class MainWindow : Window
         Content = root;
         _view.History.Changed += RefreshMaterialNames;
 
-        TryAutoOpenConfiguredGame();
+        if (startupPath is null) TryAutoOpenConfiguredGame();
+        else OpenPath(startupPath, null);
         StartAutosave();
-        PromptForAutosaveRecovery();
+        if (startupPath is null) PromptForAutosaveRecovery();
         InitializeUpdates();
     }
 
@@ -275,6 +279,7 @@ public partial class MainWindow : Window
         displayName ??= Path.GetFileName(path);
         try
         {
+            path = Path.GetFullPath(path);
             var prepared = PreparedLevelOpen.FromPath(path, _settings.DirFor);
             CommitPreparedOpen(prepared, displayName);
             _settings.AddRecent(path);
@@ -617,7 +622,7 @@ public partial class MainWindow : Window
 
     /// <summary>
     /// Prepares the loose override the engine actually reads, plus a GOB/GOO,
-    /// then starts the reviewed executable directly on Windows.
+    /// then starts the reviewed native executable, or an explicitly configured shell command.
     /// </summary>
     private void SaveAndTest()
     {
@@ -648,11 +653,9 @@ public partial class MainWindow : Window
             var verify = GuiResourceExport.FreshnessGuard(_currentDoc, revision, resources);
             var package = TestEpisode.Build(game, levelName + ".jkl", prepared.OutputText, existingEpisode);
             var gobPath = Path.Combine(projectDir, $"Test_{levelName}{package.ArchiveExtension}");
-            GameLaunchPlan? plan = OperatingSystem.IsWindows() ? GameLauncher.PrepareLaunch(new LaunchRequest(
-                game, gameDir, projectDir, package.LevelFileName, _settings.TestExecutableFor(game), _settings.TestEngineFor(game))) : null;
             string? command = OperatingSystem.IsWindows() ? null : _settings.BuildTestCommand(game, projectDir, gobPath, levelName);
-            if (plan is null && string.IsNullOrWhiteSpace(command))
-                throw new InvalidOperationException("Configure a non-Windows launch command in Game > Test Setup.");
+            GameLaunchPlan? plan = string.IsNullOrWhiteSpace(command) ? GameLauncher.PrepareLaunch(new LaunchRequest(
+                game, gameDir, projectDir, package.LevelFileName, _settings.TestExecutableFor(game), _settings.TestEngineFor(game))) : null;
 
             // -path loads loose resources; a GOB merely sitting in this folder is insufficient.
             var outputs = new List<GuiExportOutput>();

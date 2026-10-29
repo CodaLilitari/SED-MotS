@@ -39,15 +39,17 @@ public sealed class TestSetupWindow : Window
         var motsEngine = Profile(settings.MysteriesTestEngine);
         AddGame("Jedi Knight", jkExecutable, jkEngine);
         AddGame("Mysteries of the Sith", motsExecutable, motsEngine);
-        stack.Children.Add(Hint("Automatic prefers OpenJKDF2, then the game's retail executable. Leave the executable blank to search the game folder. For a renamed executable, choose its engine explicitly. Testing opens the game's menus with your project loaded."));
+        stack.Children.Add(Hint(OperatingSystem.IsWindows()
+            ? "Automatic prefers OpenJKDF2, then the game's retail executable. Leave the executable blank to search the game folder. For a renamed executable, choose its engine explicitly. Testing opens the game's menus with your project loaded."
+            : "Automatic searches the game folder for native openjkdf2 or openjkdf2-64. You can select an executable elsewhere; choose OpenJKDF2 for a renamed file. Testing opens the game's menus with your project loaded. Retail Windows games require a Wine command below."));
 
         TextBox? command = null;
         if (!OperatingSystem.IsWindows())
         {
-            stack.Children.Add(Label("Custom shell command (Wine / CrossOver)"));
+            stack.Children.Add(Label("Optional Wine / custom shell command (overrides executable profiles)"));
             command = Field(settings.TestCommand);
             stack.Children.Add(command);
-            stack.Children.Add(Hint("Existing non-Windows command templates remain available: {project} {gob} {game} {gameexe} {levelname}. The Windows launcher uses executable profiles directly."));
+            stack.Children.Add(Hint("Leave blank for direct native launch. Existing shell templates remain supported: {project} {gob} {game} {gameexe} {levelname}. Placeholders are raw text; quote substituted paths for your shell. {gameexe} is the game's retail Windows executable."));
         }
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal,
@@ -79,13 +81,15 @@ public sealed class TestSetupWindow : Window
             stack.Children.Add(Label(name));
             var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
             row.Children.Add(executable);
-            var browse = new Button { Content = "Select EXE…" };
+            var browse = new Button { Content = OperatingSystem.IsWindows() ? "Select EXE…" : "Select executable…" };
             browse.Click += async (_, _) =>
             {
                 var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Select " + name + " executable", AllowMultiple = false,
-                    FileTypeFilter = [new FilePickerFileType("Executable") { Patterns = ["*.exe"] }],
+                    FileTypeFilter = OperatingSystem.IsWindows()
+                        ? [new FilePickerFileType("Executable") { Patterns = ["*.exe"] }]
+                        : [FilePickerFileTypes.All],
                 });
                 if (files.FirstOrDefault() is { } file) executable.Text = file.Path.LocalPath;
             };

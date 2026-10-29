@@ -26,11 +26,11 @@ public sealed class AppSettings
     public string? ProjectDir { get; set; }
 
     /// <summary>
-    /// Command template used to launch the game for testing (macOS/Linux, where
-    /// the original's .bat cannot run). Placeholders are expanded from the
+    /// Optional shell template overriding direct native game launching on macOS/Linux.
+    /// Placeholders are expanded as raw text from the
     /// session: <c>{project}</c> <c>{gob}</c> <c>{game}</c> <c>{gameexe}</c>
-    /// <c>{levelname}</c>. Run through the shell, so Wine/CrossOver invocations
-    /// work as-is (their paths are <c>Z:\&lt;mac path&gt;</c>).
+    /// <c>{levelname}</c>. Existing Wine/CrossOver templates retain their shell behavior;
+    /// an empty template uses the shared native executable planner.
     /// </summary>
     public string? TestCommand { get; set; }
 
@@ -103,13 +103,17 @@ public sealed class AppSettings
 
     /// <summary>
     /// The project directory for "Save and Test" — the configured one, else a
-    /// default under the user's Documents so the feature works unconfigured.
+    /// default under the user's Documents (or home when Documents is unavailable).
     /// </summary>
     public string ResolvedProjectDir()
     {
         if (!string.IsNullOrWhiteSpace(ProjectDir)) return ProjectDir;
         var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        return Path.Combine(string.IsNullOrEmpty(docs) ? Path.GetTempPath() : docs, "SED");
+        var userDir = string.IsNullOrEmpty(docs)
+            ? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) : docs;
+        if (string.IsNullOrEmpty(userDir))
+            throw new InvalidOperationException("No user project directory is available. Choose a test project folder in Game > Test Setup.");
+        return Path.Combine(userDir, "SED");
     }
 
     /// <summary>The game executable, as the original's test batch used per game.</summary>
@@ -141,7 +145,8 @@ public sealed class AppSettings
     /// <summary>Records a recently opened level file (most recent first, capped).</summary>
     public void AddRecent(string path)
     {
-        RecentFiles.RemoveAll(p => p.Equals(path, StringComparison.OrdinalIgnoreCase));
+        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        RecentFiles.RemoveAll(p => p.Equals(path, comparison));
         RecentFiles.Insert(0, path);
         if (RecentFiles.Count > 12) RecentFiles.RemoveRange(12, RecentFiles.Count - 12);
         Save();

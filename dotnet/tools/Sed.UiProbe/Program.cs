@@ -291,6 +291,7 @@ await session.Dispatch(() =>
     UpdateRecoveryProbe.Run(Check);
     TextureWorkbenchProbe.Run(Check);
     ArrayPlacementProbe.Run(Check);
+    LinuxDesktopProbe.Run(Check);
 
 }, CancellationToken.None);
 

@@ -16,7 +16,13 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = new MainWindow();
+            string? startupPath = desktop.Args switch
+            {
+                [var file] when !file.StartsWith('-') => file,
+                ["--", var file] => file,
+                _ => null,
+            };
+            var window = new MainWindow(null, startupPath);
             string? ready = null;
             if (desktop.Args is ["--recover-update", var path, "--recovery-sha256", var recoveryHash, "--update-ready", var recoveryReady]
                 && Path.IsPathFullyQualified(path) && Path.GetExtension(path).Equals(".jkl", StringComparison.OrdinalIgnoreCase) && File.Exists(path))
