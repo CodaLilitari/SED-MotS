@@ -8,6 +8,12 @@ Vulkan. The renderer requires a Vulkan 1.2 device with at least **160 bytes of
 push-constant storage** (`maxPushConstantsSize`). A game engine and game assets
 are separate user-provided inputs.
 
+For distributing a level and its known custom dependencies, use the
+[reviewed packaging workflow](RESOURCE_PACKAGING.md). `sed-agent package-plan`
+returns a manifest; `package-apply` creates a new GOB/GOO only when its output and
+manifest hashes match the review. The same service is exposed through the two
+MCP package tools. It needs no display, Vulkan device or game process.
+
 ## Start the portable editor
 
 Verify the handoff checksums before extracting its binary archive:

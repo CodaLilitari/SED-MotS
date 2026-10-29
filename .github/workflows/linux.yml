@@ -75,3 +75,4 @@ jobs:
             build/linux-package-ci/verification/*.log
             build/linux-package-ci/verification/mcp-workflow/verification.json
             build/linux-package-ci/verification/tool-workbench/receipt.json
+            build/linux-package-ci/verification/dependency-package-workflow/**

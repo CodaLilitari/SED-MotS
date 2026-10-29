@@ -126,8 +126,8 @@ public static class LevelAssetDiagnostics
                     Add(new("sector", "colormap", SectorIndex: i), sector.ColorMap, "misc/cmp");
                 if (!string.IsNullOrEmpty(sector.Sound))
                     Add(new("sector", "sound", SectorIndex: i), sector.Sound, "sound",
-                        sector.Sound == "none" ? "null" : null,
-                        sector.Sound == "none" ? "The sound loader's explicit none sentinel." : null);
+                        sector.Sound.Equals("none", StringComparison.OrdinalIgnoreCase) ? "null" : null,
+                        sector.Sound.Equals("none", StringComparison.OrdinalIgnoreCase) ? "The sound loader's explicit none sentinel." : null);
                 for (int j = 0; j < sector.Surfaces.Count; j++)
                 {
                     Spend();
@@ -166,7 +166,7 @@ public static class LevelAssetDiagnostics
             if (direct is not null) Gather(direct, null);
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             int depth = 0;
-            while (!string.IsNullOrEmpty(templateName) && templateName != "none")
+            while (!string.IsNullOrEmpty(templateName) && !templateName.Equals("none", StringComparison.OrdinalIgnoreCase))
             {
                 Spend();
                 string? problem = null;
@@ -186,7 +186,7 @@ public static class LevelAssetDiagnostics
             {
                 Spend();
                 if (!values.TryGetValue(field.Key, out var value)) continue;
-                bool nullSoundClass = field.Key == "soundclass" && value.Value == "none";
+                bool nullSoundClass = field.Key == "soundclass" && value.Value.Equals("none", StringComparison.OrdinalIgnoreCase);
                 Add(owner with { Field = field.Key, DeclaredByTemplate = value.Template }, value.Value, field.Folder,
                     nullSoundClass ? "null" : null,
                     nullSoundClass ? "The soundclass loader's explicit none sentinel." : null);

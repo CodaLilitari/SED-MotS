@@ -123,8 +123,15 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
         return _statuses[RequestKey(name, folder)];
     }
 
-    private static string RequestKey(string name, string folder) =>
-        folder.Replace('\\', '/').Trim('/').ToLowerInvariant() + "/" + name.Replace('\\', '/').ToLowerInvariant();
+    private static string RequestKey(string name, string folder)
+    {
+        // A lookup is a folder/name pair, not the concatenated destination.
+        // For example (3do, key/foo) and (3do/key, foo) have different exact
+        // and basename fallback semantics even though their first path matches.
+        string normalizedFolder = folder.Replace('\\', '/').Trim('/').ToLowerInvariant();
+        return normalizedFolder.Length.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" +
+            normalizedFolder + name.Replace('\\', '/').ToLowerInvariant();
+    }
 
     private CapturedEntry? Capture(string name, string folder)
     {

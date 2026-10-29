@@ -10,13 +10,15 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 | --- | --- |
 | `help [command]`, `--help`, `-h` | Compact JSON command help; also returned when no command is supplied |
 | `--version` | Executable build version and supported capabilities |
-| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|bindings\|lighting\|vertexColors\|assets\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
+| `schema [patch\|query\|select\|commands\|launch-plan\|snapshot\|resources\|bindings\|lighting\|vertexColors\|assets\|package\|operation]` | Full discovery, or a focused JSON Schema/reference that fits a smaller context |
 | `inspect <level.jkl> [sector-index]` | Source hash, game, counts, materials, sector and thing indices; optional detailed geometry |
 | `query <level> <query.json\|->` | Bounded, paged readback of fields used by existing edits, including templates and lighting |
 | `bindings <level> <bindings.json\|->` | One placed COG's typed binding page, complete-schema status, modifiers and exact current-world target addresses; explicit archives required |
 | `lighting <level> <lighting.json\|->` | Read-only world-corner bake explanation per source light: facing, range, shadow and contribution counts |
 | `vertex-colors <level> <request.json\|->` | Read-only, paginated MotS RGB storage inference against actual proposed serialized rows; [scope and outcomes](DYNAMIC_VERTEX_COLORS.md) |
 | `assets <level> <assets.json\|->` | Bounded direct resource scan with origins and exact captured entry receipts; explicit archives required; recursive closure stays unverified |
+| `package-plan <level.jkl> <package.json\|->` | Review known static dependencies, included entries, stock omissions and blocked/unverified findings without writing |
+| `package-apply <level.jkl> <package.json\|-> <new-output.gob\|goo> <expected-output-sha256> <expected-manifest-sha256>` | Require both reviewed identities, recheck captured sources and atomically create a new package |
 | `select <level> <selection.json\|->` | Select a sector by world point or a face by outward direction; return a token only for a unique match |
 | `snapshot <level> <snapshot.json\|-> <new-output.png>` | Explicit-camera diagnostic or static lit PNG, rendered offscreen; no window or game |
 | `validate <level.jkl> [resources.json\|-]` | Structural diagnostics, with optional current-resource ARCH validation |
@@ -33,6 +35,18 @@ Supported outcomes are JSON on stdout. Exit codes: 0 success, 2 invalid request,
 Numeric selectors are zero-based and valid only for the exact `sourceRevision` (`inputSha256` for JKL). Later operations can address objects appended earlier in the same plan. Spatial tokens provide an alternative for supported sector/surface operations, with stricter geometry binding described below. Version 1 has no delete/reorder operations because these require fuller COG and unknown-section reference remapping.
 
 Requests supplied using `-` are a single UTF-8 JSON document on stdin, terminated by EOF. Files use the same bounded reader; UTF-8 BOM is accepted. No shell commands are accepted inside requests. A client should invoke the executable with an argument array, redirect stdin/stdout/stderr, close stdin after writing, and check the exit code and JSON result. This is a tool-neutral CLI and does not claim to implement MCP.
+
+## Reviewed resource packages
+
+The [packaging guide](RESOURCE_PACKAGING.md) describes the shared static dependency
+planner and human CLI workflow. Packaging takes an already saved JKL plus explicit,
+hashed resource archives. It preserves the JKL bytes exactly and creates a new
+one-level GOB or GOO. It does not discover installations or include arbitrary files.
+Both the proposed output hash and dependency-manifest hash are required for apply:
+changing stock roles or provider order can change the reviewed meaning even when
+output bytes are identical. Unknown runtime references require acknowledgement;
+missing resources, ambiguity, malformed supported declarations and work limits
+always block. `runtimeClosureVerified` remains false.
 
 ## Bounded readback
 

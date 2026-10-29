@@ -5,7 +5,7 @@ namespace Sed.Mcp;
 
 public static class ToolCatalog
 {
-    public const string Instructions = "SED edits isolated level files; it does not control an unsaved GUI document. Discover focused schemas, query/select, plan, then apply to a NEW output using that plan's output hash and resourceRevision. For level commits use one operationId per intended output; after interruption call sed_outcome, never blindly replay with a new ID/path. Previews have no durable outcome record: after interruption inspect the intended PNG path with authorized file/image tools before another preview; never retry blindly. Snapshots are static previews, not gameplay or retail proof. All paths use configured workspace/read roots.";
+    public const string Instructions = "SED edits isolated level files; it does not control an unsaved GUI document. Discover focused schemas, query/select, plan, then apply to a NEW output using that plan's output hash and resourceRevision. Packages use sed_package_plan and sed_package_apply with both reviewed outputSha256 and manifestSha256. For level or package commits use one operationId per intended output; after interruption call sed_outcome, never blindly replay with a new ID/path. Previews have no durable outcome record: after interruption inspect the intended PNG path with authorized file/image tools before another preview; never retry blindly. Snapshots are static previews, not gameplay or retail proof. All paths use configured workspace/read roots.";
     public static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
     public static readonly JsonElement OutputSchema = Element(new { type = "object", required = new[] { "schemaVersion", "ok" },
         properties = new { schemaVersion = new { type = "integer" }, ok = new { type = "boolean" }, result = new { type = "object" }, error = new { type = "object" } } });
@@ -29,19 +29,30 @@ public static class ToolCatalog
             Annotations = new() { ReadOnlyHint = readOnly, DestructiveHint = false, OpenWorldHint = false, IdempotentHint = readOnly }
         };
         return [
-            Make("sed_discover", "Compact capabilities or one exact domain schema. Start here; topic may be query/select/patch/snapshot/resources/bindings/lighting/vertexColors/assets or a patch operation.", true, [], ("topic", Text("Optional focused schema; omitted returns compact capabilities."))),
+            Make("sed_discover", "Compact capabilities or one exact domain schema. Start here; topic may be query/select/patch/snapshot/resources/bindings/lighting/vertexColors/assets/package or a patch operation.", true, [], ("topic", Text("Optional focused schema; omitted returns compact capabilities."))),
             Make("sed_query", "Bounded source-identified level readback. Use collection summary first, then focused pages. Does not edit files.", true, ["level","request"], ("level",level),("request",Request("Exact query JSON; discover query schema."))),
             Make("sed_select", "Find a sector/face by geometry, returning source-bound selectors or explicit ambiguity.", true, ["level","request"],("level",level),("request",Request("Exact select JSON."))),
             Make("sed_diagnose", "Validate a level or inspect assets, world bake contribution, dynamic vertex-color storage readiness, or typed COG bindings. Explicit resources remain hash-bound.", true,["level","kind"],("level",level),("kind",Choice("validate","assets","lighting","vertexColors","bindings")),("request",Request("Domain request; required except resource-free validate."))),
             Make("sed_plan", "Calculate isolated edits and exact output hash without creating output. Review warnings, effects and plan resourceRevision.",true,["level","request"],("level",level),("request",Request("Exact patch JSON; discover operation schemas."))),
             Make("sed_apply", "Recompute and commit a reviewed plan to a new file. Required output hash and operation ID; after interruption use sed_outcome.",false,["level","request","output","expectedOutputSha256","operationId"],("level",level),("request",Request("Reviewed patch including its plan resourceRevision when resources were read.")),("output",output),("expectedOutputSha256",hash),("operationId",id)),
+            Make("sed_package_plan", "Review a one-level GOB/GOO package from a saved JKL and explicit hash-bound resource archives. Caller-declared stock archives are omitted with receipts. Returns canBuild, entries, issues and both review hashes; no writes or runtime closure claim.", true,
+                ["level", "request"], ("level", Text("Saved .jkl file in configured read roots; convert native projects first.")),
+                ("request", Request("Exact package JSON; discover package schema. Stock archives must be named in resourceArchives."))),
+            Make("sed_package_apply", "Recompute a package and create a new archive only when both reviewed hashes match. Requires an operation ID; after interruption use sed_outcome. Blocked plans never create output or history.", false,
+                ["level", "request", "output", "expectedOutputSha256", "expectedManifestSha256", "operationId"],
+                ("level", Text("Saved .jkl file in configured read roots; convert native projects first.")),
+                ("request", Request("Exact reviewed package request, with explicit resource hashes and stock declarations.")),
+                ("output", Text("New .gob for JK or .goo for MotS under workspace; never overwrites an existing file.")),
+                ("expectedOutputSha256", hash),
+                ("expectedManifestSha256", new { type = "string", pattern = "^[0-9a-fA-F]{64}$", description = "manifestSha256 from the same reviewed package plan." }),
+                ("operationId", id)),
             Make("sed_new", "Plan or create an original room scaffold. Plan omits output/operationId; commit requires output, operationId and hash returned by plan.",false,["game"],("game",Choice("jk","mots")),("output",output),("expectedOutputSha256",hash),("operationId",id)),
             Make("sed_convert", "Plan or save an imported level as extended JKL. Omit commit arguments to inspect. Commit requires reviewed output hash plus expectedInputSha256 and expectedSourceRevision from that same plan.",false,["level"],("level",level),("request",Request("Optional resource validation request.")),("output",output),("expectedOutputSha256",hash),("operationId",id),
                 ("expectedInputSha256", new { type = "string", pattern = "^[0-9a-fA-F]{64}$", description = "Required for commit: inputSha256 from the reviewed conversion plan." }),
                 ("expectedSourceRevision", new { type = "string", pattern = "^[0-9a-fA-F]{64}$", description = "Required for commit: sourceRevision from the reviewed conversion plan, including native template dependencies." })),
             Make("sed_archive", "Inspect archive directory metadata with a bounded response; this does not execute or extract content.",true,["archive"],("archive",Text("Explicit .gob/.goo archive path in configured read roots."))),
             Make("sed_snapshot", "Render static diagnostic/lit PNG from JKL using the fixed isolated worker. Convert native projects first. Returns inline image and source/camera/resource receipt. Writes only a new PNG with no durable outcome record; after interruption inspect that path with authorized file/image tools before another preview, never retry blindly. Not engine/gameplay proof.",false,["level","request","output"],("level",level),("request",Request("Exact snapshot JSON with explicit camera and source identity.")),("output",output)),
-            Make("sed_outcome", "Read durable edit state and current output evidence after completion, cancellation or reconnect. Matching content does not prove this call created it. Never resumes work.",true,["operationId"],("operationId",id))
+            Make("sed_outcome", "Read durable level/package commit state and current output evidence after completion, cancellation or reconnect. Matching content does not prove this call created it. Never resumes work.",true,["operationId"],("operationId",id))
         ];
     }
     public static JsonElement Element(object value) => JsonSerializer.SerializeToElement(value, Json);

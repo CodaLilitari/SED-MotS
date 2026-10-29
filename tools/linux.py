@@ -568,6 +568,11 @@ def verify_package(package, output, graphics=False, full_workflows=False):
             discovered = client.tool("sed_query", {"level": source, "request": {"schemaVersion": 1, "collection": "summary"}})
             if discovered["inputSha256"] != original_hash:
                 raise ToolError("Default MCP server read a different source")
+        run_logged([sys.executable, "-B", relocated / "tools/test_package_workflow.py",
+                    "--agent", relocated / "agent/sed-agent", "--mcp", relocated / "mcp/sed-mcp",
+                    "--work", output / "dependency-package-workflow"],
+                   workspace, output / "dependency-package-workflow.log", no_graphics)
+        receipt["dependencyPackageWorkflowSha256"] = sha(output / "dependency-package-workflow/verification.json")
         if graphics:
             with DefaultMcp(server, workspace, env, output / "mcp-preview.stderr.log") as client:
                 if client.initialized["serverInfo"]["version"] != version["version"]:

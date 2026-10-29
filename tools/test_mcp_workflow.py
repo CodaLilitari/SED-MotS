@@ -425,7 +425,8 @@ def run(server: Path, worker: Path, output: Path, snapshots: bool):
         client = Client(server, worker, workspace)
         report["negotiation"] = client.initialized
         tools = client.rpc("tools/list", {})["tools"]
-        assert len(tools) == 11 and len({t["name"] for t in tools}) == 11
+        assert len(tools) == 13 and len({t["name"] for t in tools}) == 13
+        assert {"sed_package_plan", "sed_package_apply"} <= {t["name"] for t in tools}
         client.call("sed_discover", {})
         client.call("sed_discover", {"topic": "setGravity"})
         client.call("sed_discover", {"typo": True}, "invalid_request")

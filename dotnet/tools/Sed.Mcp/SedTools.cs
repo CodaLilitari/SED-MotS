@@ -73,7 +73,7 @@ public sealed class SedTools : IDisposable
         {
             return Failure("cancelled", name == "sed_snapshot"
                 ? "Preview cancelled. Previews have no durable outcome record. Inspect the intended PNG path with authorized file/image tools before another preview; never retry blindly or assume cancellation means no file exists."
-                : "Request cancelled. For a level commit, query sed_outcome with its operationId; cancellation does not imply rollback.");
+                : "Request cancelled. For a level or package commit, query sed_outcome with its operationId; cancellation does not imply rollback.");
         }
         catch (AgentRequestException e) { return Failure("invalid_request", e.Message, new { e.OperationIndex, e.Operation, e.JsonPointer }); }
         catch (JsonException e) { return Failure("invalid_request", e.Message, new { e.Path }); }
@@ -87,6 +87,7 @@ public sealed class SedTools : IDisposable
     private CallToolResult Dispatch(string name, IDictionary<string, JsonElement> args, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
+        if (name is "sed_package_plan" or "sed_package_apply") return Package(name, args, token);
         if (name == "sed_new")
         {
             string game = Text(args, "game");
@@ -164,6 +165,36 @@ public sealed class SedTools : IDisposable
         }
     }
 
+    private CallToolResult Package(string name, IDictionary<string, JsonElement> args, CancellationToken token)
+    {
+        bool write = name == "sed_package_apply";
+        if (write && Existing(name, args) is { } existing) return existing;
+        string? expectedOutput = write ? Expected(args) : null;
+        string? expectedManifest = write
+            ? ResourceManifest.NormalizeHash(Text(args, "expectedManifestSha256"), "expectedManifestSha256") : null;
+        if (!Path.GetExtension(Text(args, "level")).Equals(".jkl", StringComparison.OrdinalIgnoreCase))
+            throw new AgentRequestException("MCP packages require JKL. Plan and save a reviewed native conversion before packaging.");
+        string level = Level(args), request = Request(args, allowEmptyResources: true)!;
+        var prepared = AgentWorkspace.PlanPackage(level, request);
+        if (!write) return Success(prepared.Report);
+        if (!prepared.CanBuild)
+            throw new AgentValidationException("The package plan is blocked. Review its issues before applying.", prepared.Report);
+        if (prepared.OutputSha256 != expectedOutput || prepared.ManifestSha256 != expectedManifest)
+            throw new AgentConflictException("Package output or manifest differs from the reviewed plan. Replan before applying.");
+        string output = policy.WriteOutput(Text(args, "output"), prepared.ArchiveExtension);
+        // A full report must fit before durable intent or output creation begins.
+        _ = BoundedElement(prepared.Report, MaxResultBytes - 128 * 1024);
+        var intent = new OperationIntent(name, prepared.InputPath, prepared.InputSha256, prepared.InputSha256,
+            output, RequestHash(name, args), expectedOutput!);
+        return Commit(Text(args, "operationId"), intent, () => {
+            policy.ReadLevel(level);
+            policy.WriteOutput(output, prepared.ArchiveExtension);
+            using var capturedRequest = JsonDocument.Parse(request);
+            CheckResourcePaths(capturedRequest.RootElement, allowEmpty: true);
+            return AgentWorkspace.CommitPackage(prepared, output, expectedOutput!, expectedManifest!, token);
+        }, token);
+    }
+
     private CallToolResult Commit(string id, OperationIntent intent, Func<object> action, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -208,22 +239,23 @@ public sealed class SedTools : IDisposable
         return path;
     }
 
-    private string? Request(IDictionary<string, JsonElement> args, bool required = true)
+    private string? Request(IDictionary<string, JsonElement> args, bool required = true, bool allowEmptyResources = false)
     {
         if (!args.TryGetValue("request", out var request))
         { if (required) throw new AgentRequestException("request is required."); return null; }
         if (request.ValueKind != JsonValueKind.Object) throw new AgentRequestException("request must be an object.");
         string text = request.GetRawText();
         if (Encoding.UTF8.GetByteCount(text) > AgentWorkspace.MaxRequestBytes) throw new AgentRequestException("Domain request exceeds 1 MiB.");
-        CheckResourcePaths(request);
+        CheckResourcePaths(request, allowEmptyResources);
         if (request.TryGetProperty("operations", out var edits) && edits.ValueKind == JsonValueKind.Array && edits.GetArrayLength() > MaxPatchOperations)
             throw new AgentRequestException("MCP limits a single patch to 128 operations. Split and replan larger jobs.");
         return text;
     }
 
-    private void CheckResourcePaths(JsonElement request)
+    private void CheckResourcePaths(JsonElement request, bool allowEmpty = false)
     {
         if (!request.TryGetProperty("resourceArchives", out var resources)) return;
+        if (allowEmpty && resources.ValueKind == JsonValueKind.Array && resources.GetArrayLength() == 0) return;
         long total = 0;
         foreach (var archive in ResourceManifest.Parse(resources))
         {
@@ -262,12 +294,12 @@ public sealed class SedTools : IDisposable
             limits = new { inputBytes = MaxInputBytes, domainRequestBytes = AgentWorkspace.MaxRequestBytes,
                 resultBytes = MaxResultBytes, archiveBytes = MaxArchiveBytes, totalArchiveBytes = 4 * MaxArchiveBytes,
                 patchOperations = MaxPatchOperations, activeOperations = 1, activeOutcomeObservations = 1, queuedOperations = 0 },
-            next = "Use sed_discover topic=query/select/snapshot or an operation name for its exact domain schema. Domain operations are shared with sed-agent." },
+            next = "Use sed_discover topic=query/select/snapshot/package or an operation name for its exact domain schema. Domain operations are shared with sed-agent." },
         "query" => AgentQueries.Schema(), "select" => AgentSelections.Schema(), "patch" => AgentSchema.Patch(),
         "snapshot" => AgentSnapshotRequest.Schema(), "resources" => AgentWorkspace.ResourceRequestSchema(),
         "bindings" => AgentWorkspace.BindingsRequestSchema(), "lighting" => AgentWorkspace.LightingRequestSchema(),
         "vertexColors" => AgentWorkspace.VertexColorsRequestSchema(),
-        "assets" => AgentWorkspace.AssetsRequestSchema(), _ => AgentSchema.Patch(topic) };
+        "assets" => AgentWorkspace.AssetsRequestSchema(), "package" => AgentWorkspace.PackageRequestSchema(), _ => AgentSchema.Patch(topic) };
 
     private static void ValidateArguments(string name, IDictionary<string, JsonElement> args)
     {

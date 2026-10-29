@@ -24,7 +24,7 @@ try
                 if (commands.Count == 0) throw new AgentRequestException("Unknown command. Use help to list commands.");
             }
             result = new { schemaVersion = 1, commands = commands.Select(c => new { c.Name, c.Usage, c.Description, c.WritesFiles }),
-                next = "Use schema query for bounded readback, schema select for spatial targets, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
+                next = "Use schema query for bounded readback, schema select for spatial targets, schema package for reviewed resource packaging, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
             break;
         case "--version" when args.Length == 1:
         case "version" when args.Length == 1:
@@ -43,6 +43,7 @@ try
                 "lighting" => AgentWorkspace.LightingRequestSchema(),
                 "vertexColors" => AgentWorkspace.VertexColorsRequestSchema(),
                 "assets" => AgentWorkspace.AssetsRequestSchema(),
+                "package" => AgentWorkspace.PackageRequestSchema(),
                 _ => AgentSchema.Patch(args[1]) };
             break;
         case "schema" when args.Length == 1:
@@ -51,6 +52,7 @@ try
                 patchJsonSchema = AgentSchema.Patch(),
                 queryJsonSchema = AgentQueries.Schema(),
                 selectJsonSchema = AgentSelections.Schema(),
+                packageJsonSchema = AgentWorkspace.PackageRequestSchema(),
                 commandSchemas = AgentCommandCatalog.Commands(),
                 capabilities = Capabilities(),
                 selectors = "Zero-based indices remain supported. select returns unique spatial target tokens bound to sourceRevision and containing-sector geometry; supported operations accept target/otherTarget instead of numeric geometry addresses.",
@@ -93,6 +95,12 @@ try
             break;
         case "apply" when args.Length is 4 or 5:
             result = AgentWorkspace.Commit(AgentWorkspace.Plan(args[1], ReadRequest(args[2])), args[3], args.Length == 5 ? args[4] : null);
+            break;
+        case "package-plan" when args.Length == 3:
+            result = AgentWorkspace.PlanPackage(args[1], ReadRequest(args[2])).Report;
+            break;
+        case "package-apply" when args.Length == 6:
+            result = AgentWorkspace.CommitPackage(AgentWorkspace.PlanPackage(args[1], ReadRequest(args[2])), args[3], args[4], args[5]);
             break;
         case "new" when args.Length is 2 or 3:
             result = AgentWorkspace.Create(args[1], args.Length == 3 ? args[2] : "mots");
@@ -141,6 +149,7 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
+    "reviewed-resource-packaging", "package-manifest-review",
     "exact-query-filters", "batch-surface-uv", "bounded-placement-arrays",
     "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",
     "typed-cog-creation", "ordered-thing-frame-authoring",

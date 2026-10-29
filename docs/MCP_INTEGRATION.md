@@ -1,5 +1,10 @@
 # MCP-01: local headless design tools
 
+Current addition: reviewed dependency packages are exposed through
+`sed_package_plan` and `sed_package_apply`, bringing the tool catalog to thirteen.
+See [the packaging guide](RESOURCE_PACKAGING.md) for the current contract.
+The historical Windows checkpoints below retain their original counts.
+
 Status: completed and independently audited, 2026-09-27. Final source/package
 commit `ce093bdeb2c568b3717a1649775af9721e0a0ddc`, Windows version
 `0.4.0-mots.13-dev`. Completion documentation follows that tested source.
@@ -119,6 +124,8 @@ claim that a model-driven Codex design session was executed.
 | `sed_new` | Plan or commit a JK/MotS room scaffold |
 | `sed_convert` | Plan or commit a native/JKL conversion |
 | `sed_archive` | Bounded GOB/GOO level-directory inspection |
+| `sed_package_plan` | Review a saved JKL's static dependency package and both review hashes |
+| `sed_package_apply` | Create a new GOB/GOO using the reviewed output and manifest hashes |
 | `sed_snapshot` | Static offscreen JKL preview and inline PNG |
 | `sed_outcome` | Durable edit receipt and current output evidence |
 
@@ -135,6 +142,15 @@ Conversion commits additionally require `expectedInputSha256` and
 the same output bytes after the source or a native template changes; the output
 hash alone cannot bind the reviewed input. Patch requests already carry their
 input/source guards in the shared domain request.
+
+Package apply additionally requires `expectedManifestSha256`; both hashes come
+from `sed_package_plan`. Its `request` is the focused `package` domain schema,
+and `operationId` uses the same durable journal and reconnect behavior. A blocked
+plan stays readable but cannot create an operation. Package inputs must be JKL;
+convert native projects separately. Stock paths are a subset of already declared
+resource archives, never an additional read scope. The 128 MiB output cap matches
+the existing journal observer, and the complete result must fit before a commit
+starts. Packaging does not create a renderer or worker process.
 
 Each response has matching text/structured JSON: `schemaVersion`, `ok`, and
 `result` or `error`; tool failures set MCP `isError`. A validation failure

@@ -40,7 +40,7 @@ the same undoable commands. MotS arrays preserve independent white/RGB source
 lighting; thing placement checks containment, capacity and typed placed-COG
 references before appending.
 
-The local [MCP-01 adapter](docs/MCP_INTEGRATION.md) exposes eleven named tools
+The local [MCP-01 adapter](docs/MCP_INTEGRATION.md) exposes thirteen named tools
 for discovery, querying, geometric selection, diagnostics, reviewed edits,
 conversion, archive inspection, inline previews and outcome reconciliation.
 It runs over stdio without screen control, uses explicit workspace/resource
@@ -48,6 +48,15 @@ roots and retains durable edit receipts across reconnection. Conversion binds
 reviewed source/template identities as well as output bytes. The renderer runs
 in a fixed isolated worker. Neither MCP nor the CLI synchronizes unsaved GUI
 documents; configuration and precise limits are in the MCP guide.
+
+[Reviewed resource packaging](docs/RESOURCE_PACKAGING.md) follows known static
+dependencies through 3DO, PUP, SND, SPR, PAR and typed COG declarations. The native
+CLI and MCP produce a reviewable manifest, omit explicitly declared stock
+resources, and create a new deterministic GOB/GOO only when both review hashes
+match. Missing or ambiguous assets and malformed declarations block publication.
+Original JKL bytes are retained; arbitrary runtime dependencies and gameplay
+remain unverified. This first increment uses a human-readable CLI workflow and
+shared format services; it adds no GUI packaging dialog.
 
 The [PLAY-01 authoring workflow](docs/PLAYABLE_AUTHORING.md) adds typed COG
 placement and ordered path frames through those same shared commands. Its

@@ -1,6 +1,37 @@
 # SED MotS project checkpoint
 
-Updated: 2026-10-29 (native Linux conversion). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-10-29 (reviewed dependency packaging). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+
+## Reviewed dependency packaging
+
+The next increment is isolated on `feature/reviewed-packaging`, based on the
+completed native Linux commit `419637c870ce674f347de1ab982e37068c4cd4ac`.
+The Holocron comparison identified dependency-aware packaging as a useful
+first addition. This is an original implementation in the shared format layer,
+with native CLI and MCP adapters; it does not reuse the supplied binary.
+
+`package-plan` / `package-apply` and `sed_package_plan` / `sed_package_apply`
+accept a saved JKL plus explicitly hashed GOB/GOO sources. They traverse known
+static dependencies, disclose unknowns, omit caller-declared stock resources,
+preserve original JKL bytes, and require both output and manifest review hashes
+before atomic new-file publication. The MCP catalog now has thirteen tools and
+reuses the existing durable outcome journal. See [the human workflow and limits](RESOURCE_PACKAGING.md).
+
+Independent review closed concrete source/cache interpretation gaps: distinct
+folder/name lookup identities, complete normalized COG schemas under unsupported
+defaults, resource acquisition after graph exhaustion, duplicate template names,
+repeated resource parameters, and retained-source lexical differences. Where
+the engine and current model disagree, this package increment refuses the
+source rather than silently asserting dependency completeness. Known sound
+sentinels are recognized case-insensitively without extending them to other types.
+
+Development runs passed **1,801 Core tests and 293 MCP tests**. The clean-source
+Linux release gate repeats the suites, builds the self-contained editor/CLI/MCP,
+and runs `tools/test_package_workflow.py` through actual relocated CLI/MCP
+processes. Its generated receipts, exact source identity, hashes and remote refs
+are the release/publication evidence; this source checkpoint does not substitute
+for those receipts or assert a remote CI run. Runtime closure, gameplay, a new
+GUI packaging dialog, and existing-archive updates remain outside this increment.
 
 ## Native Linux work
 

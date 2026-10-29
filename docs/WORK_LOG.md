@@ -771,3 +771,69 @@ and export-ignore. A second finding distinguished a working UI shell from
 actual scene rendering: the graphics build gate now includes SceneProbe's
 non-background pixel check. The optional desktop installer also ignores empty
 or relative XDG_DATA_HOME values in favor of the documented home directory.
+
+## 2026-10-29 — Reviewed dependency packaging
+
+After the Holocron comparison, the maintainer authorized continued work. The
+selected increment is an original dependency-aware package planner in
+Sed.Formats, with native CLI and MCP access. It is isolated on
+`feature/reviewed-packaging`, based on Linux commit
+`419637c870ce674f347de1ab982e37068c4cd4ac`. The supplied executable and manual
+remain comparison inputs outside the source tree; no Holocron code is reused.
+
+The reviewed design separates output identity from review identity. A changed
+stock role, source path, provider order, unused archive or limit can change the
+manifest while leaving the GOB/GOO bytes identical. Both hashes are mandatory.
+Original JKL bytes are retained, generated episode text has deterministic LF
+endings, entries are sorted with strict ASCII/path limits, and each entry is
+read back before a plan becomes publishable. Stock classification is explicit,
+not installation discovery. The existing atomic no-replace publication and MCP
+outcome journal are reused.
+
+The pure readers use original fixtures and grammar facts inspected in the
+[OpenJKDF2-MotS-Fixes source at74e4657c](https://gitlab.com/codalilitari/OpenJKDF2-MotS-Fixes/-/tree/74e4657c4f1751d09af9ad9e056acb8f41997acb),
+including the model, puppet, soundclass, sprite, particle, AI, COG and retained
+JKL loaders. Existing [LISTRES.PAS](../src/LISTRES.PAS) and
+[SAVEJKL.INC](../src/SAVEJKL.INC) provide additional local format provenance.
+Counts in retained resource tables are capacities, and their numeric labels
+need not be dense. Only verified sound/soundclass null rules are applied;
+model/material/keyframe/AI names are not guessed from numeric or none sentinels.
+
+Independent review reproduced and corrected these concrete cases:
+
+- `(3do,key/foo)` and `(3do/key,foo)` previously collided in the provider's
+  private string cache key despite different fallback semantics. The key now
+  encodes the folder boundary; package destination collisions also hard-fail.
+- COG semicolon normalization differed between default and placed-value scans.
+  The bounded normalized symbol schema is now reused. An unsupported default
+  cannot hide a known missing positional resource from a complete schema.
+- A stopped graph could still acquire models through the architectural validator.
+  A blocked traversal now performs no secondary resource acquisition.
+- Exact retained JKL text can differ from the effective dictionary when template
+  names or resource fields repeat. Duplicate names/repeated resource parameters
+  and known lexical differences are explicit unacknowledgeable refusals.
+- Continuations, quoted non-COG records and indented semicolon forms that prevent
+  supported structural validation cannot downgrade malformed declarations to an
+  acknowledgeable warning. This is a supported-grammar limit, not whole-file or
+  engine validity certification.
+- Saved sector SOUND none can parse as uppercase NONE. Shared direct diagnostics
+  now recognize verified null sound/soundclass and parent sentinels without case
+  sensitivity. Other resource kinds keep their literal lookup semantics.
+
+Test-first evidence includes the missing package API, missing MCP tools,
+compiling reader stubs, thirteen integrated review failures, a separately
+reproduced provider-cache failure, and four lexical downgrade failures. The
+subsequent development runs passed 1,801 Core and 293 MCP tests, including 20
+package MCP cases. A large valid CLI manifest is refused by MCP before journaling
+when its response cannot fit. Actual release checks run again from committed
+source; no dirty development receipt substitutes for that gate.
+
+The original Python process harness independently writes source GOB fixtures,
+parses generated directories/payloads, and invokes actual CLI and MCP processes.
+It checks transitive inclusion, stock omission, both review identities, stale
+reviews, unchanged inputs, no overwrite and replay after source disappearance.
+Linux package verification now always runs it and CI retains its evidence.
+The [guide](RESOURCE_PACKAGING.md) documents the human workflow and exact limits.
+Final package, source/history and remote publication identities belong to the
+handoff receipts. Static dependency inspection is not runtime closure, rendering,
+player-start validation or gameplay evidence.
