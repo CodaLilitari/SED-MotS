@@ -100,19 +100,26 @@ def safe_relative(value):
 def snapshot_source(repo, state, output):
     # The compiler receives the same committed files as the corresponding source
     # archive, not ignored/untracked files admitted by project glob patterns.
+    tracked = {}
     for entry in git(repo, "ls-tree", "-r", "-z", state["commit"]).split(b"\0"):
         if not entry:
             continue
         metadata, name = entry.split(b"\t", 1)
-        safe_relative(name.decode())
-        if metadata.split()[0] not in (b"100644", b"100755"):
+        relative = safe_relative(name.decode()).as_posix()
+        mode, _, object_id = metadata.split()
+        if mode not in (b"100644", b"100755"):
             raise ToolError(f"Source archive cannot contain symlinks or submodules: {name.decode()}")
-    raw = git(repo, "archive", "--format=tar", state["commit"])
+        tracked[relative] = object_id.decode()
+    # Git archive applies checkout EOL rules. Pin Linux settings without
+    # modifying user configuration, then verify bytes against the committed
+    # blobs so export-subst, filters or export-ignore cannot alter build inputs.
+    raw = git(repo, "-c", "core.autocrlf=false", "-c", "core.eol=lf", "archive", "--format=tar", state["commit"])
     archive_path = output / "SED-MotS-source.tar.gz"
     with archive_path.open("xb") as destination, gzip.GzipFile(filename="", mode="wb", fileobj=destination,
                                                                mtime=state["epoch"]) as compressed:
         compressed.write(raw)
     source = new_output(output / ".source")
+    seen = set()
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as archive:
         for member in archive:
             relative = safe_relative(member.name)
@@ -120,13 +127,26 @@ def snapshot_source(repo, state, output):
             if member.isdir():
                 target.mkdir(parents=True, exist_ok=True)
             elif member.isfile():
+                name = relative.as_posix()
+                if name not in tracked or name in seen:
+                    raise ToolError(f"Source archive has an unexpected or duplicate tracked file: {name}")
+                with archive.extractfile(member) as incoming:
+                    payload = incoming.read()
+                object_hash = hashlib.new("sha1" if len(tracked[name]) == 40 else "sha256")
+                object_hash.update(f"blob {len(payload)}\0".encode("ascii"))
+                object_hash.update(payload)
+                if object_hash.hexdigest() != tracked[name]:
+                    raise ToolError(f"Source archive transformed a committed Git blob; check export attributes or filters: {name}")
+                seen.add(name)
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with archive.extractfile(member) as incoming, target.open("xb") as destination:
-                    shutil.copyfileobj(incoming, destination)
+                with target.open("xb") as destination:
+                    destination.write(payload)
                 target.chmod(member.mode & 0o777)
                 os.utime(target, (state["epoch"], state["epoch"]))
             else:
                 raise ToolError(f"Unsupported source archive entry: {member.name}")
+    if seen != tracked.keys():
+        raise ToolError("Source archive omitted committed Git inputs; remove export-ignore from package source")
     return source
 
 

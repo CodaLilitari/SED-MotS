@@ -112,6 +112,53 @@ class LinuxToolsTests(unittest.TestCase):
             self.assertTrue((package / relative).is_file(), relative)
         self.assertFalse((package / "private").exists())
 
+    def test_source_snapshot_preserves_git_blob_bytes_with_autocrlf_enabled(self):
+        repo = self.repository()
+        (repo / "tools").mkdir()
+        (repo / "tools/fixture.sh").write_bytes(b"#!/bin/sh\nexit 0\n")
+        (repo / "tools/fixture.sh").chmod(0o755)
+        (repo / "docs/source.txt").write_bytes(b"original first line\noriginal second line\n")
+        (repo / ".gitattributes").write_bytes(b"*.sh text\n*.txt text\n")
+        self.git(repo, "add", ".")
+        self.git(repo, "commit", "-qm", "Original LF shell and source fixture")
+        self.git(repo, "config", "core.autocrlf", "true")
+        self.git(repo, "config", "core.eol", "crlf")
+        state = self.tools.source_state(repo, require_clean=True)
+        output = self.root / "handoff"
+        output.mkdir()
+        source = self.tools.snapshot_source(repo, state, output)
+        names = self.git(repo, "ls-files").splitlines()
+        with tarfile.open(output / "SED-MotS-source.tar.gz") as archive:
+            for name in names:
+                with self.subTest(name=name):
+                    blob = subprocess.check_output(["git", "-C", str(repo), "show", f"{state['commit']}:{name}"])
+                    self.assertEqual((source / name).read_bytes(), blob)
+                    self.assertEqual(archive.extractfile(name).read(), blob)
+        completed = subprocess.run([str(source / "tools/fixture.sh")], cwd=self.root, capture_output=True)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+
+    def test_source_snapshot_refuses_export_subst_that_changes_tracked_bytes(self):
+        repo = self.repository()
+        (repo / ".gitattributes").write_bytes(b"docs/revision.txt export-subst\n")
+        (repo / "docs/revision.txt").write_bytes(b"Original source token: $Format:%H$\n")
+        self.git(repo, "add", ".")
+        self.git(repo, "commit", "-qm", "Source export substitution fixture")
+        output = self.root / "handoff"
+        output.mkdir()
+        with self.assertRaises(self.tools.ToolError):
+            self.tools.snapshot_source(repo, self.tools.source_state(repo, require_clean=True), output)
+
+    def test_source_snapshot_refuses_export_ignore_that_omits_tracked_input(self):
+        repo = self.repository()
+        (repo / ".gitattributes").write_bytes(b"docs/omitted.txt export-ignore\n")
+        (repo / "docs/omitted.txt").write_bytes(b"Original tracked source input\n")
+        self.git(repo, "add", ".")
+        self.git(repo, "commit", "-qm", "Source export omission fixture")
+        output = self.root / "handoff"
+        output.mkdir()
+        with self.assertRaises(self.tools.ToolError):
+            self.tools.snapshot_source(repo, self.tools.source_state(repo, require_clean=True), output)
+
     def test_dirty_and_changed_source_commit_are_refused(self):
         repo = self.repository()
         state = self.tools.source_state(repo, require_clean=True)
