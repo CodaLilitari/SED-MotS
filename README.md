@@ -1,10 +1,18 @@
-# SED MotS — Windows editor and agent tools
+# SED MotS — Windows and Linux editor and agent tools
 
-This development fork modernizes SED for Jedi Knight: Dark Forces II and Mysteries of the Sith. It uses C#, Avalonia and Vulkan, with a separate headless agent executable. The Windows distribution includes the .NET runtime: users do not need Delphi or an SDK.
+This development fork modernizes SED for Jedi Knight: Dark Forces II and Mysteries of the Sith. It uses C#, Avalonia and Vulkan, with a separate headless agent executable. The Windows and Linux x64 distributions include the .NET runtime: users do not need Delphi or an SDK.
 
 OpenJKDF2 is the primary compatibility target. Separate retail profiles are included. This is a development build, not a claim of complete original-editor parity or verified gameplay compatibility.
 
-Start with [the Windows guide](docs/WINDOWS_QUICKSTART.md) or [the agent protocol](docs/AGENT_PROTOCOL.md). The [MotS format audit](docs/audit/NET_MOTS_FORMAT_AUDIT.md) records preservation fixes and the precise scope of the stock-level checks.
+Start with [the Linux guide](docs/LINUX_QUICKSTART.md), [the Windows guide](docs/WINDOWS_QUICKSTART.md), or [the agent protocol](docs/AGENT_PROTOCOL.md). The [MotS format audit](docs/audit/NET_MOTS_FORMAT_AUDIT.md) records preservation fixes and the precise scope of the stock-level checks.
+
+Linux uses the same Avalonia editor, editing commands, format preservation and
+Vulkan viewport. Its CLI and local stdio MCP host work without a display;
+only snapshots initialize graphics. Native OpenJKDF2 test launches use a
+reviewable argument list, while explicit Wine command templates remain available.
+Portable package launchers preserve the caller's working directory and arguments.
+Linux updates are installed alongside existing versions; the automatic updater
+described below remains Windows-only.
 
 The fork preserves MotS's independent mono/RGB lighting, architectural arrays and thing bindings, declared thing capacity, sector metadata and repeated parameters such as `frame=`. Copy/paste, lighting undo and sector cleaving preserve the added fields. The agent tool shares Core editing commands with the GUI and binds every patch's indices to its input SHA256. Windows launch profiles build direct executable arguments, and the Windows renderer uses `vulkan-1.dll`.
 
@@ -69,7 +77,14 @@ The thing inspector and agent share explicit architectural bind, reset/rebind an
 
 ## .NET build and packaging
 
-Use the .NET SDK pinned by `global.json`:
+Use the .NET SDK pinned by `global.json`. On Linux:
+
+```sh
+./tools/build-linux.sh --dotnet /path/to/dotnet
+```
+
+See [the Linux guide](docs/LINUX_QUICKSTART.md) for native dependencies, optional
+software rendering, verification and self-contained packaging. On Windows:
 
 ```powershell
 ./tools/Build-Net.ps1 -DotNet 'C:/path/to/dotnet.exe'

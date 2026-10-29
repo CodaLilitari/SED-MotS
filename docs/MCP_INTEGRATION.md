@@ -55,6 +55,19 @@ headless control probe, not an interactive GUI playtest.
 
 ## Run locally or configure Codex
 
+The native Linux distribution includes `mcp/sed-mcp` and its matching
+`agent/sed-agent`. Keep the package together. For example:
+
+```sh
+mkdir -p /path/to/projects/outpost
+/path/to/SED-MotS/bin/sed-mcp --workspace /path/to/projects/outpost \
+    --resource-root /path/to/MotS/Resource
+```
+
+No display is needed for text tools. Only previews require a Vulkan driver;
+an explicitly selected software ICD works in a headless environment. The
+[Linux guide](LINUX_QUICKSTART.md) covers dependencies and desktop integration.
+
 The Windows distribution includes `mcp/sed-mcp.exe` and its matching
 `agent/sed-agent.exe`. Keep both directories and their bundled runtime files
 together. Create a level-project directory before starting the server:
@@ -67,7 +80,7 @@ That command speaks MCP on stdin/stdout and waits for a client. It does not show
 a window. `--help` and `--version` exit immediately. Resource-root arguments may
 repeat. They grant read scope; writes always create a new file inside workspace.
 The packaged sibling worker is automatic; an explicit `--agent` must name a
-matching `sed-agent.exe`, with `--agent-version` only when intentionally selecting
+matching native `sed-agent` (Windows: `sed-agent.exe`), with `--agent-version` only when intentionally selecting
 an exact different worker build. Missing worker files affect previews, not text
 tools. Native projects use the adapter's shipped templates and same-directory
 companion template libraries. MCP previews accept JKL only: use `sed_convert`

@@ -25,7 +25,8 @@ public sealed record HostOptions(string Workspace, string AgentPath, string Agen
             }
         }
         if (string.IsNullOrWhiteSpace(workspace)) throw new ArgumentException("--workspace must identify an existing level-project directory.");
-        return new(workspace, Path.GetFullPath(agent ?? Path.Combine(AppContext.BaseDirectory, "..", "agent", "sed-agent.exe")),
+        string workerName = OperatingSystem.IsWindows() ? "sed-agent.exe" : "sed-agent";
+        return new(workspace, Path.GetFullPath(agent ?? Path.Combine(AppContext.BaseDirectory, "..", "agent", workerName)),
             version ?? Version, roots.ToArray());
     }
 }

@@ -8,7 +8,7 @@ try
     if (args is ["--version"])
     { Console.WriteLine(JsonSerializer.Serialize(new { name = "sed-mcp", version = HostOptions.Version, sdk = "ModelContextProtocol.Core/1.4.1" })); return 0; }
     if (args is ["--help"] or [])
-    { Console.WriteLine("sed-mcp --workspace <existing-project> [--resource-root <read-only-folder>] [--agent <sed-agent.exe>] [--agent-version <exact-version>]\nLocal stdio MCP. No HTTP listener or model service. Packaged sibling agent is the default snapshot worker."); return 0; }
+    { Console.WriteLine("sed-mcp --workspace <existing-project> [--resource-root <read-only-folder>] [--agent <worker-executable>] [--agent-version <exact-version>]\nLocal stdio MCP. No HTTP listener or model service. Packaged sibling agent is the default snapshot worker."); return 0; }
     var options = HostOptions.Parse(args);
     using var service = new SedTools(options);
     var serverOptions = new McpServerOptions
