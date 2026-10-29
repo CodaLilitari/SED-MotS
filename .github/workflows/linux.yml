@@ -1,0 +1,77 @@
+name: Native Linux
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  linux-x64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
+      NUGET_PACKAGES: ${{ runner.temp }}/sed-nuget
+      DOTNET_CLI_HOME: ${{ runner.temp }}/sed-dotnet-home
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Install Linux graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb xauth libvulkan1 mesa-vulkan-drivers \
+            libx11-6 libxcb1 libxext6 libxrender1 libxrandr2 libxi6 libxcursor1 \
+            libice6 libsm6 libxkbcommon0 libxkbcommon-x11-0 libfontconfig1 libfreetype6
+      - name: Select software Vulkan for CI
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          candidates = sorted(Path('/usr/share/vulkan/icd.d').glob('*lvp*.json'))
+          if not candidates:
+              raise SystemExit('Mesa lavapipe ICD was not installed')
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write(f'VK_ICD_FILENAMES={candidates[0]}\nVK_DRIVER_FILES={candidates[0]}\n')
+          PY
+      - name: Build and run Linux suites and offscreen UI probes
+        run: tools/build-linux.sh --dotnet "$(command -v dotnet)" --graphics --output build/linux-ci
+      - name: Package and exercise relocated self-contained CLI and MCP
+        run: |
+          tools/package-linux.sh --dotnet "$(command -v dotnet)" \
+            --version "0.4.0-linux-ci.${GITHUB_RUN_NUMBER}" \
+            --build-receipt build/linux-ci/build-receipt.json \
+            --graphics --full-workflows --output build/linux-package-ci
+      - name: Check native X11 process startup under Xvfb
+        run: |
+          package="$PWD/build/linux-package-ci/SED-MotS-0.4.0-linux-ci.${GITHUB_RUN_NUMBER}-linux-x64"
+          status=0
+          xvfb-run -a timeout --signal=TERM 10s "$package/bin/sed-mots" > build/linux-ci/x11-startup.log 2>&1 || status=$?
+          test "$status" -eq 124
+      - name: Preserve Linux handoff and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sed-linux-x64-${{ github.run_number }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            build/linux-ci/*.log
+            build/linux-ci/*.trx
+            build/linux-ci/*.json
+            build/linux-ci/*.png
+            build/linux-package-ci/*.tar.gz
+            build/linux-package-ci/*.bundle
+            build/linux-package-ci/SHA256SUMS.txt
+            build/linux-package-ci/*.json
+            build/linux-package-ci/*.log
+            build/linux-package-ci/verification/*.json
+            build/linux-package-ci/verification/*.log
+            build/linux-package-ci/verification/mcp-workflow/verification.json
+            build/linux-package-ci/verification/tool-workbench/receipt.json
