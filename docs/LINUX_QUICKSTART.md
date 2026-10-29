@@ -166,13 +166,14 @@ tools/build-linux.sh --dotnet /absolute/path/to/dotnet \
   --output build/linux-check
 ```
 
-This builds the editor, agent, MCP server, two test projects and three probes
+This builds the editor, agent, MCP server, two test projects and four probes
 for `linux-x64`. It runs the Core and MCP suites, Python tooling tests, and the
 headless UI input probe with Vulkan disabled. Builds are framework-dependent to avoid copying
 runtime assets for every operating system into every output. Compiler servers
 and parallel project builds are disabled to keep resource use predictable.
 
-Add `--graphics` to run the Vulkan smoke test and the actual editor's offscreen
+Add `--graphics` to run the Vulkan smoke test, the synthetic SceneProbe cube
+with its required non-background pixels, and the actual editor's offscreen
 AppShot edit/undo/serialization probe. With the appropriate software driver
 selected, these require neither DISPLAY nor a GPU. An ordinary X11 startup can
 also be checked under `xvfb-run`; install `xvfb` and `xauth` for that environment.
