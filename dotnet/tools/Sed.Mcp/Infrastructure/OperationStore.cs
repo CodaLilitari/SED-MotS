@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Sed.Core.IO;
 using Sed.Formats.Automation;
 
 namespace Sed.Mcp.Infrastructure;
@@ -271,7 +272,13 @@ public sealed class OperationStore
                 stream.Flush(flushToDisk: true);
             }
             _policy.CheckReceiptPath(path);
-            try { File.Move(temporary, path, overwrite: replace); promoted = true; return true; }
+            try
+            {
+                if (replace) File.Move(temporary, path, overwrite: true);
+                else AtomicFilePromotion.MoveNew(temporary, path);
+                promoted = true;
+                return true;
+            }
             catch (IOException) when (!replace && File.Exists(path)) { return false; }
         }
         finally

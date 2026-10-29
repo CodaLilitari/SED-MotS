@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Sed.Core.IO;
 using Sed.Formats.Gob;
 using Sed.Formats.Jkl;
 using Sed.Formats.Resources;
@@ -101,7 +102,8 @@ public static class GuiResourceExport
                 }
                 else if (!File.Exists(output.Path) || HashFile(output.Path) != output.OriginalHash)
                     throw new IOException($"Export destination changed during preparation: '{output.Path}'. It was not overwritten.");
-                File.Move(output.Temporary, output.Path, overwrite: output.Backup is not null);
+                if (output.Backup is not null) File.Move(output.Temporary, output.Path, overwrite: true);
+                else AtomicFilePromotion.MoveNew(output.Temporary, output.Path);
                 promoted.Add(output);
             }
         }

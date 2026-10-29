@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using Sed.Core.IO;
 using Sed.Core.Math;
 using Sed.Formats.Automation;
 using Sed.Rendering;
@@ -150,7 +151,7 @@ public static class AgentSnapshotRunner
             if (current.InputSha256 != source.InputSha256 || current.SourceRevision != source.SourceRevision)
                 throw new AgentConflictException("Snapshot source or native dependency changed while rendering. No output was written.");
             resources?.VerifyUnchanged();
-            try { File.Move(temporary, outputPath, overwrite: false); }
+            try { AtomicFilePromotion.MoveNew(temporary, outputPath); }
             catch (IOException) when (File.Exists(outputPath) || Directory.Exists(outputPath))
             { throw new AgentConflictException("Snapshot output already exists; no file was replaced."); }
         }

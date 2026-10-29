@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Sed.Core.Editing;
+using Sed.Core.IO;
 using Sed.Core.Math;
 using Sed.Core.Model;
 using Sed.Core.Validation;
@@ -460,7 +461,7 @@ public static partial class AgentWorkspace
                 stream.Flush(true);
             }
             beforePromote?.Invoke();
-            File.Move(temporary, path, overwrite: false);
+            AtomicFilePromotion.MoveNew(temporary, path);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }

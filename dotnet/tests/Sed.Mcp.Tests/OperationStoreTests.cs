@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Nodes;
+using Sed.Core.IO;
 using Sed.Formats.Automation;
 using Sed.Mcp.Infrastructure;
 
@@ -238,12 +239,14 @@ public sealed class OperationStoreTests : IDisposable
         var intent = Intent(); var first = Store(); var second = Store(); string firstId = Id(), secondId = Id();
         first.Begin(firstId, intent); second.Begin(secondId, intent with { RequestSha256 = new string('b', 64) });
         var attempts = new[] { (Store: first, Id: firstId), (Store: second, Id: secondId) };
+        using var start = new Barrier(attempts.Length);
         await Task.WhenAll(attempts.Select(attempt => Task.Run(() =>
         {
             string temporary = _files.Write("workspace/" + attempt.Id + ".tmp", OutputText);
+            Assert.True(start.SignalAndWait(TimeSpan.FromSeconds(10)));
             try
             {
-                File.Move(temporary, intent.OutputPath, overwrite: false);
+                AtomicFilePromotion.MoveNew(temporary, intent.OutputPath);
                 attempt.Store.Complete(attempt.Id);
             }
             catch (IOException)
