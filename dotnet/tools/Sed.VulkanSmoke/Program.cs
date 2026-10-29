@@ -1,3 +1,4 @@
+using Sed.Rendering;
 using Sed.Rendering.Vulkan;
 
 // Smoke test: prove the Vulkan/MoltenVK path is wired up on this machine before
@@ -20,7 +21,11 @@ try
 
     Console.WriteLine($"Found {gpus.Count} GPU(s):");
     foreach (var g in gpus)
+    {
         Console.WriteLine($"  - {g.Name} [{g.Type}] Vulkan {g.ApiVersionString}");
+        string support = RendererDeviceRequirements.SupportsPushConstants(g.MaxPushConstantsSize) ? "supported" : "unsupported";
+        Console.WriteLine($"    maxPushConstantsSize: {g.MaxPushConstantsSize} bytes; scene renderer push constants: {support} (requires {RenderLightingState.PushBytes} bytes)");
+    }
 
     return 0;
 }

@@ -10,7 +10,8 @@ public readonly record struct GpuInfo(
     string Name,
     PhysicalDeviceType Type,
     uint ApiVersion,
-    uint DriverVersion)
+    uint DriverVersion,
+    uint MaxPushConstantsSize)
 {
     // Vulkan packs the version as (major<<22)|(minor<<12)|patch.
     public string ApiVersionString =>
@@ -107,7 +108,7 @@ public sealed unsafe class VulkanContext : IDisposable
         {
             Vk.GetPhysicalDeviceProperties(device, out var props);
             var name = SilkMarshal.PtrToString((nint)props.DeviceName) ?? "<unknown>";
-            gpus.Add(new GpuInfo(name, props.DeviceType, props.ApiVersion, props.DriverVersion));
+            gpus.Add(new GpuInfo(name, props.DeviceType, props.ApiVersion, props.DriverVersion, props.Limits.MaxPushConstantsSize));
         }
         return gpus;
     }

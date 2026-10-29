@@ -92,6 +92,10 @@ public sealed unsafe class SceneRenderer : IDisposable
 
     public SceneRenderer(VulkanDevice device)
     {
+        // Vulkan 1.2 only guarantees 128 bytes. Refuse incompatible devices
+        // before creating renderer resources or submitting invalid commands.
+        device.Vk.GetPhysicalDeviceProperties(device.PhysicalDevice, out var properties);
+        RendererDeviceRequirements.RequirePushConstants(device.DeviceName, properties.Limits.MaxPushConstantsSize);
         _dev = device;
         _vk = device.Vk;
         try
