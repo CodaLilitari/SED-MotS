@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the opt-in OpenMotS capture-v1 contract in a new private Windows cwd.
+"""Run the opt-in OpenMotS capture-v1 contract in a new private working directory.
 
 Usage: python tools/invoke_engine_capture.py REQUEST.json --output NEW_DIRECTORY
 
@@ -9,7 +9,9 @@ destination:relative/POSIX,sha256:hex,role:engine|runtime|resource|scenario|conf
 Optional frame=3, engineTimeoutMs=30000, runnerTimeoutMs=45000 and
 logLimitBytes=1048576 specify finite budgets. The three fixed binary names,
 resource/jk_.cd, selected episode.jk/map, registry.json and
-openjkdf2_cvars.json must all be explicitly supplied. Configuration disables
+openjkdf2_cvars.json must all be explicitly supplied. A Linux engine profile is
+the single executable `openjkdf2` (system OpenAL); it runs only on Linux, in its
+own session/process group, on a private Xvfb display that no user can see. Configuration disables
 audio and updates; staged configuration rewrites are recorded and allowed.
 
 The request supplies exact source files, SHA256 identities and destinations; no
@@ -44,6 +46,9 @@ POLL_SECONDS = 0.05
 IMMUTABLE_ROLES = {"engine", "runtime", "resource", "scenario"}
 REQUIRED_BINARIES = {"openjkdf2-64.exe": "engine", "OpenAL32.dll": "runtime",
                      "libGameNetworkingSockets.dll": "runtime"}
+# Engine profiles: the explicitly staged executable names decide the profile; a
+# profile only executes on its own operating system.
+ENGINE_PROFILES = {"windows": REQUIRED_BINARIES, "linux": {"openjkdf2": "engine"}}
 RESERVED = {"capture.ppm", "capture.ppm.json", "capture-request.txt", "request.json",
             "launcher-receipt.json", "manifest-before.json", "manifest-after.json", "manifest-prelaunch.json",
             "stdout.log", "stderr.log", ".openjkdf2-capture-session", "play-request.txt", "play-telemetry.json"}
@@ -160,7 +165,8 @@ def validate_request(request):
         role = item["role"]
         require(isinstance(role, str) and role in IMMUTABLE_ROLES | {"config"}, "Unsupported file role.")
         if role in ("engine", "runtime"):
-            require(REQUIRED_BINARIES.get(dest) == role, "Only the three explicit capture executable/DLL names are supported.")
+            require(any(binaries.get(dest) == role for binaries in ENGINE_PROFILES.values()),
+                    "Only the explicit capture executable/DLL names of a supported engine profile are supported.")
         elif role == "config":
             require(dest in ("registry.json", "openjkdf2_cvars.json"), "Unsupported isolated configuration file.")
         elif role == "scenario":
@@ -170,12 +176,18 @@ def validate_request(request):
                     and dest.lower().endswith((".goo", ".gob"))), "Resource files must be explicit resource entries or episode archives.")
         result_files.append({"source": str(source), "destination": dest, "sha256": item["sha256"].lower(), "role": role})
     by_dest = {item["destination"]: item for item in result_files}
-    required = {**REQUIRED_BINARIES, "registry.json": "config", "openjkdf2_cvars.json": "config",
+    engines = [name for name, binaries in ENGINE_PROFILES.items()
+               if any(binaries.get(item["destination"]) == "engine" for item in result_files)]
+    require(len(engines) == 1, "Supply exactly one engine profile's executable.")
+    profile = engines[0]
+    binaries = {item["destination"] for item in result_files if item["role"] in ("engine", "runtime")}
+    require(binaries == set(ENGINE_PROFILES[profile]), f"The {profile} engine profile needs exactly: {sorted(ENGINE_PROFILES[profile])}")
+    required = {**ENGINE_PROFILES[profile], "registry.json": "config", "openjkdf2_cvars.json": "config",
                 "resource/jk_.cd": "resource", f"episode/{episode}/episode.jk": "scenario",
                 f"episode/{episode}/jkl/{level}": "scenario"}
     for dest, role in required.items():
         require(dest in by_dest and by_dest[dest]["role"] == role, f"Missing required {role} input: {dest}")
-    result = {"schemaVersion": 1, "episode": episode, "map": level, "camera": normalized, "frame": frame,
+    result = {"schemaVersion": 1, "engineProfile": profile, "episode": episode, "map": level, "camera": normalized, "frame": frame,
             "engineTimeoutMs": engine_timeout, "runnerTimeoutMs": runner_timeout, "logLimitBytes": log_limit,
             "files": result_files}
     if "gameplay" in request:
@@ -201,8 +213,16 @@ def validate_config(path, destination):
                 "InstallType must be9 when supplied.")
 
 
+def engine_executable(request):
+    return next(name for name, role in ENGINE_PROFILES[request["engineProfile"]].items() if role == "engine")
+
+
+def profile_runs_here(profile):
+    return (profile == "windows" and os.name == "nt") or (profile == "linux" and sys.platform.startswith("linux"))
+
+
 def command_for(request, output):
-    return [str(output / "openjkdf2-64.exe"), "-capture", "-autostart", "-sp", "-motsCompat", "-noHUD",
+    return [str(output / engine_executable(request)), "-capture", "-autostart", "-sp", "-motsCompat", "-noHUD",
             "-episode", request["episode"], "-map", request["map"]]
 
 
@@ -338,6 +358,92 @@ def owned_windows(pid):
     return count
 
 
+class PosixProcessGroup:
+    """Contain the child's own session/process group; close kills every member.
+
+    The child starts with start_new_session, so the group exists from launch.
+    A descendant that deliberately creates its own new session leaves the group;
+    that escape is recorded as a limit, not excluded.
+    """
+    def __init__(self, process):
+        self.pgid = process.pid
+        self.closed = False
+
+    def pids(self):
+        members = []
+        for entry in os.scandir("/proc"):
+            if not entry.name.isdigit():
+                continue
+            try:
+                fields = Path(entry.path, "stat").read_text().rsplit(")", 1)[1].split()
+            except OSError:
+                continue
+            if int(fields[2]) == self.pgid:
+                members.append(int(entry.name))
+                require(len(members) <= 256, "Owned process group exceeded256 processes.")
+        return members
+
+    def kill(self):
+        import signal
+        try:
+            os.killpg(self.pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+
+    def close(self):
+        if not self.closed:
+            self.kill()
+            self.closed = True
+
+
+def private_display_observer(pid):
+    """The engine draws on a private Xvfb display; no user display can show its windows."""
+    return [0, 0, 0]
+
+
+class PrivateDisplay:
+    """Start Xvfb on an unused display number with TCP disabled; stop it afterwards."""
+    def __init__(self, width=1280, height=1024):
+        self.width, self.height = width, height
+        self.process = None
+        self.display = None
+
+    def __enter__(self):
+        import shutil
+        xvfb = shutil.which("Xvfb")
+        require(xvfb is not None, "Linux capture needs Xvfb (package xvfb) for a private display.")
+        for number in range(91, 200):
+            if not Path(f"/tmp/.X11-unix/X{number}").exists() and not Path(f"/tmp/.X{number}-lock").exists():
+                break
+        else:
+            raise CaptureError("No free private display number.")
+        self.process = subprocess.Popen([xvfb, f":{number}", "-nolisten", "tcp", "-screen", "0",
+                                         f"{self.width}x{self.height}x24"], stdin=subprocess.DEVNULL,
+                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        socket = Path(f"/tmp/.X11-unix/X{number}")
+        deadline = time.monotonic() + 10
+        while not socket.exists():
+            require(self.process.poll() is None, "Xvfb exited before its display became ready.")
+            require(time.monotonic() < deadline, "Xvfb display did not become ready within 10 seconds.")
+            time.sleep(0.05)
+        self.display = f":{number}"
+        return self
+
+    def receipt(self):
+        return {"display": self.display, "server": "Xvfb", "tcp": False,
+                "screen": f"{self.width}x{self.height}x24", "visibleToUser": False}
+
+    def __exit__(self, *exc):
+        if self.process is not None and self.process.poll() is None:
+            self.process.terminate()
+            try:
+                self.process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
+                self.process.wait(timeout=5)
+        return False
+
+
 def check_generated_budget(output, staged):
     total, count = 0, 0
     pending = [output]
@@ -364,21 +470,30 @@ def check_generated_budget(output, staged):
 
 
 def supervise(command, output, environment, timeout_ms, log_limit, staged, *,
-              observer=owned_windows, job_factory=WindowsJob, started_callback=None):
+              observer=None, job_factory=None, started_callback=None):
     """Internal supervisor; tests may supply a synthetic child, never via CLI."""
     started = time.monotonic()
     process = job = None
     drains = []
     stop = threading.Event()
+    windows = os.name == "nt"
+    observer = observer or (owned_windows if windows else private_display_observer)
+    job_factory = job_factory or (WindowsJob if windows else PosixProcessGroup)
+    containment = ({"method": "Windows Job Object after Popen", "assignmentAtomicWithLaunch": False,
+                    "childCreationBeforeAssignmentExcluded": False} if windows else
+                   {"method": "POSIX new session/process group from launch", "assignmentAtomicWithLaunch": True,
+                    "descendantNewSessionEscapeExcluded": False})
+    observation = ({"samples": 0, "maximumOwnedWindows": 0, "maximumVisibleOwnedWindows": 0,
+                    "maximumForegroundOwnedWindows": 0, "pollMilliseconds": 50,
+                    "transientWindowsBetweenSamplesNotExcluded": True} if windows else
+                   {"samples": 0, "maximumOwnedWindows": 0, "maximumVisibleOwnedWindows": 0,
+                    "maximumForegroundOwnedWindows": 0, "pollMilliseconds": 50,
+                    "method": "private Xvfb display; windows cannot reach a user display"})
     result = {"status": "failed", "engineStarted": False, "processExitCode": None, "timedOut": False,
-              "processContainment": {"method": "Windows Job Object after Popen", "assignmentAtomicWithLaunch": False,
-                                     "childCreationBeforeAssignmentExcluded": False},
-              "windowObservation": {"samples": 0, "maximumOwnedWindows": 0, "maximumVisibleOwnedWindows": 0,
-                                    "maximumForegroundOwnedWindows": 0, "pollMilliseconds": 50,
-                                    "transientWindowsBetweenSamplesNotExcluded": True}}
+              "processContainment": containment, "windowObservation": observation}
     try:
-        kwargs = {}
-        if os.name == "nt":
+        kwargs = {} if windows else {"start_new_session": True}
+        if windows:
             startup = subprocess.STARTUPINFO()
             startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
             startup.wShowWindow = 0
@@ -574,8 +689,12 @@ def run_capture(request_path, output, *, executor=supervise, _before_final_stage
         command = command_for(request, output)
         receipt["command"] = command
         # Do not pass arbitrary caller secrets or inherited SDL/capture overrides.
-        names = {"SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA", "APPDATA", "HOMEDRIVE", "HOMEPATH"}
-        environment = {k: v for k, v in os.environ.items() if k.upper() in names}
+        if request["engineProfile"] == "windows":
+            names = {"SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA", "APPDATA", "HOMEDRIVE", "HOMEPATH"}
+            environment = {k: v for k, v in os.environ.items() if k.upper() in names}
+        else:
+            # HOME is the isolated session so profile and cache writes stay inside it.
+            environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(output), "LANG": "C.UTF-8"}
         environment["OPENJKDF2_CAPTURE_REQUEST"] = str(capture_request)
         if "gameplay" in request:
             from engine_play_contract import gameplay_text
@@ -586,7 +705,8 @@ def run_capture(request_path, output, *, executor=supervise, _before_final_stage
             receipt["requestedGameplay"] = request["gameplay"]
             environment["OPENJKDF2_PLAY_REQUEST"] = str(play_request)
         if executor is supervise:
-            require(os.name == "nt", "Actual capture is supported only on Windows.")
+            require(profile_runs_here(request["engineProfile"]),
+                    f"The {request['engineProfile']} engine profile cannot execute on this operating system.")
         receipt["failureStage"] = "resource-closure"
         receipt["resourceClosure"] = check_resource_closure(before, output, request["episode"])
         require(receipt["resourceClosure"]["valid"], "Custom resource aliases collide or an explicit bootstrap archive index is unsupported.")
@@ -602,8 +722,24 @@ def run_capture(request_path, output, *, executor=supervise, _before_final_stage
         def started(pid):
             receipt["engineStarted"] = True
             receipt["processId"] = pid
-        execution = executor(command, output, environment, request["runnerTimeoutMs"], request["logLimitBytes"],
-                             {item["destination"]: item for item in before}, started_callback=started)
+        staged_map = {item["destination"]: item for item in before}
+        if executor is supervise and request["engineProfile"] == "linux":
+            engine = output / engine_executable(request)
+            engine.chmod(0o755)
+            runtime_dir = output / ".xdg-runtime"
+            runtime_dir.mkdir(mode=0o700)
+            environment["XDG_RUNTIME_DIR"] = str(runtime_dir)
+            # Keep SDL on the private X11 display (never a user's Wayland compositor) and
+            # send any audio to null backends, so nothing reaches the user's screen or speakers.
+            environment.update({"SDL_VIDEODRIVER": "x11", "SDL_AUDIODRIVER": "dummy", "ALSOFT_DRIVERS": "null"})
+            with PrivateDisplay() as display:
+                environment["DISPLAY"] = display.display
+                receipt["privateDisplay"] = display.receipt()
+                execution = executor(command, output, environment, request["runnerTimeoutMs"], request["logLimitBytes"],
+                                     staged_map, started_callback=started)
+        else:
+            execution = executor(command, output, environment, request["runnerTimeoutMs"], request["logLimitBytes"],
+                                 staged_map, started_callback=started)
         receipt["execution"] = execution
         require(execution["status"] == "completed", execution.get("error", "Engine capture failed."))
         receipt["failureStage"] = "capture-validation"
