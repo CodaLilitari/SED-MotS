@@ -13,7 +13,9 @@ playable-mission qualification remain separate work.
 
 ## Tools and prerequisites
 
-Python 3.10 or newer and Windows are required for actual capture. No Python
+Python 3.10 or newer and Windows are required for actual capture with the
+Windows engine; the native Linux engine uses the profile described in
+[ENGINE_CAPTURE_LINUX.md](ENGINE_CAPTURE_LINUX.md). No Python
 packages, API key, model service or MCP transport is required. The supplied
 `sed-agent.exe` must offer ARCH-01 authoring. The engine must implement
 `sed-engine-capture-v1`; an ordinary retail executable is not a substitute.
