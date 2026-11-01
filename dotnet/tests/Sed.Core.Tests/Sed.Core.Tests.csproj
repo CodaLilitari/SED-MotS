@@ -23,6 +23,8 @@
     <ProjectReference Include="..\..\src\Sed.Formats\Sed.Formats.csproj" />
     <ProjectReference Include="..\..\src\Sed.Rendering\Sed.Rendering.csproj" />
     <ProjectReference Include="..\..\src\Sed.App\Sed.App.csproj" />
+    <!-- Lit-snapshot asset adapter and pre-render checks; these tests never create a Vulkan device. -->
+    <ProjectReference Include="..\..\tools\Sed.Agent\Sed.Agent.csproj" />
   </ItemGroup>
 
 </Project>

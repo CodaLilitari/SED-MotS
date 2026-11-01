@@ -26,6 +26,34 @@ public sealed class SceneLightingTests
         Assert.Single(scene.Submeshes, s => !s.Adjoined);
     }
 
+    [Fact]
+    public void AdjoinPairVerticesCarryOpposedFaceNormalsForTheRendererPlaneTest()
+    {
+        // Atlantis-style water: an upward floor portal and its coplanar downward mirror.
+        var (level, top, floor) = World();
+        var below = level.NewSector();
+        var mirror = below.NewSurface();
+        mirror.Material = "underside.mat";
+        foreach (var corner in floor.Corners.AsEnumerable().Reverse())
+            mirror.Corners.Add(new Surface.Corner { Vertex = below.AddVertex(corner.Vertex.Position) });
+        floor.Adjoin = mirror;
+        mirror.Adjoin = floor;
+        var scene = Surfaces(level);
+        Assert.All(scene.Submeshes, s => Assert.True(s.Adjoined));
+        Vec3 NormalOf(string material)
+        {
+            var sub = Assert.Single(scene.Submeshes, s => s.Material == material);
+            var normals = scene.Mesh.Indices.Skip(sub.IndexOffset).Take(sub.IndexCount)
+                .Select(i => scene.Mesh.Vertices[(int)i]).Select(v => new Vec3(v.Nx, v.Ny, v.Nz)).Distinct().ToArray();
+            return Assert.Single(normals);
+        }
+        Assert.Equal(new Vec3(0, 0, 1), NormalOf("shared.mat"));
+        Assert.Equal(new Vec3(0, 0, -1), NormalOf("underside.mat"));
+        // Exactly one face of the pair passes the shader's plane test from either side.
+        foreach (var eye in new[] { new Vec3(.2, .2, 1), new Vec3(.2, .2, -1) })
+            Assert.Single(new[] { NormalOf("shared.mat"), NormalOf("underside.mat") }, n => n.Dot(eye - new Vec3(.2, .2, 0)) > 0);
+    }
+
     private const long MotsRgb = 0x1000000;
 
     private static (Level Level, Sector Sector, Surface Surface) World(ProjectType kind = ProjectType.MysteriesOfTheSith)
@@ -434,6 +462,59 @@ public sealed class SceneLightingTests
         var result = new ModelLibrary(archive).Get("synthetic.3do");
         Assert.NotNull(result); Assert.NotNull(result.ArchitectureTopology);
         return result;
+    }
+
+    [Fact]
+    public void LevelSurfacesAreMarkedAsWorldAndModelFacesAreNot()
+    {
+        // A floor and a placed model share one MAT; only the floor's batch is a world surface,
+        // so only it can take the cutaway (model normals are per triangle, not facings).
+        var (level, sector, _) = World(ProjectType.JediKnight);
+        Place(level, sector);
+        var assembler = new SceneAssembler();
+        assembler.AddLevel(level);
+        Assert.Empty(assembler.AddThings(level, _ => Model()));
+        var scene = assembler.Build();
+        var world = Assert.Single(scene.Submeshes, s => s.WorldSurface);
+        var model = Assert.Single(scene.Submeshes, s => !s.WorldSurface);
+        Assert.Equal(3, world.IndexCount);
+        Assert.Equal(3, model.IndexCount);
+        Assert.All(Surfaces(level).Submeshes, s => Assert.True(s.WorldSurface));
+        Assert.All(Things(level, Model()).Submeshes, s => Assert.False(s.WorldSurface));
+        Assert.False(scene.CullWorldBackFaces);
+    }
+
+    [Fact]
+    public void CutawayMakesOnlyWorldSubmeshesSingleSided()
+    {
+        var (level, sector, floor) = World(ProjectType.JediKnight);
+        var portal = sector.NewSurface();
+        portal.Material = "portal.mat";
+        foreach (var corner in floor.Corners) portal.Corners.Add(corner);
+        portal.Adjoin = floor;
+        Place(level, sector);
+        var assembler = new SceneAssembler();
+        assembler.AddLevel(level);
+        assembler.AddThings(level, _ => Model());
+        var scene = assembler.Build();
+        var plain = Assert.Single(scene.Submeshes, s => s.WorldSurface && !s.Adjoined);
+        var adjoined = Assert.Single(scene.Submeshes, s => s.Adjoined);
+        var model = Assert.Single(scene.Submeshes, s => !s.WorldSurface);
+        uint Bits(Submesh sub, bool flat = false) =>
+            RenderLightingState.Pack(RenderLightingMode.Mono, false, sub.LightMode, singleSided: RenderLightingState.SingleSided(scene, sub, flat))
+            & RenderLightingState.SingleSidedBit;
+
+        // Default: only the adjoined surface is single-sided, as before the cutaway existed.
+        Assert.Equal(0u, Bits(plain));
+        Assert.Equal(32u, Bits(adjoined));
+        Assert.Equal(0u, Bits(model));
+        scene.CullWorldBackFaces = true;
+        Assert.Equal(32u, Bits(plain));
+        Assert.Equal(32u, Bits(adjoined));
+        Assert.Equal(0u, Bits(model));
+        // Flat overlays never cull.
+        Assert.Equal(0u, Bits(plain, flat: true));
+        Assert.Equal(0u, Bits(adjoined, flat: true));
     }
 
     [Fact]
