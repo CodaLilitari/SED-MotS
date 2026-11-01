@@ -5,9 +5,12 @@ namespace Sed.Formats.Material;
 /// <summary>RGBA8 pixels for a resolved material.</summary>
 public readonly record struct ResolvedTexture(int Width, int Height, byte[] Rgba);
 
-/// <summary>8-bit palette-indexed pixels for a resolved material.</summary>
+/// <summary>
+/// 8-bit palette-indexed pixels for a resolved material. A 16/32-bit MAT instead
+/// carries decoded RGBA8 in <paramref name="Rgba"/>; <paramref name="Indices"/> is then empty.
+/// </summary>
 public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices, bool IsSolid = false,
-    bool HasColorKey = false);
+    bool HasColorKey = false, byte[]? Rgba = null);
 
 /// <summary>
 /// Resolves JKL material names (e.g. "wall01.mat") to RGBA textures by locating
@@ -35,30 +38,26 @@ public sealed class MaterialLibrary
     {
         if (string.IsNullOrWhiteSpace(name)) return _palette;
         if (_colormapCache.TryGetValue(name, out var cached)) return cached;
-        foreach (var archive in _archives)
+        return _colormapCache[name] = FindColormap(name, _archives);
+    }
+
+    /// <summary>
+    /// Reads a CMP from the first archive that holds it, in precedence order. Null when no
+    /// archive holds it or that entry is unreadable; a later archive is not consulted then.
+    /// The level's master palette is chosen by <c>Sed.Rendering.MasterColormap</c>, which
+    /// uses this lookup: World Colormap 0, otherwise dflt.cmp with a stated problem.
+    /// </summary>
+    public static Colormap? FindColormap(string name, IEnumerable<GobArchive> archives)
+    {
+        ArgumentNullException.ThrowIfNull(archives);
+        foreach (var archive in archives)
         {
             var entry = archive.Find(name);
             if (entry is null) continue;
-            try { return _colormapCache[name] = Colormap.Read(archive.ReadBytes(entry)); }
-            catch (Exception error) when (error is IOException or ArgumentException)
-            { return _colormapCache[name] = null; }
+            try { return Colormap.Read(archive.ReadBytes(entry)); }
+            catch (Exception error) when (error is IOException or InvalidDataException or ArgumentException) { return null; }
         }
-        return _colormapCache[name] = null;
-    }
-
-    /// <summary>Loads the level's master palette (first colormap) from the archives, or default.</summary>
-    public static Colormap LoadPalette(IEnumerable<string> colorMapNames, params GobArchive[] archives)
-    {
-        foreach (var name in colorMapNames.Append("dflt.cmp"))
-        {
-            foreach (var gob in archives)
-            {
-                var entry = gob.Find(name);
-                if (entry is not null)
-                    return Colormap.Read(gob.ReadBytes(entry));
-            }
-        }
-        throw new FileNotFoundException("No CMP colormap found (tried level colormaps and dflt.cmp)");
+        return null;
     }
 
     public ResolvedTexture? Get(string material)
@@ -87,7 +86,7 @@ public sealed class MaterialLibrary
         return result;
     }
 
-    /// <summary>Resolves a material to 8-bit palette indices (for GPU palette+lighting).</summary>
+    /// <summary>Resolves a material to 8-bit palette indices (for GPU palette+lighting), or true-colour RGBA8.</summary>
     public IndexedMaterial? GetIndexed(string material)
     {
         if (string.IsNullOrWhiteSpace(material)) return null;
@@ -103,7 +102,8 @@ public sealed class MaterialLibrary
                 var mat = MatFile.Read(gob.ReadBytes(entry));
                 result = mat.IsColor
                     ? new IndexedMaterial(1, 1, new[] { (byte)(mat.ColorIndex & 0xFF) }, IsSolid: true)
-                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey);
+                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey,
+                        Rgba: mat.IsTrueColor ? mat.Rgba : null);
                 break;
             }
         }
