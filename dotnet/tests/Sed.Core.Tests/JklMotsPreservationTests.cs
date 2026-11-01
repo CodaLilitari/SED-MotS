@@ -54,6 +54,94 @@ public class JklMotsPreservationTests
             JklReader.ParameterTokens("eyeoffset=(1/2/3 ) cog=vader.cog"));
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(" cog=vader.cog")]
+    public void LegacyFrameWithStrayClosingParenthesisKeepsSpelling(string following)
+    {
+        // Caesar's Palace thing 135: the engine's six-conversion sscanf ignores "70/0)".
+        const string first = "(8.05/8.35/10.57:0/270/0)";
+        const string stray = "(8.05/8.35/6.92:0/270/0)70/0)";
+        string source = Source.Replace("health=75", "health=75 numframes=2 frame=" + first + " frame=" + stray + following);
+        var doc = JklParser.ParseDocument(source);
+        var thing = doc.Level.Things[0];
+        Assert.Equal(stray, thing.Values["frame"]);
+        Assert.Equal(new[] { first, stray }, thing.SourceParameters.Where(p => p.Key == "frame").Select(p => p.Value));
+        Assert.Single(doc.PreservationWarnings, w => w.Contains("legacy frame parameter") && w.Contains("unmatched ')'"));
+        Assert.Equal(source, JklWriter.Build(doc));
+        thing.Values["health"] = "76";
+        var back = JklParser.Parse(JklWriter.Build(doc));
+        Assert.Equal(new[] { first, stray }, back.Things[0].SourceParameters.Where(p => p.Key == "frame").Select(p => p.Value));
+        Assert.Equal("76", back.Things[0].Values["health"]);
+        if (following.Length > 0) Assert.Equal("vader.cog", back.Things[0].Values["cog"]);
+    }
+
+    [Fact]
+    public void LegacyFrameTrailingRuleKeepsLaterParametersSeparate()
+    {
+        Assert.Equal(new[] { "frame=(1/2/3:4/5/6)70/0)", "cog=vader.cog" },
+            JklReader.ParameterTokens("frame=(1/2/3:4/5/6)70/0) cog=vader.cog"));
+        Assert.Equal(new[] { "FRAME=(1/2/3:4/5/6))" }, JklReader.ParameterTokens("FRAME=(1/2/3:4/5/6))"));
+        // Balanced trailing text was already accepted and stays warning-free.
+        var doc = JklParser.ParseDocument(Source.Replace("health=75", "health=75 frame=(1/2/3:4/5/6)abc"));
+        Assert.DoesNotContain(doc.PreservationWarnings, w => w.Contains("legacy frame"));
+    }
+
+    [Fact]
+    public void CaesarsPalaceElevatorLineTokenisesAsReleased()
+    {
+        // caesars.jkl line 56249, verbatim from the Massassi release (thing 135).
+        const string line = "135: 2x2elev 2x2elev 8.05 8.35 10.57 0 270 0 146 thingflags=0X400048 numframes=2 "
+            + "frame=(8.05/8.35/10.57:0/270/0) frame=(8.05/8.35/6.92:0/270/0)70/0)";
+        var tokens = JklReader.ParameterTokens(line);
+        Assert.Equal(14, tokens.Length);
+        Assert.Equal("numframes=2", tokens[11]);
+        Assert.Equal("frame=(8.05/8.35/10.57:0/270/0)", tokens[12]);
+        Assert.Equal("frame=(8.05/8.35/6.92:0/270/0)70/0)", tokens[13]);
+        // Through the parser the warning names the thing's own line, and only that frame.
+        var doc = JklParser.ParseDocument(Source.Replace("0: crate ActualName 0 0 0 0 0 0 0 0 health=75",
+            "0: crate ActualName 8.05 8.35 10.57 0 270 0 0 thingflags=0X400048 numframes=2 "
+            + "frame=(8.05/8.35/10.57:0/270/0) frame=(8.05/8.35/6.92:0/270/0)70/0)"));
+        var warning = Assert.Single(doc.PreservationWarnings, w => w.Contains("legacy frame"));
+        Assert.StartsWith("Line 46:", warning);
+        Assert.Equal("0X400048", doc.Level.Things[0].Values["thingflags"]);
+    }
+
+    [Fact]
+    public void TemplateLegacyFrameWithStrayClosingParenthesisKeepsSpellingAndReportsItsLine()
+    {
+        const string stray = "(1/2/3:0/90/0)70/0)";
+        string source = Source.Replace("crate none model3d=original.3do", "crate none model3d=original.3do frame=" + stray + " mass=3");
+        var doc = JklParser.ParseDocument(source);
+        var template = doc.Level.Templates["crate"];
+        Assert.Equal(stray, template.Values["frame"]);
+        Assert.Equal("3", template.Values["mass"]);
+        // The TEMPLATES row is line 42 of the fixture; the warning names it, as for a thing row.
+        var warning = Assert.Single(doc.PreservationWarnings, w => w.Contains("legacy frame parameter"));
+        Assert.StartsWith("Line 42: ", warning);
+        Assert.Contains("unmatched ')'", warning);
+        Assert.Equal(source, JklWriter.Build(doc));
+        template.Values["mass"] = "9";
+        var back = JklParser.ParseDocument(JklWriter.Build(doc));
+        Assert.Equal(stray, back.Level.Templates["crate"].Values["frame"]);
+        Assert.Equal("9", back.Level.Templates["crate"].Values["mass"]);
+        Assert.Single(back.PreservationWarnings, w => w.Contains("legacy frame parameter"));
+    }
+
+    [Theory]
+    [InlineData("frame=(1/2/3:4/5/6))(")]
+    [InlineData("frame=(1/2/3:4/5)7)")]
+    [InlineData("frame=(1/2/3:4/5/6/7)8)")]
+    [InlineData("frame=(1/2/3:4/5/NaN)7)")]
+    [InlineData("frame=(1/2/3/4/5/6)7)")]
+    [InlineData("frame=(1/2/3:4/5/)7)")]
+    [InlineData("frame=1/2/3:4/5/6)7)")]
+    [InlineData("pos=(1/2/3:4/5/6)7)")]
+    [InlineData("frame=(1/2/3:4/5/6)7) x=(1")]
+    [InlineData("frame=(1 /2/3:4/5/6)7)")]
+    public void LegacyFrameTrailingRuleRejectsOtherMalformedValues(string parameter) =>
+        Assert.Throws<FormatException>(() => JklReader.ParameterTokens(parameter));
+
     private const string Source = """
         # Keep all original comments on a no-edit save.
         SECTION: HEADER

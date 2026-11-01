@@ -563,11 +563,9 @@ public static class JklParser
 
     private static void ReportLegacyParameters(string[] tokens, int lineNumber, JklDocument? document)
     {
-        if (tokens.Length > 0 && JklReader.IsLegacyUnterminatedFrameToken(tokens[^1]))
-            document?.PreservationWarnings.Add($"Line {lineNumber}: a legacy final frame parameter has six finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's six-conversion parser.");
-        foreach (string token in tokens)
-            if (JklReader.IsLegacyUnterminatedEyeOffsetToken(token))
-                document?.PreservationWarnings.Add($"Line {lineNumber}: a legacy eyeoffset parameter has three finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's three-conversion parser; following parameters remain separate.");
+        if (document is null) return;
+        foreach (string note in JklReader.LegacyParameterNotes(tokens))
+            document.PreservationWarnings.Add($"Line {lineNumber}: {note}");
     }
 
     // ---- LIGHTS ----

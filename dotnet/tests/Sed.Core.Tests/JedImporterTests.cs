@@ -104,6 +104,45 @@ public class JedImporterTests
         Assert.Contains("ARCHLIGHTING", result.Coverage);
     }
 
+    // Native import shares JKL import's three legacy parameter rules. It keeps the spelling and now
+    // says so, naming the native thing row; the stray ')' frame was refused before the rule existed,
+    // and the other two forms used to import without a warning.
+    [Theory]
+    [InlineData("frame=(1/2/3:0/0/0)70/0)", "unmatched ')'")]
+    [InlineData("frame=(1/2/3:0/0/0", "no closing parenthesis")]
+    [InlineData("eyeoffset=(0/0/0.037", "legacy eyeoffset")]
+    public void NativeThingLegacyParametersAreKeptAndReportedLikeJklImport(string legacy, string phrase)
+    {
+        var result = JedImporter.ImportText(Native.Replace("health=100 frame=(1/2/3:0/0/0)", "health=100 " + legacy), [BaseTemplate()]);
+        var warning = Assert.Single(result.Warnings, w => w.Contains(phrase));
+        Assert.StartsWith("Native thing 0: a legacy ", warning);
+        Assert.Same(result.Document.PreservationWarnings, result.Warnings);
+        var thing = result.Document.Level.Things[0];
+        Assert.Equal(new[] { "frame=(0/0/0:0/0/0)", "health=100", legacy },
+            thing.SourceParameters.Select(parameter => parameter.Key + "=" + parameter.Value));
+        // The exported JKL row keeps the spelling, and JKL import reports it again on that line.
+        var exported = JklParser.ParseDocument(JklWriter.Build(result.Document));
+        Assert.Equal(legacy, exported.Level.Things[0].SourceParameters[^1].Key + "=" + exported.Level.Things[0].SourceParameters[^1].Value);
+        Assert.Single(exported.PreservationWarnings, w => w.StartsWith("Line ") && w.Contains(phrase));
+    }
+
+    [Fact]
+    public void LibraryTemplateLegacyFrameIsKeptAndReportedWhenImported()
+    {
+        var templates = JedImporter.LoadTemplateTexts(["crate none model3d=original.3do frame=(1/2/3:0/0/0)70/0)\n"]);
+        Assert.Equal("(1/2/3:0/0/0)70/0)", Assert.Single(templates).Values["frame"]);
+        var result = JedImporter.ImportText(Native, templates);
+        var warning = Assert.Single(result.Warnings, w => w.Contains("legacy"));
+        Assert.Equal("Template 'crate': a legacy frame parameter has six finite coordinates and its closing parenthesis, "
+            + "followed by stray characters with an unmatched ')'. Its original value is retained, matching the engine's "
+            + "six-conversion parser, which ignores the trailing characters.", warning);
+        Assert.Equal("(1/2/3:0/0/0)70/0)", result.Document.Level.Templates["crate"].Values["frame"]);
+        // Other malformed vectors stay refused on the native path, as in JKL import.
+        Assert.Throws<FormatException>(() => JedImporter.LoadTemplateTexts(["crate none frame=(1/2/3:4/5)7)\n"]));
+        Assert.Throws<FormatException>(() => JedImporter.ImportText(
+            Native.Replace("health=100 frame=(1/2/3:0/0/0)", "health=100 frame=(1/2/NaN:0/0/0)7)"), [BaseTemplate()]));
+    }
+
     [Fact]
     public void JklConversionRetainsNativeModeledEngineFields()
     {
