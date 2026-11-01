@@ -34,7 +34,10 @@ if (entry is null) { Console.Error.WriteLine("No levels to render"); return 3; }
 Console.WriteLine($"Rendering {entry.Name}");
 Level level = JklParser.Parse(install.ReadLevel(entry));
 
-var palette = MaterialLibrary.LoadPalette(level.ColorMaps, install.ResourceArchives.ToArray());
+// World Colormap 0, else dflt.cmp: the same master-palette rule as the editor and lit snapshots.
+var (masterPalette, palette) = MasterColormap.ResolveFromArchives(level.ColorMaps, install.ResourceArchives.ToArray());
+foreach (var problem in masterPalette.Problems) Console.Error.WriteLine("  " + problem);
+if (palette is null) return 4;
 var library = new MaterialLibrary(palette, install.ResourceArchives.ToArray());
 var models = new Sed.Formats.ThreeDo.ModelLibrary(install.ResourceArchives.ToArray());
 
@@ -49,7 +52,7 @@ IndexedTexture? Lookup(string m)
 {
     total++;
     var t = library.GetIndexed(m);
-    if (t is { } r) { ok++; return new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey); }
+    if (t is { } r) { ok++; return new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey, r.Rgba); }
     return null;
 }
 
