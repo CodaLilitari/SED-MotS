@@ -12,8 +12,10 @@ JKL/GOB importer and headless previewer using Coda's Blender-Sith fork) and
 `tools/retail-capture` (retail JK.EXE 1.01 under Wine 9 with scripted menus and frame
 receipts). Development gates passed 1,943 Core, 318 MCP, 127 Python, 24 Linux-tooling,
 65 + 10 Blender and 49 retail-capture tests; see the 2026-10-31 work-log entry for the
-evidence and limits. The Linux package built from the committed source carries the
-release receipts. Nothing here claims gameplay or retail pixel parity for SED's preview.
+evidence and limits. Package `0.4.0-mots.17-claude.red39` binds clean commit
+`fe04ee3` and passed its build, graphics and full-workflow verification; its receipts
+are the release evidence, and later documentation-only commits do not change that
+source identity. Nothing here claims gameplay or retail pixel parity for SED's preview.
 
 ## Reviewed dependency packaging
 
