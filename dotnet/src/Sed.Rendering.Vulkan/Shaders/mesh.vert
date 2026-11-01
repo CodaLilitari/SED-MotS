@@ -22,7 +22,7 @@ layout(push_constant) uniform Push {
     float brightness;  // 144
     uint skyMode;      // 148
     uint clampMode;    // 152  bit0 = clamp U, bit1 = clamp V
-    uint lightingMode; // 156  bit0 RGB, bit1 solid MAT, bit2 scalar modulation, bit3 MAT mask, bit4 true colour, bits8..15 face light mode
+    uint lightingMode; // 156  bit0 RGB, bit1 solid MAT, bit2 scalar modulation, bit3 MAT mask, bit4 true colour, bit5 single-sided, bits8..15 face light mode
 } pc;
 
 layout(location = 0) out vec3 vColor;
@@ -30,6 +30,7 @@ layout(location = 1) out vec2 vUv;
 layout(location = 2) out vec3 vWorld;
 layout(location = 3) out float vMono;
 layout(location = 4) out vec3 vSolidColor;
+layout(location = 5) out float vFacing;   // > 0 in front of the face plane (world surfaces carry its normal)
 
 vec3 solidColor()
 {
@@ -59,4 +60,5 @@ void main()
     vWorld = inPos;
     vMono = inMono;
     vSolidColor = (pc.lightingMode & 2u) != 0u ? solidColor() : vec3(0.0);
+    vFacing = dot(inNormal, pc.camPos.xyz - inPos);
 }

@@ -30,16 +30,22 @@ public static class RenderLightingState
     public const uint ColorKeyBit = 8;
     /// <summary>The material texture holds RGBA8 true colour rather than palette indices.</summary>
     public const uint TrueColorBit = 16;
+    /// <summary>
+    /// Draw only from in front of the surface plane. The engine draws a level surface only
+    /// when the camera is in front of it (sithRender skips plane distance &lt;= 0); an adjoined
+    /// surface's coplanar mirror covers the other side, so drawing both double-sided z-fights.
+    /// </summary>
+    public const uint SingleSidedBit = 32;
     public const int LightModeShift = 8;
 
     public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false,
-        bool trueColor = false)
+        bool trueColor = false, bool singleSided = false)
     {
         if (!Enum.IsDefined(lighting)) throw new ArgumentOutOfRangeException(nameof(lighting));
         if ((uint)lightMode > 255) throw new ArgumentOutOfRangeException(nameof(lightMode));
         return (uint)lighting | (solid ? SolidBit : 0) |
             (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) |
-            (trueColor && !solid ? TrueColorBit : 0) | ((uint)lightMode << LightModeShift);
+            (trueColor && !solid ? TrueColorBit : 0) | (singleSided ? SingleSidedBit : 0) | ((uint)lightMode << LightModeShift);
     }
 }
 
@@ -74,7 +80,11 @@ public sealed class Submesh
     public int IndexCount { get; init; }
     /// <summary>Drawn in a separate alpha-blended pass after opaque geometry.</summary>
     public bool Translucent { get; init; }
-    /// <summary>Masked/translucent adjoined world surfaces use the engine's deferred no-depth-write pass.</summary>
+    /// <summary>
+    /// An adjoined world surface. Masked/translucent ones use the engine's deferred no-depth-write
+    /// pass, and every adjoined surface is drawn only from in front of its plane (vertex normals
+    /// must carry the surface normal), so it cannot z-fight with its coplanar mirror.
+    /// </summary>
     public bool Adjoined { get; init; }
     /// <summary>0 = normal, 1 = ceiling sky, 2 = horizon sky (UV computed in shader).</summary>
     public int SkyMode { get; init; }

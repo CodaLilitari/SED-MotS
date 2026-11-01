@@ -331,6 +331,48 @@ renderer.SetColormap(mapB.PaletteRgb, mapB.LightTable);
 Pixel(Render("truecolor-ignores-master-palette"), 100, 150, 200, "True colour must not resolve through the master palette");
 renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 
+// Adjoined surfaces come in coplanar, opposite-facing pairs. Like the engine's plane test they are
+// drawn only from in front, so a mirror cannot z-fight or double-blend; other surfaces stay double-sided.
+// The view-projection is fixed, so only the camera position (and so each plane's facing) changes.
+var towardOrigin = new Vec3(0, 0, -1);
+var awayFromOrigin = new Vec3(0, 0, 1);
+RenderScene FacingScene(bool adjoined, bool translucent, double nearZ, Vec3 nearNormal, Vec3 farNormal)
+{
+    var scene = new RenderScene { LightingMode = RenderLightingMode.Mono };
+    foreach (var (z, normal, material) in new[] { (nearZ, nearNormal, "near.mat"), (.5, farNormal, "far.mat") })
+    {
+        int start = scene.Mesh.Indices.Count;
+        scene.Mesh.AddTriangle(
+            new MeshVertex(new Vec3(-1, -1, z), normal, colored, mono: 1),
+            new MeshVertex(new Vec3(3, -1, z), normal, colored, mono: 1),
+            new MeshVertex(new Vec3(-1, 3, z), normal, colored, mono: 1));
+        scene.Submeshes.Add(new Submesh { Material = material, IndexOffset = start, IndexCount = 3, LightMode = 0,
+            Adjoined = adjoined, Translucent = translucent });
+    }
+    return scene;
+}
+IndexedTexture? FacingTexture(string name) => new IndexedTexture(1, 1, new byte[] { name == "near.mat" ? (byte)2 : (byte)1 });
+byte[] FacingRender(string name, Vec3 camera)
+{
+    var pixels = renderer.Render(Mat4.Identity, camera, size, size, 0, 0, 0);
+    PngWriter.Write(Path.Combine(output, name + ".png"), pixels, size, size);
+    var rgba = pixels.AsSpan((size / 2 * size + size / 2) * 4, 4).ToArray();
+    observations.Add(new { name, centerRgba = rgba.Select(v => (int)v).ToArray(), pixelSha256 = Convert.ToHexString(SHA256.HashData(pixels)) });
+    return rgba;
+}
+// The nearer face (palette 2) faces away from a camera at the origin and toward one at z=1.
+renderer.SetScene(FacingScene(true, false, .4, awayFromOrigin, towardOrigin), FacingTexture);
+Pixel(FacingRender("adjoined-back-face-culled", Vec3.Zero), 200, 100, 40, "An adjoined face seen from behind its plane must not be drawn");
+Pixel(FacingRender("adjoined-front-face-drawn", new Vec3(0, 0, 1)), 20, 80, 160, "An adjoined face in front of the camera must be drawn and its mirror culled");
+renderer.SetScene(FacingScene(false, false, .4, awayFromOrigin, towardOrigin), FacingTexture);
+Pixel(FacingRender("ordinary-face-double-sided", Vec3.Zero), 20, 80, 160, "A non-adjoined face stays double-sided for the editor");
+renderer.SetScene(FacingScene(true, false, .4, Vec3.Zero, Vec3.Zero), FacingTexture);
+Pixel(FacingRender("adjoined-zero-normal-drawn", Vec3.Zero), 20, 80, 160, "A surface without a usable normal must stay visible");
+// A coplanar translucent adjoin pair blends once (165/255 over black), not twice.
+renderer.SetScene(FacingScene(true, true, .5, awayFromOrigin, towardOrigin), FacingTexture);
+Pixel(FacingRender("adjoined-translucent-pair-blends-once", Vec3.Zero), 129, 65, 26, "Only the camera-facing side of a translucent adjoin pair may blend");
+Pixel(FacingRender("adjoined-translucent-pair-other-side", new Vec3(0, 0, 1)), 13, 52, 104, "The mirror blends alone from the other side");
+
 var report = new { schemaVersion = 1, device = device.DeviceName, assertions, observations, diagnostics = renderer.Diagnostics };
 using (var file = new FileStream(Path.Combine(output, "receipt.json"), FileMode.CreateNew))
     JsonSerializer.Serialize(file, report, new JsonSerializerOptions { WriteIndented = true });

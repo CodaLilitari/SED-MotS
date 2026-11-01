@@ -26,6 +26,34 @@ public sealed class SceneLightingTests
         Assert.Single(scene.Submeshes, s => !s.Adjoined);
     }
 
+    [Fact]
+    public void AdjoinPairVerticesCarryOpposedFaceNormalsForTheRendererPlaneTest()
+    {
+        // Atlantis-style water: an upward floor portal and its coplanar downward mirror.
+        var (level, top, floor) = World();
+        var below = level.NewSector();
+        var mirror = below.NewSurface();
+        mirror.Material = "underside.mat";
+        foreach (var corner in floor.Corners.AsEnumerable().Reverse())
+            mirror.Corners.Add(new Surface.Corner { Vertex = below.AddVertex(corner.Vertex.Position) });
+        floor.Adjoin = mirror;
+        mirror.Adjoin = floor;
+        var scene = Surfaces(level);
+        Assert.All(scene.Submeshes, s => Assert.True(s.Adjoined));
+        Vec3 NormalOf(string material)
+        {
+            var sub = Assert.Single(scene.Submeshes, s => s.Material == material);
+            var normals = scene.Mesh.Indices.Skip(sub.IndexOffset).Take(sub.IndexCount)
+                .Select(i => scene.Mesh.Vertices[(int)i]).Select(v => new Vec3(v.Nx, v.Ny, v.Nz)).Distinct().ToArray();
+            return Assert.Single(normals);
+        }
+        Assert.Equal(new Vec3(0, 0, 1), NormalOf("shared.mat"));
+        Assert.Equal(new Vec3(0, 0, -1), NormalOf("underside.mat"));
+        // Exactly one face of the pair passes the shader's plane test from either side.
+        foreach (var eye in new[] { new Vec3(.2, .2, 1), new Vec3(.2, .2, -1) })
+            Assert.Single(new[] { NormalOf("shared.mat"), NormalOf("underside.mat") }, n => n.Dot(eye - new Vec3(.2, .2, 0)) > 0);
+    }
+
     private const long MotsRgb = 0x1000000;
 
     private static (Level Level, Sector Sector, Surface Surface) World(ProjectType kind = ProjectType.MysteriesOfTheSith)

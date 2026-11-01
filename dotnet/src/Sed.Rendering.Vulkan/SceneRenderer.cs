@@ -296,8 +296,11 @@ public sealed unsafe class SceneRenderer : IDisposable
         {
             var mt = _materialCache.TryGetValue(MaterialKey(sub), out var c)
                 ? c : new MatTex(_white.Set, _white.View, 1f, 1f);
+            // Adjoined surfaces come in coplanar, opposite-facing pairs; drawing both
+            // double-sided z-fights (Atlantis water stripes). Like the engine, draw
+            // each only from in front of its plane. Other surfaces stay double-sided.
             uint state = RenderLightingState.Pack(sub.UseMonochromeLighting ? RenderLightingMode.Mono : _lightingMode,
-                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor);
+                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor, singleSided: sub.Adjoined && !flat);
             if (sub.IndexOffset < 0 || sub.IndexCount < 0 || sub.IndexCount % 3 != 0 || sub.IndexOffset > scene.Mesh.Indices.Count - sub.IndexCount)
                 throw new ArgumentException("Submesh indices must describe complete in-range triangles.");
             bool depthWrite = !(sub.Adjoined && (sub.Translucent || mt.HasColorKey && !mt.IsSolid));

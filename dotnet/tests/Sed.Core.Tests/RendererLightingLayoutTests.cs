@@ -73,11 +73,26 @@ public sealed class RendererLightingLayoutTests
         Assert.Equal(0x303u, RenderLightingState.Pack(RenderLightingMode.Rgb, true, 3, trueColor: true));
         Assert.Equal(0x007u, RenderLightingState.Pack(RenderLightingMode.Rgb, true, 0, usePaletteLightRamp: false, hasColorKey: true, trueColor: true));
         Assert.Equal(0x300u, RenderLightingState.Pack(RenderLightingMode.Mono, false, 3));
-        // mesh.frag tests these as 1u, 2u, 4u, 8u and 16u below the light-mode byte.
+        // mesh.frag tests these as 1u, 2u, 4u, 8u, 16u and 32u below the light-mode byte.
         uint[] flags = [RenderLightingState.RgbBit, RenderLightingState.SolidBit, RenderLightingState.ScalarModulationBit,
-            RenderLightingState.ColorKeyBit, RenderLightingState.TrueColorBit];
-        Assert.Equal(0x1Fu, flags.Aggregate(0u, (all, bit) => all | bit));
+            RenderLightingState.ColorKeyBit, RenderLightingState.TrueColorBit, RenderLightingState.SingleSidedBit];
+        Assert.Equal(0x3Fu, flags.Aggregate(0u, (all, bit) => all | bit));
         Assert.All(flags, bit => Assert.True(System.Numerics.BitOperations.IsPow2(bit) && bit < 1u << RenderLightingState.LightModeShift));
+    }
+
+    [Fact]
+    public void SingleSidedBitAppliesToEveryMaterialKindAndChangesNothingElse()
+    {
+        Assert.Equal(32u, RenderLightingState.SingleSidedBit);
+        foreach (var lighting in new[] { RenderLightingMode.Mono, RenderLightingMode.Rgb })
+            foreach (bool solid in new[] { false, true })
+                foreach (bool trueColor in new[] { false, true })
+                {
+                    uint doubleSided = RenderLightingState.Pack(lighting, solid, 3, hasColorKey: true, trueColor: trueColor);
+                    uint singleSided = RenderLightingState.Pack(lighting, solid, 3, hasColorKey: true, trueColor: trueColor, singleSided: true);
+                    Assert.Equal(doubleSided | 32u, singleSided);
+                }
+        Assert.Equal(0x0323u, RenderLightingState.Pack(RenderLightingMode.Rgb, true, 3, singleSided: true));
     }
 
     [Fact]

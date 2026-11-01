@@ -195,7 +195,7 @@ public static class AgentSnapshotRunner
             preservationWarnings = source.Document.PreservationWarnings,
             warningCount = distinctWarnings.Length, warnings = distinctWarnings.Take(200).ToArray(), warningsTruncated = distinctWarnings.Length > 200,
             limitations = contentLimitations.Concat(new[] {
-                "Double-sided triangle fans without engine portal visibility or gameplay simulation; concave/non-planar polygons may differ from engine rendering.",
+                "Triangle fans without engine portal visibility or gameplay simulation; concave/non-planar polygons may differ from engine rendering. Surfaces are double-sided except adjoined ones, which are drawn only from in front of their plane, as the engine draws level surfaces.",
                 "RGBA PNG only: no depth or object-ID image. Driver differences may change image bytes; use reported source and camera provenance.",
                 "Requires a usable Vulkan loader/device. Callers should enforce a process timeout; existing driver fence waits cannot be cancelled here.",
             }).ToArray(),

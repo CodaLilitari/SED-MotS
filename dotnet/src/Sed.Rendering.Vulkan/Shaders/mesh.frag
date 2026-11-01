@@ -24,6 +24,7 @@ layout(location = 1) in vec2 vUv;
 layout(location = 2) in vec3 vWorld;
 layout(location = 3) in float vMono;
 layout(location = 4) in vec3 vSolidColor;
+layout(location = 5) in float vFacing;
 layout(location = 0) out vec4 outColor;
 
 const float PI = 3.14159265359;
@@ -31,6 +32,9 @@ const float PI = 3.14159265359;
 void main()
 {
     if (pc.mode == 1u) { outColor = vec4(vColor, 1.0); return; }   // flat: markers/selection
+    // Adjoined world surface (bit 5): like the engine, draw it only from in front of
+    // its plane, so it cannot z-fight with its coplanar mirror. A zero normal stays visible.
+    if ((pc.lightingMode & 32u) != 0u && vFacing < 0.0) discard;
     // Solid palette colors are resolved per vertex, then interpolated like rdCache output.
     if ((pc.lightingMode & 2u) != 0u) { outColor = vec4(vSolidColor, pc.alpha); return; }
 
