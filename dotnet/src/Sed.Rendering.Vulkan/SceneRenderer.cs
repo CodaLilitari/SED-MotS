@@ -10,10 +10,14 @@ namespace Sed.Rendering.Vulkan;
 
 /// <summary>
 /// Renders a textured, depth-tested <see cref="RenderScene"/> to an offscreen
-/// image. Textures are 8-bit palette indices; the fragment shader shades each
-/// index through the selected CMP light ramp or multiplies its palette color by
-/// independent RGB vertex light. Translucent submeshes are
-/// alpha-blended in a second pass; markers/selection draw flat (mode 1).
+/// image. Textures are 8-bit palette indices resolved through the level's single
+/// master palette (JK's display palette, World Colormap 0); the fragment shader
+/// shades each index through the submesh's sector CMP light ramp or multiplies
+/// its palette color by independent RGB vertex light. Solid-colour MATs instead
+/// resolve through their sector CMP's own palette and ramp, as the accelerated
+/// engine's rdCache does. 16/32-bit MATs upload as RGBA8 and are lit by
+/// modulation only. Translucent submeshes are alpha-blended in a second pass;
+/// markers/selection draw flat (mode 1).
 /// </summary>
 public sealed unsafe class SceneRenderer : IDisposable
 {
@@ -34,8 +38,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     private Pipeline _selectionPipeline;    // depth off (highlight)
 
     private GpuTexture _white;              // 1x1 index, for flat marker/selection draws
-    private GpuTexture _palette;            // 256x1 RGBA
-    private GpuTexture _lightRamp;          // 256x64 R8
+    private GpuTexture _palette;            // 256x1 RGBA master palette for every textured indexed draw
+    private GpuTexture _lightRamp;          // 256x64 R8 default ramp (submeshes without a resolved sector CMP)
     private float _brightness;              // 0 = real lighting, 1 = full bright
     private RenderLightingMode _lightingMode;
     private bool _usePaletteLightRamp = true;
@@ -61,6 +65,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     private readonly List<DrawItem> _draws = new();
     private readonly Dictionary<(string Material, string Colormap), MatTex> _materialCache = new();
     private readonly Dictionary<string, MaterialImage> _imageCache = new(StringComparer.OrdinalIgnoreCase);
+    // Resolved sector CMPs (palette and ramp). A textured MAT takes only the ramp, since the
+    // master palette displays every texture; a solid colour takes the CMP's own palette too.
     private readonly Dictionary<string, GpuColormap?> _colormapCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> _diagnostics = new();
     private TextureLookup? _textureLookup;
@@ -85,8 +91,10 @@ public sealed unsafe class SceneRenderer : IDisposable
     {
         public bool Deferred => Translucent || !DepthWrite;
     }
-    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
-    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
+    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false,
+        bool TrueColor = false);
+    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false,
+        bool TrueColor = false);
     private readonly record struct GpuColormap(GpuTexture Palette, GpuTexture Ramp);
     private struct GpuTexture { public Image Image; public DeviceMemory Memory; public ImageView View; public DescriptorSet Set; }
 
@@ -116,7 +124,12 @@ public sealed unsafe class SceneRenderer : IDisposable
         catch { Dispose(); throw; }
     }
 
-    /// <summary>Uploads the level palette (256×3 RGB) and 64×256 light ramp used for shading.</summary>
+    /// <summary>
+    /// Uploads the level's master palette (256×3 RGB, World Colormap 0) and the default
+    /// 64×256 light ramp. JK has one display palette for textures: every textured indexed
+    /// material resolves through it, while a submesh's sector CMP contributes only its
+    /// light ramp. Solid colours with a resolved sector CMP keep that CMP's own palette.
+    /// </summary>
     public void SetColormap(byte[] paletteRgb, byte[] lightTable)
     {
         var next = UploadColormap(new ColormapData(paletteRgb, lightTable));
@@ -125,9 +138,11 @@ public sealed unsafe class SceneRenderer : IDisposable
         _palette = next.Palette;
         _lightRamp = next.Ramp;
         if (_white.Set.Handle != 0) WriteMaterialDescriptor(_white.Set, _white.View, next);
+        // Every descriptor that samples the master palette or default ramp is refreshed:
+        // all textured ones (resolved sector CMPs keep their ramp) and solid colours whose
+        // sector CMP did not resolve. Rewriting the others to their sector CMP is harmless.
         foreach (var (key, material) in _materialCache)
-            if (key.Colormap.Length == 0 || !_colormapCache.TryGetValue(key.Colormap, out var map) || map is null)
-                WriteMaterialDescriptor(material.Set, material.Image, next);
+            WriteMaterialDescriptor(material.Set, material.Image, DescriptorColormap(CachedColormap(key.Colormap), material.IsSolid));
         DestroyTexture(oldPalette);
         DestroyTexture(oldRamp);
     }
@@ -145,6 +160,22 @@ public sealed unsafe class SceneRenderer : IDisposable
         try { return new GpuColormap(palette, CreateImage2D(data.LightTable, 256, 64, Format.R8Unorm, 1)); }
         catch { DestroyTexture(palette); throw; }
     }
+
+    private GpuColormap? CachedColormap(string name) =>
+        name.Length != 0 && _colormapCache.TryGetValue(name, out var map) ? map : null;
+
+    /// <summary>
+    /// Palette and ramp bound with a material. Textures display through the master palette
+    /// with the sector CMP's ramp: OpenJKDF2's GL path uploads colormaps[0] as the world
+    /// palette for every texture (std3D.c). Solid colours use the sector CMP's own palette
+    /// and ramp, because rdCache_SendFaceListToHardware reads colors[] and lightlevel[] of the
+    /// face's colormap, which sithRender sets to the sector's CMP. Without a resolved sector
+    /// CMP both use the master palette and the default ramp.
+    /// </summary>
+    private GpuColormap DescriptorColormap(GpuColormap? sector, bool solid) =>
+        sector is not { } map ? new GpuColormap(_palette, _lightRamp)
+        : solid ? map
+        : new GpuColormap(_palette, map.Ramp);
 
     /// <summary>Untextured convenience: one flat-shaded submesh using vertex colors.</summary>
     public void SetMesh(Mesh mesh)
@@ -188,7 +219,15 @@ public sealed unsafe class SceneRenderer : IDisposable
             if (!_imageCache.TryGetValue(sub.Material, out var image))
             {
                 var tex = sub.Material.Length == 0 ? null : lookup(sub.Material);
-                if (tex is { } t && t.Width > 0 && t.Height > 0 && t.Indices is not null &&
+                if (tex is { } tc && tc.Rgba is { } rgba && !tc.IsSolid && tc.Width > 0 && tc.Height > 0 &&
+                    rgba.LongLength == (long)tc.Width * tc.Height * 4)
+                {
+                    // 16/32-bit MATs: RGBA8 true colour, bypassing palette and ramp.
+                    var gpu = CreateImage2D(rgba, (uint)tc.Width, (uint)tc.Height, Format.R8G8B8A8Unorm, 4);
+                    _sceneTextures.Add(gpu);
+                    image = new MaterialImage(gpu.View, 1f / tc.Width, 1f / tc.Height, false, tc.HasColorKey, TrueColor: true);
+                }
+                else if (tex is { } t && t.Rgba is null && t.Width > 0 && t.Height > 0 && t.Indices is not null &&
                     t.Indices.LongLength == (long)t.Width * t.Height)
                 {
                     var gpu = CreateImage2D(t.Indices, (uint)t.Width, (uint)t.Height, Format.R8Unorm, 1);
@@ -199,21 +238,22 @@ public sealed unsafe class SceneRenderer : IDisposable
                 {
                     image = new MaterialImage(_white.View, 1f, 1f);
                     if (sub.Material.Length != 0)
-                        _diagnostics.Add($"Material '{sub.Material}' is missing or has unsupported/invalid indexed pixels; using a placeholder.");
+                        _diagnostics.Add($"Material '{sub.Material}' is missing or has unsupported/invalid pixels; using a placeholder.");
                 }
                 _imageCache[sub.Material] = image;
             }
-            var map = ResolveColormap(sub.Colormap);
+            var map = DescriptorColormap(ResolveColormap(sub.Colormap), image.IsSolid);
             var set = AllocateMaterialDescriptor(image.View, map);
-            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey);
+            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey, image.TrueColor);
         }
 
         RebuildDraws(scene, flat);
     }
 
-    private GpuColormap ResolveColormap(string name)
+    /// <summary>Uploads a named sector CMP on first use; null when the name is empty or unresolved.</summary>
+    private GpuColormap? ResolveColormap(string name)
     {
-        if (name.Length == 0) return new GpuColormap(_palette, _lightRamp);
+        if (name.Length == 0) return null;
         if (!_colormapCache.TryGetValue(name, out var gpu))
         {
             var data = _colormapLookup?.Invoke(name);
@@ -224,10 +264,10 @@ public sealed unsafe class SceneRenderer : IDisposable
                 _sceneTextures.Add(gpu.Value.Palette);
                 _sceneTextures.Add(gpu.Value.Ramp);
             }
-            else _diagnostics.Add($"Colormap '{name}' is unavailable; using the default palette and light table.");
+            else _diagnostics.Add($"Colormap '{name}' is unavailable; using the master palette with the default light table.");
             _colormapCache[name] = gpu;
         }
-        return gpu ?? new GpuColormap(_palette, _lightRamp);
+        return gpu;
     }
 
     /// <summary>Re-uploads geometry after an edit, reusing the loaded textures.</summary>
@@ -256,8 +296,14 @@ public sealed unsafe class SceneRenderer : IDisposable
         {
             var mt = _materialCache.TryGetValue(MaterialKey(sub), out var c)
                 ? c : new MatTex(_white.Set, _white.View, 1f, 1f);
+            // Adjoined surfaces come in coplanar, opposite-facing pairs; drawing both
+            // double-sided z-fights (Atlantis water stripes). Like the engine, draw
+            // each only from in front of its plane. Other surfaces stay double-sided,
+            // unless the scene asks for the back-face cutaway, which extends the rule
+            // to every world surface. Models never get it: their normals are per triangle.
+            bool singleSided = RenderLightingState.SingleSided(scene, sub, flat);
             uint state = RenderLightingState.Pack(sub.UseMonochromeLighting ? RenderLightingMode.Mono : _lightingMode,
-                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey);
+                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor, singleSided);
             if (sub.IndexOffset < 0 || sub.IndexCount < 0 || sub.IndexCount % 3 != 0 || sub.IndexOffset > scene.Mesh.Indices.Count - sub.IndexCount)
                 throw new ArgumentException("Submesh indices must describe complete in-range triangles.");
             bool depthWrite = !(sub.Adjoined && (sub.Translucent || mt.HasColorKey && !mt.IsSolid));
@@ -324,12 +370,27 @@ public sealed unsafe class SceneRenderer : IDisposable
 
     public byte[] Render(Mat4 viewProjection, Vec3 camPos, uint width, uint height,
         float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
-        Render(viewProjection, camPos, Vec3.Zero, width, height, clearR, clearG, clearB);
+        Render(viewProjection, RenderEye.Perspective(camPos), Vec3.Zero, width, height, clearR, clearG, clearB);
 
     /// <summary>Renders one frame; <paramref name="camAngles"/> = (yaw, pitch, roll) degrees for sky.</summary>
     public byte[] Render(Mat4 viewProjection, Vec3 camPos, Vec3 camAngles, uint width, uint height,
+        float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
+        Render(viewProjection, RenderEye.Perspective(camPos), camAngles, width, height, clearR, clearG, clearB);
+
+    /// <summary>
+    /// Renders one frame from an eye that may be orthographic (<see cref="Camera.Eye"/>): a
+    /// parallel eye measures facing and the ceiling-sky ray along the view direction.
+    /// </summary>
+    public byte[] Render(Mat4 viewProjection, RenderEye eye, uint width, uint height,
+        float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
+        Render(viewProjection, eye, Vec3.Zero, width, height, clearR, clearG, clearB);
+
+    /// <summary>Renders one frame from <paramref name="eye"/>; <paramref name="camAngles"/> = (yaw, pitch, roll) degrees for sky.</summary>
+    public byte[] Render(Mat4 viewProjection, RenderEye eye, Vec3 camAngles, uint width, uint height,
         float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f)
     {
+        if (eye.Orthographic && !(eye.TowardCamera.LengthSquared > 0.25 && double.IsFinite(eye.TowardCamera.LengthSquared)))
+            throw new ArgumentException("An orthographic eye needs a unit direction toward the camera.");
         if (viewProjection.M is null || viewProjection.M.Length != 16 || viewProjection.M.Any(v => !float.IsFinite(v)))
             throw new ArgumentException("Expected a finite 4x4 view-projection matrix.");
         // Validate/materialize ordering before recording a command buffer. A bad
@@ -354,7 +415,7 @@ public sealed unsafe class SceneRenderer : IDisposable
         var scissor = new Rect2D(new Offset2D(0, 0), new Extent2D(_width, _height));
         _vk.CmdSetViewport(cmd, 0, 1, in viewport);
         _vk.CmdSetScissor(cmd, 0, 1, in scissor);
-        PushHead(cmd, viewProjection, camPos, camAngles, _width, _height);
+        PushHead(cmd, viewProjection, eye, camAngles, _width, _height);
 
         // Opaque pass.
         if (_draws.Count > 0)
@@ -449,11 +510,15 @@ public sealed unsafe class SceneRenderer : IDisposable
     // Push layout: mvp[0], camPos[64], sky[80], camAngles[96], horizScreen[112] (head 128 B);
     // invTexSize[128], mode[136], alpha[140], brightness[144], skyMode[148],
     // clampMode[152], lightingMode[156] (tail 32 B).
-    private void PushHead(CommandBuffer cmd, Mat4 mvp, Vec3 camPos, Vec3 camAngles, uint w, uint h)
+    // camPos.w = 0: xyz is the perspective eye position. camPos.w = 1: an orthographic
+    // view, xyz is the unit direction toward the camera (every view ray is parallel).
+    private void PushHead(CommandBuffer cmd, Mat4 mvp, RenderEye eye, Vec3 camAngles, uint w, uint h)
     {
         var buf = stackalloc byte[128];
         fixed (float* m = mvp.M) System.Buffer.MemoryCopy(m, buf, 64, 64);
-        *(float*)(buf + 64) = (float)camPos.X; *(float*)(buf + 68) = (float)camPos.Y; *(float*)(buf + 72) = (float)camPos.Z; *(float*)(buf + 76) = 0f;
+        var camPos = eye.Orthographic ? eye.TowardCamera : eye.Position;
+        *(float*)(buf + 64) = (float)camPos.X; *(float*)(buf + 68) = (float)camPos.Y; *(float*)(buf + 72) = (float)camPos.Z;
+        *(float*)(buf + 76) = eye.Orthographic ? 1f : 0f;
         *(float*)(buf + 80) = _ceilZ; *(float*)(buf + 84) = _ceilOffX; *(float*)(buf + 88) = _ceilOffY; *(float*)(buf + 92) = 0f;
         *(float*)(buf + 96) = (float)camAngles.X; *(float*)(buf + 100) = (float)camAngles.Y; *(float*)(buf + 104) = (float)camAngles.Z; *(float*)(buf + 108) = 0f;
         *(float*)(buf + 112) = _horizOffX; *(float*)(buf + 116) = _horizOffY; *(float*)(buf + 120) = w; *(float*)(buf + 124) = h;
