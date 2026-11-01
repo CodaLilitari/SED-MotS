@@ -20,6 +20,7 @@ COMMIT = '0123456789abcdef0123456789abcdef01234567'
 UPSTREAM = 'b82255998fb733c8e8c87104eb7c17f27b48376f'
 LOCK_HASH = 'd1f1473d7644e65dc3ec95b2cbdb0743732ef9fd8e45d010a064b7d45ddaf098'
 UPSTREAM_HASH = 'ef4ddb3ef0cee00fd7ddf8da17ff7a6fb058f11c5337b6e3ede366b8b66723f2'
+UPSTREAM_PREFIX = 'SED-core-b822559/'
 HASH = 'a' * 64
 
 
@@ -173,7 +174,7 @@ class NativeComponentPackageTests(unittest.TestCase):
                 'files': [{'path': name, 'bytes': len(data), 'sha256': pack.digest(data)}
                           for name, data in sorted(upstream.items())]}
         lock_data = pack.canonical_json(lock)
-        upstream_data = tar_bytes(sorted(upstream.items()), commit=UPSTREAM)
+        upstream_data = tar_bytes([(UPSTREAM_PREFIX + name, data) for name, data in sorted(upstream.items())], commit=UPSTREAM)
         source = {'native/bridge/' + name: ('Original fixture: ' + name + '\n').encode()
                   for name in pack.WRAPPER_REQUIRED}
         source.update({'LICENSE': b'Original project license\n', 'NOTICE.md': b'Original project notices\n'})
@@ -244,6 +245,25 @@ class NativeComponentPackageTests(unittest.TestCase):
         request, _, _ = self.original_complete_fixture()
         with self.assertRaises(pack.PackageError):
             pack.assemble(request)
+
+    def test_exact_pinned_upstream_prefix_is_normalized_before_file_and_notice_lookup(self):
+        source = {'LICENSE': b'original fixture license', 'src/core/fixture.cpp': b'original fixture source'}
+        rows = [{'path': name, 'bytes': len(data), 'sha256': pack.digest(data)} for name, data in source.items()]
+        raw = tar_bytes([(UPSTREAM_PREFIX + name, data) for name, data in source.items()], commit=UPSTREAM)
+        members, commit = pack.tar_members(raw)
+        self.assertEqual(commit, UPSTREAM)
+        self.assertEqual(pack.verify_upstream_file_set(members, rows), source)
+        self.assertIn(UPSTREAM_PREFIX + 'LICENSE', members)
+
+    def test_wrong_missing_or_mixed_upstream_prefix_is_refused(self):
+        data = b'original fixture'
+        rows = [{'path': 'LICENSE', 'bytes': len(data), 'sha256': pack.digest(data)}]
+        for members in ({'LICENSE': data}, {'wrong-root/LICENSE': data},
+                        {'sed-core-b822559/LICENSE': data}, {'SED-core-b822559-extra/LICENSE': data},
+                        {UPSTREAM_PREFIX + 'LICENSE': data, 'outside.cpp': data},
+                        {UPSTREAM_PREFIX + 'LICENSE': data, UPSTREAM_PREFIX + 'extra.cpp': data}):
+            with self.subTest(members=list(members)), self.assertRaises(pack.PackageError):
+                pack.verify_upstream_file_set(members, rows)
 
     def test_publication_preserves_existing_output_and_refuses_git_ancestor(self):
         output = self.root / 'component.zip'

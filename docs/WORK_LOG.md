@@ -943,3 +943,15 @@ NuGet packages plus Phosphor and the .NET distribution; the inventory retains
 exact versions, source provenance and file hashes. This is notice collection,
 not a claim that every listed dependency is deployed or that license text has
 received legal review.
+
+The first production native-component preparation exposed an archive-layout
+gap in the packaging fixtures: the pinned upstream TAR retains its exact
+`SED-core-b822559/` root. The helper and request preparer now normalize only
+that root and refuse missing, wrong or mixed roots before source and notice
+lookup. The unchanged helper failed two positive cases when the fixtures were
+corrected to the actual layout. All 24 corrected packaging tests then passed;
+dry validation checked all 213 real upstream files and assembled both platform
+payloads in memory while retaining the original 11-file Linux and 9-file Windows
+build witnesses. Production preparation correctly refuses a clean source
+archive that still contains the old helper. These are packaging validations,
+not a new compilation or release claim.

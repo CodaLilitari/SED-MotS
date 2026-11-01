@@ -48,8 +48,12 @@ The corresponding upstream archive is pinned to:
 - `native/bridge/upstream.lock.json` SHA-256:
   `d1f1473d7644e65dc3ec95b2cbdb0743732ef9fd8e45d010a064b7d45ddaf098`.
 
-All 213 upstream file identities and the exact file set are compared to the
-pinned lock. The archive must retain its upstream Git commit metadata. The
+The pinned archive has the exact root prefix `SED-core-b822559/`. Every regular
+source member must be below that root; wrong, missing or mixed prefixes are
+refused. That one documented prefix is removed in memory before comparing all
+213 upstream file identities and the exact file set to the pinned lock, and
+before looking up its license and notices. The stored archive bytes are never
+rewritten. The archive must retain its upstream Git commit metadata. The
 source archives are included whole, with project/upstream licenses and notices,
 the matched bridge build instructions and protocol, and applicable DLL notices.
 Game assets and private corpus fixtures must not be present in the final source

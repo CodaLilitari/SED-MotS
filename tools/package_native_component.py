@@ -21,6 +21,7 @@ UPSTREAM_COMMIT = "b82255998fb733c8e8c87104eb7c17f27b48376f"
 LOCK_SHA256 = "d1f1473d7644e65dc3ec95b2cbdb0743732ef9fd8e45d010a064b7d45ddaf098"
 UPSTREAM_SHA256 = "ef4ddb3ef0cee00fd7ddf8da17ff7a6fb058f11c5337b6e3ede366b8b66723f2"
 UPSTREAM_BYTES = 8407040
+UPSTREAM_PREFIX = "SED-core-b822559/"
 MAX_SOURCE = 64 * 1024 * 1024
 MAX_EXPANDED = 256 * 1024 * 1024
 MAX_RUNTIME = 64 * 1024 * 1024
@@ -211,6 +212,15 @@ def verify_wrapper(members, receipt):
     verify_file_set(members, receipt["files"], "native/bridge/")
 
 
+def verify_upstream_file_set(members, records):
+    """Normalize only the pinned archive's documented root, never arbitrary roots."""
+    require(bool(members) and all(name.startswith(UPSTREAM_PREFIX) for name in members),
+            "Upstream archive contains an incorrect or outside-prefix source file")
+    normalized = {name[len(UPSTREAM_PREFIX):]: data for name, data in members.items()}
+    verify_file_set(normalized, records)
+    return normalized
+
+
 def verify_build_witness(members, witness, qualification):
     if isinstance(witness, dict):
         exact_keys(witness, ("schemaVersion", "state", "files"), "original build witness")
@@ -363,7 +373,7 @@ def assemble(request):
     upstream_data = read_artifact(request["upstreamArchive"], UPSTREAM_BYTES)
     upstream, upstream_commit = tar_members(upstream_data, maximum=16 * 1024 * 1024, max_entries=1024)
     require(upstream_commit == UPSTREAM_COMMIT, "Upstream Git archive commit metadata differs")
-    verify_file_set(upstream, lock["files"])
+    upstream = verify_upstream_file_set(upstream, lock["files"])
     qualification = load_json_bytes(read_artifact(request["qualification"], MAX_JSON))
     validate_qualification(qualification, request)
     witness_data = read_artifact(request["buildSourceWitness"], MAX_JSON)
