@@ -13,7 +13,8 @@ namespace Sed.Rendering;
 /// </summary>
 public sealed class SceneAssembler
 {
-    private readonly record struct Batch(string Material, string Colormap, bool Translucent, int SkyMode, int ClampMode, int LightMode, bool UseMonochromeLighting, bool Adjoined);
+    private readonly record struct Batch(string Material, string Colormap, bool Translucent, int SkyMode, int ClampMode, int LightMode, bool UseMonochromeLighting, bool Adjoined,
+        bool World);
     private readonly Dictionary<Batch, Mesh> _byBatch = new();
     private readonly List<string> _diagnostics = new();
     private RenderLightingMode _lightingMode;
@@ -36,17 +37,26 @@ public sealed class SceneAssembler
         _triangles++;
     }
 
-    private Mesh For(string material, bool translucent, int skyMode = 0, int clampMode = 0, string colormap = "", int lightMode = 3, bool mono = false, bool adjoined = false)
+    private Mesh For(string material, bool translucent, int skyMode = 0, int clampMode = 0, string colormap = "", int lightMode = 3, bool mono = false, bool adjoined = false,
+        bool world = false)
     {
         // Levels declare the same material under different casings — 01narshadda
         // has seven such pairs (01wgril1.mat / 01WGRIL1.mat). Material lookup is
         // case-insensitive, so keying the batch case-sensitively would upload the
         // same texture twice and add a redundant draw call per pair.
-        var key = new Batch(material.ToLowerInvariant(), colormap.ToLowerInvariant(), translucent, skyMode, clampMode, lightMode, mono, adjoined);
+        var key = new Batch(material.ToLowerInvariant(), colormap.ToLowerInvariant(), translucent, skyMode, clampMode, lightMode, mono, adjoined, world);
         if (!_byBatch.TryGetValue(key, out var mesh))
             _byBatch[key] = mesh = new Mesh();
         return mesh;
     }
+
+    /// <summary>
+    /// The world surfaces a lit scene draws: a drawing geometry mode (Geo ≠ 0), at least three
+    /// corners and a material. Sky surfaces count; no-material adjoin portals do not. Overview
+    /// framing uses the same rule, so its bounds are exactly the drawn level geometry.
+    /// </summary>
+    public static bool IsDrawnWorldSurface(Surface surface) =>
+        surface.Geo != 0 && surface.Corners.Count >= 3 && !string.IsNullOrEmpty(surface.Material);
 
     /// <summary>
     /// Adds the level's textured surfaces (skipping no-material adjoin portals).
@@ -62,7 +72,7 @@ public sealed class SceneAssembler
 
         foreach (var surface in sector.Surfaces)
         {
-            if (surface.Geo == 0 || surface.Corners.Count < 3 || string.IsNullOrEmpty(surface.Material)) continue;
+            if (!IsDrawnWorldSurface(surface)) continue;
             surface.RecalcNormal();
             var n = surface.Normal;
             int skyMode = (surface.SurfFlags & Surface.SfSkyCeiling) != 0 ? 1
@@ -70,7 +80,7 @@ public sealed class SceneAssembler
             // Texture addressing is per-draw state, so clamp flags split the batch.
             int clampMode = TextureClampMode(surface.FaceFlags);
             var mesh = For(surface.Material, surface.IsTranslucent, skyMode, clampMode, ColormapName(level, sector), surface.IsSky ? 0 : surface.Light,
-                adjoined: surface.Adjoin is not null);
+                adjoined: surface.Adjoin is not null, world: true);
             var c0 = surface.Corners[0];
             for (int i = 1; i + 1 < surface.Corners.Count; i++)
                 Triangle(mesh, SurfVertex(c0, n, surface, sector), SurfVertex(surface.Corners[i], n, surface, sector), SurfVertex(surface.Corners[i + 1], n, surface, sector));
@@ -232,6 +242,7 @@ public sealed class SceneAssembler
                 IndexCount = mesh.Indices.Count,
                 Translucent = batch.Translucent,
                 Adjoined = batch.Adjoined,
+                WorldSurface = batch.World,
                 SkyMode = batch.SkyMode,
                 ClampMode = batch.ClampMode,
                 LightMode = batch.LightMode,

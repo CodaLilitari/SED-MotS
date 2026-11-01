@@ -2,9 +2,16 @@ namespace Sed.Rendering;
 
 /// <summary>
 /// An 8-bit palette-indexed texture (one byte per pixel). The renderer applies
-/// the selected CMP palette with scalar or RGB lighting, or a monochrome ramp.
+/// the level's master palette with scalar or RGB lighting, or a sector CMP ramp.
+/// A 16/32-bit MAT instead supplies <paramref name="Rgba"/> (Width*Height*4 true-colour
+/// bytes); <paramref name="Indices"/> is then ignored, and the texture is lit by
+/// modulation like the accelerated engine, without palette or ramp.
 /// </summary>
-public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false, bool HasColorKey = false);
+public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false, bool HasColorKey = false,
+    byte[]? Rgba = null)
+{
+    public bool IsTrueColor => Rgba is not null;
+}
 
 /// <summary>Resolves a material name (e.g. "wall01.mat") to indexed pixels, or null.</summary>
 public delegate IndexedTexture? TextureLookup(string material);
@@ -21,14 +28,36 @@ public static class RenderLightingState
     public const uint SolidBit = 2;
     public const uint ScalarModulationBit = 4;
     public const uint ColorKeyBit = 8;
+    /// <summary>The material texture holds RGBA8 true colour rather than palette indices.</summary>
+    public const uint TrueColorBit = 16;
+    /// <summary>
+    /// Draw only from in front of the surface plane. The engine draws a level surface only
+    /// when the camera is in front of it (sithRender skips plane distance &lt;= 0); an adjoined
+    /// surface's coplanar mirror covers the other side, so drawing both double-sided z-fights.
+    /// </summary>
+    public const uint SingleSidedBit = 32;
     public const int LightModeShift = 8;
 
-    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false)
+    /// <summary>
+    /// Whether a submesh is drawn only from in front of its plane: always for an adjoined world
+    /// surface, and for every world surface under the back-face cutaway. Model faces never are
+    /// (their vertex normals are per-triangle, not a surface's facing), nor are flat overlays.
+    /// </summary>
+    public static bool SingleSided(RenderScene scene, Submesh submesh, bool flat = false)
+    {
+        ArgumentNullException.ThrowIfNull(scene);
+        ArgumentNullException.ThrowIfNull(submesh);
+        return (submesh.Adjoined || scene.CullWorldBackFaces && submesh.WorldSurface) && !flat;
+    }
+
+    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false,
+        bool trueColor = false, bool singleSided = false)
     {
         if (!Enum.IsDefined(lighting)) throw new ArgumentOutOfRangeException(nameof(lighting));
         if ((uint)lightMode > 255) throw new ArgumentOutOfRangeException(nameof(lightMode));
         return (uint)lighting | (solid ? SolidBit : 0) |
-            (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) | ((uint)lightMode << LightModeShift);
+            (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) |
+            (trueColor && !solid ? TrueColorBit : 0) | (singleSided ? SingleSidedBit : 0) | ((uint)lightMode << LightModeShift);
     }
 }
 
@@ -63,8 +92,17 @@ public sealed class Submesh
     public int IndexCount { get; init; }
     /// <summary>Drawn in a separate alpha-blended pass after opaque geometry.</summary>
     public bool Translucent { get; init; }
-    /// <summary>Masked/translucent adjoined world surfaces use the engine's deferred no-depth-write pass.</summary>
+    /// <summary>
+    /// An adjoined world surface. Masked/translucent ones use the engine's deferred no-depth-write
+    /// pass, and every adjoined surface is drawn only from in front of its plane (vertex normals
+    /// must carry the surface normal), so it cannot z-fight with its coplanar mirror.
+    /// </summary>
     public bool Adjoined { get; init; }
+    /// <summary>
+    /// A level surface (not a 3DO model face). Its vertices carry the surface normal, so the
+    /// renderer can cull it from behind when <see cref="RenderScene.CullWorldBackFaces"/> is set.
+    /// </summary>
+    public bool WorldSurface { get; init; }
     /// <summary>0 = normal, 1 = ceiling sky, 2 = horizon sky (UV computed in shader).</summary>
     public int SkyMode { get; init; }
 
@@ -89,6 +127,13 @@ public sealed class RenderScene
     /// always retain their separate palette-cache rules. Defaults to the legacy tool profile.
     /// </summary>
     public bool UsePaletteLightRamp { get; set; } = true;
+    /// <summary>
+    /// Back-face cutaway: draw every world surface only from in front of its plane, as the
+    /// engine does, so ceilings and outer walls facing away from an outside camera vanish
+    /// (Wren's "doll's house" view). Models stay double-sided. Adjoined surfaces are always
+    /// single-sided; this extends the rule to ordinary walls, floors and ceilings.
+    /// </summary>
+    public bool CullWorldBackFaces { get; set; }
     public List<string> Diagnostics { get; } = new();
     public Mesh Mesh { get; } = new();
     public List<Submesh> Submeshes { get; } = new();
