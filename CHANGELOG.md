@@ -1,5 +1,16 @@
 # Change Log
 
+## Unreleased — Wren's level previews (Red's claude branch)
+
+Credit: these previews and captures finish work started by Wren, a Grok bot and one of Andrei's AI collaborators; see [NOTICE.md](NOTICE.md).
+
+- Add orthographic cameras to snapshots (`projection`, `orthographicHeight`; straight-down plan views allowed), a lit `fullbright` view and a `cullBackFaces` cutaway. Perspective receipts and their `cameraSha256` are unchanged; receipts gain `fullbright`, `cullBackFaces`, `assetNotices` and `overview`.
+- Add `sed-agent overview` (and `schema overview`): Wren-style auto-framed overhead and three-quarter lit previews framed on the drawn world surfaces, with the exact equivalent snapshot request embedded for replay.
+- Show a MAT's complete mip 0 when only a later mip of its selected texture is truncated, with an asset notice that strict mode accepts (DBZ Tournament's `zgrass1`, `zgrass3`, `walkway`, `budoukaisign`, `door2017`). Retail JK shows mip 0 on faces nearer than the level's MipMap Distances; a short mip 0 or earlier texture is still refused.
+- Add `tools/blender`: a Blender 5 JKL/GOB importer and headless previewer (resource lookup in engine order across GOB/GOO and loose folders, the level's master palette, SED's MAT rules, exact thing orientation, optional baked JKL light in EEVEE or Cycles, Wren framing shared with `sed-agent overview`, JSON reports, the *Import JK level (.jkl / .gob)* extension operator). It needs Coda's Blender-Sith fork.
+- Add `tools/retail-capture`: retail JK 1.01 under Wine 9 in an isolated prefix with a hash-checked executable, an inert Smacker stand-in and a loopback DirectPlay provider built from source, scripted menus for single-player and hosted multiplayer levels, Wren's walk demo and hashed frame receipts.
+- Credit Wren, Coda's Blender-Sith fork and its upstream in `NOTICE.md`, the README and the tool READMEs.
+
 ## Unreleased — .NET MotS source lights
 
 - Preserve independent white/RGB source-light intensities, color, legacy RGB range, flags and layers when importing supported native JED/SED/NED text projects. MotS baking uses separate channel intensities with the same primary range; legacy RGB range remains metadata.

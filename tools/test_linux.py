@@ -46,6 +46,7 @@ class LinuxToolsTests(unittest.TestCase):
         for name, content in {
             ".gitignore": "private/\nbuild/\n",
             "LICENSE": "Original fixture license\n",
+            "NOTICE.md": "Original fixture credits\n",
             "README.md": "Original fixture\n",
             "docs/LINUX_QUICKSTART.md": "Fixture quickstart\n",
             "data/mots.tpl": "Original fixture templates\n",
@@ -108,7 +109,7 @@ class LinuxToolsTests(unittest.TestCase):
         package = self.root / "package"
         package.mkdir()
         self.tools.copy_support(source, package)
-        for relative in ("LICENSE", "docs/LINUX_QUICKSTART.md", ".agents/skills/fixture/SKILL.md",
+        for relative in ("LICENSE", "NOTICE.md", "docs/LINUX_QUICKSTART.md", ".agents/skills/fixture/SKILL.md",
                          "licenses/fixture.txt", "data/mots.tpl", "agent/data/mots.tpl", "mcp/data/mots.tpl"):
             self.assertTrue((package / relative).is_file(), relative)
         self.assertFalse((package / "private").exists())
@@ -330,6 +331,23 @@ class LinuxToolsTests(unittest.TestCase):
         probes = [row for row in calls if row["args"][0] == "run"]
         self.assertEqual(len(probes), 1)
         self.assertEqual(probes[0]["icd"], str(output / "no-driver.json"))
+
+    def test_build_runs_wren_tool_suites_when_present(self):
+        repo = self.build_repository()
+        sdk, _ = self.fake_sdk()
+        bare = self.root / "bare evidence"
+        self.tools.build(repo, sdk, bare, no_restore=True)
+        self.assertEqual(json.loads((bare / "build-receipt.json").read_text())["pythonToolSuites"], [])
+        for folder in ("tools/blender/tests", "tools/retail-capture/tests"):
+            (repo / folder).mkdir(parents=True)
+            (repo / folder / "test_fixture_suite.py").write_text(
+                "import unittest\nclass Suite(unittest.TestCase):\n    def test_runs(self):\n        pass\n", encoding="utf-8")
+        output = self.root / "suite evidence"
+        self.tools.build(repo, sdk, output, no_restore=True)
+        receipt = json.loads((output / "build-receipt.json").read_text())
+        self.assertEqual(receipt["pythonToolSuites"], ["blender", "retail-capture"])
+        for name in ("blender", "retail-capture"):
+            self.assertIn("Ran 1 test", (output / f"python-{name}-tests.log").read_text())
 
     def test_graphics_build_runs_actual_scene_probe_with_image_evidence_path(self):
         repo = self.build_repository()
