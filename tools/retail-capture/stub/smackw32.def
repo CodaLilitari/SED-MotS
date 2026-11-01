@@ -1,0 +1,15 @@
+; Exports for the inert Smacker stand-in (smackw32_stub.c). JK.EXE 1.01 imports these
+; nine ordinals and no names, so every export is NONAME.
+; Part of SED-MotS (Red's claude branch); finishes Wren's retail-capture recipe.
+; SPDX-License-Identifier: GPL-3.0-or-later
+LIBRARY smackw32
+EXPORTS
+  smack_ordinal_14 @14 NONAME
+  smack_ordinal_17 @17 NONAME
+  smack_ordinal_18 @18 NONAME
+  smack_ordinal_19 @19 NONAME
+  smack_ordinal_21 @21 NONAME
+  smack_ordinal_23 @23 NONAME
+  smack_ordinal_26 @26 NONAME
+  smack_ordinal_32 @32 NONAME
+  smack_ordinal_38 @38 NONAME

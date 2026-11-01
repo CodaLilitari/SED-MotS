@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "credits": "Wren's walk demo from run.sh (Wren, a Grok bot and one of Andrei's AI collaborators): turn left, walk, turn, walk, then F1 for the other view.",
+  "note": "Keys are X key names sent with XTEST; JK's default bindings turn with Left/Right and walk with Up.",
+  "steps": [
+    {"op": "hold", "key": "Left", "s": 1.2, "wait": 1.2},
+    {"op": "shot", "name": "04_turn"},
+    {"op": "hold", "key": "Up", "s": 4, "wait": 1.2},
+    {"op": "shot", "name": "05_walk"},
+    {"op": "hold", "key": "Left", "s": 2, "wait": 1.2},
+    {"op": "shot", "name": "06_turn2"},
+    {"op": "hold", "key": "Up", "s": 4, "wait": 1.2},
+    {"op": "shot", "name": "07_walk2"},
+    {"op": "key", "keys": ["F1"], "wait": 1.2},
+    {"op": "shot", "name": "08_view"}
+  ]
+}
