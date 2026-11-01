@@ -6,6 +6,9 @@ Exercises static MotS lighting through the agent CLI, synthetic archives and Vul
 Builds original synthetic JKL, 8-bit MAT, full CMP and 3DO data in a new directory.
 Checks independent surface and architectural mono/RGB rendering, exact resource
 provenance, strict/permissive asset handling and refusal to replace existing PNGs.
+A separate palette room checks that textures show World Colormap 0 while a solid
+colour uses its sector CMP's palette, that a 16-bit RGB565 MAT renders, and that a
+damaged MAT is refused in strict mode and reported in permissive mode.
 Also checks resource validation and reviewed plan/apply/convert using a separate
 closed synthetic room, including changed resources that leave output JKL unchanged.
 Separately checks world-occluded ARCH baking against a ceiling/NoBlock control,
@@ -137,6 +140,38 @@ function New-SyntheticCmp {
             $bytes[832 + $row * 256 + $index] = if ($row -lt 32 -and $index -eq 1) { 2 } else { $index }
         }
     }
+    return ,$bytes
+}
+function New-PaletteFixtureMat {
+    # Original synthetic MAT: a 2x2 one-mip texture (8-bit indices or 16-bit with declared
+    # r/g/b bits and shifts), or a solid colour when SolidColor is set.
+    param([int]$Bpp = 8, [int[]]$Channels = @(), [byte[]]$Pixels = @(), [int]$SolidColor = -1)
+    $memory = [IO.MemoryStream]::new(); $writer = [IO.BinaryWriter]::new($memory)
+    try {
+        $solid = $SolidColor -ge 0
+        $colorMode = if ($Bpp -eq 8) { 0 } else { 1 }
+        $writer.Write([Text.Encoding]::ASCII.GetBytes('MAT '))
+        foreach ($value in @(0x32, $(if ($solid) { 0 } else { 2 }), 1, $(if ($solid) { 0 } else { 1 }), $colorMode, $Bpp)) { $writer.Write([int]$value) }
+        for ($i = 0; $i -lt 6; $i++) {
+            $channel = if ($i -lt $Channels.Count) { $Channels[$i] } else { 0 }
+            $writer.Write([int]$channel)
+        }
+        $writer.Write([byte[]]::new(24)) # Bit differences and alpha fields complete the 76-byte header.
+        if ($solid) { foreach ($value in @(0, $SolidColor, 0, 0, 0, 0)) { $writer.Write([int]$value) } }
+        else {
+            $writer.Write([byte[]]::new(40)) # One texture cel header, texture index zero.
+            foreach ($value in @(2, 2, 0, 0, 0, 1)) { $writer.Write([int]$value) }
+            $writer.Write($Pixels)
+        }
+        $writer.Flush(); return ,$memory.ToArray()
+    }
+    finally { $writer.Dispose(); $memory.Dispose() }
+}
+function New-PaletteFixtureCmp([int[]]$Entry1) {
+    $bytes = [byte[]]::new(64 + 768 + 16384)
+    [Text.Encoding]::ASCII.GetBytes('CMP ').CopyTo($bytes, 0)
+    for ($channel = 0; $channel -lt 3; $channel++) { $bytes[67 + $channel] = $Entry1[$channel] }
+    for ($row = 0; $row -lt 64; $row++) { for ($index = 0; $index -lt 256; $index++) { $bytes[832 + $row * 256 + $index] = $index } }
     return ,$bytes
 }
 function New-SyntheticGob([Collections.IDictionary]$Entries) {
@@ -403,6 +438,119 @@ function Invoke-WorldOccludedArchitectureWorkflow([string]$ClosedText, [Collecti
         sourcePosition = @(-0.6, -0.6, 4.2); firstSamplePosition = @(-0.6, -0.6, 0.2)
         ceilingZ = 3; range = 8; unblockedFirstSampleFalloff = 0.25; cases = $records
         limits = 'Editor world-polygon recipe only; no material-alpha, model/self shadow, runtime or retail equivalence claim.' }
+}
+function Invoke-PaletteAndTrueColorWorkflow {
+    # One sector on CMP 1 under a different World Colormap 0, with three fullbright floor quads,
+    # left to right: an 8-bit texture of index 1, solid colour 1 and a 16-bit RGB565 texture.
+    # JK displays textures through World Colormap 0; the accelerated engine shades a solid colour
+    # through its sector CMP's own palette (rdCache); true colour needs no palette at all.
+    $masterRgb = [int[]]@(220, 40, 60); $sectorRgb = [int[]]@(30, 200, 90); $trueRgb = [int[]]@(255, 255, 0)
+    $layout = [int[]]@(5, 6, 5, 11, 5, 0) # RGB565: r/g/b bits, then shifts.
+    $yellow = [byte[]]@(0xE0, 0xFF, 0xE0, 0xFF, 0xE0, 0xFF, 0xE0, 0xFF) # Four 0xFFE0 texels, little-endian.
+    $entries = [ordered]@{
+        'mat\pal_texture.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(1, 1, 1, 1))
+        'mat\pal_solid.mat' = New-PaletteFixtureMat -SolidColor 1
+        'mat\pal_truecolor.mat' = New-PaletteFixtureMat -Bpp 16 -Channels $layout -Pixels $yellow
+        'misc\cmp\pal_master.cmp' = New-PaletteFixtureCmp $masterRgb
+        'misc\cmp\pal_sector.cmp' = New-PaletteFixtureCmp $sectorRgb }
+    $intensities = (@('1') * 16) -join ' '
+    $paletteLevel = @"
+# Original synthetic palette fixture: World Colormap 0 differs from the sector's CMP.
+SECTION: HEADER
+VERSION 1
+END
+SECTION: MATERIALS
+World materials 3
+0: pal_texture.mat 1 1
+1: pal_solid.mat 1 1
+2: pal_truecolor.mat 1 1
+END
+SECTION: GEORESOURCE
+World colormaps 2
+0: pal_master.cmp
+1: pal_sector.cmp
+World vertices 8
+0: -3 -1 0
+1: -1 -1 0
+2: 1 -1 0
+3: 3 -1 0
+4: -3 1 0
+5: -1 1 0
+6: 1 1 0
+7: 3 1 0
+World texture vertices 4
+0: 0 0
+1: 2 0
+2: 2 2
+3: 0 2
+World adjoins 0
+World surfaces 3
+0: 0 0x0 0x0 4 0 3 -1 0 4 0,0 1,1 5,2 4,3 $intensities
+1: 1 0x0 0x0 4 0 3 -1 0 4 1,0 2,1 6,2 5,3 $intensities
+2: 2 0x0 0x0 4 0 3 -1 0 4 2,0 3,1 7,2 6,3 $intensities
+0: 0 0 1
+1: 0 0 1
+2: 0 0 1
+END
+SECTION: SECTORS
+World sectors 1
+SECTOR 0
+FLAGS 0
+AMBIENT LIGHT 0
+EXTRA LIGHT 0
+COLORMAP 1
+TINT 0 0 0
+VERTICES 8
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+SURFACES 0 3
+END
+"@
+    $levelPath = Join-Path $scratch 'palette_room.jkl'
+    Write-NewBytes $levelPath $utf8.GetBytes($paletteLevel)
+    $archive = Join-Path $scratch 'palette_room.gob'; Write-NewBytes $archive (New-SyntheticGob $entries)
+    $damagedEntries = [ordered]@{}
+    foreach ($entry in $entries.GetEnumerator()) { $damagedEntries.Add($entry.Key, $entry.Value) }
+    # The 2x2 16-bit mip needs eight pixel bytes; this copy stores four.
+    $damagedEntries['mat\pal_truecolor.mat'] = New-PaletteFixtureMat -Bpp 16 -Channels $layout -Pixels ([byte[]]@(0xE0, 0xFF, 0xE0, 0xFF))
+    $damaged = Join-Path $scratch 'palette_room_damaged_mat.gob'; Write-NewBytes $damaged (New-SyntheticGob $damagedEntries)
+    foreach ($path in @($levelPath, $archive, $damaged)) {
+        $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length })
+    }
+    $inspection = Invoke-Agent 'inspect-palette-room' @('inspect', $levelPath)
+    $render = Invoke-Snapshot 'lit-master-palette-and-true-colour' $levelPath (New-SnapshotRequest $inspection 'lit' 'rgb' $archive (Get-Hash $archive))
+    $texturePixels = Count-PixelColor $render.image.pixels $masterRgb
+    $solidPixels = Count-PixelColor $render.image.pixels $sectorRgb
+    $truePixels = Count-PixelColor $render.image.pixels $trueRgb
+    $receipt.paletteChecks = [ordered]@{ masterPaletteTexture = $texturePixels; sectorPaletteSolid = $solidPixels; trueColour = $truePixels }
+    Confirm-Check 'complete palette fixture renders without warnings' (@($render.result.warnings).Count -eq 0)
+    Confirm-Check 'an 8-bit texture shows World Colormap 0 although its sector uses another CMP' ($texturePixels -gt 100)
+    Confirm-Check 'a solid colour uses its sector CMP palette, as the accelerated engine does' ($solidPixels -gt 100)
+    Confirm-Check 'a 16-bit RGB565 MAT renders as decoded true colour' ($truePixels -gt 100)
+    Confirm-Check 'the master palette is resolved from the supplied archive' (
+        @($render.result.usedResources | Where-Object requested -EQ 'pal_master.cmp').Count -eq 1)
+
+    $damagedMessage = "MAT 'pal_truecolor.mat': Truncated MAT mip pixel data."
+    $damagedRequest = New-SnapshotRequest $inspection 'lit' 'rgb' $damaged (Get-Hash $damaged)
+    $refusedPath = Join-Path $scratch 'must-not-write-damaged-mat.png'
+    $refusal = Invoke-Agent 'refuse-damaged-mat-default-strict' @('snapshot', $levelPath, '-', $refusedPath) (Convert-Request $damagedRequest) 2
+    Confirm-Check 'strict mode refuses a damaged MAT with its diagnostic and writes nothing' (
+        -not (Test-Path -LiteralPath $refusedPath) -and $refusal.error -eq 'invalid_request' -and $refusal.message.Contains($damagedMessage))
+    $damagedRequest.strictAssets = $false
+    $permissive = Invoke-Snapshot 'lit-damaged-mat-permissive' $levelPath $damagedRequest
+    Confirm-Check 'permissive mode reports the damaged MAT and draws a placeholder for it' (
+        @($permissive.result.warnings) -contains $damagedMessage -and
+        @($permissive.result.warnings | Where-Object { $_ -like "Material 'pal_truecolor.mat'*placeholder*" }).Count -eq 1 -and
+        (Count-PixelColor $permissive.image.pixels $trueRgb) -eq 0)
+    Confirm-Check 'a damaged MAT leaves the other materials and both palettes intact' (
+        (Count-PixelColor $permissive.image.pixels $masterRgb) -eq $texturePixels -and
+        (Count-PixelColor $permissive.image.pixels $sectorRgb) -eq $solidPixels)
 }
 function Invoke-ResourceWorkflow([string]$LevelText, [string]$ModelText, [Collections.IDictionary]$Entries) {
     $resourceSchema = Invoke-Agent 'resource-schema' @('schema', 'resources')
@@ -804,6 +952,7 @@ END
     Confirm-Check 'diagnostic still omits things and reports flat geometry' ($diagnostic.result.counts.omittedThings -eq 1 -and $diagnostic.result.renderer -match '(?i)diagnostic')
     Confirm-Check 'diagnostic does not consume resources or a lit mode' ($diagnostic.result.resourceArchives.Count -eq 0 -and
         $diagnostic.result.usedResources.Count -eq 0 -and $null -eq $diagnostic.result.lightingMode -and $diagnostic.result.counts.triangles -eq 2)
+    Invoke-PaletteAndTrueColorWorkflow
     Invoke-ResourceWorkflow $levelText $modelText $entries
     foreach ($fixture in $receipt.fixtures) { Confirm-Check 'input fixture remains byte-identical' ((Get-Hash $fixture.path) -eq $fixture.sha256) }
     $receipt.status = 'passed'

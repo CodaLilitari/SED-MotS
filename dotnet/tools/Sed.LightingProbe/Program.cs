@@ -16,18 +16,22 @@ const int size = 32;
 int assertions = 0;
 var observations = new List<object>();
 
-ColormapData Map(byte red, byte green, byte blue)
+// The master palette (SetColormap, World Colormap 0) resolves every textured indexed draw.
+// A sector CMP contributes only its ramp to a texture: mapB's palette must never be displayed
+// by one. Solid colours instead use their sector CMP's own palette (tested further below).
+ColormapData Map(byte red, byte green, byte blue, byte shadowIndex = 2)
 {
     var palette = new byte[768];
     palette[3] = red; palette[4] = green; palette[5] = blue;
     palette[6] = 20; palette[7] = 80; palette[8] = 160;
+    palette[9] = 90; palette[10] = 30; palette[11] = 200;
     var ramp = new byte[16384];
     for (int row = 0; row < 64; row++)
-        for (int index = 0; index < 256; index++) ramp[row * 256 + index] = (byte)(row < 32 ? 2 : index);
+        for (int index = 0; index < 256; index++) ramp[row * 256 + index] = (byte)(row < 32 ? shadowIndex : index);
     return new ColormapData(palette, ramp);
 }
 var mapA = Map(200, 100, 40);
-var mapB = Map(40, 200, 100);
+var mapB = Map(40, 200, 100, shadowIndex: 3);
 renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 IndexedTexture? Texture(string name) => new IndexedTexture(1, 1, new byte[] { 1 });
 ColormapData? Colormap(string name) => name.Equals("b.cmp", StringComparison.OrdinalIgnoreCase) ? mapB : null;
@@ -69,12 +73,16 @@ Pixel(Render("rgb-independent"), 40, 50, 36, "RGB must use base palette and all 
 renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .95f, colored));
 Pixel(Render("rgb-mono-independent"), 40, 50, 36, "Changing mono must not affect RGB");
 renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .95f, colored, "b.cmp"));
-Pixel(Render("changed-colormap"), 8, 100, 90, "A colormap-only edit must refresh descriptors");
+Pixel(Render("sector-palette-not-displayed"), 40, 50, 36, "RGB under a sector CMP must keep the master palette");
+renderer.UpdateGeometry(Scene(RenderLightingMode.Mono, .25f, colored));
+Pixel(Render("default-ramp"), 20, 80, 160, "Default ramp before a colormap-only edit");
+renderer.UpdateGeometry(Scene(RenderLightingMode.Mono, .25f, colored, "b.cmp"));
+Pixel(Render("changed-colormap"), 90, 30, 200, "A colormap-only edit must refresh descriptors to the sector ramp over the master palette");
 renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .95f, new ColorF(-.2f, 1.5f, .5f), "b.cmp"));
-Pixel(Render("rgb-clamped"), 0, 200, 50, "Each RGB channel must clamp independently");
+Pixel(Render("rgb-clamped"), 0, 100, 20, "Each RGB channel must clamp independently");
 renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .95f, colored, "b.cmp"));
 renderer.SetBrightness(1);
-Pixel(Render("full-bright"), 40, 200, 100, "Full bright retains selected palette");
+Pixel(Render("full-bright"), 200, 100, 40, "Full bright shows the master palette entry");
 renderer.SetBrightness(0);
 renderer.UpdateGeometry(Scene(RenderLightingMode.Mono, .95f, colored, "missing.cmp"));
 Pixel(Render("missing-colormap-fallback"), 200, 100, 40, "Missing palette fallback must be explicit");
@@ -88,14 +96,14 @@ Pixel(Render("rejected-colormap-retains-old"), 40, 200, 100, "Rejected palette m
 renderer.SetMesh(Scene(RenderLightingMode.Rgb, .1f, colored).Mesh);
 Pixel(Render("flat-overlay"), 51, 128, 230, "Flat drawing must remain independent of lighting mode");
 
-var split = new RenderScene { LightingMode = RenderLightingMode.Rgb };
+var split = new RenderScene { LightingMode = RenderLightingMode.Mono };
 foreach (var (left, right, map) in new[] { (-1.0, 0.0, ""), (0.0, 1.0, "b.cmp") })
 {
     int start = split.Mesh.Indices.Count;
-    var a = new MeshVertex(new Vec3(left, -1, .5), Vec3.Zero, new ColorF(1, 1, 1));
-    var b = new MeshVertex(new Vec3(right, -1, .5), Vec3.Zero, new ColorF(1, 1, 1));
-    var c = new MeshVertex(new Vec3(right, 1, .5), Vec3.Zero, new ColorF(1, 1, 1));
-    var d = new MeshVertex(new Vec3(left, 1, .5), Vec3.Zero, new ColorF(1, 1, 1));
+    var a = new MeshVertex(new Vec3(left, -1, .5), Vec3.Zero, new ColorF(1, 1, 1), mono: .25f);
+    var b = new MeshVertex(new Vec3(right, -1, .5), Vec3.Zero, new ColorF(1, 1, 1), mono: .25f);
+    var c = new MeshVertex(new Vec3(right, 1, .5), Vec3.Zero, new ColorF(1, 1, 1), mono: .25f);
+    var d = new MeshVertex(new Vec3(left, 1, .5), Vec3.Zero, new ColorF(1, 1, 1), mono: .25f);
     split.Mesh.AddTriangle(a, b, c);
     split.Mesh.AddTriangle(a, c, d);
     split.Submeshes.Add(new Submesh { Material = "synthetic.mat", Colormap = map, IndexOffset = start, IndexCount = 6 });
@@ -104,12 +112,22 @@ renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 int textureLoads = 0;
 renderer.SetScene(split, name => { textureLoads++; return Texture(name); }, Colormap);
 var splitPixels = renderer.Render(Mat4.Identity, Vec3.Zero, size, size);
-Pixel(splitPixels.AsSpan((size / 2 * size + size / 4) * 4, 4).ToArray(), 200, 100, 40, "Left batch default CMP");
-Pixel(splitPixels.AsSpan((size / 2 * size + size * 3 / 4) * 4, 4).ToArray(), 40, 200, 100, "Right batch named CMP");
+Pixel(splitPixels.AsSpan((size / 2 * size + size / 4) * 4, 4).ToArray(), 20, 80, 160, "Left batch default ramp");
+Pixel(splitPixels.AsSpan((size / 2 * size + size * 3 / 4) * 4, 4).ToArray(), 90, 30, 200, "Right batch named CMP ramp over the master palette");
 assertions++;
 if (textureLoads != 1) throw new InvalidOperationException("Same material was uploaded more than once for distinct colormaps.");
 PngWriter.Write(Path.Combine(output, "two-colormaps.png"), splitPixels, size, size);
 observations.Add(new { name = "two-colormaps", textureLoads, pixelSha256 = Convert.ToHexString(SHA256.HashData(splitPixels)) });
+// A new master palette must reach descriptors that use a resolved sector ramp too.
+var mapC = Map(200, 100, 40);
+mapC.PaletteRgb[9] = 5; mapC.PaletteRgb[10] = 250; mapC.PaletteRgb[11] = 5;
+renderer.SetColormap(mapC.PaletteRgb, mapC.LightTable);
+var masterPixels = renderer.Render(Mat4.Identity, Vec3.Zero, size, size);
+Pixel(masterPixels.AsSpan((size / 2 * size + size / 4) * 4, 4).ToArray(), 20, 80, 160, "Default ramp after a master palette change");
+Pixel(masterPixels.AsSpan((size / 2 * size + size * 3 / 4) * 4, 4).ToArray(), 5, 250, 5, "Sector-ramp descriptors must follow a new master palette");
+PngWriter.Write(Path.Combine(output, "two-colormaps-new-master.png"), masterPixels, size, size);
+observations.Add(new { name = "two-colormaps-new-master", pixelSha256 = Convert.ToHexString(SHA256.HashData(masterPixels)) });
+renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 
 // OpenJK's textured scalar path modulates the base palette. Explicit CMP mode
 // remains available and must update correctly without reloading the material.
@@ -186,6 +204,69 @@ Pixel(Render("openjk-solid-mono-retains-cmp"), 20, 80, 160, "The engine textured
 renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .99f, new ColorF(.2f, .5f, .1f), usePaletteLightRamp: false));
 Pixel(Render("openjk-solid-rgb-retains-cache-rule"), 70, 207, 185, "The engine textured scalar profile must not change solid RGB shading");
 
+// rdCache shades a solid colour through the face's colormap, the sector CMP: its colors[] and
+// lightlevel[]. Textures display through the master palette. Under a sector CMP whose palette
+// differs from the master's (index 1 and the shadow index 4), the left half is a texture of
+// index 1 and the right half solid colour 1.
+var mapS = Map(40, 200, 100, shadowIndex: 4);
+mapS.PaletteRgb[12] = 60; mapS.PaletteRgb[13] = 10; mapS.PaletteRgb[14] = 30;
+ColormapData? SectorColormap(string name) => name.Equals("s.cmp", StringComparison.OrdinalIgnoreCase) ? mapS : null;
+IndexedTexture? TextureOrSolid(string name) => name == "solid.mat" ? new IndexedTexture(1, 1, new byte[] { 1 }, IsSolid: true) : Texture(name);
+RenderScene SectorPair(RenderLightingMode mode, float mono, ColorF rgb, int lightMode, string colormap = "s.cmp")
+{
+    var scene = new RenderScene { LightingMode = mode };
+    foreach (var (left, right, material) in new[] { (-1.0, 0.0, "synthetic.mat"), (0.0, 1.0, "solid.mat") })
+    {
+        int start = scene.Mesh.Indices.Count;
+        var a = new MeshVertex(new Vec3(left, -1, .5), Vec3.Zero, rgb, mono: mono);
+        var b = new MeshVertex(new Vec3(right, -1, .5), Vec3.Zero, rgb, mono: mono);
+        var c = new MeshVertex(new Vec3(right, 1, .5), Vec3.Zero, rgb, mono: mono);
+        var d = new MeshVertex(new Vec3(left, 1, .5), Vec3.Zero, rgb, mono: mono);
+        scene.Mesh.AddTriangle(a, b, c);
+        scene.Mesh.AddTriangle(a, c, d);
+        scene.Submeshes.Add(new Submesh { Material = material, Colormap = colormap, LightMode = lightMode, IndexOffset = start, IndexCount = 6 });
+    }
+    return scene;
+}
+(byte[] Textured, byte[] Solid) RenderPair(string name)
+{
+    var pixels = renderer.Render(Mat4.Identity, Vec3.Zero, size, size);
+    PngWriter.Write(Path.Combine(output, name + ".png"), pixels, size, size);
+    var textured = pixels.AsSpan((size / 2 * size + size / 4) * 4, 4).ToArray();
+    var solid = pixels.AsSpan((size / 2 * size + size * 3 / 4) * 4, 4).ToArray();
+    observations.Add(new { name, texturedRgba = textured.Select(v => (int)v).ToArray(), solidRgba = solid.Select(v => (int)v).ToArray(),
+        pixelSha256 = Convert.ToHexString(SHA256.HashData(pixels)) });
+    return (textured, solid);
+}
+renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
+renderer.SetScene(SectorPair(RenderLightingMode.Mono, .25f, colored, lightMode: 0), TextureOrSolid, SectorColormap);
+var (sectorTexture, sectorSolid) = RenderPair("sector-cmp-fullbright");
+Pixel(sectorTexture, 200, 100, 40, "A fullbright texture under a sector CMP displays through the master palette");
+Pixel(sectorSolid, 40, 200, 100, "A fullbright solid colour under a sector CMP uses that CMP's own palette, as rdCache does");
+renderer.UpdateGeometry(SectorPair(RenderLightingMode.Mono, .25f, colored, lightMode: 3));
+(sectorTexture, sectorSolid) = RenderPair("sector-cmp-mono-ramp");
+Pixel(sectorTexture, 0, 0, 0, "A texture's sector ramp entry resolves through the master palette");
+Pixel(sectorSolid, 60, 10, 30, "A solid colour's sector ramp entry resolves through the sector palette");
+renderer.UpdateGeometry(SectorPair(RenderLightingMode.Rgb, .25f, new ColorF(.2f, .5f, .1f), lightMode: 3));
+(sectorTexture, sectorSolid) = RenderPair("sector-cmp-rgb");
+Pixel(sectorTexture, 40, 50, 4, "Textured RGB multiplies the master palette entry");
+Pixel(sectorSolid, 110, 137, 55, "Solid RGB adds the sector palette's row-zero baseline before truncation");
+// A new master palette reaches the texture but not the solid colour's sector palette.
+var mapM = Map(10, 20, 250);
+renderer.SetColormap(mapM.PaletteRgb, mapM.LightTable);
+renderer.UpdateGeometry(SectorPair(RenderLightingMode.Mono, .25f, colored, lightMode: 0));
+(sectorTexture, sectorSolid) = RenderPair("sector-cmp-new-master");
+Pixel(sectorTexture, 10, 20, 250, "A new master palette must reach a texture under a sector CMP");
+Pixel(sectorSolid, 40, 200, 100, "A new master palette must not replace a solid colour's resolved sector palette");
+// Without a resolved sector CMP a solid colour falls back to the master palette, like a texture.
+renderer.SetScene(SectorPair(RenderLightingMode.Mono, .25f, colored, lightMode: 0, colormap: "missing-solid.cmp"), TextureOrSolid, SectorColormap);
+(sectorTexture, sectorSolid) = RenderPair("sector-cmp-unresolved");
+Pixel(sectorTexture, 10, 20, 250, "An unresolved sector CMP leaves a texture on the master palette");
+Pixel(sectorSolid, 10, 20, 250, "An unresolved sector CMP leaves a solid colour on the master palette");
+assertions++;
+if (!renderer.Diagnostics.Any(v => v.Contains("missing-solid.cmp"))) throw new InvalidOperationException("Unresolved solid-colour CMP diagnostic absent.");
+renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
+
 // A deliberately nonidentity row63 must not affect a fullbright surface or editor override.
 var fullbrightMap = Map(200, 100, 40);
 fullbrightMap.PaletteRgb[0] = 17; fullbrightMap.PaletteRgb[1] = 73; fullbrightMap.PaletteRgb[2] = 149;
@@ -244,10 +325,10 @@ renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0, tr
 Pixel(Render("truecolor-translucent-clear", clearBlack: true), 0, 0, 0, "A translucent draw must discard a transparent true-colour texel");
 renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0), ClearTrueColor);
 Pixel(Render("truecolor-unmasked-opaque", clearBlack: true), 100, 150, 200, "An opaque unmasked draw keeps a transparent true-colour texel");
-// The level palette never tints true colour: a new SetColormap leaves the texel unchanged.
+// The master palette never tints true colour: a new SetColormap leaves the texel unchanged.
 renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0), TrueColor);
 renderer.SetColormap(mapB.PaletteRgb, mapB.LightTable);
-Pixel(Render("truecolor-ignores-level-palette"), 100, 150, 200, "True colour must not resolve through the level palette");
+Pixel(Render("truecolor-ignores-master-palette"), 100, 150, 200, "True colour must not resolve through the master palette");
 renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
 
 var report = new { schemaVersion = 1, device = device.DeviceName, assertions, observations, diagnostics = renderer.Diagnostics };

@@ -29,6 +29,7 @@ public static class AgentSnapshotRunner
         Sed.Formats.Resources.ArchitectureResourceValidationResult? architectureValidation = null;
         var renderWarnings = new List<string>();
         int omittedThings = level.Things.Count;
+        ColormapData? masterColormap = null;
         int surfaceCount = 0, omittedPortals = 0, degenerateTriangles = 0;
         long triangleBudget = 0;
         if (resources is not null)
@@ -42,19 +43,28 @@ public static class AgentSnapshotRunner
             if (request.LightingMode != "game") scene.LightingMode = request.LightingMode == "rgb" ? RenderLightingMode.Rgb : RenderLightingMode.Mono;
             scene.UsePaletteLightRamp = request.RenderProfile == "palette";
             mesh = scene.Mesh;
+            // JK keeps one display palette for textures, World Colormap 0 (OpenJKDF2 resolves
+            // every indexed texture through colormaps[0]); a texture takes only its sector CMP's
+            // light ramp. Solid colours use the sector CMP's own palette and ramp (rdCache).
+            var master = MasterColormap.Resolve(level.ColorMaps, resources.Colormap);
+            var masterProblems = master.Colormap is null
+                ? master.Problems.Append("Without a master palette, textured indexed materials use a grayscale placeholder palette.").ToArray()
+                : master.Problems;
+            masterColormap = master.Colormap;
             foreach (var batch in scene.Submeshes)
             {
                 _ = resources.Texture(batch.Material);
-                _ = resources.Colormap(string.IsNullOrWhiteSpace(batch.Colormap) ? "dflt.cmp" : batch.Colormap);
+                if (!string.IsNullOrWhiteSpace(batch.Colormap)) _ = resources.Colormap(batch.Colormap);
             }
+            renderWarnings.AddRange(masterProblems);
             renderWarnings.AddRange(scene.Diagnostics);
             var noModel = unmodeled.Where(t => string.IsNullOrWhiteSpace(level.GetThingModel(t))).ToList();
             if (noModel.Count > 0)
                 renderWarnings.Add($"{noModel.Count} things have no resolved 3DO model and are omitted (including invisible controllers); "
                     + $"first indices: {string.Join(", ", noModel.Take(32).Select(t => level.Things.IndexOf(t)))}.");
             // Missing models/materials, malformed ARCH bindings and unsupported assets cannot silently certify a lit image.
-            if (request.StrictAssets && (architectureValidation.HasErrors || resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0))
-                throw new AgentRequestException("Lit snapshot asset validation failed: " + string.Join("; ", resources.Diagnostics.Concat(scene.Diagnostics).Take(12)));
+            if (request.StrictAssets && (architectureValidation.HasErrors || resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0 || masterProblems.Count != 0))
+                throw new AgentRequestException("Lit snapshot asset validation failed: " + string.Join("; ", masterProblems.Concat(resources.Diagnostics).Concat(scene.Diagnostics).Take(12)));
             surfaceCount = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo != 0 && f.Corners.Count >= 3 && !string.IsNullOrEmpty(f.Material)));
             omittedPortals = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo == 0));
         }
@@ -119,8 +129,7 @@ public static class AgentSnapshotRunner
             {
                 renderer.SetSky(level.Header.CeilingSky.Height, (float)level.Header.CeilingSky.Offset.X, (float)level.Header.CeilingSky.Offset.Y,
                     (float)level.Header.HorizonSky.Offset.X, (float)level.Header.HorizonSky.Offset.Y);
-                if (scene.Submeshes.Any(s => string.IsNullOrWhiteSpace(s.Colormap)) && resources.Colormap("dflt.cmp") is { } defaultCmp)
-                    renderer.SetColormap(defaultCmp.PaletteRgb, defaultCmp.LightTable);
+                if (masterColormap is { } masterPalette) renderer.SetColormap(masterPalette.PaletteRgb, masterPalette.LightTable);
                 renderer.SetScene(scene, resources.Texture, resources.Colormap);
                 renderWarnings.AddRange(renderer.Diagnostics);
             }
@@ -159,8 +168,8 @@ public static class AgentSnapshotRunner
         if (resources is not null) renderWarnings.AddRange(resources.Diagnostics);
         if (nonBackgroundPixels == 0) renderWarnings.Add("No geometry is visible from this camera; inspect camera position, target and clipping planes.");
         string[] contentLimitations = request.Mode == "lit" ? [
-            "Static lighting preview: baked world mono/RGB, scalar 3DO base light, compatible ARCHLIGHTING, sector/surface extra light and per-sector CMP. No runtime dynamic lights, COG, animation or moving geometry.",
-            "First MAT cel/mip and model geoset zero only; 16/32-bit MATs are decoded to true colour and lit by modulation without a CMP ramp. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
+            "Static lighting preview: baked world mono/RGB, scalar 3DO base light, compatible ARCHLIGHTING, sector/surface extra light, and per-sector CMP light ramps over the level's single master palette (World Colormap 0). No runtime dynamic lights, COG, animation or moving geometry.",
+            "First MAT cel/mip and model geoset zero only. 8-bit textures resolve through the master palette; solid-colour MATs use their sector CMP's own palette and ramp, as the accelerated engine does, without its tint; 16/32-bit MATs are decoded to true colour and lit by modulation without a CMP ramp. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
             "Model hierarchy is shown in its rest pose; absent models are omitted. Resource hashes identify all supplied archives and every used entry.",
         ] : [
             "Diagnostic polygon geometry only: untextured solid faces are included; reciprocal visible untextured or Geo=0 portal faces are omitted.",

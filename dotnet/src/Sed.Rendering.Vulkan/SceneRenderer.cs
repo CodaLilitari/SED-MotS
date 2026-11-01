@@ -10,9 +10,12 @@ namespace Sed.Rendering.Vulkan;
 
 /// <summary>
 /// Renders a textured, depth-tested <see cref="RenderScene"/> to an offscreen
-/// image. Textures are 8-bit palette indices; the fragment shader shades each
-/// index through the selected CMP light ramp or multiplies its palette color by
-/// independent RGB vertex light. 16/32-bit MATs upload as RGBA8 and are lit by
+/// image. Textures are 8-bit palette indices resolved through the level's single
+/// master palette (JK's display palette, World Colormap 0); the fragment shader
+/// shades each index through the submesh's sector CMP light ramp or multiplies
+/// its palette color by independent RGB vertex light. Solid-colour MATs instead
+/// resolve through their sector CMP's own palette and ramp, as the accelerated
+/// engine's rdCache does. 16/32-bit MATs upload as RGBA8 and are lit by
 /// modulation only. Translucent submeshes are alpha-blended in a second pass;
 /// markers/selection draw flat (mode 1).
 /// </summary>
@@ -35,8 +38,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     private Pipeline _selectionPipeline;    // depth off (highlight)
 
     private GpuTexture _white;              // 1x1 index, for flat marker/selection draws
-    private GpuTexture _palette;            // 256x1 RGBA
-    private GpuTexture _lightRamp;          // 256x64 R8
+    private GpuTexture _palette;            // 256x1 RGBA master palette for every textured indexed draw
+    private GpuTexture _lightRamp;          // 256x64 R8 default ramp (submeshes without a resolved sector CMP)
     private float _brightness;              // 0 = real lighting, 1 = full bright
     private RenderLightingMode _lightingMode;
     private bool _usePaletteLightRamp = true;
@@ -62,6 +65,8 @@ public sealed unsafe class SceneRenderer : IDisposable
     private readonly List<DrawItem> _draws = new();
     private readonly Dictionary<(string Material, string Colormap), MatTex> _materialCache = new();
     private readonly Dictionary<string, MaterialImage> _imageCache = new(StringComparer.OrdinalIgnoreCase);
+    // Resolved sector CMPs (palette and ramp). A textured MAT takes only the ramp, since the
+    // master palette displays every texture; a solid colour takes the CMP's own palette too.
     private readonly Dictionary<string, GpuColormap?> _colormapCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> _diagnostics = new();
     private TextureLookup? _textureLookup;
@@ -119,7 +124,12 @@ public sealed unsafe class SceneRenderer : IDisposable
         catch { Dispose(); throw; }
     }
 
-    /// <summary>Uploads the level palette (256×3 RGB) and 64×256 light ramp used for shading.</summary>
+    /// <summary>
+    /// Uploads the level's master palette (256×3 RGB, World Colormap 0) and the default
+    /// 64×256 light ramp. JK has one display palette for textures: every textured indexed
+    /// material resolves through it, while a submesh's sector CMP contributes only its
+    /// light ramp. Solid colours with a resolved sector CMP keep that CMP's own palette.
+    /// </summary>
     public void SetColormap(byte[] paletteRgb, byte[] lightTable)
     {
         var next = UploadColormap(new ColormapData(paletteRgb, lightTable));
@@ -128,9 +138,11 @@ public sealed unsafe class SceneRenderer : IDisposable
         _palette = next.Palette;
         _lightRamp = next.Ramp;
         if (_white.Set.Handle != 0) WriteMaterialDescriptor(_white.Set, _white.View, next);
+        // Every descriptor that samples the master palette or default ramp is refreshed:
+        // all textured ones (resolved sector CMPs keep their ramp) and solid colours whose
+        // sector CMP did not resolve. Rewriting the others to their sector CMP is harmless.
         foreach (var (key, material) in _materialCache)
-            if (key.Colormap.Length == 0 || !_colormapCache.TryGetValue(key.Colormap, out var map) || map is null)
-                WriteMaterialDescriptor(material.Set, material.Image, next);
+            WriteMaterialDescriptor(material.Set, material.Image, DescriptorColormap(CachedColormap(key.Colormap), material.IsSolid));
         DestroyTexture(oldPalette);
         DestroyTexture(oldRamp);
     }
@@ -148,6 +160,22 @@ public sealed unsafe class SceneRenderer : IDisposable
         try { return new GpuColormap(palette, CreateImage2D(data.LightTable, 256, 64, Format.R8Unorm, 1)); }
         catch { DestroyTexture(palette); throw; }
     }
+
+    private GpuColormap? CachedColormap(string name) =>
+        name.Length != 0 && _colormapCache.TryGetValue(name, out var map) ? map : null;
+
+    /// <summary>
+    /// Palette and ramp bound with a material. Textures display through the master palette
+    /// with the sector CMP's ramp: OpenJKDF2's GL path uploads colormaps[0] as the world
+    /// palette for every texture (std3D.c). Solid colours use the sector CMP's own palette
+    /// and ramp, because rdCache_SendFaceListToHardware reads colors[] and lightlevel[] of the
+    /// face's colormap, which sithRender sets to the sector's CMP. Without a resolved sector
+    /// CMP both use the master palette and the default ramp.
+    /// </summary>
+    private GpuColormap DescriptorColormap(GpuColormap? sector, bool solid) =>
+        sector is not { } map ? new GpuColormap(_palette, _lightRamp)
+        : solid ? map
+        : new GpuColormap(_palette, map.Ramp);
 
     /// <summary>Untextured convenience: one flat-shaded submesh using vertex colors.</summary>
     public void SetMesh(Mesh mesh)
@@ -214,7 +242,7 @@ public sealed unsafe class SceneRenderer : IDisposable
                 }
                 _imageCache[sub.Material] = image;
             }
-            var map = ResolveColormap(sub.Colormap);
+            var map = DescriptorColormap(ResolveColormap(sub.Colormap), image.IsSolid);
             var set = AllocateMaterialDescriptor(image.View, map);
             _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey, image.TrueColor);
         }
@@ -222,9 +250,10 @@ public sealed unsafe class SceneRenderer : IDisposable
         RebuildDraws(scene, flat);
     }
 
-    private GpuColormap ResolveColormap(string name)
+    /// <summary>Uploads a named sector CMP on first use; null when the name is empty or unresolved.</summary>
+    private GpuColormap? ResolveColormap(string name)
     {
-        if (name.Length == 0) return new GpuColormap(_palette, _lightRamp);
+        if (name.Length == 0) return null;
         if (!_colormapCache.TryGetValue(name, out var gpu))
         {
             var data = _colormapLookup?.Invoke(name);
@@ -235,10 +264,10 @@ public sealed unsafe class SceneRenderer : IDisposable
                 _sceneTextures.Add(gpu.Value.Palette);
                 _sceneTextures.Add(gpu.Value.Ramp);
             }
-            else _diagnostics.Add($"Colormap '{name}' is unavailable; using the default palette and light table.");
+            else _diagnostics.Add($"Colormap '{name}' is unavailable; using the master palette with the default light table.");
             _colormapCache[name] = gpu;
         }
-        return gpu ?? new GpuColormap(_palette, _lightRamp);
+        return gpu;
     }
 
     /// <summary>Re-uploads geometry after an edit, reusing the loaded textures.</summary>

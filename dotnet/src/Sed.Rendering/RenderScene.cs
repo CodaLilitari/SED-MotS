@@ -2,7 +2,7 @@ namespace Sed.Rendering;
 
 /// <summary>
 /// An 8-bit palette-indexed texture (one byte per pixel). The renderer applies
-/// the selected CMP palette with scalar or RGB lighting, or a monochrome ramp.
+/// the level's master palette with scalar or RGB lighting, or a sector CMP ramp.
 /// A 16/32-bit MAT instead supplies <paramref name="Rgba"/> (Width*Height*4 true-colour
 /// bytes); <paramref name="Indices"/> is then ignored, and the texture is lit by
 /// modulation like the accelerated engine, without palette or ramp.

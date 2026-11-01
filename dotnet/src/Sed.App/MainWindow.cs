@@ -402,25 +402,33 @@ public partial class MainWindow : Window
         ColormapLookup? colormaps = null;
         Func<string, Sed.Formats.ThreeDo.ThreeDoModel?>? models = null;
         byte[]? paletteRgb = null, lightTable = null;
+        IReadOnlyList<string> paletteProblems = Array.Empty<string>();
 
         if (_materialArchives.Length > 0)
         {
             try
             {
-                var colormap = MaterialLibrary.LoadPalette(level.ColorMaps, _materialArchives);
-                var library = new MaterialLibrary(colormap, _materialArchives);
-                _matLibrary = library;
-                paletteRgb = colormap.PaletteRgb;
-                lightTable = colormap.LightTable;
-                textures = material =>
+                // The same master-palette rule as lit snapshots: World Colormap 0, otherwise
+                // dflt.cmp with a stated problem, never a later sector colormap.
+                var (master, colormap) = MasterColormap.ResolveFromArchives(level.ColorMaps, _materialArchives);
+                paletteProblems = master.Problems;
+                if (colormap is null) _matLibrary = null; // no palette: the view stays untextured
+                else
                 {
-                    var t = library.GetIndexed(material);
-                    return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey, r.Rgba) : null;
-                };
-                colormaps = name => library.GetColormap(name) is { } cmp
-                    ? new ColormapData(cmp.PaletteRgb, cmp.LightTable) : null;
-                _modelLibrary ??= new Sed.Formats.ThreeDo.ModelLibrary(_materialArchives);
-                models = _modelLibrary.Get;
+                    var library = new MaterialLibrary(colormap, _materialArchives);
+                    _matLibrary = library;
+                    paletteRgb = colormap.PaletteRgb;
+                    lightTable = colormap.LightTable;
+                    textures = material =>
+                    {
+                        var t = library.GetIndexed(material);
+                        return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey, r.Rgba) : null;
+                    };
+                    colormaps = name => library.GetColormap(name) is { } cmp
+                        ? new ColormapData(cmp.PaletteRgb, cmp.LightTable) : null;
+                    _modelLibrary ??= new Sed.Formats.ThreeDo.ModelLibrary(_materialArchives);
+                    models = _modelLibrary.Get;
+                }
             }
             catch { textures = null; }
         }
@@ -445,8 +453,9 @@ public partial class MainWindow : Window
                        $"{level.Things.Count} things ({(textures is null ? "untextured" : "textured")})";
         if (_currentDoc?.PreservationWarnings.Count > 0)
             _status.Text += $" — {_currentDoc.PreservationWarnings.Count} import/preservation warning(s): {_currentDoc.PreservationWarnings[0]}";
-        if (_view.RenderDiagnostics.Count > 0)
-            _status.Text += $" — {_view.RenderDiagnostics.Count} rendering warning(s): {_view.RenderDiagnostics[0]}";
+        var renderWarnings = paletteProblems.Concat(_view.RenderDiagnostics).ToList();
+        if (renderWarnings.Count > 0)
+            _status.Text += $" — {renderWarnings.Count} rendering warning(s): {renderWarnings[0]}";
     }
 
     // ---- material inspector ----

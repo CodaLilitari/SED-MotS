@@ -10,8 +10,8 @@ namespace Sed.Core.Tests;
 /// <summary>
 /// The lit snapshot's MAT/CMP adapter and the checks the runner makes before any GPU work.
 /// A damaged or unsupported MAT or CMP is a diagnostic that strict mode refuses, never an
-/// uncaught exception. These tests create no Vulkan device; Sed.LightingProbe and
-/// tools/Test-AgentLitSnapshot.ps1 check pixels.
+/// uncaught exception, and the master palette comes from World Colormap 0. These tests
+/// create no Vulkan device; Sed.LightingProbe and tools/Test-AgentLitSnapshot.ps1 check pixels.
 /// </summary>
 public sealed class AgentLitSnapshotAssetTests : IDisposable
 {
@@ -62,6 +62,9 @@ public sealed class AgentLitSnapshotAssetTests : IDisposable
     [Theory]
     [InlineData("truncated.mat", "master.cmp", "MAT 'truncated.mat': Truncated MAT mip pixel data.")]
     [InlineData("deep.mat", "master.cmp", "MAT 'deep.mat': MAT 24-bit pixels are not supported; expected 8, 16 or 32.")]
+    // custom.cmp is in no archive. The runner must ask for World Colormap 0, not the sector's CMP,
+    // and strict mode must refuse the dflt.cmp fallback rather than certify a different palette.
+    [InlineData("wall.mat", "custom.cmp", "Master colormap 'custom.cmp' (World Colormap 0) is unavailable; using dflt.cmp's palette instead.")]
     public void StrictLitSnapshotRefusesBeforeRendering(string material, string worldColormap0, string expected)
     {
         string archive = Archive("lit.gob",

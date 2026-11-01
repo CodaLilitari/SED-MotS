@@ -38,30 +38,26 @@ public sealed class MaterialLibrary
     {
         if (string.IsNullOrWhiteSpace(name)) return _palette;
         if (_colormapCache.TryGetValue(name, out var cached)) return cached;
-        foreach (var archive in _archives)
+        return _colormapCache[name] = FindColormap(name, _archives);
+    }
+
+    /// <summary>
+    /// Reads a CMP from the first archive that holds it, in precedence order. Null when no
+    /// archive holds it or that entry is unreadable; a later archive is not consulted then.
+    /// The level's master palette is chosen by <c>Sed.Rendering.MasterColormap</c>, which
+    /// uses this lookup: World Colormap 0, otherwise dflt.cmp with a stated problem.
+    /// </summary>
+    public static Colormap? FindColormap(string name, IEnumerable<GobArchive> archives)
+    {
+        ArgumentNullException.ThrowIfNull(archives);
+        foreach (var archive in archives)
         {
             var entry = archive.Find(name);
             if (entry is null) continue;
-            try { return _colormapCache[name] = Colormap.Read(archive.ReadBytes(entry)); }
-            catch (Exception error) when (error is IOException or ArgumentException)
-            { return _colormapCache[name] = null; }
+            try { return Colormap.Read(archive.ReadBytes(entry)); }
+            catch (Exception error) when (error is IOException or InvalidDataException or ArgumentException) { return null; }
         }
-        return _colormapCache[name] = null;
-    }
-
-    /// <summary>Loads the level's master palette (first colormap) from the archives, or default.</summary>
-    public static Colormap LoadPalette(IEnumerable<string> colorMapNames, params GobArchive[] archives)
-    {
-        foreach (var name in colorMapNames.Append("dflt.cmp"))
-        {
-            foreach (var gob in archives)
-            {
-                var entry = gob.Find(name);
-                if (entry is not null)
-                    return Colormap.Read(gob.ReadBytes(entry));
-            }
-        }
-        throw new FileNotFoundException("No CMP colormap found (tried level colormaps and dflt.cmp)");
+        return null;
     }
 
     public ResolvedTexture? Get(string material)

@@ -32,7 +32,10 @@ Console.WriteLine($"camera at thing #{anchor.Num} '{anchor.Name}' {anchor.Positi
 foreach (var t in level.Things.Take(8))
     Console.WriteLine($"   thing {t.Num,3} '{t.Name}' sec={t.Sector?.Num}");
 
-var palette = MaterialLibrary.LoadPalette(level.ColorMaps, install.ResourceArchives.ToArray());
+// World Colormap 0, else dflt.cmp: the same master-palette rule as the editor and lit snapshots.
+var (masterPalette, palette) = MasterColormap.ResolveFromArchives(level.ColorMaps, install.ResourceArchives.ToArray());
+foreach (var problem in masterPalette.Problems) Console.Error.WriteLine("  " + problem);
+if (palette is null) return 3;
 var library = new MaterialLibrary(palette, install.ResourceArchives.ToArray());
 var modelLib = new Sed.Formats.ThreeDo.ModelLibrary(install.ResourceArchives.ToArray());
 var assembler = new SceneAssembler();
