@@ -1,0 +1,99 @@
+name: Native macOS
+
+on:
+  push:
+    branches: ['codex/macos-consolidated-*']
+  pull_request:
+    paths: ['dotnet/**', 'tools/**', 'data/**', 'global.json', '.github/workflows/macos.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: osx-arm64
+            runner: macos-15
+          - rid: osx-x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: 'false'
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
+      DOTNET_CLI_HOME: ${{ runner.temp }}/sed-dotnet-home
+      NUGET_PACKAGES: ${{ runner.temp }}/sed-nuget
+      PYTHONDONTWRITEBYTECODE: '1'
+      SED_VERSION: 0.4.0-mots.18-macos.${{ github.run_number }}
+      SED_RID: ${{ matrix.rid }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Verify native host and acquire pinned dependency
+        shell: bash
+        run: |
+          python3 -c 'import os,sys; sys.path.insert(0,"tools"); from macos import require_host; require_host(os.environ["SED_RID"])'
+          test "$(dotnet --version)" = 10.0.401
+          command -v pwsh
+          python3 tools/acquire_macos_dependencies.py --output "$RUNNER_TEMP/sed-dependencies"
+      - name: Build, test, sign and archive the native package
+        id: package
+        shell: bash
+        run: |
+          bash tools/package-macos.sh --rid "$SED_RID" --dotnet "$(command -v dotnet)" \
+            --pwsh "$(command -v pwsh)" --version "$SED_VERSION" \
+            --moltenvk-manifest "$RUNNER_TEMP/sed-dependencies/moltenvk-manifest.json" \
+            --output "$RUNNER_TEMP/sed-macos"
+      - name: Exercise both APFS case modes on owned test images
+        if: ${{ !cancelled() && steps.package.outcome == 'success' }}
+        shell: bash
+        run: |
+          test -f "$RUNNER_TEMP/sed-macos/package-receipt.json"
+          python3 tools/test_macos_runtime.py --apfs --rid "$SED_RID" \
+            --dotnet "$(command -v dotnet)" --build-output "$RUNNER_TEMP/sed-macos" \
+            --output "$RUNNER_TEMP/sed-apfs"
+      - name: Qualify relocated authoring, graphics and native Cocoa window
+        if: ${{ !cancelled() && steps.package.outcome == 'success' }}
+        shell: bash
+        run: |
+          python3 tools/macos.py verify \
+            --package "$RUNNER_TEMP/sed-macos/SED-MotS-$SED_VERSION-$SED_RID" \
+            --output "$RUNNER_TEMP/sed-verification" --pwsh "$(command -v pwsh)" \
+            --scene-probe "$RUNNER_TEMP/sed-macos/qualification-tools/scene/Sed.SceneProbe" \
+            --graphics --full-workflows
+      - name: Preserve package and separate qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sed-${{ matrix.rid }}-${{ github.run_number }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/sed-macos/*.zip
+            ${{ runner.temp }}/sed-macos/*.tar.gz
+            ${{ runner.temp }}/sed-macos/*.bundle
+            ${{ runner.temp }}/sed-macos/SHA256SUMS.txt
+            ${{ runner.temp }}/sed-macos/*.json
+            ${{ runner.temp }}/sed-macos/*.log
+            ${{ runner.temp }}/sed-macos/*.trx
+            ${{ runner.temp }}/sed-apfs/*.json
+            ${{ runner.temp }}/sed-apfs/*/*.log
+            ${{ runner.temp }}/sed-apfs/*/*.trx
+            ${{ runner.temp }}/sed-verification/*.json
+            ${{ runner.temp }}/sed-verification/*.log
+            ${{ runner.temp }}/sed-verification/*.png
+            ${{ runner.temp }}/sed-verification/native-cocoa/*
+            ${{ runner.temp }}/sed-verification/wren-snapshots/**
+            ${{ runner.temp }}/sed-verification/mcp-workflow/verification.json
+            ${{ runner.temp }}/sed-verification/workbench/receipt.json
+            ${{ runner.temp }}/sed-dependencies/moltenvk-manifest.json

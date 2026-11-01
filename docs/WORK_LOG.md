@@ -1004,3 +1004,28 @@ an unchanged-binary rerun on external NTFS storage isolated the fixture-storage
 problem: all 320 MCP tests passed with three Mac-only skips. Both receipts remain
 available. Windows reparse-point fixtures need an NTFS temporary directory;
 external bulk archive storage can remain on exFAT.
+
+### 2026-11-01: Mac distribution candidate ready for native CI
+
+Implemented the native-only Mac assembler, pinned dependency closure, complete
+self-contained app/agent/MCP payload, portable launchers, ad-hoc JIT signing,
+exact archive audit and source/history provenance. The app carries its own data,
+documentation and notices when moved alone. Added separate relocated authoring,
+MoltenVK rendering, child-owned Cocoa window and APFS test-image qualification.
+The standard public CI matrix targets Apple Silicon and Intel independently;
+all build/cache/evidence output lives outside the checkout. Existing Linux CI
+output paths were corrected to follow the same external-storage contract.
+
+The packaging tests initially failed with the absent driver; after implementation
+the focused suite passed. Full discovery exposed a helper/test module-name
+collision, corrected by giving the test module a distinct name. The full Python
+suite then passed 175 tests with 12 platform skips (187 total). Those tests use
+synthetic archive/runtime metadata, not Mac execution. Added a native-only Unicode
+normalization alias test to expose Darwin behavior before closing write safety;
+it has not yet run. The candidate is not a qualified Mac release.
+
+Lilitari's independent source review was submitted to the existing saved SED
+project conversation with 23 complete files and a raw-byte manifest. The UI
+showed the exact GPT-6 Pro option disabled; the authorized GPT-5.6 Pro Personal
+fallback was selected. Review is pending. Red was not contacted. C++ catch-up
+remains assigned to Muse Code and outside this implementation.

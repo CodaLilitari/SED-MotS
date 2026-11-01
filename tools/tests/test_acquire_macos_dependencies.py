@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 TOOLS = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(TOOLS))
+sys.path.append(str(TOOLS))
 SCRIPT = TOOLS / "acquire_macos_dependencies.py"
 dep = None
 if SCRIPT.exists():

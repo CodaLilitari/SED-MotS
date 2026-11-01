@@ -15,13 +15,18 @@ implementation and evidence. Mac file-safety and loader changes are present;
 their Windows Core regression build passed without warnings/errors, followed by
 2,038 passing tests and three platform skips. The MCP build passed, its regenerated
 lock preserves existing dependencies while adding both Mac targets, and its NTFS
-rerun passed 320 tests with three Mac-only skips. Native Mac execution and complete
-bundle/CI packaging are still pending. These working-source checks do not update
+rerun passed 320 tests with three Mac-only skips. The Mac bundle assembler,
+archive verifier, native runtime/APFS probes and two-architecture CI workflow are
+now implemented for native qualification. The Python suite passes 175 tests with
+12 platform skips. Native Mac execution and final independent review are still
+pending; a new Darwin Unicode-alias test is deliberately awaiting that run.
+These working-source checks do not update
 the source identity of the earlier clean Windows candidate or qualify Mac GUI
 behavior. No new consolidated binary download is yet claimed.
 
-Work is on `codex/linux-consolidated-20261101` in an isolated consolidation
-checkout. Merge `ea0b351ce8a1cab46da5e9e44a068ee17fdaf920`
+Mac qualification continues on `codex/macos-consolidated-20261101`, derived from
+`codex/linux-consolidated-20261101` in the isolated consolidation checkout.
+Merge `ea0b351ce8a1cab46da5e9e44a068ee17fdaf920`
 preserves GitLab Red tip `0a99e4ac09cba7aab0bccfc88a28a2d0eca80d8d` and GitHub
 Red tip `6fcc36c522eda0da9f55ce44d1c0c36dc8573050`; their tip trees were identical.
 Lily's native Linux and reviewed-packaging histories are already ancestors.

@@ -86,6 +86,19 @@ public sealed class AtomicFilePromotionTests : IDisposable
         }
     }
 
+    [AtomicMacAliasFact]
+    public void UnicodeNormalizationAliasCannotBecomeANewOutput()
+    {
+        string staged = Path.Combine(_directory, "caf\u00e9.tmp");
+        string alias = Path.Combine(_directory, "cafe\u0301.tmp");
+        File.WriteAllText(staged, "existing staged output");
+
+        Assert.Throws<IOException>(() => AtomicFilePromotion.MoveNew(staged, alias));
+
+        Assert.Equal("existing staged output", File.ReadAllText(staged));
+        Assert.Single(Directory.GetFiles(_directory));
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -128,5 +141,14 @@ public sealed class AtomicCaseAliasFactAttribute : FactAttribute
     {
         if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
             Skip = "Case-only stage alias refusal is the Windows/macOS publication policy.";
+    }
+}
+
+public sealed class AtomicMacAliasFactAttribute : FactAttribute
+{
+    public AtomicMacAliasFactAttribute()
+    {
+        if (!OperatingSystem.IsMacOS())
+            Skip = "Unicode normalization alias refusal is the macOS publication policy.";
     }
 }
