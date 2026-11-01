@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "gui": {"width": 640, "height": 480},
+  "credits": "The click sequences generalise Wren's jk.sh and run.sh (Wren, a Grok bot and one of Andrei's AI collaborators; recovered 2026-10-31).",
+  "source": "Rectangles are the retail GUI element tables as reconstructed by OpenJKDF2 (src/Gui/jkGUI*.c), in 640x480 GUI coordinates (x, y, width, height). A click is the point jkcapture sends. 'verified' names the jkcapture proof runs of 31 October 2026 whose frames show the click working (run folders are listed in the work log); elements without it come from the tables only.",
+  "screens": {
+    "player_new": {
+      "title": "New Player (first start, no player profile)",
+      "table": "jkGUIPlayer.c jkGuiPlayer_buttons2",
+      "elements": {
+        "name": {"rect": [200, 240, 200, 20], "click": [300, 250], "verified": "final-sp-kell-first, final-mp-jk1mp-first: name typed in 00_new_player"},
+        "easy": {"rect": [200, 310, 200, 20], "click": [300, 320]},
+        "medium": {"rect": [200, 340, 200, 20], "click": [300, 350], "note": "preselected"},
+        "hard": {"rect": [200, 370, 200, 20], "click": [300, 380]},
+        "ok": {"rect": [420, 430, 200, 40], "click": [520, 450], "verified": "final-sp-kell-first, final-mp-jk1mp-first: 00_new_player -> 01_main_menu"},
+        "cancel": {"rect": [20, 430, 200, 40], "click": [120, 450]}
+      }
+    },
+    "player_select": {
+      "title": "Choose Player (later starts)",
+      "table": "jkGUIPlayer.c jkGuiPlayer_buttons1",
+      "elements": {
+        "list": {"rect": [130, 200, 380, 180], "click": [320, 290]},
+        "cancel": {"rect": [0, 430, 160, 40], "click": [80, 450]},
+        "new": {"rect": [160, 430, 160, 40], "click": [240, 450]},
+        "remove": {"rect": [320, 430, 160, 40], "click": [400, 450]},
+        "ok": {"rect": [480, 430, 160, 40], "click": [560, 450], "verified": "final-sp-kell-return, final-mp-jk1mp-return: 00_player_select -> 01_main_menu; Wren's run.sh (560, 450)"}
+      }
+    },
+    "main": {
+      "title": "Main menu",
+      "table": "jkGUIMain.c jkGuiMain_buttons",
+      "elements": {
+        "single_player": {"rect": [0, 160, 640, 60], "click": [320, 190], "verified": "final-sp-kell-first, final-sp-kell-return: 02_single_player"},
+        "multiplayer": {"rect": [0, 220, 640, 60], "click": [320, 250], "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: 02_multiplayer; Wren's run.sh (317, 247)"},
+        "quit": {"rect": [0, 280, 640, 60], "click": [320, 310]},
+        "players": {"rect": [20, 380, 150, 40], "click": [95, 400]},
+        "cutscenes": {"rect": [250, 380, 150, 40], "click": [325, 400]},
+        "setup": {"rect": [470, 380, 150, 40], "click": [545, 400]},
+        "credits": {"rect": [250, 420, 150, 40], "click": [325, 440]}
+      }
+    },
+    "sp": {
+      "title": "Single Player",
+      "table": "jkGUISingleplayer.c jkGuiSingleplayer_buttons1",
+      "elements": {
+        "new_game": {"rect": [190, 90, 210, 40], "click": [295, 110], "verified": "final-sp-kell-first, final-sp-kell-return: 03_level (one single-player episode staged, so New Game loads it directly)"},
+        "load": {"rect": [430, 90, 200, 40], "click": [530, 110]},
+        "cancel": {"rect": [200, 430, 200, 40], "click": [300, 450]}
+      }
+    },
+    "sp_episode": {
+      "title": "Choose Episode (shown only when more than one single-player episode is installed)",
+      "table": "jkGUISingleplayer.c jkGuiSingleplayer_buttons2",
+      "elements": {
+        "list": {"rect": [250, 210, 320, 170], "click": [410, 295]},
+        "ok": {"rect": [400, 430, 200, 40], "click": [500, 450]},
+        "cancel": {"rect": [200, 430, 200, 40], "click": [300, 450]}
+      }
+    },
+    "mp": {
+      "title": "Multiplayer",
+      "table": "jkGUIMultiplayer.c jkGuiMultiplayer_aElements",
+      "elements": {
+        "join": {"rect": [80, 80, 200, 40], "click": [180, 100]},
+        "host": {"rect": [360, 80, 200, 40], "click": [460, 100], "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: 03_provider; Wren's run.sh (458, 100)"},
+        "characters": {"rect": [170, 120, 300, 40], "click": [320, 140]},
+        "cancel": {"rect": [20, 430, 200, 40], "click": [120, 450]}
+      }
+    },
+    "mp_provider": {
+      "title": "Choose a network provider",
+      "table": "jkGUIMultiplayer.c jkGuiMultiplayer_aElements2",
+      "elements": {
+        "list": {"rect": [100, 180, 440, 110], "click": [260, 190], "rows": {"x": 260, "firstY": 190, "height": 15, "visible": 7}, "note": "rows follow the DirectPlay provider keys in registry order: 0 Internet TCP/IP, 1 IPX, 2 Modem, 3 Serial, 4 Virtual Loopback (jkcapture) when prepare registered it; under Wine 9.0 only the loopback row can host", "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: row 4 (loopback) -> 04_host_setup; C-runs/mp-gl-1: row 0 (TCP/IP) ends in Host Error; Wren's run.sh clicked y 235 on a Wine with a different provider list"},
+        "ok": {"rect": [420, 430, 200, 40], "click": [520, 450], "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: 04_host_setup; Wren's run.sh (517, 449)"},
+        "cancel": {"rect": [20, 430, 200, 40], "click": [120, 450]}
+      }
+    },
+    "mp_host": {
+      "title": "Host game setup",
+      "table": "jkGUINetHost.c jkGuiNetHost_aElements",
+      "elements": {
+        "game_name": {"rect": [20, 125, 270, 20], "click": [155, 135]},
+        "episodes": {"rect": [310, 175, 320, 80], "click": [470, 185], "rows": {"x": 470, "firstY": 185, "height": 15, "visible": 5}},
+        "levels": {"rect": [310, 290, 320, 110], "click": [400, 300], "rows": {"x": 400, "firstY": 300, "height": 15, "visible": 7}, "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: row 3 = Canyon Oasis (m10.jkl), shown as Level on 08_load_character"},
+        "advanced": {"rect": [220, 430, 200, 40], "click": [320, 450]},
+        "ok": {"rect": [420, 430, 200, 40], "click": [520, 450], "verified": "final-mp-jk1mp-first: 06_no_valid_characters; final-mp-jk1mp-return: 08_load_character"},
+        "cancel": {"rect": [20, 430, 200, 40], "click": [120, 450]}
+      }
+    },
+    "popup": {
+      "title": "Error dialog (No Valid Characters, Network Error, Host Error)",
+      "table": "jkGUIDialog.c jkGuiDialog_buttons",
+      "elements": {
+        "ok": {"rect": [280, 290, 190, 40], "click": [373, 309], "verified": "final-mp-jk1mp-first: 06_no_valid_characters -> New Character"}
+      }
+    },
+    "mp_new_char": {
+      "title": "New Character",
+      "table": "jkGUIBuildMulti.c jkGuiBuildMulti_menuNewCharacter_buttons",
+      "elements": {
+        "name": {"rect": [320, 200, 240, 20], "click": [440, 210], "verified": "final-mp-jk1mp-first: character name typed"},
+        "ok": {"rect": [460, 430, 180, 40], "click": [550, 450], "verified": "final-mp-jk1mp-first: 07_edit_character"},
+        "cancel": {"rect": [0, 430, 200, 40], "click": [100, 450]}
+      }
+    },
+    "mp_edit_char": {
+      "title": "Edit Character",
+      "table": "jkGUIBuildMulti.c jkGuiBuildMulti_buttons",
+      "elements": {
+        "cancel": {"rect": [20, 430, 170, 40], "click": [105, 450]},
+        "force_powers": {"rect": [290, 430, 170, 40], "click": [375, 450]},
+        "save": {"rect": [470, 430, 170, 40], "click": [555, 450], "verified": "final-mp-jk1mp-first: 08_load_character"}
+      }
+    },
+    "mp_load_char": {
+      "title": "Load Character",
+      "table": "jkGUIBuildMulti.c jkGuiBuildMulti_menuLoadCharacter_buttons",
+      "elements": {
+        "list": {"rect": [280, 100, 320, 251], "click": [300, 110], "rows": {"x": 300, "firstY": 110, "height": 15, "visible": 16}, "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: first row; Wren's run.sh (300, 110)"},
+        "cancel": {"rect": [0, 430, 128, 40], "click": [64, 450]},
+        "new": {"rect": [128, 430, 128, 40], "click": [192, 450]},
+        "remove": {"rect": [256, 430, 128, 40], "click": [320, 450]},
+        "edit": {"rect": [384, 430, 128, 40], "click": [448, 450]},
+        "ok": {"rect": [512, 430, 128, 40], "click": [576, 450], "verified": "final-mp-jk1mp-first, final-mp-jk1mp-return: 09_spawn; Wren's run.sh (573, 449)"}
+      }
+    }
+  }
+}
