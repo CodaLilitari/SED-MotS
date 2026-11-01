@@ -66,6 +66,26 @@ public struct Mat4
         return new Mat4(m);
     }
 
+    /// <summary>
+    /// Orthographic projection for Vulkan, centred on the view axis: <paramref name="width"/> by
+    /// <paramref name="height"/> world units map to NDC [-1, 1] with Y flipped, and view-space
+    /// z = -near maps to depth 0, z = -far to depth 1. Clip W stays 1 (parallel rays).
+    /// </summary>
+    public static Mat4 Orthographic(double width, double height, double near, double far)
+    {
+        if (!(width > 0) || !(height > 0) || !double.IsFinite(width) || !double.IsFinite(height))
+            throw new ArgumentOutOfRangeException(nameof(width), "Orthographic extents must be finite and positive.");
+        if (!double.IsFinite(near) || !double.IsFinite(far) || near == far)
+            throw new ArgumentOutOfRangeException(nameof(near), "Orthographic clipping planes must be finite and distinct.");
+        var m = new float[16];
+        m[0] = (float)(2.0 / width);
+        m[5] = (float)(-2.0 / height);             // Y flip for Vulkan
+        m[10] = (float)(1.0 / (near - far));
+        m[14] = (float)(near / (near - far));
+        m[15] = 1f;
+        return new Mat4(m);
+    }
+
     public static Mat4 Translate(Vec3 t)
     {
         var m = Identity;
