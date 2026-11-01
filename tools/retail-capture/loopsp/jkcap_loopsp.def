@@ -1,0 +1,7 @@
+; Export for the inert DirectPlay loopback provider (jkcap_loopsp.c). Wine's dplayx finds the
+; provider's entry point with GetProcAddress(module, "SPInit"); nothing else is exported.
+; Part of SED-MotS (Red's claude branch); finishes Wren's retail-capture recipe.
+; SPDX-License-Identifier: GPL-3.0-or-later
+LIBRARY jkcap_loopsp
+EXPORTS
+  SPInit
