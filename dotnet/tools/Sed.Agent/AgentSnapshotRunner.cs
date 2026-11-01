@@ -160,7 +160,7 @@ public static class AgentSnapshotRunner
         if (nonBackgroundPixels == 0) renderWarnings.Add("No geometry is visible from this camera; inspect camera position, target and clipping planes.");
         string[] contentLimitations = request.Mode == "lit" ? [
             "Static lighting preview: baked world mono/RGB, scalar 3DO base light, compatible ARCHLIGHTING, sector/surface extra light and per-sector CMP. No runtime dynamic lights, COG, animation or moving geometry.",
-            "Indexed MAT first cel/mip and model geoset zero only; truecolor MATs are unsupported and reported. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
+            "First MAT cel/mip and model geoset zero only; 16/32-bit MATs are decoded to true colour and lit by modulation without a CMP ramp. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
             "Model hierarchy is shown in its rest pose; absent models are omitted. Resource hashes identify all supplied archives and every used entry.",
         ] : [
             "Diagnostic polygon geometry only: untextured solid faces are included; reciprocal visible untextured or Geo=0 portal faces are omitted.",

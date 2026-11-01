@@ -224,6 +224,32 @@ foreach (var mode in new[] { RenderLightingMode.Rgb, RenderLightingMode.Mono })
         Pixel(Render("solid-mono-vertex-gradient"), 66, 85, 129, "Solid mono must resolve the CMP before raster interpolation");
 }
 
+// 16/32-bit MATs upload as RGBA8 and bypass the palette and CMP ramp in both profiles.
+IndexedTexture? TrueColor(string name) => new IndexedTexture(1, 1, [], Rgba: [100, 150, 200, 255]);
+IndexedTexture? MaskedTrueColor(string name) => new IndexedTexture(1, 1, [], HasColorKey: true, Rgba: [100, 150, 200, 0]);
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored), TrueColor);
+Pixel(Render("truecolor-mono-modulates"), 25, 38, 50, "True colour must modulate by scalar light rather than use the CMP ramp");
+renderer.UpdateGeometry(Scene(RenderLightingMode.Rgb, .25f, colored));
+Pixel(Render("truecolor-rgb"), 20, 75, 180, "True colour RGB must multiply each channel");
+renderer.UpdateGeometry(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0));
+Pixel(Render("truecolor-fullbright"), 100, 150, 200, "True colour fullbright keeps the source texel");
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0), MaskedTrueColor);
+Pixel(Render("truecolor-masked", clearBlack: true), 0, 0, 0, "A masked transparent true-colour texel must be discarded");
+// Translucent draws drop transparent texels without the MAT mask bit; opaque unmasked draws keep them,
+// as an unmasked indexed texture keeps index zero.
+IndexedTexture? ClearTrueColor(string name) => new IndexedTexture(1, 1, [], Rgba: [100, 150, 200, 0]);
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0, translucent: true), TrueColor);
+Pixel(Render("truecolor-translucent", clearBlack: true), 65, 97, 129, "Translucent true colour blends at the accelerated 165/255 opacity");
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0, translucent: true), ClearTrueColor);
+Pixel(Render("truecolor-translucent-clear", clearBlack: true), 0, 0, 0, "A translucent draw must discard a transparent true-colour texel");
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0), ClearTrueColor);
+Pixel(Render("truecolor-unmasked-opaque", clearBlack: true), 100, 150, 200, "An opaque unmasked draw keeps a transparent true-colour texel");
+// The level palette never tints true colour: a new SetColormap leaves the texel unchanged.
+renderer.SetScene(Scene(RenderLightingMode.Mono, .25f, colored, lightMode: 0), TrueColor);
+renderer.SetColormap(mapB.PaletteRgb, mapB.LightTable);
+Pixel(Render("truecolor-ignores-level-palette"), 100, 150, 200, "True colour must not resolve through the level palette");
+renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
+
 var report = new { schemaVersion = 1, device = device.DeviceName, assertions, observations, diagnostics = renderer.Diagnostics };
 using (var file = new FileStream(Path.Combine(output, "receipt.json"), FileMode.CreateNew))
     JsonSerializer.Serialize(file, report, new JsonSerializerOptions { WriteIndented = true });

@@ -415,7 +415,7 @@ public partial class MainWindow : Window
                 textures = material =>
                 {
                     var t = library.GetIndexed(material);
-                    return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey) : null;
+                    return t is { } r ? new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey, r.Rgba) : null;
                 };
                 colormaps = name => library.GetColormap(name) is { } cmp
                     ? new ColormapData(cmp.PaletteRgb, cmp.LightTable) : null;

@@ -5,9 +5,12 @@ namespace Sed.Formats.Material;
 /// <summary>RGBA8 pixels for a resolved material.</summary>
 public readonly record struct ResolvedTexture(int Width, int Height, byte[] Rgba);
 
-/// <summary>8-bit palette-indexed pixels for a resolved material.</summary>
+/// <summary>
+/// 8-bit palette-indexed pixels for a resolved material. A 16/32-bit MAT instead
+/// carries decoded RGBA8 in <paramref name="Rgba"/>; <paramref name="Indices"/> is then empty.
+/// </summary>
 public readonly record struct IndexedMaterial(int Width, int Height, byte[] Indices, bool IsSolid = false,
-    bool HasColorKey = false);
+    bool HasColorKey = false, byte[]? Rgba = null);
 
 /// <summary>
 /// Resolves JKL material names (e.g. "wall01.mat") to RGBA textures by locating
@@ -87,7 +90,7 @@ public sealed class MaterialLibrary
         return result;
     }
 
-    /// <summary>Resolves a material to 8-bit palette indices (for GPU palette+lighting).</summary>
+    /// <summary>Resolves a material to 8-bit palette indices (for GPU palette+lighting), or true-colour RGBA8.</summary>
     public IndexedMaterial? GetIndexed(string material)
     {
         if (string.IsNullOrWhiteSpace(material)) return null;
@@ -103,7 +106,8 @@ public sealed class MaterialLibrary
                 var mat = MatFile.Read(gob.ReadBytes(entry));
                 result = mat.IsColor
                     ? new IndexedMaterial(1, 1, new[] { (byte)(mat.ColorIndex & 0xFF) }, IsSolid: true)
-                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey);
+                    : new IndexedMaterial(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey,
+                        Rgba: mat.IsTrueColor ? mat.Rgba : null);
                 break;
             }
         }

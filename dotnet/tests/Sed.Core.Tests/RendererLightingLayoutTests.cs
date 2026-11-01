@@ -65,6 +65,22 @@ public sealed class RendererLightingLayoutTests
     }
 
     [Fact]
+    public void TrueColourBitIsSeparateFromMaskAndNeverMarksSolidMaterials()
+    {
+        Assert.Equal(16u, RenderLightingState.TrueColorBit);
+        Assert.Equal(0x310u, RenderLightingState.Pack(RenderLightingMode.Mono, false, 3, trueColor: true));
+        Assert.Equal(0x31Du, RenderLightingState.Pack(RenderLightingMode.Rgb, false, 3, usePaletteLightRamp: false, hasColorKey: true, trueColor: true));
+        Assert.Equal(0x303u, RenderLightingState.Pack(RenderLightingMode.Rgb, true, 3, trueColor: true));
+        Assert.Equal(0x007u, RenderLightingState.Pack(RenderLightingMode.Rgb, true, 0, usePaletteLightRamp: false, hasColorKey: true, trueColor: true));
+        Assert.Equal(0x300u, RenderLightingState.Pack(RenderLightingMode.Mono, false, 3));
+        // mesh.frag tests these as 1u, 2u, 4u, 8u and 16u below the light-mode byte.
+        uint[] flags = [RenderLightingState.RgbBit, RenderLightingState.SolidBit, RenderLightingState.ScalarModulationBit,
+            RenderLightingState.ColorKeyBit, RenderLightingState.TrueColorBit];
+        Assert.Equal(0x1Fu, flags.Aggregate(0u, (all, bit) => all | bit));
+        Assert.All(flags, bit => Assert.True(System.Numerics.BitOperations.IsPow2(bit) && bit < 1u << RenderLightingState.LightModeShift));
+    }
+
+    [Fact]
     public void ScalarProfileBitDoesNotChangeMaterialOrChannelBits()
     {
         Assert.Equal(4u, RenderLightingState.ScalarModulationBit);

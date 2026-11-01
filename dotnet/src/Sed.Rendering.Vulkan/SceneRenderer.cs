@@ -12,8 +12,9 @@ namespace Sed.Rendering.Vulkan;
 /// Renders a textured, depth-tested <see cref="RenderScene"/> to an offscreen
 /// image. Textures are 8-bit palette indices; the fragment shader shades each
 /// index through the selected CMP light ramp or multiplies its palette color by
-/// independent RGB vertex light. Translucent submeshes are
-/// alpha-blended in a second pass; markers/selection draw flat (mode 1).
+/// independent RGB vertex light. 16/32-bit MATs upload as RGBA8 and are lit by
+/// modulation only. Translucent submeshes are alpha-blended in a second pass;
+/// markers/selection draw flat (mode 1).
 /// </summary>
 public sealed unsafe class SceneRenderer : IDisposable
 {
@@ -85,8 +86,10 @@ public sealed unsafe class SceneRenderer : IDisposable
     {
         public bool Deferred => Translucent || !DepthWrite;
     }
-    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
-    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false);
+    private readonly record struct MatTex(DescriptorSet Set, ImageView Image, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false,
+        bool TrueColor = false);
+    private readonly record struct MaterialImage(ImageView View, float InvW, float InvH, bool IsSolid = false, bool HasColorKey = false,
+        bool TrueColor = false);
     private readonly record struct GpuColormap(GpuTexture Palette, GpuTexture Ramp);
     private struct GpuTexture { public Image Image; public DeviceMemory Memory; public ImageView View; public DescriptorSet Set; }
 
@@ -188,7 +191,15 @@ public sealed unsafe class SceneRenderer : IDisposable
             if (!_imageCache.TryGetValue(sub.Material, out var image))
             {
                 var tex = sub.Material.Length == 0 ? null : lookup(sub.Material);
-                if (tex is { } t && t.Width > 0 && t.Height > 0 && t.Indices is not null &&
+                if (tex is { } tc && tc.Rgba is { } rgba && !tc.IsSolid && tc.Width > 0 && tc.Height > 0 &&
+                    rgba.LongLength == (long)tc.Width * tc.Height * 4)
+                {
+                    // 16/32-bit MATs: RGBA8 true colour, bypassing palette and ramp.
+                    var gpu = CreateImage2D(rgba, (uint)tc.Width, (uint)tc.Height, Format.R8G8B8A8Unorm, 4);
+                    _sceneTextures.Add(gpu);
+                    image = new MaterialImage(gpu.View, 1f / tc.Width, 1f / tc.Height, false, tc.HasColorKey, TrueColor: true);
+                }
+                else if (tex is { } t && t.Rgba is null && t.Width > 0 && t.Height > 0 && t.Indices is not null &&
                     t.Indices.LongLength == (long)t.Width * t.Height)
                 {
                     var gpu = CreateImage2D(t.Indices, (uint)t.Width, (uint)t.Height, Format.R8Unorm, 1);
@@ -199,13 +210,13 @@ public sealed unsafe class SceneRenderer : IDisposable
                 {
                     image = new MaterialImage(_white.View, 1f, 1f);
                     if (sub.Material.Length != 0)
-                        _diagnostics.Add($"Material '{sub.Material}' is missing or has unsupported/invalid indexed pixels; using a placeholder.");
+                        _diagnostics.Add($"Material '{sub.Material}' is missing or has unsupported/invalid pixels; using a placeholder.");
                 }
                 _imageCache[sub.Material] = image;
             }
             var map = ResolveColormap(sub.Colormap);
             var set = AllocateMaterialDescriptor(image.View, map);
-            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey);
+            _materialCache[key] = new MatTex(set, image.View, image.InvW, image.InvH, image.IsSolid, image.HasColorKey, image.TrueColor);
         }
 
         RebuildDraws(scene, flat);
@@ -257,7 +268,7 @@ public sealed unsafe class SceneRenderer : IDisposable
             var mt = _materialCache.TryGetValue(MaterialKey(sub), out var c)
                 ? c : new MatTex(_white.Set, _white.View, 1f, 1f);
             uint state = RenderLightingState.Pack(sub.UseMonochromeLighting ? RenderLightingMode.Mono : _lightingMode,
-                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey);
+                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor);
             if (sub.IndexOffset < 0 || sub.IndexCount < 0 || sub.IndexCount % 3 != 0 || sub.IndexOffset > scene.Mesh.Indices.Count - sub.IndexCount)
                 throw new ArgumentException("Submesh indices must describe complete in-range triangles.");
             bool depthWrite = !(sub.Adjoined && (sub.Translucent || mt.HasColorKey && !mt.IsSolid));

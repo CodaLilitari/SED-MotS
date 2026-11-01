@@ -3,8 +3,15 @@ namespace Sed.Rendering;
 /// <summary>
 /// An 8-bit palette-indexed texture (one byte per pixel). The renderer applies
 /// the selected CMP palette with scalar or RGB lighting, or a monochrome ramp.
+/// A 16/32-bit MAT instead supplies <paramref name="Rgba"/> (Width*Height*4 true-colour
+/// bytes); <paramref name="Indices"/> is then ignored, and the texture is lit by
+/// modulation like the accelerated engine, without palette or ramp.
 /// </summary>
-public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false, bool HasColorKey = false);
+public readonly record struct IndexedTexture(int Width, int Height, byte[] Indices, bool IsSolid = false, bool HasColorKey = false,
+    byte[]? Rgba = null)
+{
+    public bool IsTrueColor => Rgba is not null;
+}
 
 /// <summary>Resolves a material name (e.g. "wall01.mat") to indexed pixels, or null.</summary>
 public delegate IndexedTexture? TextureLookup(string material);
@@ -21,14 +28,18 @@ public static class RenderLightingState
     public const uint SolidBit = 2;
     public const uint ScalarModulationBit = 4;
     public const uint ColorKeyBit = 8;
+    /// <summary>The material texture holds RGBA8 true colour rather than palette indices.</summary>
+    public const uint TrueColorBit = 16;
     public const int LightModeShift = 8;
 
-    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false)
+    public static uint Pack(RenderLightingMode lighting, bool solid, int lightMode, bool usePaletteLightRamp = true, bool hasColorKey = false,
+        bool trueColor = false)
     {
         if (!Enum.IsDefined(lighting)) throw new ArgumentOutOfRangeException(nameof(lighting));
         if ((uint)lightMode > 255) throw new ArgumentOutOfRangeException(nameof(lightMode));
         return (uint)lighting | (solid ? SolidBit : 0) |
-            (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) | ((uint)lightMode << LightModeShift);
+            (usePaletteLightRamp ? 0 : ScalarModulationBit) | (hasColorKey && !solid ? ColorKeyBit : 0) |
+            (trueColor && !solid ? TrueColorBit : 0) | ((uint)lightMode << LightModeShift);
     }
 }
 

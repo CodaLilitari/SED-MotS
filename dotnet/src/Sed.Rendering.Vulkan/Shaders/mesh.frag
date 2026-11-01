@@ -1,6 +1,6 @@
 #version 450
 
-layout(set = 0, binding = 0) uniform sampler2D matTex;    // R8 palette index
+layout(set = 0, binding = 0) uniform sampler2D matTex;    // R8 palette index, or RGBA8 true colour (lightingMode bit 4)
 layout(set = 0, binding = 1) uniform sampler2D palette;   // 256x1 RGBA
 layout(set = 0, binding = 2) uniform sampler2D lightRamp; // 256x64 R8
 
@@ -69,6 +69,23 @@ void main()
 
     bool rgbMode = (pc.lightingMode & 1u) != 0u;
     uint lightMode = (pc.lightingMode >> 8u) & 255u;
+    if ((pc.lightingMode & 16u) != 0u) {
+        // 16/32-bit MAT: RGBA8 true colour. The accelerated engine modulates it by
+        // vertex light; no palette or CMP ramp applies. Masked or translucent draws
+        // drop transparent texels, as the indexed path drops index zero.
+        vec4 texel = texture(matTex, uv);
+        if ((pc.alpha < 0.999 || (pc.lightingMode & 8u) != 0u) && texel.a < 0.5) discard;
+        vec3 trueRgb = texel.rgb;
+        if (lightMode == 0u || pc.skyMode != 0u || pc.brightness >= 1.0) {
+            // Fullbright and sky keep the source texel.
+        } else if (rgbMode && lightMode == 3u) {
+            trueRgb *= mix(rgbLight, vec3(1.0), pc.brightness);
+        } else {
+            trueRgb *= mix(light, 1.0, pc.brightness);
+        }
+        outColor = vec4(trueRgb, pc.alpha);
+        return;
+    }
     int idx = int(texture(matTex, uv).r * 255.0 + 0.5);
     if ((pc.alpha < 0.999 || (pc.lightingMode & 8u) != 0u) && idx == 0) discard;
 

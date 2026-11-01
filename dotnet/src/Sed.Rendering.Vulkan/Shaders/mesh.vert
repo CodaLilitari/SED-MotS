@@ -22,7 +22,7 @@ layout(push_constant) uniform Push {
     float brightness;  // 144
     uint skyMode;      // 148
     uint clampMode;    // 152  bit0 = clamp U, bit1 = clamp V
-    uint lightingMode; // 156  bit0 RGB, bit1 solid MAT, bits8..15 face light mode
+    uint lightingMode; // 156  bit0 RGB, bit1 solid MAT, bit2 scalar modulation, bit3 MAT mask, bit4 true colour, bits8..15 face light mode
 } pc;
 
 layout(location = 0) out vec3 vColor;
