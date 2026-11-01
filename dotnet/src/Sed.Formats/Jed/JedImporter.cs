@@ -116,6 +116,10 @@ public static class JedImporter
                 var copy = new Template { Name = template.Name, Parent = template.Parent, Order = template.Order };
                 foreach (var value in template.Values) copy.Values.Add(value.Key, value.Value);
                 copy.SourceParameters.AddRange(template.SourceParameters);
+                // A library template's legacy spelling enters this document verbatim, as JKL import keeps it.
+                foreach (string note in JklReader.LegacyParameterNotes(
+                    template.SourceParameters.Select(parameter => parameter.Key + "=" + parameter.Value).ToArray()))
+                    warnings.Add($"Template '{template.Name}': {note}");
                 level.Templates[copy.Name] = copy;
             }
         if (!sections.TryGetValue("HEADER", out var headerLines)) throw new FormatException("Native project has no HEADER section.");
@@ -123,7 +127,7 @@ public static class JedImporter
         if (level.Header.Version != 1) throw new NotSupportedException("Native import currently supports JK/MotS version-1 worlds only.");
         coverage.Add("HEADER");
         if (sections.TryGetValue("GEO", out var geometry)) { ReadGeometry(new Rows(geometry), level, warnings); coverage.Add("GEO"); }
-        if (sections.TryGetValue("THINGS", out var things)) { ReadThings(new Rows(things), level); coverage.Add("THINGS"); }
+        if (sections.TryGetValue("THINGS", out var things)) { ReadThings(new Rows(things), level, warnings); coverage.Add("THINGS"); }
         if (sections.TryGetValue("LIGHTS", out var lights)) { ReadLights(new Rows(lights), level); coverage.Add("LIGHTS"); }
         if (sections.TryGetValue("COGS", out var cogs)) { ReadCogs(new Rows(cogs), level); coverage.Add("COGS"); }
         if (sections.TryGetValue("LAYERS", out var layers))
@@ -258,7 +262,7 @@ public static class JedImporter
         if (inactiveRgb) warnings.Add("JK uses native monochrome surface values. Inactive RGB corner values differ and remain only in the original native source; use MotS mode if those colors are intended.");
     }
 
-    private static void ReadThings(Rows rows, Level level)
+    private static void ReadThings(Rows rows, Level level, List<string> warnings)
     {
         int count = rows.Count("THS");
         for (int i = 0; i < count; i++)
@@ -272,7 +276,11 @@ public static class JedImporter
                 if ((uint)sector >= (uint)level.Sectors.Count) throw new FormatException("Native thing references a missing sector.");
                 thing.Sector = level.Sectors[sector];
             }
-            foreach (var parameter in JklReader.ParameterTokens(rows.Next(allowEmpty: true)))
+            var parameters = JklReader.ParameterTokens(rows.Next(allowEmpty: true));
+            // The same legacy spellings JKL import accepts are kept here, and reported the same way.
+            foreach (string note in JklReader.LegacyParameterNotes(parameters))
+                warnings.Add($"Native thing {i}: {note}");
+            foreach (var parameter in parameters)
             {
                 int equals = parameter.IndexOf('=');
                 if (equals <= 0) throw new FormatException("Invalid native thing parameter.");
