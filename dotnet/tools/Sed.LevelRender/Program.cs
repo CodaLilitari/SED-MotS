@@ -30,7 +30,10 @@ Console.WriteLine($"Level: {entry.Name}");
 Level level = JklParser.Parse(levelGob.ReadText(entry));
 Console.WriteLine($"  {level.Sectors.Count} sectors, colormaps=[{string.Join(", ", level.ColorMaps)}]");
 
-var palette = MaterialLibrary.LoadPalette(level.ColorMaps, resGob);
+// World Colormap 0, else dflt.cmp: the same master-palette rule as the editor and lit snapshots.
+var (masterPalette, palette) = MasterColormap.ResolveFromArchives(level.ColorMaps, [resGob]);
+foreach (var problem in masterPalette.Problems) Console.Error.WriteLine("  " + problem);
+if (palette is null) return 2;
 var library = new MaterialLibrary(palette, resGob);
 
 var scene = SceneBuilder.BuildScene(level);
@@ -39,7 +42,7 @@ IndexedTexture? Lookup(string material)
 {
     total++;
     var t = library.GetIndexed(material);
-    if (t is { } r) { withTex++; return new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey); }
+    if (t is { } r) { withTex++; return new IndexedTexture(r.Width, r.Height, r.Indices, r.IsSolid, r.HasColorKey, r.Rgba); }
     return null;
 }
 
