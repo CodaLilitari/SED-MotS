@@ -19,7 +19,13 @@ internal sealed class SnapshotResources : IDisposable
     private readonly Dictionary<string, IndexedTexture?> _textures = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ColormapData?> _colormaps = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> _diagnostics = new();
+    private readonly List<string> _notices = new();
     public IReadOnlyList<string> Diagnostics => Capture.Diagnostics.Concat(_diagnostics).ToArray();
+    /// <summary>
+    /// Asset notes that do not make a render uncertifiable, such as a MAT shown through the
+    /// retail mip fallback (complete mip 0, truncated later mip). Strict mode ignores these.
+    /// </summary>
+    public IReadOnlyList<string> Notices => _notices.ToArray();
     public IReadOnlyList<ResourceEntryReceipt> UsedResources => Capture.UsedResources;
     public IReadOnlyList<ResourceArchiveReceipt> Archives => Capture.Archives;
     public SnapshotResources(IReadOnlyList<SnapshotArchive> requests) => Capture = new(requests);
@@ -32,6 +38,8 @@ internal sealed class SnapshotResources : IDisposable
         {
             if (Capture.Read(name, "mat") is not { } bytes) return _textures[name] = null;
             var mat = MatFile.Read(bytes.Span);
+            // Cached per name, so the note is recorded once however often the MAT is looked up.
+            if (mat.MipFallbackNote is { } note) _notices.Add($"MAT '{name}': {note}");
             return _textures[name] = mat.IsColor ? new IndexedTexture(1, 1, [(byte)mat.ColorIndex], IsSolid: true)
                 : new(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey, Rgba: mat.IsTrueColor ? mat.Rgba : null);
         }

@@ -298,9 +298,12 @@ public sealed unsafe class SceneRenderer : IDisposable
                 ? c : new MatTex(_white.Set, _white.View, 1f, 1f);
             // Adjoined surfaces come in coplanar, opposite-facing pairs; drawing both
             // double-sided z-fights (Atlantis water stripes). Like the engine, draw
-            // each only from in front of its plane. Other surfaces stay double-sided.
+            // each only from in front of its plane. Other surfaces stay double-sided,
+            // unless the scene asks for the back-face cutaway, which extends the rule
+            // to every world surface. Models never get it: their normals are per triangle.
+            bool singleSided = RenderLightingState.SingleSided(scene, sub, flat);
             uint state = RenderLightingState.Pack(sub.UseMonochromeLighting ? RenderLightingMode.Mono : _lightingMode,
-                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor, singleSided: sub.Adjoined && !flat);
+                mt.IsSolid, sub.LightMode, _usePaletteLightRamp, mt.HasColorKey, mt.TrueColor, singleSided);
             if (sub.IndexOffset < 0 || sub.IndexCount < 0 || sub.IndexCount % 3 != 0 || sub.IndexOffset > scene.Mesh.Indices.Count - sub.IndexCount)
                 throw new ArgumentException("Submesh indices must describe complete in-range triangles.");
             bool depthWrite = !(sub.Adjoined && (sub.Translucent || mt.HasColorKey && !mt.IsSolid));
@@ -367,12 +370,27 @@ public sealed unsafe class SceneRenderer : IDisposable
 
     public byte[] Render(Mat4 viewProjection, Vec3 camPos, uint width, uint height,
         float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
-        Render(viewProjection, camPos, Vec3.Zero, width, height, clearR, clearG, clearB);
+        Render(viewProjection, RenderEye.Perspective(camPos), Vec3.Zero, width, height, clearR, clearG, clearB);
 
     /// <summary>Renders one frame; <paramref name="camAngles"/> = (yaw, pitch, roll) degrees for sky.</summary>
     public byte[] Render(Mat4 viewProjection, Vec3 camPos, Vec3 camAngles, uint width, uint height,
+        float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
+        Render(viewProjection, RenderEye.Perspective(camPos), camAngles, width, height, clearR, clearG, clearB);
+
+    /// <summary>
+    /// Renders one frame from an eye that may be orthographic (<see cref="Camera.Eye"/>): a
+    /// parallel eye measures facing and the ceiling-sky ray along the view direction.
+    /// </summary>
+    public byte[] Render(Mat4 viewProjection, RenderEye eye, uint width, uint height,
+        float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f) =>
+        Render(viewProjection, eye, Vec3.Zero, width, height, clearR, clearG, clearB);
+
+    /// <summary>Renders one frame from <paramref name="eye"/>; <paramref name="camAngles"/> = (yaw, pitch, roll) degrees for sky.</summary>
+    public byte[] Render(Mat4 viewProjection, RenderEye eye, Vec3 camAngles, uint width, uint height,
         float clearR = 0.05f, float clearG = 0.05f, float clearB = 0.08f)
     {
+        if (eye.Orthographic && !(eye.TowardCamera.LengthSquared > 0.25 && double.IsFinite(eye.TowardCamera.LengthSquared)))
+            throw new ArgumentException("An orthographic eye needs a unit direction toward the camera.");
         if (viewProjection.M is null || viewProjection.M.Length != 16 || viewProjection.M.Any(v => !float.IsFinite(v)))
             throw new ArgumentException("Expected a finite 4x4 view-projection matrix.");
         // Validate/materialize ordering before recording a command buffer. A bad
@@ -397,7 +415,7 @@ public sealed unsafe class SceneRenderer : IDisposable
         var scissor = new Rect2D(new Offset2D(0, 0), new Extent2D(_width, _height));
         _vk.CmdSetViewport(cmd, 0, 1, in viewport);
         _vk.CmdSetScissor(cmd, 0, 1, in scissor);
-        PushHead(cmd, viewProjection, camPos, camAngles, _width, _height);
+        PushHead(cmd, viewProjection, eye, camAngles, _width, _height);
 
         // Opaque pass.
         if (_draws.Count > 0)
@@ -492,11 +510,15 @@ public sealed unsafe class SceneRenderer : IDisposable
     // Push layout: mvp[0], camPos[64], sky[80], camAngles[96], horizScreen[112] (head 128 B);
     // invTexSize[128], mode[136], alpha[140], brightness[144], skyMode[148],
     // clampMode[152], lightingMode[156] (tail 32 B).
-    private void PushHead(CommandBuffer cmd, Mat4 mvp, Vec3 camPos, Vec3 camAngles, uint w, uint h)
+    // camPos.w = 0: xyz is the perspective eye position. camPos.w = 1: an orthographic
+    // view, xyz is the unit direction toward the camera (every view ray is parallel).
+    private void PushHead(CommandBuffer cmd, Mat4 mvp, RenderEye eye, Vec3 camAngles, uint w, uint h)
     {
         var buf = stackalloc byte[128];
         fixed (float* m = mvp.M) System.Buffer.MemoryCopy(m, buf, 64, 64);
-        *(float*)(buf + 64) = (float)camPos.X; *(float*)(buf + 68) = (float)camPos.Y; *(float*)(buf + 72) = (float)camPos.Z; *(float*)(buf + 76) = 0f;
+        var camPos = eye.Orthographic ? eye.TowardCamera : eye.Position;
+        *(float*)(buf + 64) = (float)camPos.X; *(float*)(buf + 68) = (float)camPos.Y; *(float*)(buf + 72) = (float)camPos.Z;
+        *(float*)(buf + 76) = eye.Orthographic ? 1f : 0f;
         *(float*)(buf + 80) = _ceilZ; *(float*)(buf + 84) = _ceilOffX; *(float*)(buf + 88) = _ceilOffY; *(float*)(buf + 92) = 0f;
         *(float*)(buf + 96) = (float)camAngles.X; *(float*)(buf + 100) = (float)camAngles.Y; *(float*)(buf + 104) = (float)camAngles.Z; *(float*)(buf + 108) = 0f;
         *(float*)(buf + 112) = _horizOffX; *(float*)(buf + 116) = _horizOffY; *(float*)(buf + 120) = w; *(float*)(buf + 124) = h;

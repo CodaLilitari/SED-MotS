@@ -12,7 +12,7 @@ layout(set = 0, binding = 2) uniform sampler2D lightRamp;
 
 layout(push_constant) uniform Push {
     mat4 mvp;          // 0
-    vec4 camPos;       // 64
+    vec4 camPos;       // 64  w = 0: perspective eye position; w = 1: orthographic, xyz = unit direction toward the camera
     vec4 sky;          // 80  ceiling: (ceilZ, offX, offY, _)
     vec4 camAngles;    // 96  (yawDeg, pitchDeg, rollDeg, _)
     vec4 horizScreen;  // 112 (horizOffX, horizOffY, width, height)
@@ -60,5 +60,7 @@ void main()
     vWorld = inPos;
     vMono = inMono;
     vSolidColor = (pc.lightingMode & 2u) != 0u ? solidColor() : vec3(0.0);
-    vFacing = dot(inNormal, pc.camPos.xyz - inPos);
+    // w = 1 means an orthographic view whose xyz is the unit direction toward the camera:
+    // every ray is parallel, so facing does not depend on the vertex position.
+    vFacing = pc.camPos.w > 0.5 ? dot(inNormal, pc.camPos.xyz) : dot(inNormal, pc.camPos.xyz - inPos);
 }

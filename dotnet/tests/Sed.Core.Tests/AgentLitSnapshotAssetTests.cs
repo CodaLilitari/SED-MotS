@@ -10,8 +10,10 @@ namespace Sed.Core.Tests;
 /// <summary>
 /// The lit snapshot's MAT/CMP adapter and the checks the runner makes before any GPU work.
 /// A damaged or unsupported MAT or CMP is a diagnostic that strict mode refuses, never an
-/// uncaught exception, and the master palette comes from World Colormap 0. These tests
-/// create no Vulkan device; Sed.LightingProbe and tools/Test-AgentLitSnapshot.ps1 check pixels.
+/// uncaught exception, and the master palette comes from World Colormap 0. A MAT shown through
+/// the retail mip fallback is a notice, not a diagnostic. Only the strict mip-fallback test may
+/// reach the Vulkan stage (and succeeds or reports Vulkan as unavailable); Sed.LightingProbe and
+/// tools/Test-AgentLitSnapshot.ps1 check pixels.
 /// </summary>
 public sealed class AgentLitSnapshotAssetTests : IDisposable
 {
@@ -82,6 +84,51 @@ public sealed class AgentLitSnapshotAssetTests : IDisposable
         Assert.False(File.Exists(output));
     }
 
+    private const string FallbackNote = "Retail mip fallback: mip level 1 of 2 levels (1x1) needs 2 bytes but 0 remain; showing complete mip level 0, as retail JK does on faces nearer than the level's MipMap Distances; retail faces far enough to use mip level 1 or later show data the file never filled.";
+
+    [Fact]
+    public void MipFallbackMatIsANoticeRecordedOnceNotADiagnostic()
+    {
+        // A 2x2 RGB565 texture declaring two mips whose 1x1 mip is absent (DBZ zgrass pattern).
+        string archive = Archive("fallback.gob", ("mat/x.mat", Mat(16, Rgb565, 2, 2, U16(0xF800, 0x001F, 0x07E0, 0xFFFF), mipCount: 2)));
+        using var resources = new SnapshotResources([new SnapshotArchive(archive, Sha(archive))]);
+        var first = resources.Texture("x.mat");
+        var second = resources.Texture("X.MAT");
+        Assert.NotNull(first);
+        Assert.Equal(first, second);
+        Assert.True(first!.Value.IsTrueColor);
+        Assert.Equal(new byte[] { 255, 0, 0, 255, 0, 0, 255, 255, 0, 255, 0, 255, 255, 255, 255, 255 }, first.Value.Rgba);
+        Assert.Empty(resources.Diagnostics);
+        Assert.Equal(new[] { $"MAT 'x.mat': {FallbackNote}" }, resources.Notices);
+    }
+
+    [Fact]
+    public void StrictLitSnapshotDoesNotRefuseAMipFallbackMat()
+    {
+        string archive = Archive("strict-fallback.gob",
+            ("mat/wall.mat", Mat(16, Rgb565, 2, 2, U16(0xF800, 0xF800, 0xF800, 0xF800), mipCount: 2)),
+            ("misc/cmp/master.cmp", Cmp(10)), ("misc/cmp/sector.cmp", Cmp(20)));
+        string level = Path.Combine(_directory, "fallback-room.jkl");
+        File.WriteAllText(level, Room("wall.mat", "master.cmp"), new UTF8Encoding(false));
+        string output = Path.Combine(_directory, "fallback.png");
+        object? receipt = null;
+        try { receipt = AgentSnapshotRunner.Run(level, Request(level, archive), output); }
+        catch (IOException error) when (error.Message.StartsWith("Offscreen Vulkan rendering is unavailable or failed", StringComparison.Ordinal))
+        {
+            // No usable Vulkan device here: the run got past strict asset validation, which is the point.
+            Assert.False(File.Exists(output));
+            return;
+        }
+        var json = JsonSerializer.SerializeToElement(receipt, AgentWorkspace.JsonOptions);
+        Assert.True(File.Exists(output));
+        Assert.Equal(new[] { $"MAT 'wall.mat': {FallbackNote}" }, json.GetProperty("assetNotices").EnumerateArray().Select(e => e.GetString()));
+        Assert.Contains($"MAT 'wall.mat': {FallbackNote}", json.GetProperty("warnings").EnumerateArray().Select(e => e.GetString()));
+        Assert.DoesNotContain(json.GetProperty("warnings").EnumerateArray(), w => w.GetString()!.Contains("placeholder", StringComparison.Ordinal));
+        Assert.False(json.GetProperty("fullbright").GetBoolean());
+        Assert.False(json.GetProperty("cullBackFaces").GetBoolean());
+        Assert.Equal(JsonValueKind.Null, json.GetProperty("overview").ValueKind);
+    }
+
     private static string Request(string level, string archive) => JsonSerializer.Serialize(new Dictionary<string, object>
     {
         ["schemaVersion"] = 1, ["inputSha256"] = Sha(level),
@@ -136,8 +183,11 @@ public sealed class AgentLitSnapshotAssetTests : IDisposable
 
         """;
 
-    /// <summary>A one-cel, one-mip textured MAT; channels are r/g/b bits then r/g/b shifts.</summary>
-    private static byte[] Mat(int bpp, int[] channels, int width, int height, byte[] pixels)
+    /// <summary>
+    /// A one-cel textured MAT; channels are r/g/b bits then r/g/b shifts. It declares
+    /// <paramref name="mipCount"/> mips but stores only <paramref name="pixels"/>.
+    /// </summary>
+    private static byte[] Mat(int bpp, int[] channels, int width, int height, byte[] pixels, int mipCount = 1)
     {
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
@@ -146,7 +196,7 @@ public sealed class AgentLitSnapshotAssetTests : IDisposable
         for (int i = 0; i < 6; i++) writer.Write(i < channels.Length ? channels[i] : 0);
         writer.Write(new byte[24]); // bit differences and alpha fields complete the 76-byte header
         writer.Write(new byte[40]); // one cel header selecting texture zero
-        foreach (int value in new[] { width, height, 0, 0, 0, 1 }) writer.Write(value);
+        foreach (int value in new[] { width, height, 0, 0, 0, mipCount }) writer.Write(value);
         writer.Write(pixels);
         return stream.ToArray();
     }

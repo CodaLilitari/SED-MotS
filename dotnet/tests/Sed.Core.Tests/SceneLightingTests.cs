@@ -465,6 +465,59 @@ public sealed class SceneLightingTests
     }
 
     [Fact]
+    public void LevelSurfacesAreMarkedAsWorldAndModelFacesAreNot()
+    {
+        // A floor and a placed model share one MAT; only the floor's batch is a world surface,
+        // so only it can take the cutaway (model normals are per triangle, not facings).
+        var (level, sector, _) = World(ProjectType.JediKnight);
+        Place(level, sector);
+        var assembler = new SceneAssembler();
+        assembler.AddLevel(level);
+        Assert.Empty(assembler.AddThings(level, _ => Model()));
+        var scene = assembler.Build();
+        var world = Assert.Single(scene.Submeshes, s => s.WorldSurface);
+        var model = Assert.Single(scene.Submeshes, s => !s.WorldSurface);
+        Assert.Equal(3, world.IndexCount);
+        Assert.Equal(3, model.IndexCount);
+        Assert.All(Surfaces(level).Submeshes, s => Assert.True(s.WorldSurface));
+        Assert.All(Things(level, Model()).Submeshes, s => Assert.False(s.WorldSurface));
+        Assert.False(scene.CullWorldBackFaces);
+    }
+
+    [Fact]
+    public void CutawayMakesOnlyWorldSubmeshesSingleSided()
+    {
+        var (level, sector, floor) = World(ProjectType.JediKnight);
+        var portal = sector.NewSurface();
+        portal.Material = "portal.mat";
+        foreach (var corner in floor.Corners) portal.Corners.Add(corner);
+        portal.Adjoin = floor;
+        Place(level, sector);
+        var assembler = new SceneAssembler();
+        assembler.AddLevel(level);
+        assembler.AddThings(level, _ => Model());
+        var scene = assembler.Build();
+        var plain = Assert.Single(scene.Submeshes, s => s.WorldSurface && !s.Adjoined);
+        var adjoined = Assert.Single(scene.Submeshes, s => s.Adjoined);
+        var model = Assert.Single(scene.Submeshes, s => !s.WorldSurface);
+        uint Bits(Submesh sub, bool flat = false) =>
+            RenderLightingState.Pack(RenderLightingMode.Mono, false, sub.LightMode, singleSided: RenderLightingState.SingleSided(scene, sub, flat))
+            & RenderLightingState.SingleSidedBit;
+
+        // Default: only the adjoined surface is single-sided, as before the cutaway existed.
+        Assert.Equal(0u, Bits(plain));
+        Assert.Equal(32u, Bits(adjoined));
+        Assert.Equal(0u, Bits(model));
+        scene.CullWorldBackFaces = true;
+        Assert.Equal(32u, Bits(plain));
+        Assert.Equal(32u, Bits(adjoined));
+        Assert.Equal(0u, Bits(model));
+        // Flat overlays never cull.
+        Assert.Equal(0u, Bits(plain, flat: true));
+        Assert.Equal(0u, Bits(adjoined, flat: true));
+    }
+
+    [Fact]
     public void TriangleBudgetRejectsOverrunAndHierarchyCycleRejectsBeforeRecursingForever()
     {
         var (level, _, _) = World();

@@ -113,11 +113,17 @@ public class TrueColorMatTests
     [Fact]
     public void TrueColourMipChainsAreSizedAndCheckedAtTheirOwnDepth()
     {
-        // 16-bit: two bytes per texel. As for 8-bit MATs, a complete base mip
-        // cannot hide a truncated smaller mip of the selected texture.
+        // 16-bit: two bytes per texel, so the 1x1 mip 1 needs two bytes. A complete base mip
+        // with a truncated smaller mip shows mip 0 with a note (retail mip fallback).
         var sixteen = Mat(Rgb565, 0, new Texture(2, 2, 0, [U16(0xF800, 0x07E0, 0x001F, 0xFFFF), U16(0)]));
-        Assert.Equal(new byte[] { 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255 }, MatFile.Read(sixteen).Rgba);
-        Assert.Throws<InvalidDataException>(() => MatFile.Read(sixteen[..^1]));
+        byte[] baseMip = [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255];
+        var complete = MatFile.Read(sixteen);
+        Assert.Equal(baseMip, complete.Rgba);
+        Assert.Null(complete.MipFallbackNote);
+        var shortMip = MatFile.Read(sixteen[..^1]);
+        Assert.Equal(baseMip, shortMip.Rgba);
+        Assert.Equal("Retail mip fallback: mip level 1 of 2 levels (1x1) needs 2 bytes but 1 remain; showing complete mip level 0, as retail JK does on faces nearer than the level's MipMap Distances; retail faces far enough to use mip level 1 or later show data the file never filled.",
+            shortMip.MipFallbackNote);
         // 32-bit: four bytes per texel; one texel short is truncated.
         var thirtyTwo = Mat(Argb8888, 0, new Texture(2, 1, 0, [U32(0xFF102030, 0x80405060)]));
         var mat = MatFile.Read(thirtyTwo);

@@ -19,6 +19,14 @@ namespace Sed.Formats.Material;
 ///   w*h*bpp/8 bytes per mip. Each texture cel references a texture ID at
 ///   cel-header offset 36; texture and cel counts need not match. Mixed
 ///   solid/textured cel tables are not decoded.
+///
+/// Truncation: textures before the selected one must be complete, since their
+/// full mip chains locate it. The selected texture's mip count must fit its
+/// dimensions and its mip 0 must be complete; when only a later mip is cut short,
+/// mip 0 is decoded and <see cref="MipFallbackNote"/> records the shortfall. Retail
+/// JK reads mips without checking the file length and draws mip 0 up close (on faces
+/// nearer than the level's MipMap Distances), so such MATs (DBZ Tournament's zgrass and
+/// walkway, inside distances larger than the arena) show mip 0 in game. A short mip 0 is refused.
 /// </summary>
 public sealed class MatFile
 {
@@ -40,6 +48,11 @@ public sealed class MatFile
     public byte[] Rgba { get; private init; } = Array.Empty<byte>();
     /// <summary>True when the texture stores 16 or 32-bit colour rather than palette indices.</summary>
     public bool IsTrueColor => Rgba.Length != 0;
+    /// <summary>
+    /// Set when the selected texture's mip 0 is complete but a later mip is truncated: the
+    /// retail mip fallback shows mip 0 and this text names the short mip. Null otherwise.
+    /// </summary>
+    public string? MipFallbackNote { get; private init; }
 
     public static MatFile Read(ReadOnlySpan<byte> d)
     {
@@ -101,32 +114,51 @@ public sealed class MatFile
             int mipCount = I32(d, td + 20);
             if (mipCount < 1 || mipCount > 15)
                 throw new InvalidDataException("MAT mip count is out of range.");
+            bool selected = texture == selectedTexture;
+            // The selected texture's declared chain must fit its dimensions even where the
+            // file ends early, so a fallback is never offered for an impossible chain.
+            if (selected && ((w >> (mipCount - 1)) < 1 || (h >> (mipCount - 1)) < 1))
+                throw new InvalidDataException("MAT mip count exceeds its dimensions.");
             int pixels = td + TextureDataHeader;
             td = pixels;
             int mipWidth = w, mipHeight = h;
+            string? fallbackNote = null;
             for (int mip = 0; mip < mipCount; mip++)
             {
                 if (mipWidth == 0 || mipHeight == 0)
                     throw new InvalidDataException("MAT mip count exceeds its dimensions.");
                 int mipBytes = mipWidth * mipHeight * bytesPerPixel;
                 if (mipBytes > d.Length - td)
-                    throw new InvalidDataException("Truncated MAT mip pixel data.");
+                {
+                    // Earlier textures locate the selected one, and mip 0 is what is drawn:
+                    // both must be complete. A later mip of the selected texture is never drawn
+                    // here; retail JK reads it unchecked and still shows mip 0 up close.
+                    if (!selected || mip == 0)
+                        throw new InvalidDataException("Truncated MAT mip pixel data.");
+                    // Retail picks a mip per face by depth against the JKL's MipMap Distances
+                    // (rdCache.c, rdNRaster.c), so it shows mip 0 only on nearby faces; a face far
+                    // enough for mip {mip} or later samples a buffer this file never filled.
+                    fallbackNote = $"Retail mip fallback: mip level {mip} of {mipCount} levels ({mipWidth}x{mipHeight}) needs {mipBytes} bytes "
+                        + $"but {System.Math.Max(0, d.Length - td)} remain; showing complete mip level 0, as retail JK does on faces nearer "
+                        + $"than the level's MipMap Distances; retail faces far enough to use mip level {mip} or later show data the file never filled.";
+                    break;
+                }
                 td += mipBytes;
                 mipWidth >>= 1;
                 mipHeight >>= 1;
             }
-            if (texture != selectedTexture) continue;
+            if (!selected) continue;
             if (bpp == 8)
                 return new MatFile
                 {
                     Width = w, Height = h, HasColorKey = hasColorKey,
-                    Indices = d.Slice(pixels, w * h).ToArray()
+                    Indices = d.Slice(pixels, w * h).ToArray(), MipFallbackNote = fallbackNote
                 };
             var layout = TrueColorLayout.From(d, bpp, hasColorKey);
             return new MatFile
             {
                 Width = w, Height = h, HasColorKey = hasColorKey, BitsPerPixel = bpp,
-                Rgba = layout.Decode(d.Slice(pixels, w * h * bytesPerPixel), w * h)
+                Rgba = layout.Decode(d.Slice(pixels, w * h * bytesPerPixel), w * h), MipFallbackNote = fallbackNote
             };
         }
         throw new InvalidDataException("MAT selected texture was not found.");

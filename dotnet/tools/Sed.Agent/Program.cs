@@ -5,7 +5,7 @@ using Sed.Formats.Automation;
 using Sed.Formats.Launching;
 
 // stdout is exclusively a JSON result; stderr is reserved for unexpected host
-// failures. Only snapshot creates an offscreen graphics device. No GUI, game,
+// failures. Only snapshot and overview create an offscreen graphics device. No GUI, game,
 // shell or network service is started.
 try
 {
@@ -24,7 +24,7 @@ try
                 if (commands.Count == 0) throw new AgentRequestException("Unknown command. Use help to list commands.");
             }
             result = new { schemaVersion = 1, commands = commands.Select(c => new { c.Name, c.Usage, c.Description, c.WritesFiles }),
-                next = "Use schema query for bounded readback, schema select for spatial targets, schema package for reviewed resource packaging, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
+                next = "Use schema query for bounded readback, schema select for spatial targets, schema snapshot or schema overview for previews, schema package for reviewed resource packaging, schema <operation> for a focused patch schema, and '-' to supply JSON on stdin." };
             break;
         case "--version" when args.Length == 1:
         case "version" when args.Length == 1:
@@ -38,6 +38,7 @@ try
                 "commands" => new { schemaVersion = 1, commands = AgentCommandCatalog.Commands() },
                 "launch-plan" => AgentCommandCatalog.LaunchRequestSchema(), "patch" => AgentSchema.Patch(),
                 "snapshot" => AgentSnapshotRequest.Schema(),
+                "overview" => AgentOverviewRequest.Schema(),
                 "resources" => AgentWorkspace.ResourceRequestSchema(),
                 "bindings" => AgentWorkspace.BindingsRequestSchema(),
                 "lighting" => AgentWorkspace.LightingRequestSchema(),
@@ -84,6 +85,9 @@ try
             break;
         case "snapshot" when args.Length == 4:
             result = Sed.Agent.AgentSnapshotRunner.Run(args[1], ReadRequest(args[2]), args[3]);
+            break;
+        case "overview" when args.Length == 4:
+            result = Sed.Agent.AgentSnapshotRunner.RunOverview(args[1], ReadRequest(args[2]), args[3]);
             break;
         case "validate" when args.Length is 2 or 3:
             result = AgentWorkspace.Validate(args[1], args.Length == 3 ? ReadRequest(args[2]) : null);
@@ -156,7 +160,8 @@ static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schem
     "world-bake-diagnostics", "direct-asset-diagnostics", "dynamic-vertex-color-readiness",
     "resource-registration", "surface-uv", "connected-geometry", "spatial-readback", "spatial-selection", "safe-selector-targets", "offscreen-diagnostic-snapshot", "offscreen-lit-snapshot", "mots-rgb-architecture-preview",
     "all-lod-architecture-validation", "architecture-resource-revision", "resource-validated-export",
-    "architecture-authoring", "architecture-source-point-bake", "architecture-world-occluded-bake", "architecture-provenance-readback"];
+    "architecture-authoring", "architecture-source-point-bake", "architecture-world-occluded-bake", "architecture-provenance-readback",
+    "orthographic-snapshot", "fullbright-snapshot", "back-face-cutaway", "wren-overview", "retail-mip-fallback"];
 static int Failure(int code, string type, string message, object? issues = null, object? details = null)
 {
     Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, error = type, message, issues, details }, AgentWorkspace.JsonOptions));

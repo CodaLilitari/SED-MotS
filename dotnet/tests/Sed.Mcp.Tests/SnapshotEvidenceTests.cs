@@ -245,6 +245,82 @@ public sealed class SnapshotEvidenceTests
         fixture.Refused();
     }
 
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public void AcceptsOrthographicReceiptsIncludingStraightDownViews(bool lit, bool vertical)
+    {
+        using var fixture = new Fixture(lit: lit, orthographic: true, vertical: vertical);
+        SnapshotEvidence.Validate(fixture.Result(), fixture.RequestText);
+        Assert.Equal("orthographic", fixture.Receipt["camera"]!["projection"]!.GetValue<string>());
+        Assert.Equal(9.5, fixture.Receipt["camera"]!["orthographicHeight"]!.GetValue<double>());
+    }
+
+    [Theory]
+    [InlineData("orthographicHeight", "9.25")]
+    [InlineData("projection", "\"perspective\"")]
+    [InlineData("fieldOfViewDegrees", "60")]
+    [InlineData("position", "[0,0,9]")]
+    public void RefusesTamperedOrthographicCameraEvenWithRecomputedCameraHash(string field, string value)
+    {
+        using var fixture = new Fixture(lit: true, orthographic: true, vertical: true);
+        fixture.Receipt["camera"]![field] = JsonNode.Parse(value);
+        fixture.Receipt["cameraSha256"] = Hash(Encoding.UTF8.GetBytes(fixture.Receipt["camera"]!.ToJsonString(AgentWorkspace.JsonOptions)));
+        fixture.Refused();
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public void AcceptsLitFullbrightAndCutawayThatMatchTheRequest(bool fullbright, bool cullBackFaces)
+    {
+        using var fixture = new Fixture(lit: true, fullbright: fullbright, cullBackFaces: cullBackFaces,
+            notices: ["MAT 'original.mat': Retail mip fallback: mip level 1 of 2 levels (1x1) needs 2 bytes but 0 remain; showing complete mip level 0, as retail JK does on faces nearer than the level's MipMap Distances; retail faces far enough to use mip level 1 or later show data the file never filled."]);
+        SnapshotEvidence.Validate(fixture.Result(), fixture.RequestText);
+    }
+
+    [Theory]
+    [InlineData("fullbright", "true")]
+    [InlineData("cullBackFaces", "true")]
+    [InlineData("fullbright", "null")]
+    [InlineData("cullBackFaces", "\"false\"")]
+    [InlineData("assetNotices", "null")]
+    [InlineData("assetNotices", "[1]")]
+    [InlineData("assetNotices", "\"none\"")]
+    public void RefusesLitFlagsOrNoticesThatContradictTheRequest(string field, string value)
+    {
+        using var fixture = new Fixture(lit: true);
+        SnapshotEvidence.Validate(fixture.Result(), fixture.RequestText);
+        fixture.Receipt[field] = JsonNode.Parse(value);
+        fixture.Refused();
+    }
+
+    [Theory]
+    [InlineData("fullbright", "false")]
+    [InlineData("cullBackFaces", "false")]
+    [InlineData("assetNotices", "[\"a notice\"]")]
+    public void DiagnosticReceiptsCannotDeclareLitFlagsOrNotices(string field, string value)
+    {
+        using var fixture = new Fixture();
+        fixture.Receipt[field] = JsonNode.Parse(value);
+        fixture.Refused();
+    }
+
+    [Theory]
+    [InlineData("fullbright")]
+    [InlineData("cullBackFaces")]
+    [InlineData("assetNotices")]
+    public void RefusesReceiptsWithoutTheNewFields(string field)
+    {
+        using var fixture = new Fixture(lit: true);
+        fixture.Receipt.Remove(field);
+        fixture.Refused();
+    }
+
     [Fact]
     public void MinimalReceiptAndEightByteSignatureCannotClaimSuccessfulPreview()
     {
@@ -304,7 +380,8 @@ public sealed class SnapshotEvidenceTests
         public byte[] Image { get; private set; }
         public byte[] OriginalFile { get; }
         public SnapshotOutputState OutputState { get; }
-        public Fixture(bool lit = false, bool customCamera = false, bool includeRevision = true, string lightingMode = "rgb", int archiveCount = 1)
+        public Fixture(bool lit = false, bool customCamera = false, bool includeRevision = true, string lightingMode = "rgb", int archiveCount = 1,
+            bool orthographic = false, bool vertical = false, bool fullbright = false, bool cullBackFaces = false, string[]? notices = null)
         {
             Directory.CreateDirectory(Root);
             for (int i = 0; i < Pixels.Length; i += 4)
@@ -312,9 +389,13 @@ public sealed class SnapshotEvidenceTests
             PngWriter.Write(OutputPath, Pixels, 64, 64);
             OriginalFile = File.ReadAllBytes(OutputPath); Image = OriginalFile.ToArray();
             OutputState = new(OutputPath, "file", false, Image.Length, Hash(Image));
+            double[] position = vertical ? [0.0, 0, 8] : [0.0, -2, 0];
+            // Perspective fixtures keep their original request bytes and member order.
             var request = new JsonObject { ["schemaVersion"] = 1, ["inputSha256"] = new string('a', 64),
-                ["position"] = new JsonArray(0, -2, 0), ["target"] = new JsonArray(0, 0, 0),
-                ["fieldOfViewDegrees"] = 75, ["width"] = 64, ["height"] = 64 };
+                ["position"] = new JsonArray(position.Select(v => (JsonNode)v).ToArray()), ["target"] = new JsonArray(0, 0, 0) };
+            if (orthographic) { request["projection"] = "orthographic"; request["orthographicHeight"] = 9.5; }
+            else request["fieldOfViewDegrees"] = 75;
+            request["width"] = 64; request["height"] = 64;
             if (includeRevision) request["sourceRevision"] = new string('a', 64);
             var archives = lit ? Enumerable.Range(0, archiveCount).Select(index =>
                 new ResourceArchiveReceipt(Path.Combine(Root, $"original-{index}.goo"), new string((char)('c' + index), 64), 123)).ToArray() : [];
@@ -323,21 +404,27 @@ public sealed class SnapshotEvidenceTests
             {
                 request["mode"] = "lit"; request["lightingMode"] = lightingMode; request["renderProfile"] = customCamera ? "palette" : "openjk";
                 request["resourceArchives"] = JsonSerializer.SerializeToNode(archives.Select(a => new { a.Path, a.Sha256 }), AgentWorkspace.JsonOptions);
+                if (fullbright) request["fullbright"] = true;
+                if (cullBackFaces) request["cullBackFaces"] = true;
             }
-            if (customCamera) { request["nearPlane"] = 0.02; request["farPlane"] = 77; request["fieldOfViewDegrees"] = 55; }
+            if (customCamera) { request["nearPlane"] = 0.02; request["farPlane"] = 77; if (!orthographic) request["fieldOfViewDegrees"] = 55; }
             RequestText = request.ToJsonString(AgentWorkspace.JsonOptions);
             var parsed = AgentSnapshotRequest.Parse(RequestText);
-            var camera = new { position = new[] { 0.0, -2, 0 }, target = new[] { 0.0, 0, 0 },
-                parsed.FieldOfViewDegrees, parsed.NearPlane, parsed.FarPlane, up = "Z", projection = "perspective" };
+            // Written out here, not taken from CameraDescription(), so the evidence check is tested against the contract.
+            object camera = orthographic
+                ? new { position, target = new[] { 0.0, 0, 0 }, parsed.OrthographicHeight, parsed.NearPlane, parsed.FarPlane, up = "Z", projection = "orthographic" }
+                : new { position, target = new[] { 0.0, 0, 0 }, parsed.FieldOfViewDegrees, parsed.NearPlane, parsed.FarPlane, up = "Z", projection = "perspective" };
             Receipt = JsonSerializer.SerializeToNode(new {
                 schemaVersion = 1, written = OutputPath, outputSha256 = Hash(Image), outputBytes = Image.Length,
                 inputSha256 = parsed.InputSha256, sourceRevision = parsed.InputSha256, dependencies = Array.Empty<object>(), requestSha256 = Hash(Encoding.UTF8.GetBytes(RequestText)),
                 camera, cameraSha256 = Hash(JsonSerializer.SerializeToUtf8Bytes(camera, AgentWorkspace.JsonOptions)), width = 64, height = 64,
                 rgbaSha256 = Hash(Pixels), mode = parsed.Mode, lightingMode = lit ? "rgb" : null,
                 renderProfile = lit ? parsed.RenderProfile : null,
+                fullbright = lit ? parsed.Fullbright : (bool?)null, cullBackFaces = lit ? parsed.CullBackFaces : (bool?)null,
                 renderer = lit ? "Vulkan static lit scene" : "Vulkan flat diagnostic geometry", guiLaunched = false,
-                resourceArchives = archives, usedResources = entries,
+                resourceArchives = archives, usedResources = entries, assetNotices = notices ?? [],
                 resourceRevision = lit ? ExplicitArchiveResources.ComputeRevision(archives, entries) : null, nonBackgroundPixels = 4096,
+                overview = (object?)null,
             }, AgentWorkspace.JsonOptions)!.AsObject();
         }
         public void SetImage(byte[] image)

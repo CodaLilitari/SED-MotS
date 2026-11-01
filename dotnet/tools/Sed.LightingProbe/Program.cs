@@ -373,6 +373,128 @@ renderer.SetScene(FacingScene(true, true, .5, awayFromOrigin, towardOrigin), Fac
 Pixel(FacingRender("adjoined-translucent-pair-blends-once", Vec3.Zero), 129, 65, 26, "Only the camera-facing side of a translucent adjoin pair may blend");
 Pixel(FacingRender("adjoined-translucent-pair-other-side", new Vec3(0, 0, 1)), 13, 52, 104, "The mirror blends alone from the other side");
 
+// Orthographic eye (camPos.w = 1): facing is measured against the view direction, not toward a
+// position. The adjoined +Z face is drawn when looking down -Z and culled when looking up +Z, with
+// the eye on either side of its plane (a perspective eye below the plane would cull it). The far
+// face has no usable normal, so it stays visible and shows through when the near face is culled.
+byte[] EyeRender(string name, RenderEye eye)
+{
+    var pixels = renderer.Render(Mat4.Identity, eye, size, size, 0, 0, 0);
+    PngWriter.Write(Path.Combine(output, name + ".png"), pixels, size, size);
+    var rgba = pixels.AsSpan((size / 2 * size + size / 2) * 4, 4).ToArray();
+    observations.Add(new { name, centerRgba = rgba.Select(v => (int)v).ToArray(), pixelSha256 = Convert.ToHexString(SHA256.HashData(pixels)) });
+    return rgba;
+}
+renderer.SetScene(FacingScene(true, false, .4, awayFromOrigin, Vec3.Zero), FacingTexture);
+foreach (var (side, position) in new[] { ("below", new Vec3(0, 0, -5)), ("above", new Vec3(0, 0, 5)) })
+{
+    Pixel(EyeRender("ortho-looking-down-front-face-drawn-eye-" + side, RenderEye.Parallel(position, new Vec3(0, 0, -1))), 20, 80, 160,
+        "An orthographic view looking down -Z must draw an adjoined +Z face wherever the eye is");
+    Pixel(EyeRender("ortho-looking-up-back-face-culled-eye-" + side, RenderEye.Parallel(position, new Vec3(0, 0, 1))), 200, 100, 40,
+        "An orthographic view looking up +Z must cull an adjoined +Z face wherever the eye is");
+}
+assertions++;
+try { renderer.Render(Mat4.Identity, new RenderEye(Vec3.Zero, Vec3.Zero, true), size, size); throw new InvalidOperationException("A directionless orthographic eye was accepted."); }
+catch (ArgumentException) { }
+
+// Back-face cutaway: an ordinary world surface seen from behind its plane is drawn double-sided by
+// default and culled under CullWorldBackFaces; a model (non-world) face behind it stays drawn.
+RenderScene CutawayScene(bool cull)
+{
+    var scene = new RenderScene { LightingMode = RenderLightingMode.Mono, CullWorldBackFaces = cull };
+    foreach (var (z, material, world) in new[] { (.4, "near.mat", true), (.5, "far.mat", false) })
+    {
+        int start = scene.Mesh.Indices.Count;
+        scene.Mesh.AddTriangle(
+            new MeshVertex(new Vec3(-1, -1, z), awayFromOrigin, colored, mono: 1),
+            new MeshVertex(new Vec3(3, -1, z), awayFromOrigin, colored, mono: 1),
+            new MeshVertex(new Vec3(-1, 3, z), awayFromOrigin, colored, mono: 1));
+        scene.Submeshes.Add(new Submesh { Material = material, IndexOffset = start, IndexCount = 3, LightMode = 0, WorldSurface = world });
+    }
+    return scene;
+}
+renderer.SetScene(CutawayScene(cull: false), FacingTexture);
+Pixel(FacingRender("cutaway-off-world-back-face-drawn", Vec3.Zero), 20, 80, 160, "Without the cutaway an ordinary world surface stays double-sided");
+renderer.SetScene(CutawayScene(cull: true), FacingTexture);
+Pixel(FacingRender("cutaway-on-world-back-face-culled", Vec3.Zero), 200, 100, 40,
+    "The cutaway culls a world surface seen from behind and keeps the model face behind it");
+Pixel(FacingRender("cutaway-on-world-front-face-drawn", new Vec3(0, 0, 1)), 20, 80, 160, "The cutaway keeps a world surface seen from in front");
+
+// Full bright (the snapshot's fullbright option): a Gouraud face with zero light is black under the
+// engine scalar profile and shows its source colour at brightness 1.
+renderer.SetColormap(mapA.PaletteRgb, mapA.LightTable);
+renderer.SetScene(Scene(RenderLightingMode.Mono, 0, ColorF.Black, lightMode: 3, usePaletteLightRamp: false), Texture);
+Pixel(Render("fullbright-off-indexed-unlit-black"), 0, 0, 0, "A zero-light indexed texel modulates to black");
+renderer.SetBrightness(1);
+Pixel(Render("fullbright-on-indexed-master-palette"), 200, 100, 40, "Full bright shows an indexed texel's master-palette colour");
+renderer.SetBrightness(0);
+renderer.SetScene(Scene(RenderLightingMode.Rgb, 0, ColorF.Black, lightMode: 3, usePaletteLightRamp: false), TrueColor);
+Pixel(Render("fullbright-off-truecolor-unlit-black"), 0, 0, 0, "A zero-light true-colour texel modulates to black");
+renderer.SetBrightness(1);
+Pixel(Render("fullbright-on-truecolor-texel"), 100, 150, 200, "Full bright shows the true-colour texel");
+renderer.SetScene(Scene(RenderLightingMode.Mono, 0, ColorF.Black, lightMode: 3, usePaletteLightRamp: false), Solid);
+Pixel(Render("fullbright-on-solid-palette-entry"), 200, 100, 40, "Full bright shows a solid colour's palette entry");
+renderer.SetBrightness(0);
+
+// Orthographic projection through Camera: looking straight down from above with 8 world units of
+// height on a 32 px square image (4 px per unit), a quad spanning x = -1..2 covers columns 12..23.
+var plan = new Camera { Position = new Vec3(0, 0, 10), Pitch = -Math.PI / 2, Yaw = 0, Projection = CameraProjection.Orthographic,
+    OrthographicHeight = 8, NearPlane = 1, FarPlane = 20 };
+var quad = new RenderScene { LightingMode = RenderLightingMode.Mono };
+var q0 = new MeshVertex(new Vec3(-1, -4, 0), new Vec3(0, 0, 1), colored, mono: 1);
+var q1 = new MeshVertex(new Vec3(2, -4, 0), new Vec3(0, 0, 1), colored, mono: 1);
+var q2 = new MeshVertex(new Vec3(2, 4, 0), new Vec3(0, 0, 1), colored, mono: 1);
+var q3 = new MeshVertex(new Vec3(-1, 4, 0), new Vec3(0, 0, 1), colored, mono: 1);
+quad.Mesh.AddTriangle(q0, q1, q2);
+quad.Mesh.AddTriangle(q0, q2, q3);
+quad.Submeshes.Add(new Submesh { Material = "synthetic.mat", IndexCount = 6, LightMode = 0, WorldSurface = true });
+quad.CullWorldBackFaces = true; // looking down at a +Z face: the cutaway keeps it
+renderer.SetScene(quad, Texture);
+var planPixels = renderer.Render(plan.ViewProjection(1), plan.Eye, size, size, 0, 0, 0);
+PngWriter.Write(Path.Combine(output, "ortho-quad-columns.png"), planPixels, size, size);
+var covered = Enumerable.Range(0, size).Where(x => planPixels[(size / 2 * size + x) * 4] > 100).ToArray();
+observations.Add(new { name = "ortho-quad-columns", columns = covered, pixelSha256 = Convert.ToHexString(SHA256.HashData(planPixels)) });
+assertions += 3;
+if (covered.Length == 0 || Math.Abs(covered[0] - 12) > 1 || Math.Abs(covered[^1] - 23) > 1 || covered.Length != covered[^1] - covered[0] + 1)
+    throw new InvalidOperationException($"Orthographic quad x = -1..2 must cover columns 12..23 (±1); got {string.Join(",", covered)}.");
+// Parallel rays: lifting the quad toward the camera leaves its footprint unchanged.
+for (int i = 0; i < quad.Mesh.Vertices.Count; i++) { var v = quad.Mesh.Vertices[i]; v.Pz = 6; quad.Mesh.Vertices[i] = v; }
+renderer.UpdateGeometry(quad);
+var lifted = renderer.Render(plan.ViewProjection(1), plan.Eye, size, size, 0, 0, 0);
+assertions++;
+if (!lifted.AsSpan().SequenceEqual(planPixels)) throw new InvalidOperationException("An orthographic plan must not change when geometry moves along the view axis.");
+
+// Orthographic ceiling sky: the ray through each fragment runs along the view direction, so looking
+// straight down the sky texture depends only on x and y, not on the sky surface's height.
+IndexedTexture? Checker(string name) => new IndexedTexture(2, 2, new byte[] { 1, 2, 2, 1 });
+RenderScene SkyQuad(double z)
+{
+    var scene = new RenderScene { LightingMode = RenderLightingMode.Mono };
+    var a = new MeshVertex(new Vec3(-4, -4, z), new Vec3(0, 0, 1), colored, mono: 1);
+    var b = new MeshVertex(new Vec3(4, -4, z), new Vec3(0, 0, 1), colored, mono: 1);
+    var c = new MeshVertex(new Vec3(4, 4, z), new Vec3(0, 0, 1), colored, mono: 1);
+    var d = new MeshVertex(new Vec3(-4, 4, z), new Vec3(0, 0, 1), colored, mono: 1);
+    scene.Mesh.AddTriangle(a, b, c);
+    scene.Mesh.AddTriangle(a, c, d);
+    scene.Submeshes.Add(new Submesh { Material = "sky.mat", IndexCount = 6, LightMode = 0, SkyMode = 1, WorldSurface = true });
+    return scene;
+}
+renderer.SetSky(9f, 0.25f, 0f);
+var skyPlan = new Camera { Position = new Vec3(0, 0, 10), Pitch = -Math.PI / 2, Yaw = 0, Projection = CameraProjection.Orthographic,
+    OrthographicHeight = 0.5, NearPlane = 1, FarPlane = 20 };
+renderer.SetScene(SkyQuad(0), Checker);
+var skyLow = renderer.Render(skyPlan.ViewProjection(1), skyPlan.Eye, size, size, 0, 0, 0);
+renderer.SetScene(SkyQuad(5), Checker);
+var skyHigh = renderer.Render(skyPlan.ViewProjection(1), skyPlan.Eye, size, size, 0, 0, 0);
+PngWriter.Write(Path.Combine(output, "ortho-ceiling-sky.png"), skyLow, size, size);
+var skyColors = Enumerable.Range(0, size * size).Select(i => (skyLow[i * 4], skyLow[i * 4 + 1], skyLow[i * 4 + 2])).Distinct().ToArray();
+observations.Add(new { name = "ortho-ceiling-sky", distinctColors = skyColors.Length, pixelSha256 = Convert.ToHexString(SHA256.HashData(skyLow)) });
+assertions += 2;
+if (!skyLow.AsSpan().SequenceEqual(skyHigh)) throw new InvalidOperationException("Orthographic ceiling sky must not depend on the sky surface's height.");
+if (skyColors.Length != 2 || !skyColors.Contains(((byte)200, (byte)100, (byte)40)) || !skyColors.Contains(((byte)20, (byte)80, (byte)160)))
+    throw new InvalidOperationException($"Orthographic ceiling sky must show both checker palette entries; got {skyColors.Length} colours.");
+renderer.SetSky(0, 0, 0);
+
 var report = new { schemaVersion = 1, device = device.DeviceName, assertions, observations, diagnostics = renderer.Diagnostics };
 using (var file = new FileStream(Path.Combine(output, "receipt.json"), FileMode.CreateNew))
     JsonSerializer.Serialize(file, report, new JsonSerializerOptions { WriteIndented = true });

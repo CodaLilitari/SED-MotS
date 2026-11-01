@@ -9,7 +9,13 @@ using Sed.Rendering.Vulkan;
 
 namespace Sed.Agent;
 
-/// <summary>One bounded offscreen diagnostic view, with no window or game process.</summary>
+/// <summary>
+/// One bounded offscreen diagnostic view, with no window or game process. <see cref="Run"/>
+/// takes an explicit camera; <see cref="RunOverview"/> computes Wren's level-preview cameras
+/// (an orthographic overhead plan or a three-quarter perspective, after the Blender previews
+/// Wren, a Grok bot and one of Andrei's AI collaborators, made; recovered 2026-10-31) and
+/// renders the equivalent lit snapshot through the same path.
+/// </summary>
 public static class AgentSnapshotRunner
 {
     private static readonly ColorF[] Colors = [new(0.55f, 0.72f, 0.85f), new(0.76f, 0.61f, 0.43f),
@@ -22,6 +28,65 @@ public static class AgentSnapshotRunner
         outputPath = AgentSnapshotRequest.PrepareOutputPath(outputPath); // before source parsing or any native/GPU operation
         var source = AgentWorkspace.LoadWithProvenance(path);
         request.VerifySource(source);
+        return RenderCore(path, source, request, requestText, outputPath, overview: null, timer);
+    }
+
+    /// <summary>
+    /// Wren's level-preview cameras: frames the level's drawn world surfaces for the requested
+    /// view and renders the equivalent lit snapshot. The receipt's <c>overview.snapshotRequest</c>
+    /// is that exact snapshot request, so <c>snapshot</c> reproduces its camera and pixels.
+    /// </summary>
+    public static object RunOverview(string path, string requestText, string outputPath)
+    {
+        var timer = Stopwatch.StartNew();
+        var overview = AgentOverviewRequest.Parse(requestText);
+        outputPath = AgentSnapshotRequest.PrepareOutputPath(outputPath); // before source parsing or any native/GPU operation
+        var source = AgentWorkspace.LoadWithProvenance(path);
+        overview.VerifySource(source);
+        if (OverviewFraming.WorldSurfaceBounds(source.Document.Level) is not { } bounds)
+            throw new AgentRequestException("Level has no drawn world surfaces to frame.");
+        OverviewCamera camera;
+        try { camera = OverviewFraming.Compute(bounds, overview.View, overview.Framing, overview.Width, overview.Height, overview.Margin); }
+        catch (InvalidOperationException error) { throw new AgentRequestException(error.Message); }
+        var request = overview.ToSnapshotRequest(camera.Position, camera.Target, camera.Projection, camera.FieldOfViewDegrees,
+            camera.OrthographicHeight, camera.Near, camera.Far);
+        var info = new
+        {
+            view = overview.View, framing = overview.Framing, margin = overview.Margin,
+            bounds = new
+            {
+                min = new[] { bounds.Min.X, bounds.Min.Y, bounds.Min.Z },
+                max = new[] { bounds.Max.X, bounds.Max.Y, bounds.Max.Z },
+            },
+            snapshotRequest = request.ToJson(),
+        };
+        return RenderCore(path, source, request, requestText, outputPath, info, timer);
+    }
+
+    /// <summary>
+    /// The camera a request describes. A view whose horizontal component is under 1e-6 of its
+    /// length (only orthographic requests may have one) is built exactly vertical, yaw 0: looking
+    /// down, screen up is +Y (north) and screen right +X; looking up, screen up is -Y.
+    /// </summary>
+    internal static Camera SnapshotCamera(AgentSnapshotRequest request)
+    {
+        var delta = request.Target - request.Position;
+        var camera = delta.Cross(Camera.Up).Length / delta.Length < 0.000001
+            ? new Camera { Position = request.Position, Yaw = 0, Pitch = delta.Z < 0 ? -System.Math.PI / 2 : System.Math.PI / 2 }
+            : Camera.LookingAt(request.Position, request.Target, request.FieldOfViewDegrees);
+        camera.NearPlane = request.NearPlane; camera.FarPlane = request.FarPlane;
+        if (request.IsOrthographic)
+        {
+            camera.Projection = CameraProjection.Orthographic;
+            camera.OrthographicHeight = request.OrthographicHeight;
+        }
+        else camera.FieldOfViewDegrees = request.FieldOfViewDegrees;
+        return camera;
+    }
+
+    private static object RenderCore(string path, AgentDocumentSnapshot source, AgentSnapshotRequest request, string requestText,
+        string outputPath, object? overview, Stopwatch timer)
+    {
         var level = source.Document.Level; // independent parsed model, never the live GUI document
         var mesh = new Mesh();
         using var resources = request.Mode == "lit" ? new SnapshotResources(request.ResourceArchives) : null;
@@ -42,6 +107,7 @@ public static class AgentSnapshotRunner
             scene = assembler.Build();
             if (request.LightingMode != "game") scene.LightingMode = request.LightingMode == "rgb" ? RenderLightingMode.Rgb : RenderLightingMode.Mono;
             scene.UsePaletteLightRamp = request.RenderProfile == "palette";
+            scene.CullWorldBackFaces = request.CullBackFaces;
             mesh = scene.Mesh;
             // JK keeps one display palette for textures, World Colormap 0 (OpenJKDF2 resolves
             // every indexed texture through colormaps[0]); a texture takes only its sector CMP's
@@ -58,6 +124,10 @@ public static class AgentSnapshotRunner
             }
             renderWarnings.AddRange(masterProblems);
             renderWarnings.AddRange(scene.Diagnostics);
+            // Notices (such as the retail mip fallback) are reported but do not fail strict mode:
+            // the drawn pixels are a complete mip 0, which retail JK shows on faces nearer than
+            // the level's MipMap Distances (SED never draws later mips).
+            renderWarnings.AddRange(resources.Notices);
             var noModel = unmodeled.Where(t => string.IsNullOrWhiteSpace(level.GetThingModel(t))).ToList();
             if (noModel.Count > 0)
                 renderWarnings.Add($"{noModel.Count} things have no resolved 3DO model and are omitted (including invisible controllers); "
@@ -65,7 +135,7 @@ public static class AgentSnapshotRunner
             // Missing models/materials, malformed ARCH bindings and unsupported assets cannot silently certify a lit image.
             if (request.StrictAssets && (architectureValidation.HasErrors || resources.Diagnostics.Count != 0 || scene.Diagnostics.Count != 0 || masterProblems.Count != 0))
                 throw new AgentRequestException("Lit snapshot asset validation failed: " + string.Join("; ", masterProblems.Concat(resources.Diagnostics).Concat(scene.Diagnostics).Take(12)));
-            surfaceCount = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo != 0 && f.Corners.Count >= 3 && !string.IsNullOrEmpty(f.Material)));
+            surfaceCount = level.Sectors.Sum(s => s.Surfaces.Count(SceneAssembler.IsDrawnWorldSurface));
             omittedPortals = level.Sectors.Sum(s => s.Surfaces.Count(f => f.Geo == 0));
         }
         else
@@ -109,14 +179,8 @@ public static class AgentSnapshotRunner
         }
         }
         if (mesh.IsEmpty) throw new AgentRequestException("Snapshot has no drawable geometry for the requested mode.");
-        var camera = Camera.LookingAt(request.Position, request.Target, request.FieldOfViewDegrees);
-        camera.NearPlane = request.NearPlane; camera.FarPlane = request.FarPlane;
-        object cameraDescription = new
-        {
-            position = new[] { request.Position.X, request.Position.Y, request.Position.Z },
-            target = new[] { request.Target.X, request.Target.Y, request.Target.Z },
-            request.FieldOfViewDegrees, request.NearPlane, request.FarPlane, up = "Z", projection = "perspective",
-        };
+        var camera = SnapshotCamera(request);
+        object cameraDescription = request.CameraDescription();
         byte[] pixels;
         string deviceName;
         try
@@ -131,10 +195,12 @@ public static class AgentSnapshotRunner
                     (float)level.Header.HorizonSky.Offset.X, (float)level.Header.HorizonSky.Offset.Y);
                 if (masterColormap is { } masterPalette) renderer.SetColormap(masterPalette.PaletteRgb, masterPalette.LightTable);
                 renderer.SetScene(scene, resources.Texture, resources.Colormap);
+                // The shader already bypasses light for indexed, solid and true-colour draws at full brightness.
+                if (request.Fullbright) renderer.SetBrightness(1f);
                 renderWarnings.AddRange(renderer.Diagnostics);
             }
             else renderer.SetMesh(mesh);
-            pixels = renderer.Render(camera.ViewProjection((double)request.Width / request.Height), camera.Position,
+            pixels = renderer.Render(camera.ViewProjection((double)request.Width / request.Height), camera.Eye,
                 (uint)request.Width, (uint)request.Height);
         }
         catch (Exception error) when (error is VulkanException or DllNotFoundException or EntryPointNotFoundException or BadImageFormatException)
@@ -167,7 +233,7 @@ public static class AgentSnapshotRunner
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
         if (resources is not null) renderWarnings.AddRange(resources.Diagnostics);
         if (nonBackgroundPixels == 0) renderWarnings.Add("No geometry is visible from this camera; inspect camera position, target and clipping planes.");
-        string[] contentLimitations = request.Mode == "lit" ? [
+        string[] modeLimitations = request.Mode == "lit" ? [
             "Static lighting preview: baked world mono/RGB, scalar 3DO base light, compatible ARCHLIGHTING, sector/surface extra light, and per-sector CMP light ramps over the level's single master palette (World Colormap 0). No runtime dynamic lights, COG, animation or moving geometry.",
             "First MAT cel/mip and model geoset zero only. 8-bit textures resolve through the master palette; solid-colour MATs use their sector CMP's own palette and ramp, as the accelerated engine does, without its tint; 16/32-bit MATs are decoded to true colour and lit by modulation without a CMP ramp. No fog, engine portal traversal, exact sky projection or retail transparency-table emulation.",
             "Model hierarchy is shown in its rest pose; absent models are omitted. Resource hashes identify all supplied archives and every used entry.",
@@ -175,6 +241,12 @@ public static class AgentSnapshotRunner
             "Diagnostic polygon geometry only: untextured solid faces are included; reciprocal visible untextured or Geo=0 portal faces are omitted.",
             "Colors identify surfaces, not material or game lighting. MotS RGB and architectural lighting, sky, transparency, things and 3DO models are not represented.",
         ];
+        var contentLimitations = new List<string>(modeLimitations);
+        if (scene is not null && request.Fullbright)
+            contentLimitations.Add("Fullbright: lighting is ignored; indexed texels show their master-palette colour, solid colours their palette entry and true colour its texel.");
+        string facing = scene is not null && request.CullBackFaces
+            ? "Every world surface is drawn only from in front of its plane (cutaway); models stay double-sided."
+            : "Surfaces are double-sided except adjoined ones, which are drawn only from in front of their plane, as the engine draws level surfaces.";
         var distinctWarnings = renderWarnings.Distinct().ToArray();
         return new
         {
@@ -186,8 +258,11 @@ public static class AgentSnapshotRunner
             request.Width, request.Height, rgbaSha256 = AgentWorkspace.Hash(pixels),
             request.Mode, lightingMode = scene?.LightingMode.ToString().ToLowerInvariant(),
             renderProfile = scene is null ? null : request.RenderProfile,
+            fullbright = scene is null ? (bool?)null : request.Fullbright,
+            cullBackFaces = scene is null ? (bool?)null : request.CullBackFaces,
             renderer = scene is null ? "Vulkan flat diagnostic geometry" : "Vulkan static lit scene", deviceName, guiLaunched = false,
             resourceArchives = resources?.Archives ?? [], usedResources = resources?.UsedResources ?? [],
+            assetNotices = resources?.Notices ?? [],
             resourceRevision = resources?.Capture.ResourceRevision, architectureValidation,
             counts = new { sectors = level.Sectors.Count, renderedSurfaces = surfaceCount, triangles = mesh.TriangleCount,
                 omittedPortalSurfaces = omittedPortals, skippedDegenerateTriangles = degenerateTriangles, omittedThings },
@@ -195,10 +270,11 @@ public static class AgentSnapshotRunner
             preservationWarnings = source.Document.PreservationWarnings,
             warningCount = distinctWarnings.Length, warnings = distinctWarnings.Take(200).ToArray(), warningsTruncated = distinctWarnings.Length > 200,
             limitations = contentLimitations.Concat(new[] {
-                "Triangle fans without engine portal visibility or gameplay simulation; concave/non-planar polygons may differ from engine rendering. Surfaces are double-sided except adjoined ones, which are drawn only from in front of their plane, as the engine draws level surfaces.",
+                "Triangle fans without engine portal visibility or gameplay simulation; concave/non-planar polygons may differ from engine rendering. " + facing,
                 "RGBA PNG only: no depth or object-ID image. Driver differences may change image bytes; use reported source and camera provenance.",
                 "Requires a usable Vulkan loader/device. Callers should enforce a process timeout; existing driver fence waits cannot be cancelled here.",
             }).ToArray(),
+            overview,
         };
     }
 }

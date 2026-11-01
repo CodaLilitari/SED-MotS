@@ -90,10 +90,17 @@ public class MatTransparencyTests
     }
 
     [Fact]
-    public void TruncatedSelectedMipChainCannotSucceedFromBaseMipAlone()
+    public void TruncatedLaterMipOfSelectedTextureShowsBaseMipWithNote()
     {
+        // Retail JK reads mips unchecked and draws the complete mip 0 on nearby faces; SED always
+        // draws mip 0 and its note scopes the claim to the level's MipMap Distances.
         var bytes = Mat(0, new Texture(2, 2, 1, [[0, 7, 7, 0], [7]]));
-        Assert.Throws<InvalidDataException>(() => MatFile.Read(bytes[..^1]));
+        var mat = MatFile.Read(bytes[..^1]);
+        Assert.Equal(new byte[] { 0, 7, 7, 0 }, mat.Indices);
+        Assert.True(mat.HasColorKey);
+        Assert.Equal("Retail mip fallback: mip level 1 of 2 levels (1x1) needs 1 bytes but 0 remain; showing complete mip level 0, as retail JK does on faces nearer than the level's MipMap Distances; retail faces far enough to use mip level 1 or later show data the file never filled.",
+            mat.MipFallbackNote);
+        Assert.Null(MatFile.Read(bytes).MipFallbackNote);
     }
 
     [Fact]

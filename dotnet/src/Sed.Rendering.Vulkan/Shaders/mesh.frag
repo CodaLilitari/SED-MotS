@@ -6,7 +6,7 @@ layout(set = 0, binding = 2) uniform sampler2D lightRamp; // 256x64 R8
 
 layout(push_constant) uniform Push {
     mat4 mvp;
-    vec4 camPos;
+    vec4 camPos;       // w = 0: perspective eye position; w = 1: orthographic, xyz = unit direction toward the camera
     vec4 sky;
     vec4 camAngles;
     vec4 horizScreen;
@@ -43,9 +43,17 @@ void main()
     vec3 rgbLight = clamp(vColor, 0.0, 1.0);
 
     if (pc.skyMode == 1u) {              // ceiling sky: project view ray onto ceiling plane
-        vec3 dir = normalize(vWorld - pc.camPos.xyz);
-        float t = dir.z != 0.0 ? (pc.sky.x - pc.camPos.z) / dir.z : 0.0;
-        vec3 hit = pc.camPos.xyz + dir * max(t, 0.0);
+        vec3 hit;
+        if (pc.camPos.w > 0.5) {
+            // Orthographic: the ray through this fragment runs along the view direction.
+            vec3 dir = -pc.camPos.xyz;
+            float t = dir.z != 0.0 ? (pc.sky.x - vWorld.z) / dir.z : 0.0;
+            hit = vWorld + dir * t;
+        } else {
+            vec3 dir = normalize(vWorld - pc.camPos.xyz);
+            float t = dir.z != 0.0 ? (pc.sky.x - pc.camPos.z) / dir.z : 0.0;
+            hit = pc.camPos.xyz + dir * max(t, 0.0);
+        }
         uv = vec2((hit.x + pc.sky.y) * 16.0, (hit.y + pc.sky.z) * 16.0) * pc.invTexSize;
         light = 1.0;
         rgbLight = vec3(1.0);

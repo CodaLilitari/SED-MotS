@@ -27,6 +27,7 @@ var matEntry = gob.Find(matName) ?? gob.FindByExtension(".mat")
 
 var mat = MatFile.Read(gob.ReadBytes(matEntry));
 Console.WriteLine($"MAT: {matEntry.Name} — {mat.Width}x{mat.Height} {(mat.IsColor ? $"color #{mat.ColorIndex}" : "texture")}");
+if (mat.MipFallbackNote is { } note) Console.WriteLine($"Note: {note}");
 
 var rgba = mat.ToRgba(palette);
 PngWriter.Write(outPath, rgba, mat.Width, mat.Height);
