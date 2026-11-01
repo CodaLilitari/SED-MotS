@@ -12,10 +12,13 @@ jobs:
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
       DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
-      NUGET_PACKAGES: ${{ runner.temp }}/sed-nuget
-      DOTNET_CLI_HOME: ${{ runner.temp }}/sed-dotnet-home
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
+      - name: Set external SDK cache directories
+        shell: bash
+        run: |
+          echo "DOTNET_CLI_HOME=$RUNNER_TEMP/sed-dotnet-home" >> "$GITHUB_ENV"
+          echo "NUGET_PACKAGES=$RUNNER_TEMP/sed-nuget" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
