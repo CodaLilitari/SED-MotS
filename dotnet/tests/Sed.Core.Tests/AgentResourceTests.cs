@@ -52,6 +52,18 @@ public sealed class AgentResourceTests : IDisposable
     private static JsonElement Report(object value) => JsonSerializer.SerializeToElement(value, AgentWorkspace.JsonOptions);
 
     [Fact]
+    public void ArchiveThatIsNotAGobIsARequestErrorNotACrash()
+    {
+        // A text file passed as a resource archive used to escape as InvalidDataException and abort sed-agent.
+        string notGob = Path.Combine(_directory, "JKMRES.GOO");
+        File.WriteAllText(notGob, "not a gob");
+        var request = new ResourceArchiveRequest(notGob, AgentWorkspace.Hash(File.ReadAllBytes(notGob)));
+        var error = Assert.Throws<AgentRequestException>(() => new ExplicitArchiveResources([request]));
+        Assert.Contains("not a readable GOB/GOO archive", error.Message);
+        Assert.Contains(notGob, error.Message);
+    }
+
+    [Fact]
     public void PlanAndApplyBindAllLodsAndKeepMissingHistoryExplicit()
     {
         byte[] original = File.ReadAllBytes(_input);

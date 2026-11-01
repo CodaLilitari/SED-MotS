@@ -137,7 +137,7 @@ catch (AgentRequestException error)
 { return Failure(2, "invalid_request", error.Message, details: new { error.OperationIndex, error.Operation, error.JsonPointer }); }
 catch (JsonException error)
 { return Failure(2, "invalid_request", error.Message, details: new { jsonPath = error.Path, lineNumber = error.LineNumber, bytePositionInLine = error.BytePositionInLine }); }
-catch (Exception error) when (error is FormatException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException or NotSupportedException)
+catch (Exception error) when (error is FormatException or InvalidDataException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException or NotSupportedException)
 { return Failure(2, "invalid_request", error.Message); }
 catch (AgentValidationException error)
 { return Failure(3, "validation_failed", error.Message, error.Issues); }

@@ -10,6 +10,7 @@ Credit: these previews and captures finish work started by Wren, a Grok bot and 
 - Add `tools/blender`: a Blender 5 JKL/GOB importer and headless previewer (resource lookup in engine order across GOB/GOO and loose folders, the level's master palette, SED's MAT rules, exact thing orientation, optional baked JKL light in EEVEE or Cycles, Wren framing shared with `sed-agent overview`, JSON reports, the *Import JK level (.jkl / .gob)* extension operator). It needs Coda's Blender-Sith fork.
 - Add `tools/retail-capture`: retail JK 1.01 under Wine 9 in an isolated prefix with a hash-checked executable, an inert Smacker stand-in and a loopback DirectPlay provider built from source, scripted menus for single-player and hosted multiplayer levels, Wren's walk demo and hashed frame receipts.
 - Credit Wren, Coda's Blender-Sith fork and its upstream in `NOTICE.md`, the README and the tool READMEs.
+- Report a resource archive that is not a GOB/GOO (for example a placeholder `JKMRES.GOO`) as an `invalid_request` JSON error with exit code 2, naming the file, instead of letting `sed-agent snapshot`/`overview` abort with an unhandled `InvalidDataException` (exit 134).
 
 ## Unreleased — .NET MotS source lights
 

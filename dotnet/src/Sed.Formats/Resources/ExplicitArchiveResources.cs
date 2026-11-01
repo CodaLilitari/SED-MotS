@@ -75,7 +75,13 @@ public sealed class ExplicitArchiveResources : IArchitectureResourceProvider, ID
                     if (stream.Length > 536_870_912 || total > 2_147_483_648)
                         throw new AgentRequestException("Resources exceed the 512 MiB/archive or 2 GiB total budget.");
                     VerifyHash(stream, request);
-                    _archives.Add(new(request, stream, new GobArchive(stream)));
+                    GobArchive archive;
+                    try { archive = new GobArchive(stream); }
+                    catch (InvalidDataException error)
+                    {
+                        throw new AgentRequestException($"Resource archive is not a readable GOB/GOO archive: {request.Path}. {error.Message}");
+                    }
+                    _archives.Add(new(request, stream, archive));
                 }
                 catch { stream.Dispose(); throw; }
             }
