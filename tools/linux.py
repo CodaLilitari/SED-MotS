@@ -154,7 +154,7 @@ def snapshot_source(repo, state, output):
 def copy_support(source, package):
     for path in sorted(source.rglob("*")):
         relative = path.relative_to(source)
-        if relative.parts[0] not in ("LICENSE", "README.md", "AGENTS.md", ".agents", "docs", "licenses", "data", "tools"):
+        if relative.parts[0] not in ("LICENSE", "NOTICE.md", "README.md", "AGENTS.md", ".agents", "docs", "licenses", "data", "tools"):
             continue
         if path.is_symlink():
             raise ToolError(f"Support files cannot be symlinks: {relative}")
@@ -336,6 +336,12 @@ def build(repo, dotnet, output, configuration="Release", no_restore=False, graph
         run_logged([sys.executable, "-B", "tools/test_linux.py"], repo, output / "linux-tools-tests.log", env)
         run_logged([sys.executable, "-B", "-m", "unittest", "discover", "-s", "tools/tests", "-v"],
                    repo, output / "python-tests.log", env)
+        # Standard-library suites of the Wren preview tools; their Blender tests skip without bpy.
+        suites = {"blender": "tools/blender/tests", "retail-capture": "tools/retail-capture/tests"}
+        receipt["pythonToolSuites"] = [name for name, folder in suites.items() if (Path(repo) / folder).is_dir()]
+        for name in receipt["pythonToolSuites"]:
+            run_logged([sys.executable, "-B", "-m", "unittest", "discover", "-s", suites[name], "-v"],
+                       repo, output / f"python-{name}-tests.log", env)
         headless = env.copy()
         headless.pop("DISPLAY", None)
         headless.pop("WAYLAND_DISPLAY", None)

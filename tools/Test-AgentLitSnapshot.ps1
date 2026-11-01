@@ -6,6 +6,16 @@ Exercises static MotS lighting through the agent CLI, synthetic archives and Vul
 Builds original synthetic JKL, 8-bit MAT, full CMP and 3DO data in a new directory.
 Checks independent surface and architectural mono/RGB rendering, exact resource
 provenance, strict/permissive asset handling and refusal to replace existing PNGs.
+A separate palette room checks that textures show World Colormap 0 while a solid
+colour uses its sector CMP's palette, that a 16-bit RGB565 MAT renders, that a
+damaged MAT is refused in strict mode and reported in permissive mode, and that a
+MAT whose later mip is truncated renders its complete mip 0 in strict mode with one
+asset notice (the retail mip fallback). A zero-light room renders black, and its
+fullbright render shows the master palette. A closed box room checks Wren-style
+overview previews (orthographic overhead and three-quarter perspective, framed
+automatically; Wren is a Grok bot, one of Andrei's AI collaborators, whose Blender
+level previews these generalise), their exact replay through snapshot with the
+embedded request, and the back-face cutaway (floor seen from above with it, ceiling without).
 Also checks resource validation and reviewed plan/apply/convert using a separate
 closed synthetic room, including changed resources that leave output JKL unchanged.
 Separately checks world-occluded ARCH baking against a ceiling/NoBlock control,
@@ -139,6 +149,41 @@ function New-SyntheticCmp {
     }
     return ,$bytes
 }
+function New-PaletteFixtureMat {
+    # Original synthetic MAT: a 2x2 texture (8-bit indices or 16-bit with declared r/g/b bits
+    # and shifts), or a solid colour when SolidColor is set. MipCount is the declared mip
+    # count; only Pixels are stored, so MipCount 2 with mip 0 alone truncates mip 1.
+    param([int]$Bpp = 8, [int[]]$Channels = @(), [byte[]]$Pixels = @(), [int]$SolidColor = -1, [int]$MipCount = 1)
+    $memory = [IO.MemoryStream]::new(); $writer = [IO.BinaryWriter]::new($memory)
+    try {
+        $solid = $SolidColor -ge 0
+        $colorMode = if ($Bpp -eq 8) { 0 } else { 1 }
+        $writer.Write([Text.Encoding]::ASCII.GetBytes('MAT '))
+        foreach ($value in @(0x32, $(if ($solid) { 0 } else { 2 }), 1, $(if ($solid) { 0 } else { 1 }), $colorMode, $Bpp)) { $writer.Write([int]$value) }
+        for ($i = 0; $i -lt 6; $i++) {
+            $channel = if ($i -lt $Channels.Count) { $Channels[$i] } else { 0 }
+            $writer.Write([int]$channel)
+        }
+        $writer.Write([byte[]]::new(24)) # Bit differences and alpha fields complete the 76-byte header.
+        if ($solid) { foreach ($value in @(0, $SolidColor, 0, 0, 0, 0)) { $writer.Write([int]$value) } }
+        else {
+            $writer.Write([byte[]]::new(40)) # One texture cel header, texture index zero.
+            foreach ($value in @(2, 2, 0, 0, 0, $MipCount)) { $writer.Write([int]$value) }
+            $writer.Write($Pixels)
+        }
+        $writer.Flush(); return ,$memory.ToArray()
+    }
+    finally { $writer.Dispose(); $memory.Dispose() }
+}
+function New-PaletteFixtureCmp([int[]]$Entry1, [int[]]$Entry2 = @(0, 0, 0), [int[]]$Entry3 = @(0, 0, 0)) {
+    $bytes = [byte[]]::new(64 + 768 + 16384)
+    [Text.Encoding]::ASCII.GetBytes('CMP ').CopyTo($bytes, 0)
+    for ($channel = 0; $channel -lt 3; $channel++) {
+        $bytes[67 + $channel] = $Entry1[$channel]; $bytes[70 + $channel] = $Entry2[$channel]; $bytes[73 + $channel] = $Entry3[$channel]
+    }
+    for ($row = 0; $row -lt 64; $row++) { for ($index = 0; $index -lt 256; $index++) { $bytes[832 + $row * 256 + $index] = $index } }
+    return ,$bytes
+}
 function New-SyntheticGob([Collections.IDictionary]$Entries) {
     $memory = [IO.MemoryStream]::new(); $writer = [IO.BinaryWriter]::new($memory)
     try {
@@ -229,9 +274,12 @@ function Invoke-Snapshot([string]$Name, [string]$LevelPath, $Request) {
     $result = Invoke-Agent $Name @('snapshot', $LevelPath, '-', $path) $requestText
     Confirm-Check "$Name reports the output hash and byte count" ((Get-Hash $path) -eq $result.outputSha256 -and (Get-Item -LiteralPath $path).Length -eq $result.outputBytes)
     Confirm-Check "$Name binds source, revision and exact request" ($result.inputSha256 -eq $Request.inputSha256 -and $result.sourceRevision -eq $Request.sourceRevision -and $result.requestSha256 -eq (Get-BytesHash $utf8.GetBytes($requestText)))
+    $orthographic = $Request.Contains('projection') -and $Request.projection -eq 'orthographic'
+    $lens = if ($orthographic) { $result.camera.projection -eq 'orthographic' -and $result.camera.orthographicHeight -eq $Request.orthographicHeight }
+        else { $result.camera.projection -eq 'perspective' -and $result.camera.fieldOfViewDegrees -eq $Request.fieldOfViewDegrees }
     Confirm-Check "$Name uses an offscreen explicit camera" (-not $result.guiLaunched -and $result.camera.up -eq 'Z' -and $result.cameraSha256 -match '^[0-9a-f]{64}$' -and
         ($result.camera.position -join ',') -eq ($Request.position -join ',') -and ($result.camera.target -join ',') -eq ($Request.target -join ',') -and
-        $result.camera.fieldOfViewDegrees -eq $Request.fieldOfViewDegrees -and $result.camera.nearPlane -eq $Request.nearPlane -and $result.camera.farPlane -eq $Request.farPlane)
+        $lens -and $result.camera.nearPlane -eq $Request.nearPlane -and $result.camera.farPlane -eq $Request.farPlane)
     $image = Read-SnapshotPng $path
     Confirm-Check "$Name PNG dimensions and independently decoded pixels match" ($image.width -eq $Request.width -and $image.height -eq $Request.height -and $image.rgbaSha256 -eq $result.rgbaSha256)
     Confirm-Check "$Name contains visible geometry" ($result.nonBackgroundPixels -gt 100)
@@ -403,6 +451,369 @@ function Invoke-WorldOccludedArchitectureWorkflow([string]$ClosedText, [Collecti
         sourcePosition = @(-0.6, -0.6, 4.2); firstSamplePosition = @(-0.6, -0.6, 0.2)
         ceilingZ = 3; range = 8; unblockedFirstSampleFalloff = 0.25; cases = $records
         limits = 'Editor world-polygon recipe only; no material-alpha, model/self shadow, runtime or retail equivalence claim.' }
+}
+function Invoke-PaletteAndTrueColorWorkflow {
+    # One sector on CMP 1 under a different World Colormap 0, with three fullbright floor quads,
+    # left to right: an 8-bit texture of index 1, solid colour 1 and a 16-bit RGB565 texture.
+    # JK displays textures through World Colormap 0; the accelerated engine shades a solid colour
+    # through its sector CMP's own palette (rdCache); true colour needs no palette at all.
+    $masterRgb = [int[]]@(220, 40, 60); $sectorRgb = [int[]]@(30, 200, 90); $trueRgb = [int[]]@(255, 255, 0)
+    $layout = [int[]]@(5, 6, 5, 11, 5, 0) # RGB565: r/g/b bits, then shifts.
+    $yellow = [byte[]]@(0xE0, 0xFF, 0xE0, 0xFF, 0xE0, 0xFF, 0xE0, 0xFF) # Four 0xFFE0 texels, little-endian.
+    $entries = [ordered]@{
+        'mat\pal_texture.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(1, 1, 1, 1))
+        'mat\pal_solid.mat' = New-PaletteFixtureMat -SolidColor 1
+        'mat\pal_truecolor.mat' = New-PaletteFixtureMat -Bpp 16 -Channels $layout -Pixels $yellow
+        'misc\cmp\pal_master.cmp' = New-PaletteFixtureCmp $masterRgb
+        'misc\cmp\pal_sector.cmp' = New-PaletteFixtureCmp $sectorRgb }
+    $intensities = (@('1') * 16) -join ' '
+    $paletteLevel = @"
+# Original synthetic palette fixture: World Colormap 0 differs from the sector's CMP.
+SECTION: HEADER
+VERSION 1
+END
+SECTION: MATERIALS
+World materials 3
+0: pal_texture.mat 1 1
+1: pal_solid.mat 1 1
+2: pal_truecolor.mat 1 1
+END
+SECTION: GEORESOURCE
+World colormaps 2
+0: pal_master.cmp
+1: pal_sector.cmp
+World vertices 8
+0: -3 -1 0
+1: -1 -1 0
+2: 1 -1 0
+3: 3 -1 0
+4: -3 1 0
+5: -1 1 0
+6: 1 1 0
+7: 3 1 0
+World texture vertices 4
+0: 0 0
+1: 2 0
+2: 2 2
+3: 0 2
+World adjoins 0
+World surfaces 3
+0: 0 0x0 0x0 4 0 3 -1 0 4 0,0 1,1 5,2 4,3 $intensities
+1: 1 0x0 0x0 4 0 3 -1 0 4 1,0 2,1 6,2 5,3 $intensities
+2: 2 0x0 0x0 4 0 3 -1 0 4 2,0 3,1 7,2 6,3 $intensities
+0: 0 0 1
+1: 0 0 1
+2: 0 0 1
+END
+SECTION: SECTORS
+World sectors 1
+SECTOR 0
+FLAGS 0
+AMBIENT LIGHT 0
+EXTRA LIGHT 0
+COLORMAP 1
+TINT 0 0 0
+VERTICES 8
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+SURFACES 0 3
+END
+"@
+    $levelPath = Join-Path $scratch 'palette_room.jkl'
+    Write-NewBytes $levelPath $utf8.GetBytes($paletteLevel)
+    $archive = Join-Path $scratch 'palette_room.gob'; Write-NewBytes $archive (New-SyntheticGob $entries)
+    $damagedEntries = [ordered]@{}
+    foreach ($entry in $entries.GetEnumerator()) { $damagedEntries.Add($entry.Key, $entry.Value) }
+    # The 2x2 16-bit mip needs eight pixel bytes; this copy stores four.
+    $damagedEntries['mat\pal_truecolor.mat'] = New-PaletteFixtureMat -Bpp 16 -Channels $layout -Pixels ([byte[]]@(0xE0, 0xFF, 0xE0, 0xFF))
+    $damaged = Join-Path $scratch 'palette_room_damaged_mat.gob'; Write-NewBytes $damaged (New-SyntheticGob $damagedEntries)
+    foreach ($path in @($levelPath, $archive, $damaged)) {
+        $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length })
+    }
+    $inspection = Invoke-Agent 'inspect-palette-room' @('inspect', $levelPath)
+    $render = Invoke-Snapshot 'lit-master-palette-and-true-colour' $levelPath (New-SnapshotRequest $inspection 'lit' 'rgb' $archive (Get-Hash $archive))
+    $texturePixels = Count-PixelColor $render.image.pixels $masterRgb
+    $solidPixels = Count-PixelColor $render.image.pixels $sectorRgb
+    $truePixels = Count-PixelColor $render.image.pixels $trueRgb
+    $receipt.paletteChecks = [ordered]@{ masterPaletteTexture = $texturePixels; sectorPaletteSolid = $solidPixels; trueColour = $truePixels }
+    Confirm-Check 'complete palette fixture renders without warnings' (@($render.result.warnings).Count -eq 0)
+    Confirm-Check 'an 8-bit texture shows World Colormap 0 although its sector uses another CMP' ($texturePixels -gt 100)
+    Confirm-Check 'a solid colour uses its sector CMP palette, as the accelerated engine does' ($solidPixels -gt 100)
+    Confirm-Check 'a 16-bit RGB565 MAT renders as decoded true colour' ($truePixels -gt 100)
+    Confirm-Check 'the master palette is resolved from the supplied archive' (
+        @($render.result.usedResources | Where-Object requested -EQ 'pal_master.cmp').Count -eq 1)
+
+    $damagedMessage = "MAT 'pal_truecolor.mat': Truncated MAT mip pixel data."
+    $damagedRequest = New-SnapshotRequest $inspection 'lit' 'rgb' $damaged (Get-Hash $damaged)
+    $refusedPath = Join-Path $scratch 'must-not-write-damaged-mat.png'
+    $refusal = Invoke-Agent 'refuse-damaged-mat-default-strict' @('snapshot', $levelPath, '-', $refusedPath) (Convert-Request $damagedRequest) 2
+    Confirm-Check 'strict mode refuses a damaged MAT with its diagnostic and writes nothing' (
+        -not (Test-Path -LiteralPath $refusedPath) -and $refusal.error -eq 'invalid_request' -and $refusal.message.Contains($damagedMessage))
+    $damagedRequest.strictAssets = $false
+    $permissive = Invoke-Snapshot 'lit-damaged-mat-permissive' $levelPath $damagedRequest
+    Confirm-Check 'permissive mode reports the damaged MAT and draws a placeholder for it' (
+        @($permissive.result.warnings) -contains $damagedMessage -and
+        @($permissive.result.warnings | Where-Object { $_ -like "Material 'pal_truecolor.mat'*placeholder*" }).Count -eq 1 -and
+        (Count-PixelColor $permissive.image.pixels $trueRgb) -eq 0)
+    Confirm-Check 'a damaged MAT leaves the other materials and both palettes intact' (
+        (Count-PixelColor $permissive.image.pixels $masterRgb) -eq $texturePixels -and
+        (Count-PixelColor $permissive.image.pixels $sectorRgb) -eq $solidPixels)
+
+    # Retail mip fallback: the same 2x2 RGB565 texture declaring two mips with only mip 0 stored
+    # (DBZ Tournament's zgrass pattern). Retail JK shows mip 0 on faces nearer than the level's
+    # MipMap Distances; SED always draws mip 0, and strict mode renders it with a notice.
+    $fallbackEntries = [ordered]@{}
+    foreach ($entry in $entries.GetEnumerator()) { $fallbackEntries.Add($entry.Key, $entry.Value) }
+    $fallbackEntries['mat\pal_truecolor.mat'] = New-PaletteFixtureMat -Bpp 16 -Channels $layout -Pixels $yellow -MipCount 2
+    $fallbackArchive = Join-Path $scratch 'palette_room_mip_fallback.gob'; Write-NewBytes $fallbackArchive (New-SyntheticGob $fallbackEntries)
+    $receipt.fixtures.Add(@{ path = $fallbackArchive; sha256 = Get-Hash $fallbackArchive; bytes = (Get-Item -LiteralPath $fallbackArchive).Length })
+    $fallbackNote = "MAT 'pal_truecolor.mat': Retail mip fallback: mip level 1 of 2 levels (1x1) needs 2 bytes but 0 remain; showing complete mip level 0, as retail JK does on faces nearer than the level's MipMap Distances; retail faces far enough to use mip level 1 or later show data the file never filled."
+    $fallback = Invoke-Snapshot 'lit-mip-fallback-strict' $levelPath (New-SnapshotRequest $inspection 'lit' 'rgb' $fallbackArchive (Get-Hash $fallbackArchive))
+    $receipt.paletteChecks.mipFallbackTrueColour = Count-PixelColor $fallback.image.pixels $trueRgb
+    Confirm-Check 'strict mode renders a MAT whose later mip is truncated from its complete mip 0' (
+        $receipt.paletteChecks.mipFallbackTrueColour -eq $truePixels -and $fallback.result.rgbaSha256 -eq $render.result.rgbaSha256)
+    Confirm-Check 'the retail mip fallback is one asset notice and warning, never a placeholder' (
+        @($fallback.result.assetNotices).Count -eq 1 -and $fallback.result.assetNotices[0] -eq $fallbackNote -and
+        @($fallback.result.warnings | Where-Object { $_ -eq $fallbackNote }).Count -eq 1 -and
+        @($fallback.result.warnings | Where-Object { $_ -like '*placeholder*' }).Count -eq 0)
+    Confirm-Check 'complete and damaged archives report no asset notices' (
+        @($render.result.assetNotices).Count -eq 0 -and @($permissive.result.assetNotices).Count -eq 0)
+}
+function Invoke-FullbrightWorkflow {
+    # One JK floor, Gouraud-lit with zero intensity, zero surface/sector extra light and no
+    # lights: DBZ Tournament ships like this. The lit render is black; fullbright shows the
+    # master palette entry of every texel, so unlit levels can be inspected.
+    $masterRgb = [int[]]@(220, 40, 60)
+    $entries = [ordered]@{
+        'mat\dark_floor.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(1, 1, 1, 1))
+        'misc\cmp\dark_master.cmp' = New-PaletteFixtureCmp $masterRgb }
+    $darkLevel = @'
+# Original synthetic zero-light fixture: Gouraud surface, intensity 0, no extra light.
+SECTION: HEADER
+VERSION 1
+END
+SECTION: MATERIALS
+World materials 1
+0: dark_floor.mat 1 1
+END
+SECTION: GEORESOURCE
+World colormaps 1
+0: dark_master.cmp
+World vertices 4
+0: -2 -2 0
+1: 2 -2 0
+2: 2 2 0
+3: -2 2 0
+World texture vertices 4
+0: 0 0
+1: 2 0
+2: 2 2
+3: 0 2
+World adjoins 0
+World surfaces 1
+0: 0 0x0 0x0 4 3 3 -1 0 4 0,0 1,1 2,2 3,3 0 0 0 0
+0: 0 0 1
+END
+SECTION: SECTORS
+World sectors 1
+SECTOR 0
+FLAGS 0
+AMBIENT LIGHT 0
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+VERTICES 4
+0: 0
+1: 1
+2: 2
+3: 3
+SURFACES 0 1
+END
+'@
+    $levelPath = Join-Path $scratch 'dark_room.jkl'
+    Write-NewBytes $levelPath $utf8.GetBytes($darkLevel)
+    $archive = Join-Path $scratch 'dark_room.gob'; Write-NewBytes $archive (New-SyntheticGob $entries)
+    foreach ($path in @($levelPath, $archive)) { $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length }) }
+    $inspection = Invoke-Agent 'inspect-dark-room' @('inspect', $levelPath)
+    Confirm-Check 'zero-light fixture parses as a JK (mono) level' ($inspection.game -eq 'JediKnight')
+    $request = New-SnapshotRequest $inspection 'lit' 'game' $archive (Get-Hash $archive)
+    $request.renderProfile = 'openjk'
+    $dark = Invoke-Snapshot 'lit-zero-light' $levelPath $request
+    $request.fullbright = $true
+    $bright = Invoke-Snapshot 'lit-zero-light-fullbright' $levelPath $request
+    $receipt.fullbrightChecks = [ordered]@{ litBlack = Count-PixelColor $dark.image.pixels @(0, 0, 0); litMaster = Count-PixelColor $dark.image.pixels $masterRgb
+        fullbrightMaster = Count-PixelColor $bright.image.pixels $masterRgb; fullbrightBlack = Count-PixelColor $bright.image.pixels @(0, 0, 0) }
+    Confirm-Check 'a zero-light level renders black under its own lighting' ($receipt.fullbrightChecks.litBlack -gt 100 -and $receipt.fullbrightChecks.litMaster -eq 0)
+    Confirm-Check 'fullbright shows the master palette colour instead' ($receipt.fullbrightChecks.fullbrightMaster -gt 100 -and
+        $receipt.fullbrightChecks.fullbrightMaster -eq $receipt.fullbrightChecks.litBlack -and $receipt.fullbrightChecks.fullbrightBlack -eq 0)
+    Confirm-Check 'fullbright is reported in the receipt and its limitations' ($bright.result.fullbright -eq $true -and $dark.result.fullbright -eq $false -and
+        @($bright.result.limitations | Where-Object { $_ -like 'Fullbright: lighting is ignored*' }).Count -eq 1 -and
+        @($dark.result.limitations | Where-Object { $_ -like 'Fullbright*' }).Count -eq 0 -and
+        $bright.result.cameraSha256 -eq $dark.result.cameraSha256)
+    $diagnosticRequest = New-SnapshotRequest $inspection
+    $diagnosticRequest.fullbright = $true
+    $refusedPath = Join-Path $scratch 'must-not-write-diagnostic-fullbright.png'
+    $refusal = Invoke-Agent 'refuse-diagnostic-fullbright' @('snapshot', $levelPath, '-', $refusedPath) (Convert-Request $diagnosticRequest) 2
+    Confirm-Check 'diagnostic snapshots refuse fullbright' (-not (Test-Path -LiteralPath $refusedPath) -and
+        $refusal.message -eq 'resourceArchives, lightingMode, renderProfile, strictAssets, fullbright and cullBackFaces apply only to lit snapshots.')
+}
+function Get-StepStdout([string]$StepName) {
+    # The exact stdout text of a completed agent step, for byte-exact embedded JSON.
+    $step = @($receipt.steps | Where-Object { $_.name -eq $StepName })
+    if ($step.Count -ne 1) { throw "Expected one agent step named $StepName." }
+    return [IO.File]::ReadAllText((Join-Path $scratch $step[0].stdoutFile), $utf8)
+}
+function Invoke-Overview([string]$Name, [string]$LevelPath, $Request) {
+    $requestText = Convert-Request $Request
+    $path = Join-Path $scratch "$Name.png"
+    $result = Invoke-Agent $Name @('overview', $LevelPath, '-', $path) $requestText
+    Confirm-Check "$Name reports the output hash and byte count" ((Get-Hash $path) -eq $result.outputSha256 -and (Get-Item -LiteralPath $path).Length -eq $result.outputBytes)
+    Confirm-Check "$Name binds source and the exact overview request" ($result.inputSha256 -eq $Request.inputSha256 -and
+        $result.requestSha256 -eq (Get-BytesHash $utf8.GetBytes($requestText)) -and -not $result.guiLaunched -and $result.mode -eq 'lit')
+    $image = Read-SnapshotPng $path
+    Confirm-Check "$Name PNG dimensions and independently decoded pixels match" ($image.width -eq $Request.width -and $image.height -eq $Request.height -and $image.rgbaSha256 -eq $result.rgbaSha256)
+    Confirm-Check "$Name contains visible geometry" ($result.nonBackgroundPixels -gt 0)
+    $expectedProjection = if ($Request.view -eq 'overhead') { 'orthographic' } else { 'perspective' }
+    $framing = if ($Request.Contains('framing')) { $Request.framing } else { 'wren' }
+    $cull = if ($Request.Contains('cullBackFaces')) { $Request.cullBackFaces } else { $true }
+    Confirm-Check "$Name records its view, framing and the equivalent snapshot request" (
+        $result.camera.projection -eq $expectedProjection -and $result.overview.view -eq $Request.view -and $result.overview.framing -eq $framing -and
+        $result.overview.snapshotRequest.mode -eq 'lit' -and $result.overview.snapshotRequest.cullBackFaces -eq $cull -and $result.cullBackFaces -eq $cull -and
+        (($result.overview.snapshotRequest.Contains('projection') -and $result.overview.snapshotRequest.projection -eq 'orthographic') -eq ($expectedProjection -eq 'orthographic')))
+    $receipt.outputs.Add([ordered]@{ name = $Name; path = $path; sha256 = $result.outputSha256; rgbaSha256 = $result.rgbaSha256
+        width = $image.width; height = $image.height; camera = $result.camera; overview = $result.overview; warnings = $result.warnings })
+    # Replay the embedded request byte for byte through snapshot.
+    $node = [Text.Json.Nodes.JsonNode]::Parse((Get-StepStdout $Name))
+    $snapshotText = $node['overview']['snapshotRequest'].ToJsonString()
+    $replayPath = Join-Path $scratch "$Name-replay.png"
+    $replay = Invoke-Agent "$Name-replay" @('snapshot', $LevelPath, '-', $replayPath) $snapshotText
+    Confirm-Check "$Name replays through snapshot with the same camera and pixels" (
+        $replay.cameraSha256 -eq $result.cameraSha256 -and $replay.rgbaSha256 -eq $result.rgbaSha256 -and
+        $null -eq $replay.overview -and $replay.requestSha256 -eq (Get-BytesHash $utf8.GetBytes($snapshotText)))
+    return @{ result = $result; image = $image; path = $path }
+}
+function Invoke-OverviewWorkflow {
+    # A closed 4 x 4 x 3 box room, fullbright, with distinct floor, ceiling and wall colours.
+    $floorRgb = [int[]]@(220, 40, 60); $ceilingRgb = [int[]]@(40, 200, 220); $wallRgb = [int[]]@(90, 90, 200)
+    $entries = [ordered]@{
+        'mat\ov_floor.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(1, 1, 1, 1))
+        'mat\ov_ceiling.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(2, 2, 2, 2))
+        'mat\ov_wall.mat' = New-PaletteFixtureMat -Pixels ([byte[]]@(3, 3, 3, 3))
+        'misc\cmp\ov_master.cmp' = New-PaletteFixtureCmp $floorRgb $ceilingRgb $wallRgb }
+    $boxLevel = @'
+# Original synthetic closed box room for Wren-style overviews; fullbright surfaces.
+SECTION: HEADER
+VERSION 1
+END
+SECTION: MATERIALS
+World materials 3
+0: ov_floor.mat 1 1
+1: ov_ceiling.mat 1 1
+2: ov_wall.mat 1 1
+END
+SECTION: GEORESOURCE
+World colormaps 1
+0: ov_master.cmp
+World vertices 8
+0: -2 -2 0
+1: 2 -2 0
+2: 2 2 0
+3: -2 2 0
+4: -2 -2 3
+5: 2 -2 3
+6: 2 2 3
+7: -2 2 3
+World texture vertices 4
+0: 0 0
+1: 2 0
+2: 2 2
+3: 0 2
+World adjoins 0
+World surfaces 6
+'@
+    $faces = @(@(0, 1, 2, 3), @(7, 6, 5, 4), @(4, 5, 1, 0), @(5, 6, 2, 1), @(6, 7, 3, 2), @(7, 4, 0, 3))
+    $normals = @('0 0 1', '0 0 -1', '0 1 0', '-1 0 0', '0 -1 0', '1 0 0')
+    for ($i = 0; $i -lt $faces.Count; $i++) {
+        $material = [Math]::Min($i, 2)
+        $pairs = (0..3 | ForEach-Object { '{0},{1}' -f $faces[$i][$_], $_ }) -join ' '
+        $boxLevel += "`n${i}: $material 0x0 0x0 4 0 3 -1 0 4 $pairs 1 1 1 1"
+    }
+    for ($i = 0; $i -lt $normals.Count; $i++) { $boxLevel += "`n${i}: $($normals[$i])" }
+    $boxLevel += @'
+
+END
+SECTION: SECTORS
+World sectors 1
+SECTOR 0
+FLAGS 0
+AMBIENT LIGHT 0
+EXTRA LIGHT 0
+COLORMAP 0
+TINT 0 0 0
+VERTICES 8
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+SURFACES 0 6
+END
+
+'@
+    $levelPath = Join-Path $scratch 'overview_box.jkl'
+    Write-NewBytes $levelPath $utf8.GetBytes($boxLevel)
+    $archive = Join-Path $scratch 'overview_box.gob'; Write-NewBytes $archive (New-SyntheticGob $entries)
+    foreach ($path in @($levelPath, $archive)) { $receipt.fixtures.Add(@{ path = $path; sha256 = Get-Hash $path; bytes = (Get-Item -LiteralPath $path).Length }) }
+    $inspection = Invoke-Agent 'inspect-overview-box' @('inspect', $levelPath)
+    Confirm-Check 'overview fixture is one closed six-surface sector' ($inspection.sectors[0].surfaces -eq 6)
+    function New-OverviewRequest([string]$View) {
+        return [ordered]@{ schemaVersion = 1; inputSha256 = $inspection.inputSha256; sourceRevision = $inspection.sourceRevision
+            view = $View; width = 256; height = 192; resourceArchives = @(@{ path = $archive; sha256 = Get-Hash $archive }) }
+    }
+    $overhead = Invoke-Overview 'overview-overhead' $levelPath (New-OverviewRequest 'overhead')
+    $threeQuarter = Invoke-Overview 'overview-threequarter' $levelPath (New-OverviewRequest 'threequarter')
+    $containRequest = New-OverviewRequest 'threequarter'; $containRequest.framing = 'contain'; $containRequest.margin = 0.05
+    $contain = Invoke-Overview 'overview-threequarter-contain' $levelPath $containRequest
+    $openRequest = New-OverviewRequest 'overhead'; $openRequest.cullBackFaces = $false
+    $open = Invoke-Overview 'overview-overhead-no-cutaway' $levelPath $openRequest
+    $receipt.overviewChecks = [ordered]@{
+        overheadFloor = Count-PixelColor $overhead.image.pixels $floorRgb; overheadCeiling = Count-PixelColor $overhead.image.pixels $ceilingRgb
+        openFloor = Count-PixelColor $open.image.pixels $floorRgb; openCeiling = Count-PixelColor $open.image.pixels $ceilingRgb
+        threeQuarterFloor = Count-PixelColor $threeQuarter.image.pixels $floorRgb; threeQuarterWall = Count-PixelColor $threeQuarter.image.pixels $wallRgb
+        threeQuarterCeiling = Count-PixelColor $threeQuarter.image.pixels $ceilingRgb; containFloor = Count-PixelColor $contain.image.pixels $floorRgb }
+    $checks = $receipt.overviewChecks
+    Confirm-Check 'the overhead plan frames the drawn surfaces with Wren''s orthographic camera' (
+        ($overhead.result.overview.bounds.min -join ',') -eq '-2,-2,0' -and ($overhead.result.overview.bounds.max -join ',') -eq '2,2,3' -and
+        ($overhead.result.camera.position -join ',') -eq '0,0,7' -and ($overhead.result.camera.target -join ',') -eq '0,0,1.5' -and
+        [Math]::Abs($overhead.result.camera.orthographicHeight - 4.2) -lt 1e-9 -and $overhead.result.overview.margin -eq 0.025)
+    Confirm-Check 'cutaway overhead shows the floor through the culled ceiling' ($checks.overheadFloor -gt 100 -and $checks.overheadCeiling -eq 0 -and
+        @($overhead.result.limitations | Where-Object { $_ -like '*Every world surface is drawn only from in front of its plane (cutaway)*' }).Count -eq 1)
+    Confirm-Check 'without the cutaway the overhead plan shows the ceiling' ($checks.openCeiling -gt 100 -and $checks.openFloor -eq 0 -and
+        @($open.result.limitations | Where-Object { $_ -like '*Surfaces are double-sided except adjoined ones*' }).Count -eq 1)
+    Confirm-Check 'the three-quarter view looks into the doll''s house from the south-east' ($threeQuarter.result.camera.position[0] -gt 0 -and
+        $threeQuarter.result.camera.position[1] -lt 0 -and $threeQuarter.result.camera.position[2] -gt 3 -and
+        $checks.threeQuarterFloor -gt 100 -and $checks.threeQuarterWall -gt 100 -and $checks.threeQuarterCeiling -eq 0)
+    Confirm-Check 'contain framing backs further off than Wren''s fixed distance' ($contain.result.overview.framing -eq 'contain' -and
+        $contain.result.camera.position[0] -gt $threeQuarter.result.camera.position[0] -and $checks.containFloor -gt 100 -and
+        $checks.containFloor -lt $checks.threeQuarterFloor)
+
+    $existing = Get-Hash $overhead.path
+    $null = Invoke-Agent 'refuse-overview-overwrite' @('overview', $levelPath, '-', $overhead.path) (Convert-Request (New-OverviewRequest 'overhead')) 4
+    Confirm-Check 'overview never replaces an existing PNG' ((Get-Hash $overhead.path) -eq $existing)
+    $unbound = New-OverviewRequest 'overhead'; $unbound.Remove('resourceArchives')
+    $unboundPath = Join-Path $scratch 'must-not-write-overview-without-resources.png'
+    $refusal = Invoke-Agent 'refuse-overview-without-resources' @('overview', $levelPath, '-', $unboundPath) (Convert-Request $unbound) 2
+    Confirm-Check 'overview requires hash-bound resource archives' (-not (Test-Path -LiteralPath $unboundPath) -and
+        $refusal.message -eq 'Overview requires resourceArchives with explicit paths and SHA256 hashes.')
 }
 function Invoke-ResourceWorkflow([string]$LevelText, [string]$ModelText, [Collections.IDictionary]$Entries) {
     $resourceSchema = Invoke-Agent 'resource-schema' @('schema', 'resources')
@@ -590,6 +1001,15 @@ try {
         'architecture-world-occluded-bake' -in $version.capabilities -and 'architecture-provenance-readback' -in $version.capabilities)
     $schema = Invoke-Agent 'snapshot-schema' @('schema', 'snapshot')
     Confirm-Check 'snapshot schema exposes explicit lit assets and mono/RGB modes' ('lit' -in $schema.properties.mode.enum -and 'mono' -in $schema.properties.lightingMode.enum -and 'rgb' -in $schema.properties.lightingMode.enum -and $schema.properties.strictAssets.default -eq $true)
+    Confirm-Check 'agent advertises orthographic, fullbright, cutaway, overview and mip-fallback support' (
+        @('orthographic-snapshot', 'fullbright-snapshot', 'back-face-cutaway', 'wren-overview', 'retail-mip-fallback' | Where-Object { $_ -notin $version.capabilities }).Count -eq 0)
+    Confirm-Check 'snapshot schema offers orthographic cameras, fullbright and the cutaway' (
+        'orthographic' -in $schema.properties.projection.enum -and $schema.properties.Contains('orthographicHeight') -and
+        $schema.properties.fullbright.default -eq $false -and $schema.properties.cullBackFaces.default -eq $false -and 'fieldOfViewDegrees' -notin $schema.required)
+    $overviewSchema = Invoke-Agent 'overview-schema' @('schema', 'overview')
+    Confirm-Check 'overview schema requires a view and hash-bound archives and defaults to the cutaway' (
+        'view' -in $overviewSchema.required -and 'resourceArchives' -in $overviewSchema.required -and
+        ($overviewSchema.properties.view.enum -join ',') -eq 'overhead,threequarter' -and $overviewSchema.properties.cullBackFaces.default -eq $true)
 
     $modelText = @'
 SECTION: HEADER
@@ -804,6 +1224,9 @@ END
     Confirm-Check 'diagnostic still omits things and reports flat geometry' ($diagnostic.result.counts.omittedThings -eq 1 -and $diagnostic.result.renderer -match '(?i)diagnostic')
     Confirm-Check 'diagnostic does not consume resources or a lit mode' ($diagnostic.result.resourceArchives.Count -eq 0 -and
         $diagnostic.result.usedResources.Count -eq 0 -and $null -eq $diagnostic.result.lightingMode -and $diagnostic.result.counts.triangles -eq 2)
+    Invoke-PaletteAndTrueColorWorkflow
+    Invoke-FullbrightWorkflow
+    Invoke-OverviewWorkflow
     Invoke-ResourceWorkflow $levelText $modelText $entries
     foreach ($fixture in $receipt.fixtures) { Confirm-Check 'input fixture remains byte-identical' ((Get-Hash $fixture.path) -eq $fixture.sha256) }
     $receipt.status = 'passed'
