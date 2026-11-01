@@ -1,6 +1,21 @@
 # SED MotS project checkpoint
 
-Updated: 2026-10-29 (reviewed dependency packaging). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-10-31 (Wren's level previews, Red's `claude` branch). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+
+## Wren's level previews (claude branch)
+
+Red's `claude` branch finishes work started by Wren, a Grok bot and one of Andrei's
+AI collaborators ([NOTICE.md](../NOTICE.md)): `sed-agent overview` and orthographic,
+fullbright and cutaway snapshots in SED ([protocol](AGENT_PROTOCOL.md#wren-style-overviews)),
+the retail mip fallback for MATs with short later mips, `tools/blender` (a Blender 5
+JKL/GOB importer and headless previewer using Coda's Blender-Sith fork) and
+`tools/retail-capture` (retail JK.EXE 1.01 under Wine 9 with scripted menus and frame
+receipts). Development gates passed 1,943 Core, 318 MCP, 127 Python, 24 Linux-tooling,
+65 + 10 Blender and 49 retail-capture tests; see the 2026-10-31 work-log entry for the
+evidence and limits. Package `0.4.0-mots.17-claude.red39` binds clean commit
+`fe04ee3` and passed its build, graphics and full-workflow verification; its receipts
+are the release evidence, and later documentation-only commits do not change that
+source identity. Nothing here claims gameplay or retail pixel parity for SED's preview.
 
 ## Reviewed dependency packaging
 
