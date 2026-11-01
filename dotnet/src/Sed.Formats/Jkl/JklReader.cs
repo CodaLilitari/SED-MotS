@@ -106,7 +106,17 @@ public sealed class JklReader
             }
             if (start < 0) start = i;
             if (c == '(' && ++depth > 32) throw new FormatException("JKL parameter nesting exceeds the parser limit.");
-            if (c == ')' && --depth < 0) throw new FormatException("Unmatched JKL parameter parenthesis.");
+            if (c == ')' && --depth < 0)
+            {
+                int end = i;
+                while (end < line.Length && !char.IsWhiteSpace(line[end])) end++;
+                if (!IsLegacyTrailingFrameToken(line[start..end]))
+                    throw new FormatException("Unmatched JKL parameter parenthesis.");
+                tokens.Add(line[start..end]);
+                start = -1;
+                depth = 0;
+                i = end; // the delimiter at 'end' (or the line end) needs no further processing
+            }
         }
         if (depth != 0)
         {
@@ -116,6 +126,24 @@ public sealed class JklReader
             tokens.Add(finalToken);
         }
         return tokens.ToArray();
+    }
+
+    /// <summary>
+    /// One preservation note for each legacy spelling that <see cref="ParameterTokens"/> kept
+    /// verbatim, in the order JKL import has always reported them. Callers prefix their own
+    /// location: a JKL line, a native thing row or a template library entry.
+    /// </summary>
+    internal static IEnumerable<string> LegacyParameterNotes(IReadOnlyList<string> tokens)
+    {
+        if (tokens.Count > 0 && IsLegacyUnterminatedFrameToken(tokens[tokens.Count - 1]))
+            yield return "a legacy final frame parameter has six finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's six-conversion parser.";
+        foreach (string token in tokens)
+        {
+            if (IsLegacyUnterminatedEyeOffsetToken(token))
+                yield return "a legacy eyeoffset parameter has three finite coordinates but no closing parenthesis. Its original value is retained, matching the engine's three-conversion parser; following parameters remain separate.";
+            if (IsLegacyTrailingFrameToken(token) && token.Count(c => c == ')') > token.Count(c => c == '('))
+                yield return "a legacy frame parameter has six finite coordinates and its closing parenthesis, followed by stray characters with an unmatched ')'. Its original value is retained, matching the engine's six-conversion parser, which ignores the trailing characters.";
+        }
     }
 
     // sithTrackThing accepts six successful sscanf conversions even when the final
@@ -130,6 +158,32 @@ public sealed class JklReader
         {
             var values = half.Split('/');
             if (values.Length != 3 || values.Any(value =>
+                !float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float number) || !float.IsFinite(number)))
+                return false;
+        }
+        return true;
+    }
+
+    // stdConffile splits parameters at whitespace, then sithTrackThing scans each
+    // frame value with sscanf "(%f/%f/%f:%f/%f/%f)" and requires only the six
+    // conversions, so anything after them is ignored. Caesar's Palace (caesars.jkl
+    // line 56249, thing 135) ships "frame=(8.05/8.35/6.92:0/270/0)70/0)", whose
+    // stray ')' would otherwise be unmatched. Keep its spelling; accept only six
+    // finite coordinates, a closing ')' and non-whitespace trailing characters
+    // without '('. Do not extend this exception to other malformed vectors.
+    internal static bool IsLegacyTrailingFrameToken(string token)
+    {
+        if (!token.StartsWith("frame=(", StringComparison.OrdinalIgnoreCase)) return false;
+        int close = token.IndexOf(')', 7);
+        if (close < 0 || close == token.Length - 1) return false;
+        string trailing = token[(close + 1)..];
+        if (trailing.Any(c => c == '(' || char.IsWhiteSpace(c))) return false;
+        var halves = token[7..close].Split(':');
+        if (halves.Length != 2) return false;
+        foreach (string half in halves)
+        {
+            var values = half.Split('/');
+            if (values.Length != 3 || values.Any(value => value.Length == 0 || value.Any(char.IsWhiteSpace) ||
                 !float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float number) || !float.IsFinite(number)))
                 return false;
         }
