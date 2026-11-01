@@ -43,12 +43,8 @@ internal static class SnapshotEvidence
             Require(Text(receipt, "mode") == request.Mode, "Receipt mode differs from the request.");
             Require(receipt.GetProperty("guiLaunched").ValueKind == JsonValueKind.False, "Receipt must report no GUI launch.");
 
-            var camera = new {
-                position = new[] { request.Position.X, request.Position.Y, request.Position.Z },
-                target = new[] { request.Target.X, request.Target.Y, request.Target.Z },
-                request.FieldOfViewDegrees, request.NearPlane, request.FarPlane, up = "Z", projection = "perspective",
-            };
-            byte[] cameraBytes = JsonSerializer.SerializeToUtf8Bytes(camera, AgentWorkspace.JsonOptions);
+            // The same description the worker hashes: perspective or orthographic, never rebuilt here.
+            byte[] cameraBytes = JsonSerializer.SerializeToUtf8Bytes(request.CameraDescription(), AgentWorkspace.JsonOptions);
             using var expectedCamera = JsonDocument.Parse(cameraBytes);
             Require(JsonElement.DeepEquals(receipt.GetProperty("camera"), expectedCamera.RootElement),
                 "Receipt camera differs from the requested pose or default clipping planes.");
@@ -78,19 +74,26 @@ internal static class SnapshotEvidence
     {
         var archives = receipt.GetProperty("resourceArchives");
         var entries = receipt.GetProperty("usedResources");
+        var notices = receipt.GetProperty("assetNotices");
         Require(archives.ValueKind == JsonValueKind.Array && entries.ValueKind == JsonValueKind.Array, "Missing resource arrays.");
+        Require(notices.ValueKind == JsonValueKind.Array && notices.EnumerateArray().All(n => n.ValueKind == JsonValueKind.String),
+            "Receipt asset notices must be an array of strings.");
         if (request.Mode == "diagnostic")
         {
-            Require(archives.GetArrayLength() == 0 && entries.GetArrayLength() == 0 &&
+            Require(archives.GetArrayLength() == 0 && entries.GetArrayLength() == 0 && notices.GetArrayLength() == 0 &&
                 receipt.GetProperty("resourceRevision").ValueKind == JsonValueKind.Null &&
                 receipt.GetProperty("lightingMode").ValueKind == JsonValueKind.Null &&
-                receipt.GetProperty("renderProfile").ValueKind == JsonValueKind.Null,
+                receipt.GetProperty("renderProfile").ValueKind == JsonValueKind.Null &&
+                receipt.GetProperty("fullbright").ValueKind == JsonValueKind.Null &&
+                receipt.GetProperty("cullBackFaces").ValueKind == JsonValueKind.Null,
                 "Diagnostic snapshot unexpectedly declares lit resources or settings.");
             Require(Text(receipt, "renderer") == "Vulkan flat diagnostic geometry", "Unexpected diagnostic renderer.");
             return;
         }
         Require(Text(receipt, "renderer") == "Vulkan static lit scene" && Text(receipt, "renderProfile") == request.RenderProfile,
             "Lit renderer or profile differs from the request.");
+        Require(Boolean(receipt, "fullbright") == request.Fullbright && Boolean(receipt, "cullBackFaces") == request.CullBackFaces,
+            "Receipt fullbright or back-face cutaway differs from the request.");
         string lighting = Text(receipt, "lightingMode");
         // The game-selected choice derives from source kind, which this API does
         // not reparse. Explicit mono/RGB requests are exactly checkable here.
@@ -191,6 +194,12 @@ internal static class SnapshotEvidence
         var field = value.GetProperty(name);
         Require(field.ValueKind == JsonValueKind.Number && field.TryGetInt64(out _), "Invalid receipt integer: " + name);
         return field.GetInt64();
+    }
+    private static bool Boolean(JsonElement value, string name)
+    {
+        var field = value.GetProperty(name);
+        Require(field.ValueKind is JsonValueKind.True or JsonValueKind.False, "Invalid receipt boolean: " + name);
+        return field.GetBoolean();
     }
     private static string Text(JsonElement value, string name)
     {
