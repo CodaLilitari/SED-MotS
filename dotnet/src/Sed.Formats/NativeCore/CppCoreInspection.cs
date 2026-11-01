@@ -30,11 +30,11 @@ public static class CppCoreInspector
     public static Task<CppCoreInspectionObservation> InspectAsync(CppCoreInspectionOptions options,
         CppCoreOperation operation, CppCoreProjectKind projectKind, ReadOnlyMemory<byte> input,
         CancellationToken cancellationToken = default) => InspectAsync(options, operation, projectKind, input,
-            cancellationToken, new CppCoreProcessFactory());
+            cancellationToken, new CppCoreProcessFactory(), TimeProvider.System);
 
     internal static Task<CppCoreInspectionObservation> InspectAsync(CppCoreInspectionOptions options,
         CppCoreOperation operation, CppCoreProjectKind projectKind, ReadOnlyMemory<byte> input,
-        CancellationToken cancellationToken, ICppCoreProcessFactory processFactory)
+        CancellationToken cancellationToken, ICppCoreProcessFactory processFactory, TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(processFactory);
@@ -54,12 +54,13 @@ public static class CppCoreInspector
         var capturedOptions = options with { ExecutablePath = Path.GetFullPath(options.ExecutablePath),
             ExpectedExecutableSha256 = options.ExpectedExecutableSha256.ToLowerInvariant(),
             ExpectedSourceManifestSha256 = options.ExpectedSourceManifestSha256.ToLowerInvariant() };
-        return InspectCapturedAsync(capturedOptions, operation, projectKind, captured, cancellationToken, processFactory);
+        return InspectCapturedAsync(capturedOptions, operation, projectKind, captured, cancellationToken,
+            processFactory, timeProvider ?? TimeProvider.System);
     }
 
     private static async Task<CppCoreInspectionObservation> InspectCapturedAsync(CppCoreInspectionOptions options,
         CppCoreOperation operation, CppCoreProjectKind kind, byte[] input, CancellationToken callerToken,
-        ICppCoreProcessFactory factory)
+        ICppCoreProcessFactory factory, TimeProvider timeProvider)
     {
         string inputHash = Hash(input), requestId = Guid.NewGuid().ToString("N");
         string operationName = operation == CppCoreOperation.InspectJkl ? "inspect-jkl" : "inspect-native-sed";
@@ -68,8 +69,11 @@ public static class CppCoreInspector
         bool started = false, exitConfirmed = true;
         int? exit = null, processId = null;
         string stderr = "";
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
-        deadline.CancelAfter(options.Timeout);
+        // The public path uses the system clock. An internal provider lets the
+        // fake-process tests control expiry without racing real filesystem I/O.
+        // This still covers every identity check, handshake and inspection.
+        using var timeout = new CancellationTokenSource(options.Timeout, timeProvider);
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken, timeout.Token);
         try
         {
             binaryHash = await VerifyExecutableAsync(options, deadline.Token).ConfigureAwait(false);

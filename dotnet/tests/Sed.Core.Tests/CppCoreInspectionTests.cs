@@ -270,7 +270,7 @@ public sealed class CppCoreInspectionTests
             json["integrity"]!["repairedChunks"] = repairs;
         };
         var result = await CppCoreInspector.InspectAsync(fixture.Options, CppCoreOperation.InspectNativeSed,
-            CppCoreProjectKind.Mots, fixture.Input, default, fixture.Factory);
+            CppCoreProjectKind.Mots, fixture.Input, default, fixture.Factory, fixture.Clock);
         Assert.Equal("protocol_error", result.FailureCode);
     }
 
@@ -310,8 +310,20 @@ public sealed class CppCoreInspectionTests
         using var fixture = new Fixture();
         var child = new BlockingProcess();
         fixture.Factory.InspectionProcess = () => child;
-        var result = await CppCoreInspector.InspectAsync(fixture.Options with { Timeout = TimeSpan.FromMilliseconds(100) },
-            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, fixture.Input, default, fixture.Factory);
+        var timeout = TimeSpan.FromMilliseconds(100);
+        bool advancedAfterInspectionStart = false;
+        child.OnWaitStarted = () =>
+        {
+            // The runner calls this only after obtaining the inspection child,
+            // recording ownership and starting its stdin/stdout/stderr work.
+            advancedAfterInspectionStart = fixture.Factory.Starts.Count == 2
+                && fixture.Factory.Starts[1].ArgumentList[2] == "inspect-jkl";
+            fixture.Clock.Advance(timeout);
+        };
+        var result = await CppCoreInspector.InspectAsync(fixture.Options with { Timeout = timeout },
+            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, fixture.Input, default, fixture.Factory, fixture.Clock);
+        Assert.True(advancedAfterInspectionStart);
+        Assert.True(result.ProcessStarted);
         Assert.Equal("timeout", result.FailureCode);
         Assert.True(child.Killed && child.HasExited);
         Assert.True(result.ProcessExitConfirmed);
@@ -323,11 +335,36 @@ public sealed class CppCoreInspectionTests
         using var fixture = new Fixture();
         var child = new BlockingProcess { ConfirmTermination = false };
         fixture.Factory.InspectionProcess = () => child;
-        var result = await CppCoreInspector.InspectAsync(fixture.Options with { Timeout = TimeSpan.FromMilliseconds(100) },
-            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, fixture.Input, default, fixture.Factory);
+        var timeout = TimeSpan.FromMilliseconds(100);
+        bool advancedAfterInspectionStart = false;
+        child.OnWaitStarted = () =>
+        {
+            advancedAfterInspectionStart = fixture.Factory.Starts.Count == 2
+                && fixture.Factory.Starts[1].ArgumentList[2] == "inspect-jkl";
+            fixture.Clock.Advance(timeout);
+        };
+        var result = await CppCoreInspector.InspectAsync(fixture.Options with { Timeout = timeout },
+            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, fixture.Input, default, fixture.Factory, fixture.Clock);
+        Assert.True(advancedAfterInspectionStart);
+        Assert.True(result.ProcessStarted);
         Assert.Equal("termination_unconfirmed", result.FailureCode);
         Assert.False(result.ProcessExitConfirmed);
         Assert.True(child.Killed);
+    }
+
+    [Fact]
+    public async Task DeadlineExpiredBeforeIdentityReadStartsNoWorker()
+    {
+        using var fixture = new Fixture();
+        fixture.Clock.ExpireNextTimerOnCreation = true;
+        var result = await fixture.Inspect();
+        Assert.Equal(CppCoreInspectionOutcome.ProcessFailed, result.Outcome);
+        Assert.Equal("timeout", result.FailureCode);
+        Assert.Empty(fixture.Factory.Starts);
+        Assert.False(result.ProcessStarted);
+        Assert.True(result.ProcessExitConfirmed);
+        Assert.Null(result.ExitCode);
+        Assert.Null(result.ProcessId);
     }
 
     [CppCoreLinuxPythonFact]
@@ -384,6 +421,7 @@ public sealed class CppCoreInspectionTests
         internal readonly byte[] Input = Encoding.Latin1.GetBytes("SECTION: HEADER\nVersion 1\n# Original synthetic fixture\n");
         internal readonly CppCoreInspectionOptions Options;
         internal readonly FakeFactory Factory;
+        internal readonly ManualDeadlineTimeProvider Clock = new();
         internal Fixture()
         {
             Directory.CreateDirectory(Root);
@@ -393,7 +431,7 @@ public sealed class CppCoreInspectionTests
             Factory = new(Input.Length);
         }
         internal Task<CppCoreInspectionObservation> Inspect() => CppCoreInspector.InspectAsync(Options,
-            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, Input, default, Factory);
+            CppCoreOperation.InspectJkl, CppCoreProjectKind.Jk, Input, default, Factory, Clock);
         public void Dispose() => Directory.Delete(Root, recursive: true);
     }
 
@@ -486,10 +524,99 @@ public sealed class CppCoreInspectionTests
         public int? Id => null;
         internal bool ConfirmTermination = true;
         internal bool Killed;
-        public Task WaitForExitAsync(CancellationToken token) => !token.CanBeCanceled && !ConfirmTermination
-            ? Task.FromException(new InvalidOperationException("Synthetic unconfirmed termination.")) : _exit.Task.WaitAsync(token);
+        internal Action? OnWaitStarted;
+        private bool _waitStarted;
+        public Task WaitForExitAsync(CancellationToken token)
+        {
+            if (token.CanBeCanceled && !_waitStarted)
+            {
+                _waitStarted = true;
+                OnWaitStarted?.Invoke();
+            }
+            return !token.CanBeCanceled && !ConfirmTermination
+                ? Task.FromException(new InvalidOperationException("Synthetic unconfirmed termination.")) : _exit.Task.WaitAsync(token);
+        }
         public void KillTree() { Killed = true; if (ConfirmTermination) _exit.TrySetResult(); }
         public void Dispose() { StandardInput.Dispose(); StandardOutput.Dispose(); StandardError.Dispose(); }
+    }
+
+    // Deliberately limited to the one-shot timers used by CancellationTokenSource.
+    // Each fixture owns its clock; no global clock or real-time sleep is changed.
+    private sealed class ManualDeadlineTimeProvider : TimeProvider
+    {
+        private readonly object _gate = new();
+        private readonly List<ManualTimer> _timers = [];
+        private long _ticks;
+        internal bool ExpireNextTimerOnCreation;
+
+        public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
+        {
+            ArgumentNullException.ThrowIfNull(callback);
+            var timer = new ManualTimer(this, callback, state);
+            bool expire;
+            lock (_gate)
+            {
+                _timers.Add(timer);
+                timer.Change(dueTime, period);
+                expire = ExpireNextTimerOnCreation;
+                ExpireNextTimerOnCreation = false;
+            }
+            // Timer callbacks can race construction in production too. Advancing
+            // here deterministically exercises expiry before any identity I/O.
+            if (expire) Advance(dueTime);
+            return timer;
+        }
+
+        internal void Advance(TimeSpan elapsed)
+        {
+            if (elapsed < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(elapsed));
+            List<(TimerCallback Callback, object? State)> callbacks = [];
+            lock (_gate)
+            {
+                _ticks = checked(_ticks + elapsed.Ticks);
+                foreach (var timer in _timers)
+                    if (timer.DueTicks is long due && due <= _ticks)
+                    {
+                        timer.DueTicks = null;
+                        callbacks.Add((timer.Callback, timer.State));
+                    }
+            }
+            // Cancellation disposes its timer; invoke outside the collection lock.
+            foreach (var (callback, state) in callbacks) callback(state);
+        }
+
+        private sealed class ManualTimer(ManualDeadlineTimeProvider owner, TimerCallback callback, object? state) : ITimer
+        {
+            internal readonly TimerCallback Callback = callback;
+            internal readonly object? State = state;
+            internal long? DueTicks;
+            private bool _disposed;
+
+            public bool Change(TimeSpan dueTime, TimeSpan period)
+            {
+                if (period != Timeout.InfiniteTimeSpan) throw new NotSupportedException("Only one-shot fixture timers are supported.");
+                if (dueTime < TimeSpan.Zero && dueTime != Timeout.InfiniteTimeSpan)
+                    throw new ArgumentOutOfRangeException(nameof(dueTime));
+                lock (owner._gate)
+                {
+                    if (_disposed) return false;
+                    DueTicks = dueTime == Timeout.InfiniteTimeSpan ? null : checked(owner._ticks + dueTime.Ticks);
+                    return true;
+                }
+            }
+
+            public void Dispose()
+            {
+                lock (owner._gate)
+                {
+                    _disposed = true;
+                    DueTicks = null;
+                    owner._timers.Remove(this);
+                }
+            }
+
+            public ValueTask DisposeAsync() { Dispose(); return ValueTask.CompletedTask; }
+        }
     }
 
     private sealed class PendingReadStream : Stream

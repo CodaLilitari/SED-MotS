@@ -955,3 +955,21 @@ payloads in memory while retaining the original 11-file Linux and 9-file Windows
 build witnesses. Production preparation correctly refuses a clean source
 archive that still contains the old helper. These are packaging validations,
 not a new compilation or release claim.
+
+The first clean Windows package candidate compiled the complete solution with
+zero warnings or errors, then failed two native-host tests. Those fake-process
+tests coupled short wall-clock deadlines to real executable hashing: malformed
+JSON could time out before validation, and the cleanup assertion did not first
+establish that the inspection child had started. The logs do not establish a
+leaked started child or a production cleanup defect.
+
+The inspector now exposes a clock only through its internal testing overload;
+the public path still uses the system clock and the deadline still covers all
+identity checks, the handshake and inspection. Fake tests advance their own
+one-shot clock after inspection ownership is established, retain kill and exit
+confirmation assertions, and separately verify expiry before any worker starts.
+Actual Linux child-process tests retain real deadlines. Independent static
+review accepted the change. The Windows incremental rebuild passed without
+warnings or errors, followed by 2,013 passing Core tests and three Linux-only
+skips (2,016 total). Final clean package and Linux acceptance remain pending;
+these results do not replace either release gate.
