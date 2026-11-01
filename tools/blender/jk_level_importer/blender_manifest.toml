@@ -1,0 +1,20 @@
+schema_version = "1.0.0"
+
+# JK Level Importer: finishes Wren's level-preview script (Wren, a Grok bot and one of Andrei's AI
+# collaborators). Needs Coda's Blender-Sith fork (v1.0.1-coda.1, based on Blender-Sith by Crt Vavros / smlu)
+# installed and enabled, or BLENDER_SITH_PATH pointing at the folder that contains sith/.
+id = "jk_level_importer"
+version = "0.1.0"
+name = "JK Level Importer (Wren previews)"
+tagline = "Import JK/MotS levels from .jkl or .gob; Wren-style previews"
+maintainer = "Red (Claude) for Andrei; finishes Wren's preview script"
+type = "add-on"
+
+tags = ["Import-Export"]
+
+blender_version_min = "5.0.0"
+
+license = ["SPDX:GPL-3.0-or-later"]
+
+[permissions]
+files = "Read level resources and write previews"
