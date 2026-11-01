@@ -3,6 +3,40 @@
 param([Parameter(Mandatory)][string]$PackageDirectory)
 $ErrorActionPreference = 'Stop'
 
+function Invoke-Git([string[]]$Arguments, [int]$TimeoutSeconds = 30) {
+    $start = [Diagnostics.ProcessStartInfo]::new()
+    $start.FileName = 'git'; $start.WorkingDirectory = Split-Path -Parent $PSScriptRoot
+    foreach ($argument in (@('--no-optional-locks') + $Arguments)) { $start.ArgumentList.Add($argument) }
+    $start.UseShellExecute = $false; $start.CreateNoWindow = $true
+    $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true
+    $process = [Diagnostics.Process]::Start($start)
+    try {
+        $stdout = $process.StandardOutput.ReadToEndAsync(); $stderr = $process.StandardError.ReadToEndAsync()
+        if (!$process.WaitForExit($TimeoutSeconds * 1000)) {
+            $process.Kill($true); $process.WaitForExit()
+            throw "Owned bundle verification timed out after $TimeoutSeconds seconds. No retry was started."
+        }
+        $result = $stdout.GetAwaiter().GetResult(); $errorText = $stderr.GetAwaiter().GetResult()
+        if ($process.ExitCode -ne 0) { throw "Bundle verification failed ($($process.ExitCode)): $errorText" }
+        if ($result.Length) { return $result.TrimEnd("`r", "`n") -split '\r?\n' }
+    } finally { $process.Dispose() }
+}
+
+function Get-ConsolidatedSupportFlag($Provenance) {
+    $schema = $Provenance.PSObject.Properties['schemaVersion']
+    $profile = $Provenance.PSObject.Properties['supportProfile']
+    if ($null -ne $schema -and (($schema.Value -isnot [int] -and $schema.Value -isnot [long]) -or $schema.Value -notin 1, 2)) {
+        throw 'Unsupported package provenance schema.'
+    }
+    if (($null -ne $schema -and $schema.Value -eq 2) -or $null -ne $profile) {
+        if ($null -eq $schema -or $schema.Value -ne 2 -or $null -eq $profile -or $profile.Value -cne 'cross-platform-tools-v1') {
+            throw 'Schema 2 requires the consolidated cross-platform-tools-v1 support profile.'
+        }
+        return $true
+    }
+    return $false
+}
+
 function Assert-SafeZipPath([string]$Path) {
     if ([string]::IsNullOrEmpty($Path) -or $Path -match '[<>:"\\|?*\x00-\x1f]' -or $Path.StartsWith('/')) { throw "Unsafe ZIP path: $Path" }
     foreach ($part in $Path.TrimEnd('/').Split('/')) {
@@ -209,8 +243,41 @@ try {
             throw 'PLAY package provenance does not record the actual authoring workflow.'
         }
     }
+    # New consolidated packages declare this profile. Older packages remain
+    # valid under their original capabilities and are not retroactively required
+    # to contain later tools or tests.
+    $hasConsolidatedTools = Get-ConsolidatedSupportFlag $provenance
+    if ($hasConsolidatedTools) {
+        if ($provenance.schemaVersion -ne 2 -or $provenance.supportProfile -cne 'cross-platform-tools-v1') {
+            throw 'Unsupported consolidated package support profile.'
+        }
+        if ($provenance.compiledFrom -cne 'verified-commit-snapshot' -or $provenance.sourceGitBlobs -lt 1 -or
+            $provenance.sourceArchiveSha256 -cnotmatch '^[0-9a-f]{64}$') {
+            throw 'Consolidated package lacks verified compile-source snapshot provenance.'
+        }
+        foreach ($required in @('NOTICE.md', 'CLAUDE.md', '.claude/skills/jk-level-workshop/SKILL.md',
+            'tools/test_package_workflow.py', 'tools/blender/README.md', 'tools/blender/jkl_preview.py',
+            'tools/blender/build_extension.py', 'tools/blender/jk_level_importer/framing.py',
+            'tools/retail-capture/README.md', 'tools/retail-capture/jkcapture.py',
+            'tools/retail-capture/menus.json', 'tools/retail-capture/scripts/walk.json',
+            'docs/LINUX_QUICKSTART.md', 'docs/WINDOWS_QUICKSTART.md')) {
+            if (!$seen.Contains($prefix + $required)) { throw "Consolidated package lacks a tool, guide or credit: $required" }
+        }
+        if (!$hasMcp -or $provenance.packagedDependencyWorkflow -cne 'passed' -or
+            $provenance.packagedDependencyWorkflowCalls -lt 1 -or
+            $provenance.packagedDependencyWorkflowSha256 -cnotmatch '^[0-9a-f]{64}$' -or
+            $provenance.headlessUiProbe -cne 'passed') {
+            throw 'Consolidated package lacks dependency-workflow or headless-UI acceptance evidence.'
+        }
+        foreach ($suite in @('tools/tests', 'tools/blender/tests')) {
+            if (@($provenance.pythonToolSuites) -cnotcontains $suite) { throw "Consolidated package lacks Python suite evidence: $suite" }
+        }
+    }
 } finally { $archive.Dispose() }
 $sourcePath = Join-Path $root 'SED-MotS-source.zip'
+if ($hasConsolidatedTools -and (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash.ToLowerInvariant() -cne $provenance.sourceArchiveSha256) {
+    throw 'Source archive differs from the verified compile-source snapshot.'
+}
 $sourceCommit = Get-GitArchiveCommit $sourcePath
 if ($sourceCommit -cne $provenance.commit) { throw 'Source ZIP git archive commit differs from binary provenance.' }
 $source = [IO.Compression.ZipFile]::OpenRead($sourcePath)
@@ -235,17 +302,23 @@ try {
             if ($null -eq $source.GetEntry($required)) { throw "Corresponding PLAY source archive lacks $required" }
         }
     }
+    if ($hasConsolidatedTools) {
+        foreach ($required in @('NOTICE.md', 'CLAUDE.md', '.claude/skills/jk-level-workshop/SKILL.md',
+            'tools/test_package_workflow.py', 'tools/blender/jkl_preview.py', 'tools/retail-capture/jkcapture.py')) {
+            if ($null -eq $source.GetEntry($required)) { throw "Corresponding consolidated source archive lacks $required" }
+        }
+    }
 } finally { $source.Dispose() }
 $bundlePath = Join-Path $root 'SED-MotS-history.bundle'
 Assert-CompleteHeadBundle $bundlePath $provenance.commit
-& git -C (Split-Path -Parent $PSScriptRoot) bundle verify $bundlePath
-if ($LASTEXITCODE -ne 0) { throw 'Git history bundle verification failed.' }
-$bundleHeads = @(& git bundle list-heads (Join-Path $root 'SED-MotS-history.bundle'))
-if ($LASTEXITCODE -ne 0 -or $bundleHeads.Count -ne 1 -or $bundleHeads[0] -cne "$($provenance.commit) HEAD") { throw 'History bundle HEAD differs from binary provenance.' }
+Invoke-Git @('bundle', 'verify', $bundlePath)
+$bundleHeads = @(Invoke-Git @('bundle', 'list-heads', $bundlePath))
+if ($bundleHeads.Count -ne 1 -or $bundleHeads[0] -cne "$($provenance.commit) HEAD") { throw 'History bundle HEAD differs from binary provenance.' }
 [ordered]@{ verifiedUtc=[DateTime]::UtcNow.ToString('o'); topLevelChecksums=$records.Count;
     windowsZip=$binaryZip.Name; verifiedBinaryMembers=$seen.Count; exactBinaryMemberSet=$true;
     sourceArchiveRequiredFiles=$true; sourceArchiveCommit=$sourceCommit; sourceCommitMatchesBinary=$true;
     gitBundleVerified=$true; completeHistoryHeadMatchesBinary=$true; installersExecuted=$false;
-    mcpIncluded=[bool]$hasMcp; mcpRuntimeNoticePackages=$mcpNoticePackages; playAuthoringIncluded=[bool]$hasPlay } |
+    mcpIncluded=[bool]$hasMcp; mcpRuntimeNoticePackages=$mcpNoticePackages; playAuthoringIncluded=[bool]$hasPlay;
+    consolidatedToolsIncluded=[bool]$hasConsolidatedTools } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $root 'verification.json') -Encoding utf8
 Write-Output "Verified $($seen.Count) distribution files, exact ZIP member set, source archive and Git history."

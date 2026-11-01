@@ -9,6 +9,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[1] / "invoke_engine_capture.py"
 sys.path.insert(0, str(SCRIPT.parent))
@@ -102,8 +103,32 @@ class LinuxProfileTests(unittest.TestCase):
     @unittest.skipUnless(LINUX and XVFB, "needs Linux and Xvfb")
     def test_private_display_starts_and_stops(self):
         with runner.PrivateDisplay() as display:
-            socket = Path(f"/tmp/.X11-unix/X{display.display[1:]}")
-            self.assertTrue(socket.exists())
+            # WSLg may expose a read-only socket directory while Xvfb listens
+            # successfully on Linux's abstract Unix socket transport.
+            import socket
+            connected = False
+            for address in (f"\0/tmp/.X11-unix/X{display.display[1:]}",
+                            f"/tmp/.X11-unix/X{display.display[1:]}"):
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                    client.settimeout(1)
+                    try:
+                        client.connect(address)
+                        # Complete the initial X11 setup exchange, rather than
+                        # treating a stale socket path or listener as readiness.
+                        client.sendall(b"l\0\x0b\0\0\0\0\0\0\0\0\0")
+                        header = b""
+                        while len(header) < 8:
+                            block = client.recv(8 - len(header))
+                            if not block:
+                                break
+                            header += block
+                        self.assertEqual(header[:1], b"\x01", "X11 setup must succeed")
+                        self.assertEqual(header[2:4], b"\x0b\0")
+                        connected = True
+                        break
+                    except OSError:
+                        pass
+            self.assertTrue(connected, "Ready Xvfb must accept an X11 client connection")
             self.assertFalse(display.receipt()["visibleToUser"])
         self.assertIsNotNone(display.process.poll())
 
@@ -119,6 +144,78 @@ class LinuxProfileTests(unittest.TestCase):
         log = (self.output / "stdout.log").read_text()
         self.assertIn(f"fake-engine {receipt['privateDisplay']['display']} True x11 null", log)
         self.assertIn("'-capture'", log)
+
+
+@unittest.skipUnless(LINUX, "Linux private-display process integration")
+class PrivateDisplayFailureTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="sed-display-failure-")
+        self.addCleanup(self.temp.cleanup)
+        self.executable = Path(self.temp.name) / "Xvfb"
+        self.display = runner.PrivateDisplay()
+        # Failed enter never invokes __exit__. Keep the regression's baseline
+        # failure from leaving a test child behind before the fix is present.
+        self.addCleanup(self.stop_child)
+        self.patch = mock.patch("shutil.which", return_value=str(self.executable))
+        self.patch.start()
+        self.addCleanup(self.patch.stop)
+
+    def stop_child(self):
+        process = self.display.process
+        if process is not None:
+            if process.poll() is None:
+                process.kill()
+            process.wait(timeout=5)
+
+    def server(self, body):
+        self.executable.write_text("#!" + sys.executable + "\n" + body, encoding="utf-8")
+        self.executable.chmod(0o700)
+
+    def test_startup_timeout_reaps_child_even_when_enter_fails(self):
+        self.server("import time\ntime.sleep(60)\n")
+        with mock.patch.object(runner.time, "monotonic", side_effect=[0, 11]):
+            with self.assertRaisesRegex(runner.CaptureError, "within 10 seconds"):
+                self.display.__enter__()
+        self.assertIsNotNone(self.display.process.returncode, "Failed enter must terminate and reap its child")
+
+    def test_startup_exit_includes_bounded_server_diagnostics(self):
+        self.server("import sys\nsys.stderr.write('synthetic startup failure\\n' + 'x' * 100000)\nsys.exit(7)\n")
+        with self.assertRaises(runner.CaptureError) as error:
+            self.display.__enter__()
+        self.assertIn("synthetic startup failure", str(error.exception))
+        self.assertLess(len(str(error.exception)), 5000)
+        self.assertEqual(self.display.process.returncode, 7)
+
+    def test_malformed_readiness_reaps_live_child(self):
+        self.server("import os, sys, time\nfd = int(sys.argv[sys.argv.index('-displayfd') + 1])\n"
+                    "os.write(fd, b'not-a-display\\n')\ntime.sleep(60)\n")
+        with self.assertRaisesRegex(runner.CaptureError, "readiness"):
+            self.display.__enter__()
+        self.assertIsNotNone(self.display.process.returncode)
+
+    def test_closed_readiness_pipe_reaps_live_child_and_closes_descriptors(self):
+        self.server("import os, sys, time\nfd = int(sys.argv[sys.argv.index('-displayfd') + 1])\n"
+                    "os.close(fd)\ntime.sleep(60)\n")
+        before = len(os.listdir("/proc/self/fd"))
+        with self.assertRaisesRegex(runner.CaptureError, "readiness"):
+            self.display.__enter__()
+        self.assertIsNotNone(self.display.process.returncode)
+        self.assertEqual(len(os.listdir("/proc/self/fd")), before)
+
+    def test_startup_interruption_reaps_child(self):
+        self.server("import time\ntime.sleep(60)\n")
+        with mock.patch("select.select", side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                self.display.__enter__()
+        self.assertIsNotNone(self.display.process.returncode)
+
+    def test_ready_notification_does_not_require_filesystem_socket(self):
+        self.server("import os, sys, time\nfd = int(sys.argv[sys.argv.index('-displayfd') + 1])\n"
+                    "os.write(fd, b'153')\ntime.sleep(0.05)\nos.write(fd, b'\\n')\ntime.sleep(60)\n")
+        with self.display as display:
+            self.assertEqual(display.display, ":153")
+            self.assertIsNone(display.process.poll())
+        self.assertIsNotNone(self.display.process.returncode)
 
 
 if __name__ == "__main__":

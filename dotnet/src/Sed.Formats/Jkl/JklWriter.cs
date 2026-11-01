@@ -239,7 +239,7 @@ public static class JklWriter
                     throw new InvalidOperationException($"Thing {i} model changed after architectural lighting import; unbind or rebake before saving.");
                 line += $" {t.ArchLightingIndex}";
             }
-            foreach (var (k, v) in ParameterRecords.Merge(t.SourceParameters, t.Values)) line += $" {k}={v}";
+            foreach (var (k, v) in ParametersForWrite(t.SourceParameters, t.Values, $"Thing {i}")) line += $" {k}={v}";
             lines.Add(line);
         }
         lines.Add("end");
@@ -285,13 +285,31 @@ public static class JklWriter
 
             var sb = new StringBuilder();
             sb.Append(tpl.Name).Append(' ').Append(parent);
-            foreach (var (k, v) in ParameterRecords.Merge(tpl.SourceParameters, tpl.Values))
+            foreach (var (k, v) in ParametersForWrite(tpl.SourceParameters, tpl.Values, $"Template '{tpl.Name}'"))
                 sb.Append(' ').Append(k).Append('=').Append(v);
             lines.Add(sb.ToString());
         }
         lines.Add("end");
         lines.Add("");
         return lines;
+    }
+
+    private static IReadOnlyList<KeyValuePair<string, string>> ParametersForWrite(
+        IReadOnlyList<KeyValuePair<string, string>> source, IReadOnlyDictionary<string, string> current, string owner)
+    {
+        var parameters = ParameterRecords.Merge(source, current).ToArray();
+        for (int i = 0; i + 1 < parameters.Length; i++)
+        {
+            var parameter = parameters[i];
+            if (JklReader.IsLegacyUnterminatedFrameToken(parameter.Key + "=" + parameter.Value))
+                // This exception is deliberately final-only in the reader. Moving new
+                // parameters ahead of it can change engine semantics (move/numframes),
+                // while closing it would silently repair the preserved source value.
+                throw new InvalidOperationException($"{owner}: the preserved legacy final frame has no closing parenthesis and must remain last, " +
+                    $"but '{parameters[i + 1].Key}' follows it. Remove the following addition or explicitly edit the ordered frame records before saving; " +
+                    "the original spelling and parameter order are preserved.");
+        }
+        return parameters;
     }
 
     private static List<string> GenerateLights(Level level)

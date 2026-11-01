@@ -1,0 +1,1078 @@
+{
+  "schemaVersion": 1,
+  "upstreamRepository": "https://github.com/smlu/SED",
+  "upstreamCommit": "b82255998fb733c8e8c87104eb7c17f27b48376f",
+  "coverage": [
+    "CMakeLists.txt",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "src/core/"
+  ],
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 3101,
+      "sha256": "a02cde0e83ccbd1ece7e3cdabebb6cb2bae1c7c1b422c7e08a45cf031a4ff7f5"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 4280,
+      "sha256": "5c81b447f54842b5a4bf96e455ffbb27240e94c0bec6fa5bd4967c369d37379f"
+    },
+    {
+      "path": "src/core/CMakeLists.txt",
+      "bytes": 11378,
+      "sha256": "6f95944fed0f506c719b10bafc8dc321c56627e8bd4005fb3f7410e6f346b1a3"
+    },
+    {
+      "path": "src/core/fuzz/sed_file_fuzzer.cpp",
+      "bytes": 3771,
+      "sha256": "41178c58150c511bd68f76c5b6c474cfa94e4e72f18271eb8593eaf06f5aedc3"
+    },
+    {
+      "path": "src/core/include/sed/assets/3do.hpp",
+      "bytes": 3753,
+      "sha256": "5e1c148876010967a5b35b9c9b077c2fb083e71d71c0ee16fddade69589561ad"
+    },
+    {
+      "path": "src/core/include/sed/assets/asc.hpp",
+      "bytes": 567,
+      "sha256": "21b527d9a24fdcca639fde25179b8a08680721fd4b3f32247f32a7d3be205ad4"
+    },
+    {
+      "path": "src/core/include/sed/assets/bounded_stream_reader.hpp",
+      "bytes": 2816,
+      "sha256": "47d44695547525f054d10f577552eba9ea28640ab71d9f2317ec48cc4712352f"
+    },
+    {
+      "path": "src/core/include/sed/assets/cmp.hpp",
+      "bytes": 1289,
+      "sha256": "011e08aa5743c27e1617ed49a287b48932e3f68692f5e7ce7aacb8647332add0"
+    },
+    {
+      "path": "src/core/include/sed/assets/cog_script.hpp",
+      "bytes": 2142,
+      "sha256": "d3f7a8a66f1a878ccd0c4ab4e6e363b979714b1e1778af375f3651b15d8aa3fe"
+    },
+    {
+      "path": "src/core/include/sed/assets/df2jk.hpp",
+      "bytes": 516,
+      "sha256": "f62828eb5e6565191b3b9e542a10cf5d2436006c59365d379afd650c42388782"
+    },
+    {
+      "path": "src/core/include/sed/assets/episode.hpp",
+      "bytes": 2165,
+      "sha256": "db75dbc13462cea3a74235583b2fd819091cdf7e17060e80e8bdea03a5b06ae5"
+    },
+    {
+      "path": "src/core/include/sed/assets/gob.hpp",
+      "bytes": 941,
+      "sha256": "1fba85b3e0e82bb9a7c5a92c96767964b6b7b6177f483f8643c249441221dd24"
+    },
+    {
+      "path": "src/core/include/sed/assets/indy_wv.hpp",
+      "bytes": 544,
+      "sha256": "10f2f1e0704a25c13bea8c28e276aa5578555a753f514f936dfa39a2f4ae78b8"
+    },
+    {
+      "path": "src/core/include/sed/assets/items_dat.hpp",
+      "bytes": 321,
+      "sha256": "e385a4719a175747a2b04417692f7010f0ca430f01fa558e8218b42f4fc8a6c8"
+    },
+    {
+      "path": "src/core/include/sed/assets/jed.hpp",
+      "bytes": 856,
+      "sha256": "8d38926bd87906ebcd4251ca483b11214eb1c0defa2be5c3eacd420743b931e1"
+    },
+    {
+      "path": "src/core/include/sed/assets/jkl.hpp",
+      "bytes": 4926,
+      "sha256": "223abeb342f336363766991f59e2f716962f04cf1a18837588430fd1c5497349"
+    },
+    {
+      "path": "src/core/include/sed/assets/jlh.hpp",
+      "bytes": 1401,
+      "sha256": "83cc3cf6b94adc5c27e20202c0ec8e9a1d60f2f8ed628599f10cd58d47d16996"
+    },
+    {
+      "path": "src/core/include/sed/assets/key.hpp",
+      "bytes": 699,
+      "sha256": "58fd041a09b272286434c646f2b170993f9a56618a1f6e2781636c34f517836d"
+    },
+    {
+      "path": "src/core/include/sed/assets/lev.hpp",
+      "bytes": 1288,
+      "sha256": "bfef3d40e084c0ea0b4f09b43ea0f6343f69328a99e3b04b15b6ecbd408490f9"
+    },
+    {
+      "path": "src/core/include/sed/assets/mat.hpp",
+      "bytes": 1021,
+      "sha256": "e93f4cdc208703bff2cd5cc4ce033097d9a0c46495544d43f525d8acf9ba1630"
+    },
+    {
+      "path": "src/core/include/sed/assets/material_dimensions.hpp",
+      "bytes": 910,
+      "sha256": "fd278731bf24519a1a0b6713360ea17f39a6f959bae7ac12801f07c6504bce22"
+    },
+    {
+      "path": "src/core/include/sed/assets/models_dat.hpp",
+      "bytes": 362,
+      "sha256": "f7f2f1fc45d2d2527cd4203ea18dfd2a63eff0f7a840a46121faf595beabd09d"
+    },
+    {
+      "path": "src/core/include/sed/assets/par.hpp",
+      "bytes": 228,
+      "sha256": "ad7629e9f22ffc7f6cb52f1d79f818a8600d82166f9fbd33a48e40992a108287"
+    },
+    {
+      "path": "src/core/include/sed/assets/pup.hpp",
+      "bytes": 296,
+      "sha256": "75131fd03d303629d5120fd6ae662b89e39f2adce67bb3bc5a611bc6101e8e95"
+    },
+    {
+      "path": "src/core/include/sed/assets/resource_locator.hpp",
+      "bytes": 5332,
+      "sha256": "0b004d63214123323691b11f5d6df5c25dfade5d16b21dfcbb72ee8f1db3a07f"
+    },
+    {
+      "path": "src/core/include/sed/assets/sed.hpp",
+      "bytes": 32467,
+      "sha256": "7c5b64e5a6b2218aa199cd22642b804713e96023b9079d95dad20ada2717a84a"
+    },
+    {
+      "path": "src/core/include/sed/assets/snd.hpp",
+      "bytes": 1781,
+      "sha256": "c2f60c452a8ee9a0b591214df814f09c0995487450311d3fb303b98c30db8bf2"
+    },
+    {
+      "path": "src/core/include/sed/assets/spr.hpp",
+      "bytes": 1023,
+      "sha256": "9e2a500f5303da69041e65bbca672c4c86fb22a42bbd74556753c861c3d1925f"
+    },
+    {
+      "path": "src/core/include/sed/assets/static_resources.hpp",
+      "bytes": 998,
+      "sha256": "09db21699a0e509abb20f5174353c85083acef55f125ea38c18b2c1be19d9151"
+    },
+    {
+      "path": "src/core/include/sed/assets/string_table.hpp",
+      "bytes": 1386,
+      "sha256": "0547c91f348e4a643dc34ed0cbbe67ca94401249a494ead7761e7c643fcdd2e2"
+    },
+    {
+      "path": "src/core/include/sed/assets/tpl.hpp",
+      "bytes": 1551,
+      "sha256": "d07b83bdf3bbddc0a13c531ffa14429dfe589909dfbcaee94bae99e91dbc79b7"
+    },
+    {
+      "path": "src/core/include/sed/assets/wav.hpp",
+      "bytes": 830,
+      "sha256": "545f2062ddf99a545abc18133988b9120851686502adfd447950181bb276a622"
+    },
+    {
+      "path": "src/core/include/sed/binary_reader.hpp",
+      "bytes": 2052,
+      "sha256": "3b7cb69b541c9bd23ddfcde58bb10d3d98603be4264259bfc1787603d575a256"
+    },
+    {
+      "path": "src/core/include/sed/color.hpp",
+      "bytes": 4531,
+      "sha256": "d2c625f8ed571269f8c5d95e0c889d027459c35cb151df6858293c775dc87ed3"
+    },
+    {
+      "path": "src/core/include/sed/diagnostic.hpp",
+      "bytes": 545,
+      "sha256": "7f7f838d5f08188ff0526920a4a1f39c9bca70e4b6f03fb9d6cbab60fb5d70ae"
+    },
+    {
+      "path": "src/core/include/sed/editor/document.hpp",
+      "bytes": 88753,
+      "sha256": "836036ac248f2babc45b0c5d4c204e0af775b4e637a5e546fa7f13b2970e509b"
+    },
+    {
+      "path": "src/core/include/sed/editor/selection.hpp",
+      "bytes": 2955,
+      "sha256": "f98a49ff8b8b8396892f8247b518f9429913cf33a27cb03a8072ebd3d03bd2ff"
+    },
+    {
+      "path": "src/core/include/sed/editor/undo.hpp",
+      "bytes": 3195,
+      "sha256": "7fccd96170103beee0af0bed74e2103d30094184502d77e6213ed43279ecf3d8"
+    },
+    {
+      "path": "src/core/include/sed/editor/uv_promotion.hpp",
+      "bytes": 1370,
+      "sha256": "ae1a4be6248d9fe105f67df5df4bcdf1645353140dad175b04ade5fccce8a7bf"
+    },
+    {
+      "path": "src/core/include/sed/format_number.hpp",
+      "bytes": 725,
+      "sha256": "c7aa5aaacaa19b296b512304ca104978f7cc3de7b57e68af786215269eaa7be7"
+    },
+    {
+      "path": "src/core/include/sed/geometry.hpp",
+      "bytes": 14999,
+      "sha256": "5ef689fc5e8d1f079f5a7e06028ceb7b3cc67c6bbe53cb63edf8811a4727fa47"
+    },
+    {
+      "path": "src/core/include/sed/geometry_old.hpp",
+      "bytes": 342,
+      "sha256": "1ec3e9ee4cb2655ec0f23cea488dec4b146aada4c40eec5f4cae7315c21f66b4"
+    },
+    {
+      "path": "src/core/include/sed/image.hpp",
+      "bytes": 1844,
+      "sha256": "c5fbccc3bc78b269aa089e85863ee86ab23708a42656fd35c14d136eabd52b4a"
+    },
+    {
+      "path": "src/core/include/sed/level.hpp",
+      "bytes": 14468,
+      "sha256": "2543bbcd7aa5630c46691264a2ac59153d6c484d70d0888d7e3d567abe7b3b12"
+    },
+    {
+      "path": "src/core/include/sed/level/arch_lighting.hpp",
+      "bytes": 4973,
+      "sha256": "6e12827db841517d6c188ef87692259ea5facb0a2c639aa302cf6dccb8622709"
+    },
+    {
+      "path": "src/core/include/sed/level/arch_lighting_clipboard.hpp",
+      "bytes": 3828,
+      "sha256": "6bb527ebd4e6c9e8fee1b6b820fc49755ae73b55b31eaa2d8ce43170fd408450"
+    },
+    {
+      "path": "src/core/include/sed/level/build.hpp",
+      "bytes": 7853,
+      "sha256": "f956389f24a022b727ca49ef2cda937e597c5152fd57f3400012cda4e375fa63"
+    },
+    {
+      "path": "src/core/include/sed/level/cleave.hpp",
+      "bytes": 5926,
+      "sha256": "48c5558a57e4f9e52448596329dfacfdbdf940f64f4c10d69d3d7c44e44e0a3e"
+    },
+    {
+      "path": "src/core/include/sed/level/cleave_stroke_reach.hpp",
+      "bytes": 5702,
+      "sha256": "9844553144e3bcd4dd22c6475b5ea5fbbf47c410ae712acea093882f369a9025"
+    },
+    {
+      "path": "src/core/include/sed/level/clipboard.hpp",
+      "bytes": 4737,
+      "sha256": "815dd32bded8c92b200031020eef1ad79c0438b1b50608c8d69bffbe4cc62b82"
+    },
+    {
+      "path": "src/core/include/sed/level/edit.hpp",
+      "bytes": 826,
+      "sha256": "255221c736ac55a57ed3edbad929e92f22ac5f0fcfa98989a0ca787b9e4f5c69"
+    },
+    {
+      "path": "src/core/include/sed/level/geometry.hpp",
+      "bytes": 14665,
+      "sha256": "a94215dac400ad8ef2a82d13e20ce70eefe1b135bcf49940ea7ec904eedf2a92"
+    },
+    {
+      "path": "src/core/include/sed/level/lighting.hpp",
+      "bytes": 3808,
+      "sha256": "a433063d46c78c1336adeb01ab0b4cf8a2b2a70e7a6a4b2a48889252e0c65cc0"
+    },
+    {
+      "path": "src/core/include/sed/level/merge.hpp",
+      "bytes": 1994,
+      "sha256": "1cc88470c785fbd016edc8128d386bb2efeae4a0861a43a58ac4e119466e1550"
+    },
+    {
+      "path": "src/core/include/sed/level/thing.hpp",
+      "bytes": 1239,
+      "sha256": "1e2adc370e992e137a8cce936595eb4382f1f751c5204b70ba293b641bf5f05e"
+    },
+    {
+      "path": "src/core/include/sed/level/transform.hpp",
+      "bytes": 11459,
+      "sha256": "f778227916375862758dee7861cc26e2e4aa4b1bb6f8346a869de5b016ed0f1d"
+    },
+    {
+      "path": "src/core/include/sed/level/uv.hpp",
+      "bytes": 2784,
+      "sha256": "7d6516ebcaaa86c87f20f3fbe958c2bd2ddb6bc404e7116836fef58227e97932"
+    },
+    {
+      "path": "src/core/include/sed/math.hpp",
+      "bytes": 5100,
+      "sha256": "5baadcb569a1d43c546ff887ddc6e40a520d1a239e251304bfe0c3136b4938ae"
+    },
+    {
+      "path": "src/core/include/sed/math_utils.hpp",
+      "bytes": 2275,
+      "sha256": "4a5aa0ea166dba5729f1cb86a69372d9a2b90ce6e7f0aec0ad4e5090d3020864"
+    },
+    {
+      "path": "src/core/include/sed/parse.hpp",
+      "bytes": 1270,
+      "sha256": "320ffb2d21c4cb97c0b07b30d1a68b1cbb6a9ff914166a3fdd62a9a1e455881e"
+    },
+    {
+      "path": "src/core/include/sed/parse_frame.hpp",
+      "bytes": 3546,
+      "sha256": "a0fcdfb2b2556566d21be8f13c8b40e303c058c4f3fab4ff5b5729796dbd7abf"
+    },
+    {
+      "path": "src/core/include/sed/text.hpp",
+      "bytes": 4838,
+      "sha256": "92ce093776338fc340c954b5247eafde6496ab2ee94eacf14013f31b4add1639"
+    },
+    {
+      "path": "src/core/include/sed/values.hpp",
+      "bytes": 4015,
+      "sha256": "1929465be6480c280327056955f7bd708f2d591bdb4f98a20fdc93b01a2902a2"
+    },
+    {
+      "path": "src/core/src/assets/3do.cpp",
+      "bytes": 55827,
+      "sha256": "e387c2587dd2a0765ce05b00f6d0e2d82f2f10c3d4ded12bdff1562159a07018"
+    },
+    {
+      "path": "src/core/src/assets/asc.cpp",
+      "bytes": 10184,
+      "sha256": "b48bbe12a8dcb80f234585ece77d720e589be43db285a5ac34ef01adb52e29d6"
+    },
+    {
+      "path": "src/core/src/assets/atomic_file_write.hpp",
+      "bytes": 7930,
+      "sha256": "4e7868e06bc34806b49c75919c3981b8f8377a844b91cf592d79567b3938434a"
+    },
+    {
+      "path": "src/core/src/assets/cmp.cpp",
+      "bytes": 3445,
+      "sha256": "674a38d7b22b276bc5449d7371382509aab21cc0666d63210eb5efe600ad50d0"
+    },
+    {
+      "path": "src/core/src/assets/cog_script.cpp",
+      "bytes": 25590,
+      "sha256": "5a5caf128e39b6b406f87eb07496547dc1a6b1cfa33a6fe53d5ebfd41523e29a"
+    },
+    {
+      "path": "src/core/src/assets/df2jk.cpp",
+      "bytes": 1357,
+      "sha256": "f9260d065c392873ed673b863a03a4d2811fcd8a9379a6240d9ba3c20060b3fe"
+    },
+    {
+      "path": "src/core/src/assets/episode.cpp",
+      "bytes": 22454,
+      "sha256": "f3ad1507b70377a5edca070777db0856c5e8b525a3f1ee5352e78d93ef0e84ea"
+    },
+    {
+      "path": "src/core/src/assets/gob.cpp",
+      "bytes": 8011,
+      "sha256": "5f5f01e79ab3bda34482ea6ec0a0f149f729fec459e8b8c6f525ab305fe9bdf9"
+    },
+    {
+      "path": "src/core/src/assets/indy_wv.cpp",
+      "bytes": 9910,
+      "sha256": "0021b32940b5814f7a2e5bc044ddf26935942fdc705aa0550d93b19f9138668a"
+    },
+    {
+      "path": "src/core/src/assets/items_dat.cpp",
+      "bytes": 1485,
+      "sha256": "95538c2d4c5114dee7ae797c025ec9a6e3f067f3e667465c7945d95ec8873d7a"
+    },
+    {
+      "path": "src/core/src/assets/jed.cpp",
+      "bytes": 52948,
+      "sha256": "df266424c664fb62bf6177e56305c15d0b8c26520b1392b77e7ed92feaadde8b"
+    },
+    {
+      "path": "src/core/src/assets/jkl.cpp",
+      "bytes": 235133,
+      "sha256": "7a93ae5e2c2731fab51099255f6521be6da582b8916fa56c423f150c36bb5c3e"
+    },
+    {
+      "path": "src/core/src/assets/jlh.cpp",
+      "bytes": 15429,
+      "sha256": "7cecd9b589d290bb1563166447536b367cb7feb6b1c1737fc9f819da322e6516"
+    },
+    {
+      "path": "src/core/src/assets/key.cpp",
+      "bytes": 6223,
+      "sha256": "8c0a0297e2f984fc6ff3837e2a10c994d45117ca724047cf5b5047d570d08c89"
+    },
+    {
+      "path": "src/core/src/assets/lev.cpp",
+      "bytes": 57587,
+      "sha256": "f76b53682295fc62c3a9a18f5207c61c73e22d12a27dcdbc3c99d507ce7140d8"
+    },
+    {
+      "path": "src/core/src/assets/mat.cpp",
+      "bytes": 16396,
+      "sha256": "439abd6a2a44f212c27be2c7f13f8327ea4e829d38381d7634989e4ff934a0ed"
+    },
+    {
+      "path": "src/core/src/assets/material_dimensions.cpp",
+      "bytes": 2229,
+      "sha256": "ccbf37d3c7cee6e169aeac123c8f8ee5c831c5ee7c924eb86da17ef7b0314d47"
+    },
+    {
+      "path": "src/core/src/assets/models_dat.cpp",
+      "bytes": 1220,
+      "sha256": "00175de050402f9d377e0c8186ad3420eb969d1c9a16cbb7072313ce1a37ed3a"
+    },
+    {
+      "path": "src/core/src/assets/par.cpp",
+      "bytes": 953,
+      "sha256": "5aeb0d528c5c21583b705159b8793a9fdf58931dee7ebbaf8e930a6dc12906ac"
+    },
+    {
+      "path": "src/core/src/assets/pup.cpp",
+      "bytes": 1393,
+      "sha256": "08a2f977cf33dcb33eef02ee0fa25325bd26d4c64437fc2f734731d2f5a9892f"
+    },
+    {
+      "path": "src/core/src/assets/resource_locator.cpp",
+      "bytes": 21467,
+      "sha256": "6d80c625764747c970b0de6800b120378f5110a13232a7f29c9b4e927657d9d3"
+    },
+    {
+      "path": "src/core/src/assets/sed.cpp",
+      "bytes": 351473,
+      "sha256": "3c3527f33c910c3a8ac0ffb739ccf037f707781f6133b8842bff80dd2f9eda03"
+    },
+    {
+      "path": "src/core/src/assets/snd.cpp",
+      "bytes": 15180,
+      "sha256": "412006d0c967b68599b84802b63ff30a0514d949e6ea3b3607305d6be6c4a59d"
+    },
+    {
+      "path": "src/core/src/assets/spr.cpp",
+      "bytes": 10823,
+      "sha256": "346162263c7d4cb5074fbad7d3cd537eeac392e3d72d777b9319e78c50d081cd"
+    },
+    {
+      "path": "src/core/src/assets/static_resources.cpp",
+      "bytes": 33444,
+      "sha256": "87111ed815d68b3ab832e721dde7e7654ed9d287bde90bea4836eaf12cc88905"
+    },
+    {
+      "path": "src/core/src/assets/string_table.cpp",
+      "bytes": 14646,
+      "sha256": "466616388b4524029953373918d68d38a1fe4e3909e82787312fc9aa97cf8412"
+    },
+    {
+      "path": "src/core/src/assets/tpl.cpp",
+      "bytes": 8589,
+      "sha256": "69bd20c44be1486fad9ff34b782d79b5458dd45c72c3389c8da57f05416b06af"
+    },
+    {
+      "path": "src/core/src/assets/wav.cpp",
+      "bytes": 8572,
+      "sha256": "0bb776bf76819417a2e6f277c1180bcf96b167c757c253ea573cc16813b82a98"
+    },
+    {
+      "path": "src/core/src/editor/uv_promotion.cpp",
+      "bytes": 4944,
+      "sha256": "76cdc8c22b15bcba111cde03278d8aded742b63e4a15e7ecf7949390a8d62502"
+    },
+    {
+      "path": "src/core/src/geometry.cpp",
+      "bytes": 20691,
+      "sha256": "d5aa7b90a9cc103c75b8f07df984f042c0b1a9f07fd53228be308501a3f5e1b9"
+    },
+    {
+      "path": "src/core/src/level.cpp",
+      "bytes": 13057,
+      "sha256": "41790159fd7542b3ab42071a24627b2417d216e502b4f83ea26b9b1f7482872d"
+    },
+    {
+      "path": "src/core/src/level/arch_lighting.cpp",
+      "bytes": 68842,
+      "sha256": "d0a98d203bd66444a936e8acc05d4de6327d3d50cf69c35878b6ccd03f1d84e3"
+    },
+    {
+      "path": "src/core/src/level/arch_lighting_clipboard.cpp",
+      "bytes": 37206,
+      "sha256": "4c0e0b116bf73bdc5292cb9512c559253f2c4ffd301e3816be93c2411015b79a"
+    },
+    {
+      "path": "src/core/src/level/build.cpp",
+      "bytes": 112433,
+      "sha256": "a05bb99b66cd9c2f2088196f3f3df8dd842b88dc5c2418de7bdad2baf1b53ff4"
+    },
+    {
+      "path": "src/core/src/level/cleave.cpp",
+      "bytes": 400529,
+      "sha256": "1efd710870e17f31b5ea269809214f4abc6e6d4d69770f1fca469ce34eb0373d"
+    },
+    {
+      "path": "src/core/src/level/cleave_index_utils.hpp",
+      "bytes": 730,
+      "sha256": "a7e4679bfdeb3225f66107488ce8d5b12358da8a25fea95d036353490d683ba3"
+    },
+    {
+      "path": "src/core/src/level/cleave_projection_utils.hpp",
+      "bytes": 4567,
+      "sha256": "104f519d054a665bf9a1b8e7901ebb631f9e98cea8a4db08e60a6129114dc9d3"
+    },
+    {
+      "path": "src/core/src/level/clipboard.cpp",
+      "bytes": 47660,
+      "sha256": "492cfc6512dbe704ff24ac3b7a621cbb7ba74fa4fe05b380da972345ef3d1178"
+    },
+    {
+      "path": "src/core/src/level/cog_reference_utils.hpp",
+      "bytes": 7394,
+      "sha256": "9cb81d2480c927d95ff46055b9bc4c0c79a51622b4360c9588c65a3977e43087"
+    },
+    {
+      "path": "src/core/src/level/connected_surface_uv.cpp",
+      "bytes": 25228,
+      "sha256": "7e04018d06dff5be12437e451f04556dea5535ab9616c80417cc1ac8cc59c597"
+    },
+    {
+      "path": "src/core/src/level/edit.cpp",
+      "bytes": 12094,
+      "sha256": "28a4e78e03c55cfe5e573e6114a495308a65cd00bbd50fd448934aaa9c7cbb20"
+    },
+    {
+      "path": "src/core/src/level/exact_orientation.hpp",
+      "bytes": 26601,
+      "sha256": "bca3f8ffbfcc1c913d935436bc1e7d336e79742fb226161ac069ebf0cac8d3a4"
+    },
+    {
+      "path": "src/core/src/level/extrude_arrangement_context.hpp",
+      "bytes": 20747,
+      "sha256": "733e2a691ae957c924dc7500856a343703d6e4ffda6804c0b32a0adbb155e50c"
+    },
+    {
+      "path": "src/core/src/level/extrude_arrangement_registry.hpp",
+      "bytes": 74470,
+      "sha256": "ed694dae66c83cb45fc9e56efda5ae460f9ef32ddf9be0d666b2f5df38bd4359"
+    },
+    {
+      "path": "src/core/src/level/extrude_contained_ring.cpp",
+      "bytes": 29608,
+      "sha256": "b8f2132e8e32e067784a81e8b2657c07216ac5955e9db07c64442ac3df5301e3"
+    },
+    {
+      "path": "src/core/src/level/extrude_contained_ring.hpp",
+      "bytes": 2582,
+      "sha256": "3ddd072f6686965e7cfe7878a2884a6eff835a9e5c9720c35d991c84963d5eca"
+    },
+    {
+      "path": "src/core/src/level/geometry.cpp",
+      "bytes": 177280,
+      "sha256": "972a2d85fda93ba630552f133be05661dc5ae6a1df858d05f3661af31fc716b2"
+    },
+    {
+      "path": "src/core/src/level/geometry_precision.hpp",
+      "bytes": 28502,
+      "sha256": "029c993ac8b38a718252c4b0554ff3c1b451ace1e7f202052f3ab6ff3b370004"
+    },
+    {
+      "path": "src/core/src/level/lighting.cpp",
+      "bytes": 76575,
+      "sha256": "ca63ed32775f64ee1835b5b0d5d51f8fb9975c0a766e6426543011498d212b37"
+    },
+    {
+      "path": "src/core/src/level/merge.cpp",
+      "bytes": 76818,
+      "sha256": "03c02598b6f7052567101649e9276cb89d09424666b537f16ea7006d48a5a768"
+    },
+    {
+      "path": "src/core/src/level/thing.cpp",
+      "bytes": 7823,
+      "sha256": "bc96ef7aaeb30977f796407dcba8328080b77da2924614116a66cde3531a2201"
+    },
+    {
+      "path": "src/core/src/level/transform.cpp",
+      "bytes": 63883,
+      "sha256": "cfff409ddadded276f866f603f61738ccf29bbce077f9cf07dad54d5485e1a87"
+    },
+    {
+      "path": "src/core/src/level/uv.cpp",
+      "bytes": 8674,
+      "sha256": "c5e5e6d6e779ee0e2710b812ab74dc29339382f6f50609f1c932639d1904474b"
+    },
+    {
+      "path": "src/core/src/math_utils.cpp",
+      "bytes": 903,
+      "sha256": "cd5b6c70b6134cd1c2e062d9eb70cd126abe0c13eb25ca5be567169754cc8817"
+    },
+    {
+      "path": "src/core/src/values.cpp",
+      "bytes": 25726,
+      "sha256": "5967c8f2198197638150067e891206c4b1b6527e5607fb49593eccd2ad001348"
+    },
+    {
+      "path": "src/core/tests/README.md",
+      "bytes": 21577,
+      "sha256": "a338e6447fef44732e8a7fb65573ff328b48ce1f0b94984f274d5dc9c877da7a"
+    },
+    {
+      "path": "src/core/tests/assets/arch_lighting_tests.cpp",
+      "bytes": 53465,
+      "sha256": "1cd9c31408aac9f8e37afe413bd4befb7ad150c264990de62bb99f2ec18e69b3"
+    },
+    {
+      "path": "src/core/tests/assets/asc_tests.cpp",
+      "bytes": 12147,
+      "sha256": "62d03c5640ebfce7f02f211e7af3fc20e684efad5755ec802d34c52d262359bc"
+    },
+    {
+      "path": "src/core/tests/assets/cog_script_tests.cpp",
+      "bytes": 29305,
+      "sha256": "76413665a7a8d981b0d865a0a7c4b64c26e2050573bd843239629903b871258e"
+    },
+    {
+      "path": "src/core/tests/assets/df2jk_tests.cpp",
+      "bytes": 1074,
+      "sha256": "7af8e0d16fb244c9e1e791b0392bfeb5da4fb0f9451583f20b657e06ae422915"
+    },
+    {
+      "path": "src/core/tests/assets/episode_tests.cpp",
+      "bytes": 17727,
+      "sha256": "54aa247fa907dcd0a24b6e6ab896396f0e72b44956f981e81922fe65a4165342"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/ijim_thing_params.ndy",
+      "bytes": 571,
+      "sha256": "b282a0fd91c282001c7f9902e3c40446f610c975ca927ff5f10782d8a9269cb4"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/README.md",
+      "bytes": 9575,
+      "sha256": "ed112d400f2fcf4212a3b35b99295343eabb3119f88e688a083b739596963484"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/all_resource_categories.sed",
+      "bytes": 196772,
+      "sha256": "80ce8fe5c331f5de5c9f00b52f38816fda5ea77fbe7ab9d260841d98bb6a7b63"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/hist_small.sed",
+      "bytes": 213156,
+      "sha256": "00cee008face4b5e174e584940e8a8f04a2bd5b147ee5b3f774cd21845b82b77"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/hist_small_1_damage.sed",
+      "bytes": 213156,
+      "sha256": "5e220dc8bbc63d1d7a86475adf35dc39be5e838e93570bba4d12de9e494d1f95"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/hist_small_2_damage.sed",
+      "bytes": 213156,
+      "sha256": "d0f8ff86c024f38de02b96acfe3cda6584900edfdbb27f170fb09f7b9d8545fb"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/hist_small_3_damage.sed",
+      "bytes": 213156,
+      "sha256": "134b92b0da15f92ac76cb0f26fca6dbb5f7da9047d2828c89ee0d36046c6d189"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/ijim_expected.ndy",
+      "bytes": 3354,
+      "sha256": "34bf73c289583bcd0aed02f2b26fd1b804afed8fec96cd2c5de57196ca7d6226"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/ijim_expected_partial.ndy",
+      "bytes": 2616,
+      "sha256": "df25b3804d03bf1bc4060fc5f2a081bdec645209536185d260086e472fd32862"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/ijim_input.ndy",
+      "bytes": 718,
+      "sha256": "3928e13620211b233854ed18a65cc0a190ad6774a95ed5e39e1d19a48cb99e73"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/ijim_native.sed",
+      "bytes": 196772,
+      "sha256": "83bd93f18c855db06cccca2c97165ab1bb76353e1a404d7cee7e9c50a05540da"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/ijim_sect_unrecoverable.sed",
+      "bytes": 196772,
+      "sha256": "ddccf5f6b997a9265c2d0d3746fd70eb3f4308ab6ef2bc040bbf217869f7f1fa"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/jkdf2_expected.jkl",
+      "bytes": 3156,
+      "sha256": "d6e926ea2f745b44bad135ec55b17eb46d0f3004d140e0cb1e072d545c6f1267"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/jkdf2_expected_partial.jkl",
+      "bytes": 2537,
+      "sha256": "add33727807291aa8a22c37a45b8d40c60ea43a123be35b05e4f549d381a4285"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/jkdf2_input.jkl",
+      "bytes": 665,
+      "sha256": "23717992fefa65411d09467f40ba9d4dc72e7c05f563508b3993e3320cedc2b6"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/jkdf2_native.sed",
+      "bytes": 196772,
+      "sha256": "f49ad16013361d50daaedcad82aeca7af06cb9d389b87560bd485b94fea8ec97"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/jkdf2_sect_unrecoverable.sed",
+      "bytes": 196772,
+      "sha256": "58a69f9ae5ee7102b6afcdabc5195c27f94f14808fbd6c2feb9d023f22557685"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/mots_expected.jkl",
+      "bytes": 3268,
+      "sha256": "0151c2225c17bc9062b0765e5fa224f0f995ffa1a4fd16358252013a55f3099a"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/mots_expected_partial.jkl",
+      "bytes": 2576,
+      "sha256": "97f4c864d426d808be5b49e01ff91011f3fa54a9995d8c92d836531edc3cdde2"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/mots_input.jkl",
+      "bytes": 667,
+      "sha256": "81d0508f7447ecfdb8c69fb7e8fbf7832e28874a45fd22080843f8bc253b8d84"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/mots_native.sed",
+      "bytes": 196772,
+      "sha256": "acdb3b13fc8ac4ee9db1a069a7e52652cf6c36bccc44eafddf4be05ddfb81cb9"
+    },
+    {
+      "path": "src/core/tests/assets/fixtures/sed_vectors/mots_sect_unrecoverable.sed",
+      "bytes": 196772,
+      "sha256": "b2036f657ceb73e6aecf0934d4d51194e712d3099e09eee0e3b925e4f10467be"
+    },
+    {
+      "path": "src/core/tests/assets/gob_tests.cpp",
+      "bytes": 21809,
+      "sha256": "d2b6554307dbfa493563e339b04f7ee8e9cb4034a69c65df0b0242fd9f740f6f"
+    },
+    {
+      "path": "src/core/tests/assets/indy_wv_tests.cpp",
+      "bytes": 7437,
+      "sha256": "41ead759b1bdbb5cb147350a687434904d2be8320f470538115096088063010d"
+    },
+    {
+      "path": "src/core/tests/assets/items_dat_tests.cpp",
+      "bytes": 1100,
+      "sha256": "ce95c9d1b27e47e10fab11d6cc012fe4cc7ac19d8b4e83a128b53e82f8194908"
+    },
+    {
+      "path": "src/core/tests/assets/jed_level_tests.cpp",
+      "bytes": 51733,
+      "sha256": "008015c98dbab359ab3b5ec4704408c85099edfc065ec662be0bfb202a76cc93"
+    },
+    {
+      "path": "src/core/tests/assets/jkl_level_tests.cpp",
+      "bytes": 143144,
+      "sha256": "996452e1966ee5138f0c8a04a938df253ff39eca7efe50c721789801306456aa"
+    },
+    {
+      "path": "src/core/tests/assets/jkl_save_tests.cpp",
+      "bytes": 210435,
+      "sha256": "71fcaac655acd669d8b8870b639e1b487a393cd024d467710b83e58ccc656e8a"
+    },
+    {
+      "path": "src/core/tests/assets/jlh_tests.cpp",
+      "bytes": 10031,
+      "sha256": "79ac24010521fc234570ed0c0d70bf8f2ff270ab0973618d4f67aba776fa0f0d"
+    },
+    {
+      "path": "src/core/tests/assets/key_tests.cpp",
+      "bytes": 3187,
+      "sha256": "b2919b3fc6debedb634fa284eef6ff9335799e15525b0c44f87a5b0e2990a3ae"
+    },
+    {
+      "path": "src/core/tests/assets/lev_tests.cpp",
+      "bytes": 27402,
+      "sha256": "4f44d92bcf65a830e1078dc6ab5e2e248d24f7936b670a62477543a3f3259a35"
+    },
+    {
+      "path": "src/core/tests/assets/mat_allocation_tests.cpp",
+      "bytes": 5468,
+      "sha256": "65df732bdc25ab34a2eeec2bfebb56befb6ee7c00c4b3419d34c4bb7dfee2492"
+    },
+    {
+      "path": "src/core/tests/assets/mat_cmp_tests.cpp",
+      "bytes": 22263,
+      "sha256": "098139c38545d10617501ba4e48a9c26bad1efa74221ab8cbe0f6e73545819f6"
+    },
+    {
+      "path": "src/core/tests/assets/model3do_tests.cpp",
+      "bytes": 57071,
+      "sha256": "082ba3044ead894172cbd7e4ec1e426b19d8288f00db2fb45e6366f4bd3a563f"
+    },
+    {
+      "path": "src/core/tests/assets/models_dat_tests.cpp",
+      "bytes": 1164,
+      "sha256": "192515a2aca50da7ab5515116639f2a932fd75083c916fc904cd885d18e29d5e"
+    },
+    {
+      "path": "src/core/tests/assets/ndy_save_tests.cpp",
+      "bytes": 14826,
+      "sha256": "f846d11b41e5eb9893dfb8578e3d7832bfc147777402f3130d3f562773792e93"
+    },
+    {
+      "path": "src/core/tests/assets/par_tests.cpp",
+      "bytes": 2372,
+      "sha256": "3837089d69470715400f4f4882861508d917d6c1315e00c6879509a837827821"
+    },
+    {
+      "path": "src/core/tests/assets/pup_tests.cpp",
+      "bytes": 922,
+      "sha256": "f7e672dd0aeebc450992e44dda0dbc7fc08c8e41c858876c814391705b433a2b"
+    },
+    {
+      "path": "src/core/tests/assets/resource_locator_bounded_read_tests.cpp",
+      "bytes": 23602,
+      "sha256": "c714a05b16ae49221989ad327c7b217022facb9e5288fac19aa03c5acb535b8f"
+    },
+    {
+      "path": "src/core/tests/assets/resource_locator_disk_tests.cpp",
+      "bytes": 24124,
+      "sha256": "387d12ae1668b6dfc75863377f2b387f5276d6804e70ba8aaa312541ad01bea1"
+    },
+    {
+      "path": "src/core/tests/assets/resource_locator_overlay_tests.cpp",
+      "bytes": 4111,
+      "sha256": "a00bbed80e1d1ab43c3015cd2311d6216725b38b1a013899a70051385dc981b6"
+    },
+    {
+      "path": "src/core/tests/assets/resource_locator_sharing_tests.cpp",
+      "bytes": 2155,
+      "sha256": "3ed5220187096f70939d185c0461c9756075f199f327853585693d5956ac8208"
+    },
+    {
+      "path": "src/core/tests/assets/resource_locator_test_fixtures.hpp",
+      "bytes": 1398,
+      "sha256": "149cc05a298c781eddcbd14bbd808c1593efe5a64d7d0515ea6d140a084d10af"
+    },
+    {
+      "path": "src/core/tests/assets/resource_stream_failure_tests.cpp",
+      "bytes": 12137,
+      "sha256": "870afed919f9344854bf30856cad6b5e76bbbee7db97ae87b9259f57f4bda70a"
+    },
+    {
+      "path": "src/core/tests/assets/sed_level_tests.cpp",
+      "bytes": 341331,
+      "sha256": "e69c2a43d7f87f671d6ac0005a59eb66fa5f7febe0d15d7b656f4a711f8c1e21"
+    },
+    {
+      "path": "src/core/tests/assets/snd_tests.cpp",
+      "bytes": 20209,
+      "sha256": "7c0cf92d46db311fdcc280bacf22542ca07843a741a5eee2acc8eae2caa31d81"
+    },
+    {
+      "path": "src/core/tests/assets/spr_tests.cpp",
+      "bytes": 24552,
+      "sha256": "defadadff706622509cb8ed4cef80dd4135a7b5669a203300daa49c290b53aa4"
+    },
+    {
+      "path": "src/core/tests/assets/string_table_tests.cpp",
+      "bytes": 24612,
+      "sha256": "7a27ecde336c01a80e772186279a7a3626a25d5482881b8baffa7c251a7f5dd4"
+    },
+    {
+      "path": "src/core/tests/assets/tpl_tests.cpp",
+      "bytes": 30147,
+      "sha256": "8eef752a5f5ab8ba6748a262cab7a73f6aed2f477bc817c42a33c95c48d77581"
+    },
+    {
+      "path": "src/core/tests/assets/wav_tests.cpp",
+      "bytes": 21026,
+      "sha256": "90313d8683fef0c20330d657017977fe01414b95f91d5c42178eb56a965ac1b8"
+    },
+    {
+      "path": "src/core/tests/binary_reader_tests.cpp",
+      "bytes": 2957,
+      "sha256": "aa8825e967b75fc9a0135ef76c2dba3774daddadebb8b544acafa046d9fc9e0a"
+    },
+    {
+      "path": "src/core/tests/editor/document_allocation_tests.cpp",
+      "bytes": 37652,
+      "sha256": "db2097932f1817e0a883aebb685565232988bbbb274b79091b1bc915c2ed66af"
+    },
+    {
+      "path": "src/core/tests/editor/editor_tests.cpp",
+      "bytes": 105802,
+      "sha256": "7305b03f5a97810dfa502afd3e3642bf555a8041bd02a015ce805f506c60f70e"
+    },
+    {
+      "path": "src/core/tests/editor/pending_cog_import_tests.cpp",
+      "bytes": 5938,
+      "sha256": "0634316897fd1bf9f052d4eefaf57baa711f645e7dcf636771f877728a63d6dc"
+    },
+    {
+      "path": "src/core/tests/geometry/geometry_math_tests.cpp",
+      "bytes": 14913,
+      "sha256": "fefd1ca9b8379c25b4827c6bc554d318316347d16276f20c716c310411b46d25"
+    },
+    {
+      "path": "src/core/tests/level/arch_lighting_clipboard_tests.cpp",
+      "bytes": 28449,
+      "sha256": "0f1afee69779a5ab7fbee26f5d30f44a663d2effdfeb5a5d63b3cd14a3ebd9d2"
+    },
+    {
+      "path": "src/core/tests/level/cleave_allocation_tests.cpp",
+      "bytes": 25870,
+      "sha256": "3fcbb8ae31f1286ff22075339c08fb16848dc3397ea72f1dee2f23d5779f8b6b"
+    },
+    {
+      "path": "src/core/tests/level/cleave_subdivided_portal_tests.cpp",
+      "bytes": 79197,
+      "sha256": "3f690b29de9cfe5aebf2778452801355f8326dc969491ea9aa738a19cfa2245f"
+    },
+    {
+      "path": "src/core/tests/level/connected_surface_uv_tests.cpp",
+      "bytes": 40462,
+      "sha256": "b9d246336ad15237e29a59a4cb804c9794f0c0a1cfdfa563d12621d823c15514"
+    },
+    {
+      "path": "src/core/tests/level/extrude_allocation_tests.cpp",
+      "bytes": 44781,
+      "sha256": "c7386d6ba736f49079095ed898149423bf102a90c2727843cbaa3a88b74dca14"
+    },
+    {
+      "path": "src/core/tests/level/extrude_arrangement_registry_tests.cpp",
+      "bytes": 111629,
+      "sha256": "68f135369317947e954554b22bd346ae07cbacdc8cbc275f4ab2e0cbc3d5cc3d"
+    },
+    {
+      "path": "src/core/tests/level/extrude_collinear_support_tests.cpp",
+      "bytes": 26344,
+      "sha256": "c2bc8e1d1d5652c344fd9ef5604696d5bc4bf3a8dce81b99b76dc3c8823b31de"
+    },
+    {
+      "path": "src/core/tests/level/extrude_contained_ring_tests.cpp",
+      "bytes": 37783,
+      "sha256": "b212f1939dd8a9de6dd0239452df11526993f6c83f48b3c05fd02078091f9a06"
+    },
+    {
+      "path": "src/core/tests/level/frame_transform_allocation_tests.cpp",
+      "bytes": 12434,
+      "sha256": "b06b2db1a53257b02a9bcba6f31281cda8403bd2e953e501377ea2a868697ec0"
+    },
+    {
+      "path": "src/core/tests/level/geometry_transform_allocation_tests.cpp",
+      "bytes": 21615,
+      "sha256": "7b775689cf34da5a1b4056467a0350da27363e98e1b127552d534e075498f4d5"
+    },
+    {
+      "path": "src/core/tests/level/level_adjoin_tests.cpp",
+      "bytes": 24412,
+      "sha256": "7e029ec6cbaff17c411623a35fc59a2dfcabc6d8e417cf0fd22d9f2e520f40d7"
+    },
+    {
+      "path": "src/core/tests/level/level_build_tests.cpp",
+      "bytes": 79110,
+      "sha256": "6eca79e63a03f698d2d9465cef66f5ae3e0f62076c393c7bf21be46d2ea2b0c5"
+    },
+    {
+      "path": "src/core/tests/level/level_cleave_tests.cpp",
+      "bytes": 329515,
+      "sha256": "8236e36a6df03bb4ca85e887b6a7668fe097d7c979121f2be73fa784fc896f89"
+    },
+    {
+      "path": "src/core/tests/level/level_clipboard_tests.cpp",
+      "bytes": 37166,
+      "sha256": "8c7a8d3f072df563f11c19b62b7dd2891911e63ba2aec6b44b9c75e40784ade0"
+    },
+    {
+      "path": "src/core/tests/level/level_closure_contract_tests.cpp",
+      "bytes": 7378,
+      "sha256": "a656afe95efd17e5668a5301890dd1319c0558a412deddd5138c6710b24fa8cd"
+    },
+    {
+      "path": "src/core/tests/level/level_cog_reference_tests.cpp",
+      "bytes": 19627,
+      "sha256": "ef493cccf7845289959d5728a31d9b29e2232bd2a026a1a4a58bd5396051d007"
+    },
+    {
+      "path": "src/core/tests/level/level_connect_contract_tests.cpp",
+      "bytes": 26570,
+      "sha256": "ef96390bdc37c06ec5a3ddefe096c2f72e0947576fa809b683827f4e3870bfd1"
+    },
+    {
+      "path": "src/core/tests/level/level_edit_tests.cpp",
+      "bytes": 31817,
+      "sha256": "d149258eb3cf96dad47b7fc49a1a87a2632680be8d25f692881b8a2d67c0fb0a"
+    },
+    {
+      "path": "src/core/tests/level/level_extrude_tests.cpp",
+      "bytes": 247627,
+      "sha256": "51a038fb62c34240e395c1cdc1bc55d3a9c314ea218a339f03b11e61596c0e52"
+    },
+    {
+      "path": "src/core/tests/level/level_geometry_tests.cpp",
+      "bytes": 88548,
+      "sha256": "9020053a089b23a2176bc9a56a31a50f7b5f78438861268f61a188da013e8984"
+    },
+    {
+      "path": "src/core/tests/level/level_layers_tests.cpp",
+      "bytes": 5760,
+      "sha256": "8fcd3b715cda06e4660f88d08aeea1ffab7c7e4eab1ffeae4aea335255cd6989"
+    },
+    {
+      "path": "src/core/tests/level/level_lighting_tests.cpp",
+      "bytes": 62803,
+      "sha256": "be1d97aa11e25294c35b5f33fb44a210c2721419e0bf00ab5a07a64b7f1f41bd"
+    },
+    {
+      "path": "src/core/tests/level/level_merge_tests.cpp",
+      "bytes": 108286,
+      "sha256": "4d017b063754580922de4837e0f57178a85a0222169a33b30b420af270a0e09f"
+    },
+    {
+      "path": "src/core/tests/level/level_picking_tests.cpp",
+      "bytes": 24134,
+      "sha256": "728aa14ec451ab7f0cf82fd4c9844bfe3e0c8512b99f67d828442374b6deb20e"
+    },
+    {
+      "path": "src/core/tests/level/level_surface_merge_uv_tests.cpp",
+      "bytes": 20641,
+      "sha256": "17072770807b5f1dffb3203e2ef3cfb95bb9dcee983f021733a39dedebf13d81"
+    },
+    {
+      "path": "src/core/tests/level/level_tests.cpp",
+      "bytes": 8078,
+      "sha256": "4a04ac39d95371043627533e0b633bdc961697a6de7bc93af092b0518eace807"
+    },
+    {
+      "path": "src/core/tests/level/level_thing_tests.cpp",
+      "bytes": 5872,
+      "sha256": "a6f7d6cd4415bf4f6454624ef73a1460f032e7f4c987796e8720883d90efee93"
+    },
+    {
+      "path": "src/core/tests/level/level_transform_tests.cpp",
+      "bytes": 105361,
+      "sha256": "6180a87a3d2c4d5ebd2c5e0daa2ed7faed21594c80cebbd234f21ca3edab7273"
+    },
+    {
+      "path": "src/core/tests/level/level_uv_tests.cpp",
+      "bytes": 121067,
+      "sha256": "dc0b4a09e7d9bcebe358eb997c88b5c6080c1b223f96409fecda561249c91581"
+    },
+    {
+      "path": "src/core/tests/level/surface_extrude_uv_regression_tests.cpp",
+      "bytes": 18105,
+      "sha256": "1605b02de9d68bc9e7a3f71aa010d4f583166b223a884de6d1bb2e37fce5bcf0"
+    },
+    {
+      "path": "src/core/tests/test_common.hpp",
+      "bytes": 6688,
+      "sha256": "1935dd025e39d0d3da28132516549a7cc0bdcce32a88b84f5092de0b3a4770d5"
+    },
+    {
+      "path": "src/core/tests/test_main.cpp",
+      "bytes": 9493,
+      "sha256": "bbc48a69a63055fa18bf7e2a3074d5a0c462c5f51608afea23f5f4cacb881c14"
+    },
+    {
+      "path": "src/core/tests/text/text_tests.cpp",
+      "bytes": 6305,
+      "sha256": "dbe95b6b7c472f485060868d2166e6a634c470d0f597ba2de0e0b6ee524cd826"
+    }
+  ]
+}

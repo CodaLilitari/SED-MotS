@@ -1,10 +1,14 @@
 {
-  "capturedUtc": "2026-09-27T22:53:43.4189978Z",
+  "capturedUtc": "2026-11-01T08:50:20.9142797Z",
   "scope": "All Sed.App, Sed.Agent and Sed.Mcp restore packages and exact declared runtime-pack downloads, including build and non-Windows dependencies; this is a superset, not a list of deployed components. Runtime-pack identities in published deps manifests are verified separately. dotnet-LICENSE.txt identifies the SDK distribution; runtime-pack directories preserve their separate licenses.",
   "packages": [
     {
       "package": "Avalonia.Angle.Windows.Natives/2.1.27548.20260419",
       "dependencyType": "package",
+      "contentSha512": "l17nI3XVDN3oMnpjf2pnmJg0YTwK4m6NLsn/itAjDMdObTFxN77D5F1M9sRMSfViSY3KKcse1ROczwgoWLJsnA==",
+      "archiveSha512": "j3QyVAPEDkI4/jp3rEpbvi5Q4CwBRJLV0jO/QlRuDU8t7415herWcNxcjh7VZ6xTpTx4gZvz+unnBe4h86PdyA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "2dd03940159c3b637786264f5a5563ffd3e9aad3bdab4a4c75270e095a485a1f",
       "license": "LICENSE",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/angle/",
@@ -16,6 +20,7 @@
         {
           "file": "Avalonia.Angle.Windows.Natives-2.1.27548.20260419/LICENSE",
           "source": "nuget:Avalonia.Angle.Windows.Natives/2.1.27548.20260419/LICENSE",
+          "isPackageLicense": true,
           "sha256": "54aff7276217df9f6b5181613999d208c9e40d2b1d51bf55217837e6871a4a63"
         }
       ]
@@ -23,6 +28,10 @@
     {
       "package": "Avalonia.BuildServices/11.3.2",
       "dependencyType": "package",
+      "contentSha512": "qHDToxto1e3hci5YqbG9n0Ty8mlp3zBUN5wT66wKqaDVzXyQ0do3EnRILd4Ke9jpvsktaPpgE0YjEk7hornryQ==",
+      "archiveSha512": "Iz+GjnSrkeVoGABK0Kp9C7bpeARN3PAGHjc62gahhGsXqC6Ux3erkHukhMGHPSIStH01OdJpTomkFfGvBHwwRQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "a8846537f7d074b8f9ed753c03678128c36bd046939ee245fad8c575a7cd3e9b",
       "license": "MIT",
       "copyright": "Copyright 2023-2025 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia.BuildServices",
@@ -34,6 +43,7 @@
         {
           "file": "Avalonia.BuildServices-11.3.2/LICENSE",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia.BuildServices/777f975b0a0cecf0311273711d56697212c558c0/LICENSE",
+          "isPackageLicense": true,
           "sha256": "94162c40c663bd96ec1b870e6aba6ef0a43f44c9eb500807e7965e7078f6dc47"
         }
       ]
@@ -41,6 +51,10 @@
     {
       "package": "Avalonia.Desktop/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "7gnap/vQzMQESufH+muozlsOPAcMGE6CKEXUmv9Jx7dRK/OYO+r10ETrmRJg/zYgLPG8stZElsPUMhK8X+8rEQ==",
+      "archiveSha512": "FTD9pVm9d6boVYXERRwnBKrb3gn4shIrWsxH/TdAWnoOFd/So+lgwZ8zocHEy4klMucO9eHM9JHswYyEERdcng==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "4dfd87b06bd8918f2dd2cb53ac7fad141b56ba88bc7f94d7b6b0bc8e5ef97cbf",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -52,11 +66,13 @@
         {
           "file": "Avalonia.Desktop-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Desktop-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -64,6 +80,10 @@
     {
       "package": "Avalonia.FreeDesktop.AtSpi/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "BRr7G2n9VFSdGmv3ZRxH2327Op1svwadmKw/RfU0lC96COVS7fWLIXxQFYzz+LvgiENt9+IE1nQGcOQCJVhZZA==",
+      "archiveSha512": "RHFhmfYlaaTI+EjQS3g0VVkybJW4Y8Y+EzRDt7cOBTSbUVK/UkMDEzSB/m5bffg8cDh2cxBy3tTVd2hwCEhBFQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "cbea16e025964b9fc141dfe4d1aefde334a6943528f7c4e3ffac32bdf007cff7",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -75,11 +95,13 @@
         {
           "file": "Avalonia.FreeDesktop.AtSpi-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.FreeDesktop.AtSpi-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -87,6 +109,10 @@
     {
       "package": "Avalonia.FreeDesktop/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "MYZ51mQg3ir1ZJO2ePoNHoixwGomJ0x1EH0NzLTFidsikkQDIPVA50yIHXamFRUaFFutK+XKRsk+afrUv2HZAQ==",
+      "archiveSha512": "5QwTgPGdG5Q867oZt8OWwlxmuzzpwArbgCbpcKvy4Z/jngBYR2V0fCm7uvI6xN5vj0a0dHqVU7+n6gsM/Hphpg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "ee1e9f65c6ebc3d47f39b3c163605d729901cf49625827257d60f9d56647a7ba",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -98,11 +124,13 @@
         {
           "file": "Avalonia.FreeDesktop-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.FreeDesktop-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -110,6 +138,10 @@
     {
       "package": "Avalonia.HarfBuzz/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "FT5XHaxnCA+kj+Q6dXAPC9/Gy1eBz3buT7T6KJFu+P8+2WZoSFBN5Pk4mO/VA8OTUwtZB/TOX8lExSrmxUBdqw==",
+      "archiveSha512": "jjmHlcLWDVEkHCdxvPNjrg9z9bTiDLYCh66PlTdswTCsPIVwrj4UagAdDZYZfxQHVs6sYyGOQUSIN4bDqocFRw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "1281b09acf02efb19c421a1fd1a72488dee9baad18aea245c1c36b24a8b8f728",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -121,11 +153,13 @@
         {
           "file": "Avalonia.HarfBuzz-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.HarfBuzz-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -133,6 +167,10 @@
     {
       "package": "Avalonia.Native/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "N1Mxv+R9kQ9UDOybaQLNviDZ91k0RmY3m84Vj1gXsJcc+qMmGr0jvs0dBNcsvTHqkfY8gZC+u8CWdJUfLtRMAQ==",
+      "archiveSha512": "5Ccb5kFSbBurEajUqBws8wNnUJc/mYZ519f2cYGUSSu+ngzQoJnCzZDxJwsbp4ndnMeTaEVFZpXozz9ysZE4Og==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "b01374aeb7409e64619b6d630c294332d330b08cb09bb5162f662ec0898f5142",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -144,11 +182,13 @@
         {
           "file": "Avalonia.Native-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Native-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -156,6 +196,10 @@
     {
       "package": "Avalonia.Remote.Protocol/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "Cvnzp2KTO7BScBPnn4Q91PmVwLvv19of+ZxrN3KFHYQe8in0qNaefZgOHGEiXZ841WpdO3VUFw7qvxv/1RTTGg==",
+      "archiveSha512": "RDRRxW1yYgH/NGLv4zWUm9ziydu3r5R5DsxMZ3LvEpKS/Jks55oHP1sE4oSFdNhjiccBJAZrgl7MtxyLRA180g==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "b9b7816d1914e8319155fe7f70007fae4f78d9e9139d0d6dcad8d1753a99987c",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -167,11 +211,13 @@
         {
           "file": "Avalonia.Remote.Protocol-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Remote.Protocol-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -179,6 +225,10 @@
     {
       "package": "Avalonia.Skia/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "YXUvuMqhbie4uNM9LTbniksavQcxhY0HLaxoH3IW7v4tYiV0U7VHQFDd0qfrlqqnmNZ6mtllk6wqm9uSr/YDZw==",
+      "archiveSha512": "IwBc9ZoxwqJjfUFh6hFdsMgEJsD2G0RXOEtQ0/tUa0pPheJ/bC7dgLsOXqf5Hv1lzZwj+8lCJ2mEF/neSv6yyA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "a2735874da48d88ee820bc5662b328c00a58907dd2b556ddcd9dedd2c679e751",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -190,11 +240,13 @@
         {
           "file": "Avalonia.Skia-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Skia-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -202,6 +254,10 @@
     {
       "package": "Avalonia.Themes.Fluent/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "SWhg/CGDkQmYspvYHSH7f6OTqhAfdbK5oBpitL1TiGVc/KtslShZeQyW9kLo6vYajJmbjZG01gNGplcmjEyV4g==",
+      "archiveSha512": "+FdhgES7rUv/II5fgMVCEFWRuBnX8gNew+lXK3VW8WXnVr6WKWelm9Lf6w6zQ6Mz6tLHAyOQdrKpAIDalE1Q6A==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "05107aba7c0b8d18d9d95992da44a99147165f149887d93b1f8bf3c2505a95c1",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -213,11 +269,13 @@
         {
           "file": "Avalonia.Themes.Fluent-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Themes.Fluent-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -225,6 +283,10 @@
     {
       "package": "Avalonia.Win32/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "B4knOvBcS0sqHLW7uqGZCN42uqV08zdWcguIfWGGb1vOmdYnNDbTbVzMUEKKBCUuNIKE0Vs4y7zk8lvwyybyiA==",
+      "archiveSha512": "ulo8AniMsPThfkFxsDt82dO/s2kI6adDXP3ewxjUcr6eHPfLUBx0vgf4HkZndv+hAqLoikdQAI42eKNZXV9daw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "736dc6251254bad74fc390608ac857e22c01c5291783df0e99bd2de850bc071d",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -236,11 +298,13 @@
         {
           "file": "Avalonia.Win32-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.Win32-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -248,6 +312,10 @@
     {
       "package": "Avalonia.X11/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "zFSVXbhhUMkXL+Ity0slAzys1AOsGVX89n23uVBoQ0I26MU/xsRajDkDhNB5R/HdQGI57dEYSyRYsq+B2pxPFw==",
+      "archiveSha512": "K6r2/qrbXSvy/cnT2fUE3rh/hHIrUngefqyY5H4QRnvKqm6XzLkJhKQWDzTl6Ou/8oKtm+0eH7XEEZXOwCODEw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "c706362ae0a84dede23d0eafbb210884a2ed414762f81d3fdd6d20600f8680ce",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -259,11 +327,13 @@
         {
           "file": "Avalonia.X11-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia.X11-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -271,6 +341,10 @@
     {
       "package": "Avalonia/12.0.4",
       "dependencyType": "package",
+      "contentSha512": "0ehIUuOVaR3OmsL8YK8v9yCCnOpzRtQSDgP5Nh2fMc+Lji8WoVGD+J6nvwkGjCH5hbm1urgvkVYWAYWkby0EeQ==",
+      "archiveSha512": "UMlITjzf16LaoW7EYaAzWVdbP6G5C6Y3DqbZW9nUrscRfFEIBIFhfWJ3ShRoNTgCkROtDkZzRpSzAz1TMVX+WQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "962897ed4cc8770fe32ace031f31582d857d3ee64a685b98f0601e0a57c8154d",
       "license": "MIT",
       "copyright": "Copyright 2013-2026 © The AvaloniaUI Project",
       "repository": "https://github.com/AvaloniaUI/Avalonia/",
@@ -282,11 +356,13 @@
         {
           "file": "Avalonia-12.0.4/NOTICE.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/NOTICE.md",
+          "isPackageLicense": false,
           "sha256": "dd6f80852d16320c865a2e403ffd1a8b07a0e34c5b37122c0bc2343639ff68e6"
         },
         {
           "file": "Avalonia-12.0.4/licence.md",
           "source": "https://raw.githubusercontent.com/AvaloniaUI/Avalonia/a8dd6417fd8918570edefdbecd92d16ac7620069/licence.md",
+          "isPackageLicense": true,
           "sha256": "213814d306090074d234d760239ff0f67eb9b8d20eefb4d5631bb39dbe0b769b"
         }
       ]
@@ -294,6 +370,10 @@
     {
       "package": "HarfBuzzSharp.NativeAssets.Linux/8.3.1.3",
       "dependencyType": "package",
+      "contentSha512": "RI6A1LgmooU30+4QIyFt5rmBCzP0VzTR+587IJSGvYIsHHWlahFufihYxtraLfsIhW7I8dn6+xX+DZGygOPKWQ==",
+      "archiveSha512": "xBOkJE8fzwyt3Y4Dn36WMkzuRewJcKriP8Mkv0CogIxfz54rOGvlqSD5XjfMLuA6aNPdcJL7kJHBVeUqcprI1w==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "0aa61be16ff5d9e7a8379e5b162cccbce0754a5c360b3f33ab463c25d4d7618e",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -305,11 +385,13 @@
         {
           "file": "HarfBuzzSharp.NativeAssets.Linux-8.3.1.3/LICENSE.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.Linux/8.3.1.3/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "HarfBuzzSharp.NativeAssets.Linux-8.3.1.3/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.Linux/8.3.1.3/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -317,6 +399,10 @@
     {
       "package": "HarfBuzzSharp.NativeAssets.macOS/8.3.1.3",
       "dependencyType": "package",
+      "contentSha512": "KPTq0xnslkI6nAo0jh3ptcQPJvZZr7MWYXa2jUe4SnHc9q+JlHElmNXp0sfFoiTgoCX7WOYpYsurypuH9Gehxw==",
+      "archiveSha512": "ZCIuEE+UXMKEwI/Zj+qk27NVuSmQ63eFjUF5q26hEtHmoScZgHXpJ0dFBE/UHpn2kcTGihON39Q4xevbsFcWAg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "f03fdc73cf4cb1c13598896d2d8118fa3374c35b673a2b57de8886d1de74eadc",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -328,11 +414,13 @@
         {
           "file": "HarfBuzzSharp.NativeAssets.macOS-8.3.1.3/LICENSE.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.macOS/8.3.1.3/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "HarfBuzzSharp.NativeAssets.macOS-8.3.1.3/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.macOS/8.3.1.3/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -340,6 +428,10 @@
     {
       "package": "HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.3",
       "dependencyType": "package",
+      "contentSha512": "w2QfdNm9Uz/sUa0B5D+OnVQhyq3G/fBq6ibQMdWBlQqqwh0g0/5j3RFvYqZAmRZ5+RzvjVe8o8SFFnWYUSkuxA==",
+      "archiveSha512": "p5kdyZPkLvLhB4XUEZPN1zHAPBNejbTAnLSTo9NkpjSgf0erA1y2OtpB5kP/CJzUYfGrWERAL0zTDuzTrWiyAA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "b02d7556366842cd8ad79e9b3b7c77c0e28955f4a8d9756dd6f09ddefbff04cb",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -351,11 +443,13 @@
         {
           "file": "HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.3/LICENSE.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.3/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "HarfBuzzSharp.NativeAssets.WebAssembly-8.3.1.3/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.3/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -363,6 +457,10 @@
     {
       "package": "HarfBuzzSharp.NativeAssets.Win32/8.3.1.3",
       "dependencyType": "package",
+      "contentSha512": "bx8CE8Js+XGX8PUxAHCBDEORt5aaBYtMN4Hr9QFs57Xithh6yjUyYqksizH6eRDhJkwsGI+SXWmPmMm8lZC9Pw==",
+      "archiveSha512": "FWqyRqea61CWcrEMEJofop5Zs60euXE6wzHi8RtrrEt6lry3Zaji2k0/WbtU1bZI6HCurk0iVDusoosXywRvzw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "6443701ebc6778a1f5adc888cbe30fd12b96f7b211a67311416b80efb90888b6",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -374,11 +472,13 @@
         {
           "file": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.3/LICENSE.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.Win32/8.3.1.3/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "HarfBuzzSharp.NativeAssets.Win32-8.3.1.3/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:HarfBuzzSharp.NativeAssets.Win32/8.3.1.3/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -386,6 +486,10 @@
     {
       "package": "HarfBuzzSharp/8.3.1.3",
       "dependencyType": "package",
+      "contentSha512": "NGZ2+ZVNPM+NdHB/asW0/ykWngyHWwcqjrbN2nDeH1B/aptPGlCUl8wkQ2cSJxw5fdWgdmIPmNuTPWpLwNVXWg==",
+      "archiveSha512": "hJOzboi+7fyA4S8T47mG+x5VYMTI34bmcsHK0kpiP6Nq3JoagvVm/aN4T3otWJddECc+plt7yxGa/BJrEaRSyA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "dc37c8a3c466e1a2ab3a8f9bdecb78d619ac9ae9089b6ce05c291729f4ed7b4a",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -397,6 +501,7 @@
         {
           "file": "HarfBuzzSharp-8.3.1.3/LICENSE.txt",
           "source": "nuget:HarfBuzzSharp/8.3.1.3/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         }
       ]
@@ -404,6 +509,10 @@
     {
       "package": "MicroCom.Runtime/0.11.4",
       "dependencyType": "package",
+      "contentSha512": "yZ8+Lgwo+KtRI29TB2mIOEMzV+csMJ+pKZg4YHReAP3vRewWLKKeYfrBDo5FS69rWnEbCfU3sbM+ZEQr+GDLtg==",
+      "archiveSha512": "ddy1sHYfilYH2+mnNAf6+z9CWEJCJyhsHmETzzskzVGra7havH31hnXIljTy0By+8bJi1np2KtxxEhLUhCWtAg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "a167c870d58621682728e3e9972289420aa17cac01bd3b9b931e6969ccd83ff6",
       "license": "MIT",
       "copyright": "Copyright 2021 © Nikita Tsukanov",
       "repository": "https://github.com/kekekeks/MicroCom",
@@ -415,13 +524,18 @@
         {
           "file": "MicroCom.Runtime-0.11.4/LICENSE",
           "source": "https://raw.githubusercontent.com/kekekeks/MicroCom/28850f85fb586488828ab7267ed4a87e8c970b51/LICENSE",
+          "isPackageLicense": true,
           "sha256": "6ee769c9ac4dac9abb16b98b1341e9528ff9f4ab685481410d3376d14148f3a9"
         }
       ]
     },
     {
-      "package": "Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12",
+      "package": "Microsoft.AspNetCore.App.Runtime.linux-x64/10.0.12",
       "dependencyType": "runtimepack",
+      "contentSha512": "uNpe40GALY0lbi+mJAvycUP3M2E66E1HUyws0AkPbqGxzHTnT4vhPouK25o0XKPNrSdUbiND1O0to8T2uIftmw==",
+      "archiveSha512": "M3cZRbtrCjFV1aJ0eA2MbIBe2CB3XO56dkqBoRjIyhAKo3luCzk7AqStyr5u4/7an2/SF+6ejhazWtiAcdTlsA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "1d4e4168b4a6c94b5a916d7b0aa4b68000c15c6db6763fa0f9687842ba3b19a8",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/dotnet",
@@ -431,13 +545,46 @@
       ],
       "files": [
         {
+          "file": "Microsoft.AspNetCore.App.Runtime.linux-x64-10.0.12/LICENSE.txt",
+          "source": "nuget:Microsoft.AspNetCore.App.Runtime.linux-x64/10.0.12/LICENSE.txt",
+          "isPackageLicense": true,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "file": "Microsoft.AspNetCore.App.Runtime.linux-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.AspNetCore.App.Runtime.linux-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
+          "sha256": "52af3d603b6d069e635f8afd08ec44ec01559255b5f3afd161ae9e6fe7e7aa54"
+        }
+      ]
+    },
+    {
+      "package": "Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12",
+      "dependencyType": "runtimepack",
+      "contentSha512": "W017+ITNnqIsYwmtQllvLTKbEDA86hEsrHCgLVoHutuhngNEFacJHEHoHrcOUZXDS11fcpeZ+3vc09Ugg3npAQ==",
+      "archiveSha512": "n8qSkT3KkkXSpu9UU748wzEbrDwLOJCkOGxY0D/tvWOwUXUbS2qRk5icYG2SukR7+i1eO8YF4sOl+ivbohhRPA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "6f3d800ff6669f05fab40d3c9fcfe3ab162c2d36717d78ef39d6e1baa0eabc59",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent",
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
           "file": "Microsoft.AspNetCore.App.Runtime.win-x64-10.0.12/LICENSE.txt",
           "source": "nuget:Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
         },
         {
           "file": "Microsoft.AspNetCore.App.Runtime.win-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.AspNetCore.App.Runtime.win-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "307d014f65d8482314f1400ddeae7a0cbabb96c2207bcc77f6233cc10588e5d9"
         }
       ]
@@ -445,6 +592,10 @@
     {
       "package": "Microsoft.DotNet.PlatformAbstractions/3.1.6",
       "dependencyType": "package",
+      "contentSha512": "jek4XYaQ/PGUwDKKhwR8K47Uh1189PFzMeLqO83mXrXQVIpARZCcfuDedH50YDTepBkfijCZN5U/vZi++erxtg==",
+      "archiveSha512": "Vbh/VEh0aGvtloiZU7fpnkNCa3mw+sMcxFLg9KJ8pcwIUiwKyWe/nfZJ98BBN6XiVT0TStedXB5pV4NnwrS0xg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "73f03026fbcaf485888042e6ac7d89439aaaa1b73009a1c316ec6399d13bea9c",
       "license": "LICENSE.TXT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "git://github.com/dotnet/core-setup",
@@ -457,11 +608,13 @@
         {
           "file": "Microsoft.DotNet.PlatformAbstractions-3.1.6/LICENSE.TXT",
           "source": "nuget:Microsoft.DotNet.PlatformAbstractions/3.1.6/LICENSE.TXT",
+          "isPackageLicense": true,
           "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
         },
         {
           "file": "Microsoft.DotNet.PlatformAbstractions-3.1.6/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.DotNet.PlatformAbstractions/3.1.6/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "2e3b2cb5cb57ff44310801dd46e51dab1d35d9cfe196a9709ee8cb9c6f8e4d4a"
         }
       ]
@@ -469,6 +622,10 @@
     {
       "package": "Microsoft.Extensions.AI.Abstractions/10.5.2",
       "dependencyType": "package",
+      "contentSha512": "Ei+YWV9Ybnps7pR1dgjlG29gelXEwZkhLVAcWmKe6HvXS6LNBYgSdWiY3Hk9OZXYtK34rv/NtLWBQYQGOBQYPQ==",
+      "archiveSha512": "o/SrmdCdkTQXE74zl1oTvMov9IRIxC04H/B3SoAN08+ipkzqpMjOTXCaDKEfyzQIUyzs7j6fzV5N//G1otN3zg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "c4ea439c74a64f853ea89e38ef0ccb117a42abf8750e6260bdddda5010736595",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/extensions",
@@ -480,6 +637,7 @@
         {
           "file": "Microsoft.Extensions.AI.Abstractions-10.5.2/LICENSE",
           "source": "https://raw.githubusercontent.com/dotnet/extensions/2a86d759c251eee39274c191bd9f8e14c58f875a/LICENSE",
+          "isPackageLicense": true,
           "sha256": "47f0ad8ba753eae5de6178291cd8f38bbb42d2368b177f8e11714ad17c701275"
         }
       ]
@@ -487,6 +645,10 @@
     {
       "package": "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7",
       "dependencyType": "package",
+      "contentSha512": "Z6mfFEaFcwCfSboxJwOLfu7/31npCY9q70WUamHW/vRQhDvBKOT4Vf9YkZj5J6hLvJpb0oDEYfHunQZj0xxvKw==",
+      "archiveSha512": "HtdxiP5fPpSxL8+QVoqr4z5XEXlWd0ZuKmMqdO0IJFvw0TWE6OjoPb03mpbPDuuKApMdoIeZPGCCsrUjb6agDA==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "174866cbf4338f5e9f39a014cfaf952629ffe6cbef75a047c65d7985861e2f01",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/dotnet",
@@ -498,11 +660,13 @@
         {
           "file": "Microsoft.Extensions.DependencyInjection.Abstractions-10.0.7/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.Extensions.DependencyInjection.Abstractions/10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
         },
         {
           "file": "Microsoft.Extensions.DependencyInjection.Abstractions-10.0.7/LICENSE.TXT",
           "source": "https://raw.githubusercontent.com/dotnet/dotnet/b16286c2284fecf303dbc12a0bb152476d662e44/LICENSE.TXT",
+          "isPackageLicense": true,
           "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
         }
       ]
@@ -510,6 +674,10 @@
     {
       "package": "Microsoft.Extensions.DependencyModel/9.0.9",
       "dependencyType": "package",
+      "contentSha512": "fNGvKct2De8ghm0Bpfq0iWthtzIWabgOTi+gJhNOPhNJIowXNEUE2eZNW/zNCzrHVA3PXg2yZ+3cWZndC2IqYA==",
+      "archiveSha512": "WH2f1lWSAEX3m7BNnEgJlNcw6L00ePbCU6x7MuYzwYadnq9LJn1n4OqJsyq1aXQiXAUoPE6kxzzvIywykfK76A==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "72885f6bc913912b070ad9cb59cc5c3764f862d00728a253462efe21e1e70fda",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/runtime",
@@ -522,11 +690,13 @@
         {
           "file": "Microsoft.Extensions.DependencyModel-9.0.9/LICENSE.TXT",
           "source": "nuget:Microsoft.Extensions.DependencyModel/9.0.9/LICENSE.TXT",
+          "isPackageLicense": true,
           "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
         },
         {
           "file": "Microsoft.Extensions.DependencyModel-9.0.9/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.Extensions.DependencyModel/9.0.9/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "40686c6447a7d5b5d3693068e4571b5f483d7ed335aeee773ef662440de4c5d5"
         }
       ]
@@ -534,6 +704,10 @@
     {
       "package": "Microsoft.Extensions.Logging.Abstractions/10.0.7",
       "dependencyType": "package",
+      "contentSha512": "tIEcQ2gvERrH2KiCjdsVcHGhXt9lIsuDStfOIeZWr7/fP8IXhGiYfx0/80PNI7WPO2IYuFtlZLSlnTS8+/Mchw==",
+      "archiveSha512": "Q/Bg0nT4qNXqSmTbdH7Ovoj2TRSCPE61RGBBPnETSJMCRdVJ9ObR1GlYUeGLoaLRXj2FQQ9h78pFS/xccRNDKQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "675586915682e8a234b7328c2b6361c8d65c7737a275ff3ef0f28e0c860e4ed7",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/dotnet",
@@ -545,18 +719,24 @@
         {
           "file": "Microsoft.Extensions.Logging.Abstractions-10.0.7/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.Extensions.Logging.Abstractions/10.0.7/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
         },
         {
           "file": "Microsoft.Extensions.Logging.Abstractions-10.0.7/LICENSE.TXT",
           "source": "https://raw.githubusercontent.com/dotnet/dotnet/b16286c2284fecf303dbc12a0bb152476d662e44/LICENSE.TXT",
+          "isPackageLicense": true,
           "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b"
         }
       ]
     },
     {
-      "package": "Microsoft.NETCore.App.Runtime.win-x64/10.0.12",
+      "package": "Microsoft.NETCore.App.Runtime.linux-x64/10.0.12",
       "dependencyType": "runtimepack",
+      "contentSha512": "nrSdIt6h0T6FVd96Jeg3nJ/oc10sOObwW044h26QBiQQEi7ZG9UJ0WY+hoCy/fGlSLBGkfxCqVmRc+UbtP7eMg==",
+      "archiveSha512": "FWJ8ixsfc+snzowYyAUlRGHehPjH9xtmLg0owWDV1Ju9dUeZf+OKuBagE+E/flME5Hhx7rObgcSVTXQak/wvGg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "2fdce950c9a2869f2c08ad410e3fe4bcbb0bf075e9ff04575e8b2141748a51b9",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/dotnet",
@@ -566,13 +746,46 @@
       ],
       "files": [
         {
+          "file": "Microsoft.NETCore.App.Runtime.linux-x64-10.0.12/LICENSE.TXT",
+          "source": "nuget:Microsoft.NETCore.App.Runtime.linux-x64/10.0.12/LICENSE.TXT",
+          "isPackageLicense": true,
+          "sha256": "cfc21f5e8bd655ae997eec916138b707b1d290b83272c02a95c9f821b8c87310"
+        },
+        {
+          "file": "Microsoft.NETCore.App.Runtime.linux-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "source": "nuget:Microsoft.NETCore.App.Runtime.linux-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
+          "sha256": "66f1d4e44973185519bb4aa8a9718eb22fc7af2cc532e3ae9cfc4c127ee7fc54"
+        }
+      ]
+    },
+    {
+      "package": "Microsoft.NETCore.App.Runtime.win-x64/10.0.12",
+      "dependencyType": "runtimepack",
+      "contentSha512": "H3eh1w8Yevp6yO2+R3zbOPfwJ1vs2c/5PKa1ez7igGCF8EIycnzZr8gTjeVBAKjCPbyGuOdMSazLUnNqMsfTkw==",
+      "archiveSha512": "Oa/LIiAy6r6+LH+lGjfEkcaw9FZ5ateIhDGXG47vT2icruVFQmA5jOD/r+SRxWWJGzXnOvxnWFo+TEvemVcQ7g==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "2649fc5fcb95c80f991b6d47ad8e10b772923249e87d98f409ca54cee548c379",
+      "license": "MIT",
+      "copyright": "© Microsoft Corporation. All rights reserved.",
+      "repository": "https://github.com/dotnet/dotnet",
+      "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
+      "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent",
+        "Sed.Mcp"
+      ],
+      "files": [
+        {
           "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.12/LICENSE.TXT",
           "source": "nuget:Microsoft.NETCore.App.Runtime.win-x64/10.0.12/LICENSE.TXT",
+          "isPackageLicense": true,
           "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
         },
         {
           "file": "Microsoft.NETCore.App.Runtime.win-x64-10.0.12/THIRD-PARTY-NOTICES.TXT",
           "source": "nuget:Microsoft.NETCore.App.Runtime.win-x64/10.0.12/THIRD-PARTY-NOTICES.TXT",
+          "isPackageLicense": false,
           "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
         }
       ]
@@ -580,17 +793,24 @@
     {
       "package": "Microsoft.WindowsDesktop.App.Runtime.win-x64/10.0.12",
       "dependencyType": "runtimepack",
+      "contentSha512": "VsVtDEmt6l3gyhSs1G6B2u5BJoW2a7p9S4Kllui9YZv8jEwnlfpxpcZm9U3Wuc29zvw7iQ7bwddsc36KvGtwwg==",
+      "archiveSha512": "BeGI/KTBBca4pduu1nff61VvZAwlzVwqNmo+eVqT26ltsAJsQsF//DCPJssw+fXpARq+FQ7pVKiQed5igv8KYQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "07565a5cd782179e3b8c356ceca851796d8353c10a1ef14a400d43ac1add00cf",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://github.com/dotnet/dotnet",
       "repositoryCommit": "95017c711e6afc1085133d440e42b4bd78155701",
       "sourceProjects": [
+        "Sed.App",
+        "Sed.Agent",
         "Sed.Mcp"
       ],
       "files": [
         {
           "file": "Microsoft.WindowsDesktop.App.Runtime.win-x64-10.0.12/LICENSE",
           "source": "nuget:Microsoft.WindowsDesktop.App.Runtime.win-x64/10.0.12/LICENSE",
+          "isPackageLicense": true,
           "sha256": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab"
         }
       ]
@@ -598,6 +818,10 @@
     {
       "package": "ModelContextProtocol.Core/1.4.1",
       "dependencyType": "package",
+      "contentSha512": "G/hOBZkJsvF3MSy0sOvXdxca5uRe2Sb4xk7xRuTWNZI45khVBjOLo6nSzGilctIICavNVxbxUF908fLYI9RxkQ==",
+      "archiveSha512": "CvMhSjVRoieW9e06Lk3l/Mp6oRK5DRmcmpMx4V9f7ccDPoPGb5y2fIi8Zei5bh5vl54GfgH6X8F7XXu7S0PT7w==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "0aef15439ec5181ea10a8c0e40ccd6e4aa661c1101d7e41f8b7f8f98d773a89a",
       "license": "Apache-2.0",
       "copyright": "© Model Context Protocol a Series of LF Projects, LLC.",
       "repository": "https://github.com/modelcontextprotocol/csharp-sdk",
@@ -609,6 +833,7 @@
         {
           "file": "ModelContextProtocol.Core-1.4.1/LICENSE",
           "source": "https://raw.githubusercontent.com/modelcontextprotocol/csharp-sdk/2b7fd35fbe58dfb9f00eae8b3393e1a7361b5e01/LICENSE",
+          "isPackageLicense": true,
           "sha256": "7c6a686d2b34b86ad8c726e0ac4d76903b525f251d73e617f8db3879fa8f11fc"
         }
       ]
@@ -616,6 +841,10 @@
     {
       "package": "Silk.NET.Core/2.23.0",
       "dependencyType": "package",
+      "contentSha512": "D7AT/nnwlB+4RZ84XY8QNGBZMJI5z9l4CSSETIJ1wCfRJzRt/341y3MRZ4HbnFz4r/IGaWOEZr86iE+0/65yyQ==",
+      "archiveSha512": "NY4ec3J7Yph+RT1wTueKbW3Zv0wqLYlrCabUpakYxBwSYpJvaPnnqzZTBM0kdP+pMhDh42sD81lANk6rMzJvBg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "dad5f28ee64c92383d67114cdfcae0ccc77a70e1a203fdb5c7bd3da587f8287c",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
@@ -628,6 +857,7 @@
         {
           "file": "Silk.NET.Core-2.23.0/LICENSE.md",
           "source": "https://raw.githubusercontent.com/dotnet/Silk.NET/94605142f7b7bd6e69c9201e8e721d245c69eb7e/LICENSE.md",
+          "isPackageLicense": true,
           "sha256": "725919ae6dd430f6302bd4e84958ae5b99f4f231b164382f6197df1413d4a9c1"
         }
       ]
@@ -635,6 +865,10 @@
     {
       "package": "Silk.NET.Vulkan.Extensions.KHR/2.23.0",
       "dependencyType": "package",
+      "contentSha512": "uRaf4j+SmH3DumjSSSUbFg33BnsGZUyXGj93O9NgGKZSJN3OTmNmQDxRew+/KiVLcgH6qzbto8aNGZ++j9GFWg==",
+      "archiveSha512": "8IIHl0/n6TvmwElmzeVzwDbcOydUyjaV+wSk97ZrTKxomsKZ99LdeHxS3URxpbHBogTjYhJO2pwqV6c5YJX8sQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "4605d2268ec04a6bce7b0308ef689d3b0140316ff42d57b911adfe66d1046f53",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
@@ -647,6 +881,7 @@
         {
           "file": "Silk.NET.Vulkan.Extensions.KHR-2.23.0/LICENSE.md",
           "source": "https://raw.githubusercontent.com/dotnet/Silk.NET/94605142f7b7bd6e69c9201e8e721d245c69eb7e/LICENSE.md",
+          "isPackageLicense": true,
           "sha256": "725919ae6dd430f6302bd4e84958ae5b99f4f231b164382f6197df1413d4a9c1"
         }
       ]
@@ -654,6 +889,10 @@
     {
       "package": "Silk.NET.Vulkan/2.23.0",
       "dependencyType": "package",
+      "contentSha512": "3/irtlSWXZ3eTi8N6nelI6L34NTB8ZJHpqVMNzZx2aX7Ek9YEQ34NoQW8/Tljrtmkg8KRhHW8hKTEzZaKV8PgA==",
+      "archiveSha512": "4onvXmpWAdSHIH659N5Hsydg/bY+L17JpYnINJ6w43L+ldCCbdkbWC6iC4176etd2LT3XZw3ANS0SVW1/rsosw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "bed9c35a813e0500f7410ae2c3521a8dca2f24b0d64eb84eda1cdfcce834e2ad",
       "license": "MIT",
       "copyright": "",
       "repository": "https://github.com/dotnet/Silk.NET.git",
@@ -666,6 +905,7 @@
         {
           "file": "Silk.NET.Vulkan-2.23.0/LICENSE.md",
           "source": "https://raw.githubusercontent.com/dotnet/Silk.NET/94605142f7b7bd6e69c9201e8e721d245c69eb7e/LICENSE.md",
+          "isPackageLicense": true,
           "sha256": "725919ae6dd430f6302bd4e84958ae5b99f4f231b164382f6197df1413d4a9c1"
         }
       ]
@@ -673,6 +913,10 @@
     {
       "package": "SkiaSharp.NativeAssets.Linux/3.119.4",
       "dependencyType": "package",
+      "contentSha512": "UAyVzbqNfZsZbKbzj68zXLyUyF/SbTKmzTfOO6qDu++dtIUMMTzPBe8oOuzU/DiewpfKoUUlOSsJmqWc6blxBw==",
+      "archiveSha512": "+DnMNYJrhlrUUYBCehbi13l76DgZIzWq/PPc/aixEMoE188a6/XzAMStv4dUVGONR2/oxE6bMrOIViveDVWPcg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "b95f79928a4833943ec3930ff1a9329c8ec004875bd922611743b2d4289bb2b5",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -684,11 +928,13 @@
         {
           "file": "SkiaSharp.NativeAssets.Linux-3.119.4/LICENSE.txt",
           "source": "nuget:SkiaSharp.NativeAssets.Linux/3.119.4/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "SkiaSharp.NativeAssets.Linux-3.119.4/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:SkiaSharp.NativeAssets.Linux/3.119.4/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -696,6 +942,10 @@
     {
       "package": "SkiaSharp.NativeAssets.macOS/3.119.4",
       "dependencyType": "package",
+      "contentSha512": "fgBOWEqbY012x7gMfJU4ezgz6dfhJb30Z6YdW35h85Zoe39+a8YNbAAwL29ihPfWoppg5AjvyKNzD1oCvlqWwA==",
+      "archiveSha512": "UYhxM3U3o/ogRTDXAmW4/cyBvinejIhxtqIFJpgjcsxPVuIY5VLgxs83ePuOBfNBu7t/WehTF+w4EL5sdiBkDg==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "6aa19803f329aaa479b30ff851bd1830a1cd754e28bc5f7b21935caf83171896",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -707,11 +957,13 @@
         {
           "file": "SkiaSharp.NativeAssets.macOS-3.119.4/LICENSE.txt",
           "source": "nuget:SkiaSharp.NativeAssets.macOS/3.119.4/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "SkiaSharp.NativeAssets.macOS-3.119.4/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:SkiaSharp.NativeAssets.macOS/3.119.4/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -719,6 +971,10 @@
     {
       "package": "SkiaSharp.NativeAssets.WebAssembly/3.119.4",
       "dependencyType": "package",
+      "contentSha512": "S1HOxtBbD4bYDtA2e9WH5TX+lxqRrTPvKjrjttRhxnHNNu7YY8VFo/LeCP7tNqoTA6PV+8vsvNbmRUEC2ip8RQ==",
+      "archiveSha512": "cpCijt2WNGNa0JjPg5SY0a1dQ37zq2ayK29MsmFkA9Lj0Fe/DcPZZTvOQTO0mjOW9JPbTaNQ/4uMHBFd1W4oUQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "6c1275cb2d1b18b3126f1dc7fbd371c31e361d5ff18919f899ceea7f30462b38",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -730,11 +986,13 @@
         {
           "file": "SkiaSharp.NativeAssets.WebAssembly-3.119.4/LICENSE.txt",
           "source": "nuget:SkiaSharp.NativeAssets.WebAssembly/3.119.4/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "SkiaSharp.NativeAssets.WebAssembly-3.119.4/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:SkiaSharp.NativeAssets.WebAssembly/3.119.4/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -742,6 +1000,10 @@
     {
       "package": "SkiaSharp.NativeAssets.Win32/3.119.4",
       "dependencyType": "package",
+      "contentSha512": "XOpbx/4CReO2wYsq2s6rbvdauc6dntG4Zv499sHGTJ87bwZaFXszFkwql3+FIZMc8kUPeaj3Mx2ezIJmo8a1Kg==",
+      "archiveSha512": "RFv9fJMFUi44URCmcqQ/Fay/s2tcmFxa9UDbU0+ZzrOn3fkzogWH7gUnsU7fGxnLmxZ+eBvqJ1yis7d9mgJZzw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "3e0c3eafd204f390ab4e63f15bfaa34e5f128f576a2d97b9c25d1afb848a5c16",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -753,11 +1015,13 @@
         {
           "file": "SkiaSharp.NativeAssets.Win32-3.119.4/LICENSE.txt",
           "source": "nuget:SkiaSharp.NativeAssets.Win32/3.119.4/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         },
         {
           "file": "SkiaSharp.NativeAssets.Win32-3.119.4/THIRD-PARTY-NOTICES.txt",
           "source": "nuget:SkiaSharp.NativeAssets.Win32/3.119.4/THIRD-PARTY-NOTICES.txt",
+          "isPackageLicense": false,
           "sha256": "21504c46c4c58aa64c1055bd2dcbc5f9a136b4b8c412ed3cc6740e22c5b127f5"
         }
       ]
@@ -765,6 +1029,10 @@
     {
       "package": "SkiaSharp/3.119.4",
       "dependencyType": "package",
+      "contentSha512": "53NOSUZ1Us+91Sm0uCkIivh/k7jOowRErZT2sIWwPFN9mLUvdxnE6rS4sWo4255+Rd2MWUSF+j0NMZHD6Cke+Q==",
+      "archiveSha512": "cSkl+6zfvTTF18Brzlsq4ZxQYtz0AAqlfsLERrS2zWgnxYFTAn4cYJDsJk8Jl7NH9EWZlciMIdsJTE2SQMqVpQ==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "64f0b2f1511042f5a6ba63a9b9508aa5d34118e7e388d828121faa0e124e3597",
       "license": "MIT",
       "copyright": "© Microsoft Corporation. All rights reserved.",
       "repository": "https://go.microsoft.com/fwlink/?linkid=868515",
@@ -776,6 +1044,7 @@
         {
           "file": "SkiaSharp-3.119.4/LICENSE.txt",
           "source": "nuget:SkiaSharp/3.119.4/LICENSE.txt",
+          "isPackageLicense": true,
           "sha256": "89101e35a8c66fd4d6dffc1763259161d35cb564c169714ec227a768c89f2938"
         }
       ]
@@ -783,6 +1052,10 @@
     {
       "package": "Tmds.DBus.Protocol/0.92.0",
       "dependencyType": "package",
+      "contentSha512": "h7IMakm0PF2jxiagoysoAjrzzLQ0UBdnSXQL5kb17YW0Fvyo12Tg96A99QkzwktWRrd7H+Uw9EzjasNLUfGYlA==",
+      "archiveSha512": "RQ1sDvp3mDJ4kuEOk1z8An29mmEiSSR7qJvSViDRUSgqnmmtitx3n92u/mYTSj7cbDpQSz2T1bPC64e2FnS7rw==",
+      "packageSource": "https://api.nuget.org/v3/index.json",
+      "nuspecSha256": "92e750f2659b91c68d66a76b1cf703d9e1066fbf1079218bada9a9d5610b07a5",
       "license": "MIT",
       "copyright": "Tom Deseyn",
       "repository": "https://github.com/tmds/Tmds.DBus.git",
@@ -794,6 +1067,7 @@
         {
           "file": "Tmds.DBus.Protocol-0.92.0/COPYING",
           "source": "https://raw.githubusercontent.com/tmds/Tmds.DBus/282acebca8d4e4e3ba211646ac650911ee94edfd/COPYING",
+          "isPackageLicense": true,
           "sha256": "aca3b49277abcc7886ccb2f115603a9f5b15fc3f96019a10c00f2974098b210c"
         }
       ]

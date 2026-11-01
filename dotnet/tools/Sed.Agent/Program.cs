@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Reflection;
 using Sed.Formats.Automation;
 using Sed.Formats.Launching;
+using Sed.Formats.NativeCore;
 
 // stdout is exclusively a JSON result; stderr is reserved for unexpected host
 // failures. Only snapshot and overview create an offscreen graphics device. No GUI, game,
@@ -64,6 +65,17 @@ try
             break;
         case "inspect" when args.Length is 2 or 3:
             result = AgentWorkspace.Inspect(args[1], args.Length == 3 ? int.Parse(args[2]) : null);
+            break;
+        case "native-inspect" when args.Length == 5:
+            var nativeObservation = await Sed.Agent.NativeInspectionRunner.RunAsync(args[1], args[2], args[3], args[4]);
+            result = new { schemaVersion = 1, status = nativeObservation.Outcome.ToString(), observation = nativeObservation,
+                note = "Read-only upstream core observation. Resources are not validated; no source, document or undo state was changed." };
+            exitCode = nativeObservation.Outcome switch
+            {
+                CppCoreInspectionOutcome.Inspected => 0,
+                CppCoreInspectionOutcome.DocumentRejected => 3,
+                _ => 5
+            };
             break;
         case "query" when args.Length == 3:
             result = AgentWorkspace.Query(args[1], ReadRequest(args[2]));
@@ -153,6 +165,7 @@ static string ReadRequest(string path)
     return AgentRequestReader.Read(input);
 }
 static string[] Capabilities() => ["bounded-query", "stdin-json", "focused-schema", "native-source-revision", "reviewed-output-hash", "operation-diagnostics",
+    "native-core-inspection-preview",
     "reviewed-resource-packaging", "package-manifest-review",
     "exact-query-filters", "batch-surface-uv", "bounded-placement-arrays",
     "neighbor-texture-alignment", "thing-point-containment", "typed-cog-bindings", "guarded-cog-rebinding",

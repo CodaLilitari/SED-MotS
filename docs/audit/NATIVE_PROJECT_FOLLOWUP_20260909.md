@@ -1,5 +1,13 @@
 # Authored native JED fixture recovery — 2026-09-09
 
+**Current-source update, 2026-11-01:** this is a historical package report. The
+consolidated importer now preserves separate white/RGB intensity and legacy RGB
+range. Fresh conversion of these same hashed fixtures retained all 56 sector
+detail records and both light collections. The old light-row interpretation
+below also confused intensity with range: the row's white intensity is 10 and
+range is 2. See [the current regression record](LEGACY_CONSOLIDATION_20261101.md).
+Layer visibility and the other explicitly untested features remain separate.
+
 This bounded follow-up recovered two genuine author-distributed native JED projects from live Massassi tutorial links. They are historical authored files, not synthetic fixtures or JKL-to-JED reconstructions. No downloaded code, browser, GUI or game was executed. No release source or Git state was modified.
 
 The previous audit's 65 editor/plugin packages and 50 community map archives were consulted to avoid repeating their inventory scans. This pass concentrated on original tutorial attachments and a few specifically documented prefab releases. No Wayback Machine path was used.

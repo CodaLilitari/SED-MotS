@@ -2,6 +2,7 @@
 """Behavior checks for the Linux distribution tools; no SDK, GPU or network."""
 from __future__ import annotations
 
+import errno
 import importlib.util
 import json
 import os
@@ -11,6 +12,8 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -232,6 +235,61 @@ class LinuxToolsTests(unittest.TestCase):
         with tarfile.open(first) as archive:
             self.assertEqual(sum(member.islnk() for member in archive), 2)
 
+    def deduplication_fixture(self, name):
+        package = self.root / name
+        for relative, content in (("a/runtime.so", b"original duplicate runtime"),
+                                  ("b/runtime.so", b"original duplicate runtime"),
+                                  ("c/runtime.so", b"original duplicate runtime"),
+                                  ("keep/name with spaces.txt", b"original distinct file")):
+            path = package / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+            path.chmod(0o755 if relative.endswith(".so") else 0o644)
+        return package
+
+    def payload_snapshot(self, package):
+        return {path.relative_to(package).as_posix(): (path.read_bytes(), path.stat().st_mode)
+                for path in package.rglob("*") if path.is_file()}
+
+    def test_deduplication_unsupported_filesystem_preserves_every_payload(self):
+        for code in (errno.EPERM, errno.EOPNOTSUPP, errno.ENOSYS, errno.EXDEV):
+            with self.subTest(errno=code):
+                package = self.deduplication_fixture(f"unsupported-{code}")
+                before = self.payload_snapshot(package)
+                with mock.patch.object(self.tools.os, "link",
+                                       side_effect=OSError(code, "Original unsupported filesystem fixture")) as link:
+                    self.assertEqual(self.tools.deduplicate(package), 0)
+                link.assert_called_once()
+                self.assertEqual(self.payload_snapshot(package), before)
+
+    def test_deduplication_unsupported_after_success_keeps_only_earned_savings(self):
+        package = self.deduplication_fixture("partial-deduplication")
+        before = self.payload_snapshot(package)
+        original_link = self.tools.os.link
+        linked = []
+
+        def first_link_only(source, target):
+            if not linked:
+                original_link(source, target)
+                linked.append((source, target))
+            else:
+                raise OSError(errno.EXDEV, "Original cross-device fixture")
+
+        with mock.patch.object(self.tools.os, "link", side_effect=first_link_only) as link:
+            self.assertEqual(self.tools.deduplicate(package), len(b"original duplicate runtime"))
+        self.assertEqual(link.call_count, 2)
+        self.assertEqual(self.payload_snapshot(package), before)
+
+    def test_deduplication_unexpected_io_error_propagates_without_payload_loss(self):
+        package = self.deduplication_fixture("failed-deduplication")
+        before = self.payload_snapshot(package)
+        failure = OSError(errno.EIO, "Original unexpected storage failure")
+        with mock.patch.object(self.tools.os, "link", side_effect=failure):
+            with self.assertRaises(OSError) as caught:
+                self.tools.deduplicate(package)
+        self.assertIs(caught.exception, failure)
+        self.assertEqual(self.payload_snapshot(package), before)
+
     def test_new_output_never_replaces_existing_directory(self):
         output = self.root / "existing handoff"
         output.mkdir()
@@ -395,11 +453,12 @@ class LinuxToolsTests(unittest.TestCase):
         (dependency / "LICENSE.TXT").write_text("Original runtime fixture license", encoding="utf-8")
         (dependency / "THIRD-PARTY-NOTICES.TXT").write_text("Original runtime fixture notices", encoding="utf-8")
         (dependency / "microsoft.netcore.app.runtime.linux-x64.nuspec").write_text("<package />", encoding="utf-8")
-        assets = source / "dotnet/src/Sed.App/obj/project.assets.json"
-        assets.parent.mkdir(parents=True)
-        assets.write_text(json.dumps({"packageFolders": {str(cache): {}}, "libraries": {}, "project": {
-            "frameworks": {"net10.0": {"downloadDependencies": [{"name": "Microsoft.NETCore.App.Runtime.linux-x64",
-                "version": "[10.0.12, 10.0.12]"}]}}}}), encoding="utf-8")
+        for component in ("editor", "agent", "mcp"):
+            assets = source / Path(self.tools.PROJECTS[component]).parent / "obj/project.assets.json"
+            assets.parent.mkdir(parents=True)
+            assets.write_text(json.dumps({"packageFolders": {str(cache): {}}, "libraries": {}, "project": {
+                "frameworks": {"net10.0": {"downloadDependencies": [{"name": "Microsoft.NETCore.App.Runtime.linux-x64",
+                    "version": "[10.0.12, 10.0.12]"}]}}}}), encoding="utf-8")
         inventory = self.tools.collect_licenses(source, package)
         self.assertEqual(inventory[0]["package"], "Microsoft.NETCore.App.Runtime.linux-x64/10.0.12")
         copied = package / "licenses/linux/Microsoft.NETCore.App.Runtime.linux-x64-10.0.12"
@@ -453,6 +512,236 @@ class LinuxToolsTests(unittest.TestCase):
         clone = self.root / "history clone"
         subprocess.run(["git", "-c", "advice.detachedHead=false", "clone", "-q", str(bundle), str(clone)], check=True)
         self.assertEqual(self.git(clone, "rev-parse", "HEAD"), state["commit"])
+
+
+class LinuxSafeguardTests(unittest.TestCase):
+    """Small original fixtures; this class never launches Git or a .NET build."""
+
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("sed_linux_safeguards", DRIVER)
+        self.tools = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.tools)
+        self.temp = tempfile.TemporaryDirectory(prefix="sed safeguards ")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def test_git_has_deadline_optional_lock_avoidance_and_no_retry(self):
+        with mock.patch.object(self.tools.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout=b"ok", stderr=b"")) as run:
+            self.assertEqual(self.tools.git(self.root, "rev-parse", "HEAD"), b"ok")
+        args, kwargs = run.call_args
+        self.assertIn("--no-optional-locks", args[0])
+        self.assertEqual(kwargs["env"]["GIT_OPTIONAL_LOCKS"], "0")
+        self.assertEqual(kwargs["timeout"], 30)
+        with mock.patch.object(self.tools.subprocess, "run", side_effect=subprocess.TimeoutExpired("git", 30)) as run:
+            with self.assertRaisesRegex(self.tools.ToolError, "timed out"):
+                self.tools.git(self.root, "status", "--porcelain")
+        run.assert_called_once()
+
+    def test_copy_support_includes_claude_context_and_preserves_data_copies(self):
+        source, package = self.root / "source", self.root / "package"
+        package.mkdir()
+        payload = {"NOTICE.md": "Credits", "CLAUDE.md": "Project context", ".claude/skills/workshop/SKILL.md": "Workshop",
+                   "docs/LINUX_QUICKSTART.md": "Guide", "data/mots.tpl": "Original template", "unselected.txt": "Do not copy"}
+        for relative, text in payload.items():
+            path = source / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8")
+        self.tools.copy_support(source, package)
+        for relative in payload.keys() - {"unselected.txt"}:
+            self.assertEqual((package / relative).read_text(), payload[relative])
+        self.assertFalse((package / "unselected.txt").exists())
+        self.assertEqual((package / "agent/data/mots.tpl").read_text(), "Original template")
+        self.assertEqual((package / "mcp/data/mots.tpl").read_text(), "Original template")
+
+    def test_output_allows_external_directory_and_refuses_git_file_or_directory_ancestors(self):
+        created = self.tools.new_output(self.root / "external" / "evidence")
+        self.assertTrue(created.is_dir())
+        for marker_kind in ("file", "directory"):
+            repo = self.root / marker_kind
+            repo.mkdir()
+            marker = repo / ".git"
+            marker.write_text("gitdir: fixture") if marker_kind == "file" else marker.mkdir()
+            output = repo / "ignored" / "build"
+            with self.assertRaisesRegex(self.tools.ToolError, "outside Git"):
+                self.tools.new_output(output)
+            self.assertFalse(output.parent.exists())
+
+    def test_output_refuses_symlink_ancestors_even_when_target_is_external(self):
+        target, link = self.root / "target", self.root / "link"
+        target.mkdir()
+        try:
+            link.symlink_to(target, target_is_directory=True)
+        except OSError as error:
+            self.skipTest(f"Host cannot create fixture symlink: {error}")
+        with self.assertRaisesRegex(self.tools.ToolError, "links|reparse"):
+            self.tools.new_output(link / "evidence")
+        self.assertFalse((target / "evidence").exists())
+
+    def test_output_refuses_reparse_point_attribute(self):
+        linked = self.root / "junction"
+        linked.mkdir()
+        original = Path.lstat
+        def lstat(path):
+            if path == linked:
+                return SimpleNamespace(st_mode=0o40755, st_file_attributes=0x400)
+            return original(path)
+        with mock.patch.object(Path, "lstat", lstat):
+            with self.assertRaisesRegex(self.tools.ToolError, "links|reparse"):
+                self.tools.new_output(linked / "evidence")
+        self.assertFalse((linked / "evidence").exists())
+
+    def test_build_routes_all_dotnet_artifacts_outside_source_and_serializes_builds(self):
+        repo = self.root / "repo"
+        repo.mkdir()
+        (repo / ".git").write_text("gitdir: fixture")
+        output, artifacts = self.root / "evidence", self.root / "reused artifacts"
+        state = {"commit": "1" * 40, "sourceClean": True, "epoch": 1700000000}
+        with mock.patch.object(self.tools, "run_logged") as run, \
+             mock.patch.object(self.tools, "resolve_dotnet", return_value=Path(sys.executable)):
+            self.tools.build(repo, sys.executable, output, no_restore=True, source=state, artifacts_path=artifacts)
+        calls = [call.args[0] for call in run.call_args_list if call.args[0][0] == Path(sys.executable)]
+        for args in calls:
+            if args[1] in ("build", "test", "run"):
+                self.assertIn(f"-p:ArtifactsPath={artifacts}", args)
+            if args[1] in ("build", "test"):
+                self.assertIn("-m:1", args)
+                self.assertIn("-nodeReuse:false", args)
+        self.assertFalse((repo / "obj").exists())
+        self.assertEqual(json.loads((output / "build-receipt.json").read_text())["artifactsPath"], str(artifacts))
+
+    def test_build_refuses_artifacts_in_git_ancestor_before_launch(self):
+        repo = self.root / "repo"
+        repo.mkdir()
+        (repo / ".git").mkdir()
+        with mock.patch.object(self.tools, "run_logged") as run:
+            with self.assertRaisesRegex(self.tools.ToolError, "outside Git"):
+                self.tools.build(repo, sys.executable, self.root / "evidence", artifacts_path=repo / "obj")
+        run.assert_not_called()
+
+    def test_run_logged_has_finite_default_and_preserves_timed_out_output(self):
+        with mock.patch.object(self.tools.subprocess, "Popen") as popen:
+            process = popen.return_value
+            process.wait.return_value = 0
+            process.returncode = 0
+            self.tools.run_logged([sys.executable, "--version"], self.root, self.root / "default.log")
+            self.assertEqual(process.wait.call_args.kwargs["timeout"], 1800)
+        log = self.root / "timeout.log"
+        started = time.monotonic()
+        with self.assertRaisesRegex(self.tools.ToolError, "timed out"):
+            self.tools.run_logged([sys.executable, "-c", "import time; print('partial', flush=True); time.sleep(30)"],
+                                  self.root, log, timeout=0.2)
+        self.assertLess(time.monotonic() - started, 5)
+        self.assertIn(b"partial", log.read_bytes())
+
+    def test_command_defaults_use_external_temp_directories(self):
+        for command in ("build", "package", "verify"):
+            with self.subTest(command=command):
+                target = {"build": "build", "package": "package_release", "verify": "verify_package"}[command]
+                arguments = [command]
+                if command == "package":
+                    arguments += ["--version", "0.4.0-test"]
+                if command == "verify":
+                    arguments += ["--package", str(self.root / "package")]
+                with mock.patch.object(self.tools.sys, "platform", "linux"), \
+                     mock.patch.object(self.tools.tempfile, "gettempdir", return_value=str(self.root)), \
+                     mock.patch.object(self.tools, target, return_value="fixture receipt") as operation:
+                    self.assertEqual(self.tools.main(arguments), 0)
+                output = operation.call_args.args[{"build": 2, "package": 3, "verify": 1}[command]]
+                self.assertEqual(output.parent, self.root)
+                self.assertTrue(output.name.startswith("sed-mots-"))
+
+    def test_run_logged_cancellation_stops_its_owned_process(self):
+        with mock.patch.object(self.tools.subprocess, "Popen") as popen, \
+             mock.patch.object(self.tools.os, "killpg", create=True) as kill_group:
+            process = popen.return_value
+            process.wait.side_effect = [KeyboardInterrupt(), 0]
+            process.pid = 123456
+            with self.assertRaises(KeyboardInterrupt):
+                self.tools.run_logged([sys.executable, "--version"], self.root, self.root / "cancelled.log")
+            if os.name == "posix":
+                kill_group.assert_called_once_with(123456, self.tools.signal.SIGKILL)
+            else:
+                process.kill.assert_called_once()
+            self.assertEqual(process.wait.call_args.kwargs["timeout"], 10)
+        with mock.patch.object(self.tools.subprocess, "Popen") as popen:
+            with self.assertRaisesRegex(self.tools.ToolError, "deadline"):
+                self.tools.run_logged([sys.executable, "--version"], self.root, self.root / "unbounded.log", timeout=None)
+            popen.assert_not_called()
+
+    def notice_fixture(self, label="case", inherited=False):
+        root = self.root / label
+        source, package, cache = root / "source", root / "package", root / "cache"
+        package.mkdir(parents=True)
+        dependency = cache / "synthetic.package/1.0.0"
+        dependency.mkdir(parents=True)
+        (dependency / "synthetic.package.nuspec").write_text("<package />", encoding="utf-8")
+        metadata = {"libraries": {"Synthetic.Package/1.0.0": {"type": "package", "path": "synthetic.package/1.0.0"}},
+                    "packageFolders": {str(cache): {}}, "project": {"frameworks": {}}}
+        for component in ("editor", "agent", "mcp"):
+            assets = source / Path(self.tools.PROJECTS[component]).parent / "obj/project.assets.json"
+            assets.parent.mkdir(parents=True)
+            assets.write_text(json.dumps(metadata), encoding="utf-8")
+        if inherited:
+            notices = source / "licenses/net"
+            license_file = notices / "Synthetic.Package-1.0.0/LICENSE.txt"
+            license_file.parent.mkdir(parents=True)
+            license_file.write_text("Original synthetic supplied license text.", encoding="utf-8")
+            record = {"package": "Synthetic.Package/1.0.0", "files": [{"file": license_file.relative_to(notices).as_posix(),
+                      "sha256": self.tools.sha(license_file), "source": "https://example.invalid/pinned-fixture/LICENSE.txt"}]}
+            (notices / "inventory.json").write_text(json.dumps({"packages": [record]}), encoding="utf-8")
+        return source, package, dependency
+
+    def test_notice_collection_requires_all_publish_assets_before_writing(self):
+        for component in ("editor", "agent", "mcp"):
+            with self.subTest(component=component):
+                source, package, _ = self.notice_fixture(component)
+                (source / Path(self.tools.PROJECTS[component]).parent / "obj/project.assets.json").unlink()
+                with self.assertRaisesRegex(self.tools.ToolError, "assets"):
+                    self.tools.collect_licenses(source, package)
+                self.assertFalse((package / "licenses").exists())
+
+    def test_nuspec_alone_cannot_satisfy_package_license_coverage(self):
+        source, package, _ = self.notice_fixture()
+        with self.assertRaisesRegex(self.tools.ToolError, "license"):
+            self.tools.collect_licenses(source, package)
+        self.assertFalse((package / "licenses/linux/inventory.json").exists())
+
+    def test_exact_supplied_license_fallback_preserves_hash_source_and_metadata_separation(self):
+        source, package, _ = self.notice_fixture(inherited=True)
+        result = self.tools.collect_licenses(source, package)
+        self.assertEqual(len(result), 1)
+        record = result[0]
+        self.assertEqual(record["package"], "Synthetic.Package/1.0.0")
+        self.assertEqual(record["sourceProjects"], ["editor", "agent", "mcp"])
+        self.assertEqual(len(record["metadataFiles"]), 1)
+        self.assertEqual(len(record["files"]), 1)
+        notice = record["files"][0]
+        self.assertEqual(notice["source"], "https://example.invalid/pinned-fixture/LICENSE.txt")
+        self.assertEqual(notice["sha256"], self.tools.sha(package / notice["path"]))
+        self.assertEqual(notice["inventorySha256"], self.tools.sha(source / "licenses/net/inventory.json"))
+        self.assertEqual((package / notice["path"]).read_text(), "Original synthetic supplied license text.")
+
+    def test_supplied_license_fallback_refuses_wrong_version_tampered_hash_and_unsafe_path(self):
+        for mode in ("wrong-version", "tampered", "unsafe-path", "missing-source", "duplicate-identity"):
+            with self.subTest(mode=mode):
+                source, package, _ = self.notice_fixture(mode, inherited=True)
+                inventory_path = source / "licenses/net/inventory.json"
+                metadata = json.loads(inventory_path.read_text())
+                record = metadata["packages"][0]
+                if mode == "wrong-version":
+                    record["package"] = "Synthetic.Package/2.0.0"
+                elif mode == "tampered":
+                    (source / "licenses/net" / record["files"][0]["file"]).write_text("Changed license", encoding="utf-8")
+                elif mode == "unsafe-path":
+                    record["files"][0]["file"] = "../outside.txt"
+                elif mode == "missing-source":
+                    del record["files"][0]["source"]
+                else:
+                    metadata["packages"].append(record)
+                inventory_path.write_text(json.dumps(metadata), encoding="utf-8")
+                with self.assertRaises(self.tools.ToolError):
+                    self.tools.collect_licenses(source, package)
+                self.assertFalse((package / "licenses/linux/inventory.json").exists())
 
 
 if __name__ == "__main__":

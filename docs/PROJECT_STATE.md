@@ -1,6 +1,61 @@
 # SED MotS project checkpoint
 
-Updated: 2026-10-31 (Wren's level previews, Red's `claude` branch). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+Updated: 2026-11-01 (consolidation in progress). This is the short recovery entry point. Read this file, then the relevant entries in [WORK_LOG.md](WORK_LOG.md), before resuming work after a context change. Verify Git and artifact state; a checkpoint describes an observed state, not a substitute for fresh inspection.
+
+## Current consolidation
+
+Work is on `codex/linux-consolidated-20261101` in an isolated consolidation
+checkout. Merge `ea0b351ce8a1cab46da5e9e44a068ee17fdaf920`
+preserves GitLab Red tip `0a99e4ac09cba7aab0bccfc88a28a2d0eca80d8d` and GitHub
+Red tip `6fcc36c522eda0da9f55ce44d1c0c36dc8573050`; their tip trees were identical.
+Lily's native Linux and reviewed-packaging histories are already ancestors.
+The original worktree and its local changes remain separate. Red is not being
+contacted for this project review.
+
+Current working-source changes add final-only legacy frame write refusal,
+Windows committed-snapshot packaging and support parity, external build paths,
+bounded process handling, stricter notice coverage, and WSLg-compatible private
+Xvfb readiness/cleanup. The full Linux development pipeline passed Core 1,962,
+MCP 318, the Python suites and headless UI checks. This precedes the new native
+inspection client/worker tests and is not a clean package release claim.
+
+[Nine original JKLs and two real JED projects](audit/LEGACY_CONSOLIDATION_20261101.md)
+passed the bounded preservation/conversion checks. Native light documentation
+has been corrected from fresh readback. Game loading, graphics and multiplayer
+remain separate evidence.
+
+The current [editor comparison](audit/EDITOR_COMPARISON_20261101.md) supersedes
+older source-discovery status below. The actual upstream C++ rewrite has been
+obtained and its unchanged core built/tested on Linux. Lilitari and an independent
+source-level reviewer both support the
+[stateless C++ adoption direction](audit/CPP_ADOPTION_DECISION_20261101.md).
+The first implementation is [read-only native inspection](NATIVE_CORE_INSPECTION.md);
+larger native-authority/Qt migration is gated, not approved by test counts alone.
+
+The latest Red work-log note's nine-byte placeholder-resource archive crash was
+replayed with current-source CLI binaries: both `snapshot` and `overview`
+returned structured `invalid_request` JSON, exit 2, no image and empty stderr.
+The specific crash is no longer reproduced. Missing real MotS retail resources
+in the earlier cloud study are a separate unresolved input limitation.
+
+The shared native client passed 53 Linux tests and 50 Windows tests (three
+Linux-only skips). Focused worker checks and eight actual CLI integration cases
+passed on both platforms. The unchanged Windows core compiled but failed one of 51 CTest
+registrations: eight generated-crossing directed-order assertions in the
+aggregate suite. This is an open geometry qualification issue, separate from
+the read-only inspection preview.
+
+The [ordering diagnosis](audit/CPP_WINDOWS_ORDERING_20261101.md) localizes the
+Windows fixture mismatch to platform-dependent frame/projection operands:
+identical-bit predicate replays agree on both compilers and with an independent
+exact oracle. Choosing and validating a portable geometry contract remains open;
+this path is outside the inspection worker's load operations.
+
+Remaining consolidation gates: produce clean Linux/Windows distributions and
+component source/provenance; verify relocated workflows; derive the Windows
+parity branch and record publication state. No consolidated push or new release
+is asserted by this checkpoint. The earlier fresh seven-process PLAY acceptance
+queue is still distinct from authoring and source compatibility tests.
 
 ## Wren's level previews (claude branch)
 

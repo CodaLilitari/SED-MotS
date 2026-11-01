@@ -169,7 +169,8 @@ and the native libraries above. The scripts use `dotnet` on PATH by default;
 
 ```sh
 tools/build-linux.sh --dotnet /absolute/path/to/dotnet \
-  --output build/linux-check
+  --output "$HOME/SED-Builds/linux-check-01" \
+  --artifacts-path "$HOME/SED-Builds/linux-artifacts"
 ```
 
 This builds the editor, agent, MCP server, two test projects and four probes
@@ -185,10 +186,15 @@ selected, these require neither DISPLAY nor a GPU. An ordinary X11 startup can
 also be checked under `xvfb-run`; install `xvfb` and `xauth` for that environment.
 
 The first build restores dependencies. After a successful restore for the same
-runtime, `--no-restore` reuses it. `NUGET_PACKAGES` and `DOTNET_CLI_HOME` are
+runtime, `--no-restore` reuses it when paired with the same `--artifacts-path`.
+`NUGET_PACKAGES` and `DOTNET_CLI_HOME` are
 respected, so a portable SDK and shared package cache can remain outside the
 repository. Each run requires a new output directory and leaves logs plus a
-`build-receipt.json`, including failures.
+`build-receipt.json`, including failures. Output and artifact paths must be
+outside every Git worktree and cannot pass through symbolic links or junctions.
+When omitted, the output is a new directory in the system temporary directory;
+artifacts default to its `artifacts` subdirectory. Use an explicit external path
+to retain build data across temporary-directory cleanup or reboots.
 
 ## Create and verify a portable handoff
 
@@ -201,12 +207,12 @@ project would otherwise include them through a source glob.
 tools/package-linux.sh --dotnet /absolute/path/to/dotnet \
   --version 0.4.0-mots.17-linux.1 \
   --graphics --full-workflows \
-  --output build/packages/linux-handoff
+  --output "$HOME/SED-Builds/linux-handoff-01"
 ```
 
 Choose the actual release version. By default, packaging runs its own build
 and test gate. To reuse the build above, add
-`--build-receipt build/linux-check/build-receipt.json`; it must confirm passing
+`--build-receipt "$HOME/SED-Builds/linux-check-01/build-receipt.json"`; it must confirm passing
 Linux Release tests for the same clean commit and SDK. Publishing still
 restores the new source snapshot's build metadata and reuses the NuGet cache.
 Allow several GiB for the SDK, restore cache and compilation; the tools do not
@@ -220,7 +226,7 @@ The package layout is:
 | `agent/sed-agent` | Native self-contained JSON CLI |
 | `mcp/sed-mcp` | Native self-contained stdio MCP server |
 | `bin/sed-mots`, `bin/sed-agent`, `bin/sed-mcp` | Relocatable shell launchers |
-| `data`, `docs`, `.agents`, `licenses`, `tools` | Tracked support files and acceptance tools |
+| `data`, `docs`, `.agents`, `.claude`, `licenses`, `tools`, `CLAUDE.md`, `NOTICE.md` | Tracked support files, attribution and acceptance tools |
 | `licenses/linux` | Resolved Linux dependency metadata, licenses and runtime notices |
 | `PROVENANCE.json`, `SHA256SUMS.txt` | Commit/dependency identity and exact payload hashes |
 

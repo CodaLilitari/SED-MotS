@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import base64
 from datetime import datetime, timezone
+import errno
 import gzip
 import hashlib
 import io
@@ -14,10 +15,12 @@ from pathlib import Path, PurePosixPath
 import queue
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
 import tarfile
+import tempfile
 import threading
 import uuid
 
@@ -58,8 +61,12 @@ def write_json(path, value):
     Path(path).write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def git(repo, *args):
-    result = subprocess.run(["git", "-C", str(repo), *args], capture_output=True)
+def git(repo, *args, timeout=30):
+    try:
+        result = subprocess.run(["git", "--no-optional-locks", "-C", str(repo), *args], capture_output=True,
+                                env=os.environ | {"GIT_OPTIONAL_LOCKS": "0"}, timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        raise ToolError(f"Owned Git command timed out after {timeout} seconds; no retry was started") from error
     if result.returncode:
         raise ToolError(result.stderr.decode(errors="replace").strip() or "Git command failed")
     return result.stdout
@@ -82,8 +89,25 @@ def assert_source(repo, expected):
         raise ToolError("Source commit changed during packaging; this attempt cannot be distributed")
 
 
-def new_output(path):
+def external_output(path):
+    # Inspect the lexical route before normalizing it: resolving first would
+    # hide links/junctions (including a link followed by '..').
     path = Path(path).absolute()
+    for ancestor in (path, *path.parents):
+        try:
+            info = ancestor.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
+            raise ToolError(f"Generated output cannot pass through links or reparse points: {path}")
+        marker = ancestor / ".git"
+        if marker.exists() or marker.is_symlink():
+            raise ToolError(f"Generated build/package data must be outside Git worktrees: {path}")
+    return Path(os.path.abspath(path))
+
+
+def new_output(path):
+    path = external_output(path)
     try:
         path.mkdir(parents=True, exist_ok=False)
     except FileExistsError as error:
@@ -114,7 +138,7 @@ def snapshot_source(repo, state, output):
     # Git archive applies checkout EOL rules. Pin Linux settings without
     # modifying user configuration, then verify bytes against the committed
     # blobs so export-subst, filters or export-ignore cannot alter build inputs.
-    raw = git(repo, "-c", "core.autocrlf=false", "-c", "core.eol=lf", "archive", "--format=tar", state["commit"])
+    raw = git(repo, "-c", "core.autocrlf=false", "-c", "core.eol=lf", "archive", "--format=tar", state["commit"], timeout=120)
     archive_path = output / "SED-MotS-source.tar.gz"
     with archive_path.open("xb") as destination, gzip.GzipFile(filename="", mode="wb", fileobj=destination,
                                                                mtime=state["epoch"]) as compressed:
@@ -154,7 +178,7 @@ def snapshot_source(repo, state, output):
 def copy_support(source, package):
     for path in sorted(source.rglob("*")):
         relative = path.relative_to(source)
-        if relative.parts[0] not in ("LICENSE", "NOTICE.md", "README.md", "AGENTS.md", ".agents", "docs", "licenses", "data", "tools"):
+        if relative.parts[0] not in ("LICENSE", "NOTICE.md", "README.md", "AGENTS.md", "CLAUDE.md", ".agents", ".claude", "docs", "licenses", "data", "tools"):
             continue
         if path.is_symlink():
             raise ToolError(f"Support files cannot be symlinks: {relative}")
@@ -227,7 +251,15 @@ def deduplicate(root):
             seen[key] = path
         elif info.st_ino != seen[key].stat().st_ino:
             temporary = path.with_name(path.name + ".hardlink-" + uuid.uuid4().hex)
-            os.link(seen[key], temporary)
+            try:
+                os.link(seen[key], temporary)
+            except OSError as error:
+                if error.errno in (errno.EPERM, errno.EOPNOTSUPP, errno.ENOSYS, errno.EXDEV):
+                    # Hard links are only a size optimization. Leave this
+                    # original payload intact when the filesystem cannot link,
+                    # and report only savings from earlier completed replaces.
+                    return saved
+                raise
             os.replace(temporary, path)
             saved += info.st_size
     return saved
@@ -300,39 +332,56 @@ def sdk_environment(dotnet):
                          "PYTHONDONTWRITEBYTECODE": "1"}
 
 
-def run_logged(arguments, cwd, log, env=None, timeout=None):
+def run_logged(arguments, cwd, log, env=None, timeout=1800):
+    if timeout is None or timeout <= 0:
+        raise ToolError("Logged commands require a positive finite deadline")
     print(f"Running {Path(str(arguments[0])).name} {arguments[1]} (log: {log})", file=sys.stderr, flush=True)
     with Path(log).open("wb") as stream:
+        process = subprocess.Popen([str(value) for value in arguments], cwd=cwd, env=env,
+                                   stdout=stream, stderr=subprocess.STDOUT, start_new_session=os.name == "posix")
         try:
-            result = subprocess.run([str(value) for value in arguments], cwd=cwd, env=env,
-                                    stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
-        except subprocess.TimeoutExpired as error:
-            raise ToolError(f"Command timed out; see {log}") from error
-    if result.returncode:
-        raise ToolError(f"Command exited {result.returncode}; see {log}")
+            process.wait(timeout=timeout)
+        except BaseException as error:
+            if os.name == "posix":
+                # Build/test children share this explicitly owned session.
+                # Stop the group so a timed-out compiler cannot keep running.
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            else:
+                process.kill()
+            process.wait(timeout=10)
+            if isinstance(error, subprocess.TimeoutExpired):
+                raise ToolError(f"Command timed out; see {log}") from error
+            raise
+    if process.returncode:
+        raise ToolError(f"Command exited {process.returncode}; see {log}")
 
 
-def build(repo, dotnet, output, configuration="Release", no_restore=False, graphics=False, source=None):
+def build(repo, dotnet, output, configuration="Release", no_restore=False, graphics=False, source=None, artifacts_path=None):
+    artifacts = external_output(artifacts_path or Path(output) / "artifacts")
     output = new_output(output)
     dotnet = resolve_dotnet(dotnet)
     env = sdk_environment(dotnet)
     receipt = {**(source or source_state(repo)), "status": "running", "startedUtc": utc(), "runtime": RID,
-               "configuration": configuration, "dotnetSha256": sha(dotnet),
+               "configuration": configuration, "dotnetSha256": sha(dotnet), "artifactsPath": str(artifacts),
                "testProjects": ["Sed.Core.Tests", "Sed.Mcp.Tests"], "graphicsRequested": graphics,
                "guiLaunched": False, "gameLaunched": False}
     try:
-        run_logged([dotnet, "--info"], repo, output / "sdk-info.log", env)
+        run_logged([dotnet, "--info"], repo, output / "sdk-info.log", env, timeout=60)
         for name, project in PROJECTS.items():
             arguments = [dotnet, "build", project, "-c", configuration, "-r", RID, "--self-contained", "false",
                          "--nologo", "--disable-build-servers", "-m:1", "-nodeReuse:false",
-                         "-p:BuildInParallel=false", "-p:UseSharedCompilation=false"]
+                         "-p:BuildInParallel=false", "-p:UseSharedCompilation=false", f"-p:ArtifactsPath={artifacts}"]
             if no_restore:
                 arguments.append("--no-restore")
             run_logged(arguments, repo, output / f"build-{name}.log", env)
         for name in ("core-tests", "mcp-tests"):
             run_logged([dotnet, "test", PROJECTS[name], "-c", configuration, "-r", RID, "-p:SelfContained=false",
                         "--no-build", "--no-restore", "--nologo", "--logger", f"trx;LogFileName={name}.trx",
-                        "--results-directory", output], repo, output / f"{name}.log", env)
+                        "--results-directory", output, f"-p:ArtifactsPath={artifacts}", "-m:1", "-nodeReuse:false",
+                        "-p:BuildInParallel=false", "-p:UseSharedCompilation=false"], repo, output / f"{name}.log", env)
         run_logged([sys.executable, "-B", "tools/test_linux.py"], repo, output / "linux-tools-tests.log", env)
         run_logged([sys.executable, "-B", "-m", "unittest", "discover", "-s", "tools/tests", "-v"],
                    repo, output / "python-tests.log", env)
@@ -350,7 +399,7 @@ def build(repo, dotnet, output, configuration="Release", no_restore=False, graph
                             VK_DRIVER_FILES=str(output / "no-driver.json"))
         for name in (["ui", "vulkan", "scene", "appshot"] if graphics else ["ui"]):
             arguments = [dotnet, "run", "--project", PROJECTS[name], "-c", configuration, "-r", RID,
-                         "--self-contained", "false", "--no-build", "--no-restore"]
+                         "--self-contained", "false", "--no-build", "--no-restore", f"-p:ArtifactsPath={artifacts}"]
             if name in ("scene", "appshot"):
                 arguments += ["--", output / f"{name}.png"]
             run_logged(arguments, repo, output / f"{name}.log", headless, timeout=180)
@@ -375,23 +424,64 @@ def validate_build_receipt(path, source, dotnet):
 
 
 def collect_licenses(source, package):
+    source, package = Path(source), Path(package)
     inventory = {}
+    restored = {}
     for name in ("editor", "agent", "mcp"):
         assets = source / Path(PROJECTS[name]).parent / "obj/project.assets.json"
         if not assets.is_file():
-            continue
+            raise ToolError(f"Published {name} assets metadata is missing: {assets}")
         metadata = json.loads(assets.read_text(encoding="utf-8"))
-        libraries = dict(metadata.get("libraries", {}))
+        if not isinstance(metadata.get("libraries"), dict) or not isinstance(metadata.get("packageFolders"), dict) or not metadata["packageFolders"]:
+            raise ToolError(f"Published {name} assets metadata lacks libraries or package folders")
+        restored[name] = metadata
+
+    inherited_root = source / "licenses/net"
+    inherited_inventory = inherited_root / "inventory.json"
+    inherited = None
+    inherited_hash = None
+
+    def supplied_notices(identity):
+        nonlocal inherited, inherited_hash
+        if inherited is None:
+            if not inherited_inventory.is_file():
+                raise ToolError(f"No bundled license or supplied license inventory for {identity}")
+            inherited = json.loads(inherited_inventory.read_text(encoding="utf-8"))
+            inherited_hash = sha(inherited_inventory)
+        matches = [record for record in inherited.get("packages", []) if record.get("package") == identity]
+        if len(matches) != 1 or not matches[0].get("files"):
+            raise ToolError(f"No unambiguous supplied license for exact resolved package {identity}")
+        checked, seen = [], set()
+        for record in matches[0]["files"]:
+            if not isinstance(record.get("file"), str) or not isinstance(record.get("source"), str) or not record["source"] or not re.fullmatch(r"[0-9a-f]{64}", str(record.get("sha256", ""))):
+                raise ToolError(f"Incomplete supplied license provenance for {identity}")
+            relative = safe_relative(record["file"])
+            candidate = inherited_root / relative
+            if relative.as_posix() in seen or not candidate.is_file() or not candidate.resolve().is_relative_to(inherited_root.resolve()) or sha(candidate) != record["sha256"]:
+                raise ToolError(f"Missing, duplicate, escaping or changed supplied license for {identity}: {relative}")
+            seen.add(relative.as_posix())
+            checked.append((candidate, relative, record))
+        if not any(file.stat().st_size > 0 and file.suffix.lower() != ".nuspec" and re.search(r"(?i)licen[cs]e|copying", file.name) for file, _, _ in checked):
+            raise ToolError(f"Supplied package metadata/notices contain no license text for {identity}")
+        return checked
+
+    for name, metadata in restored.items():
+        libraries = dict(metadata["libraries"])
         # SDK runtime packs are downloadDependencies, not NuGet libraries.
         for framework in metadata.get("project", {}).get("frameworks", {}).values():
             for dependency in framework.get("downloadDependencies", []):
-                match = re.fullmatch(r"\[([^,]+),\s*\1\]", dependency["version"])
+                match = re.fullmatch(r"\[([^,\s\[\]]+)(?:,\s*\1)?\]", dependency["version"])
                 if not match:
                     raise ToolError(f"Runtime pack version is not pinned: {dependency}")
                 identity = dependency["name"] + "/" + match.group(1)
                 libraries[identity] = {"type": "package", "path": identity.lower()}
         for identity, library in libraries.items():
-            if library.get("type") != "package" or identity in inventory:
+            if library.get("type") != "package":
+                continue
+            if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.+-]+", identity):
+                raise ToolError(f"Unsupported resolved package identity: {identity}")
+            if identity in inventory:
+                inventory[identity]["sourceProjects"].append(name)
                 continue
             relative = safe_relative(library.get("path", identity.lower()))
             folders = [Path(folder) / relative for folder in metadata.get("packageFolders", {})]
@@ -400,15 +490,32 @@ def collect_licenses(source, package):
                 raise ToolError(f"Resolved dependency is absent from its package cache: {identity}")
             destination = package / "licenses/linux" / identity.replace("/", "-")
             destination.mkdir(parents=True, exist_ok=True)
-            notices = []
+            notices, package_metadata = [], []
             for file in sorted(directory.iterdir()):
                 if file.is_file() and (file.suffix.lower() == ".nuspec" or
                         re.match(r"(?i)(licen[cs]e|notice|copying|third.?party)", file.name)):
-                    shutil.copy2(file, destination / file.name)
-                    notices.append({"path": (destination / file.name).relative_to(package).as_posix(), "sha256": sha(file)})
-            if not notices:
-                raise ToolError(f"No package metadata or license notice found for {identity}")
-            inventory[identity] = {"package": identity, "files": notices}
+                    target = destination / file.name
+                    shutil.copy2(file, target)
+                    records = package_metadata if file.suffix.lower() == ".nuspec" else notices
+                    records.append({"path": target.relative_to(package).as_posix(), "sha256": sha(target),
+                                    "source": f"nuget:{identity}/{file.name}"})
+            has_license = any(re.search(r"(?i)licen[cs]e|copying", Path(record["path"]).name) and
+                              (package / record["path"]).stat().st_size > 0 for record in notices)
+            if not has_license:
+                for file, relative, record in supplied_notices(identity):
+                    target = destination / "supplied" / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(file, target)
+                    if sha(target) != record["sha256"]:
+                        raise ToolError(f"Supplied license changed while copying {identity}: {relative}")
+                    records = package_metadata if file.suffix.lower() == ".nuspec" else notices
+                    records.append({"path": target.relative_to(package).as_posix(), "sha256": record["sha256"],
+                                    "source": record["source"], "suppliedFile": relative.as_posix(),
+                                    "inventory": "licenses/net/inventory.json", "inventorySha256": inherited_hash})
+            inventory[identity] = {"package": identity, "sourceProjects": [name], "files": notices,
+                                   "metadataFiles": package_metadata}
+    if not inventory:
+        raise ToolError("Published assets supplied no resolved package licenses")
     result = [inventory[key] for key in sorted(inventory)]
     (package / "licenses/linux").mkdir(parents=True, exist_ok=True)
     write_json(package / "licenses/linux/inventory.json", result)
@@ -420,7 +527,7 @@ def write_history(repo, state, output):
     path = output / "SED-MotS-history.bundle"
     if path.exists():
         raise ToolError(f"History output already exists: {path}")
-    git(repo, "bundle", "create", str(path), "HEAD")
+    git(repo, "bundle", "create", str(path), "HEAD", timeout=120)
     if git(repo, "bundle", "list-heads", str(path)).decode().strip() != state["commit"] + " HEAD":
         raise ToolError("History bundle does not bind the package source commit")
     git(repo, "bundle", "verify", str(path))
@@ -619,11 +726,7 @@ def package_release(repo, dotnet, version, output, build_receipt=None, graphics=
         raise ToolError("--version must be a SemVer-style version without spaces")
     state = source_state(repo, require_clean=True)
     dotnet = resolve_dotnet(dotnet)
-    output = Path(output).absolute()
-    if output.is_relative_to(repo):
-        ignored = subprocess.run(["git", "-C", str(repo), "check-ignore", "-q", str(output)]).returncode == 0
-        if not ignored:
-            raise ToolError("Package output inside the source repository must be ignored; use build/packages or an external directory")
+    output = external_output(output)
     if build_receipt:
         validate_build_receipt(build_receipt, state, dotnet)
     output = new_output(output)
@@ -715,6 +818,8 @@ def main(argv=None):
         command.add_argument("--graphics", action="store_true", help="Require offscreen Vulkan graphics checks (choose a driver through the environment)")
     build_parser.add_argument("--configuration", choices=("Release", "Debug"), default="Release")
     build_parser.add_argument("--no-restore", action="store_true", help="Reuse existing linux-x64 restore outputs and the package cache")
+    build_parser.add_argument("--artifacts-path", type=Path,
+                              help="External .NET artifacts directory (default: output/artifacts); reuse it with --no-restore")
     package_parser.add_argument("--version", required=True, help="Package/assembly version, e.g. 0.4.0-mots.17-linux.1")
     package_parser.add_argument("--build-receipt", type=Path, help="Reuse passing Release tests bound to this clean commit and SDK")
     for command in (package_parser, verify_parser):
@@ -732,13 +837,13 @@ def main(argv=None):
     attempt = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     try:
         if args.command == "build":
-            result = build(ROOT, args.dotnet, args.output or ROOT / "build/linux" / attempt,
-                           args.configuration, args.no_restore, args.graphics)
+            result = build(ROOT, args.dotnet, args.output or Path(tempfile.gettempdir()) / ("sed-mots-build-" + attempt),
+                           args.configuration, args.no_restore, args.graphics, artifacts_path=args.artifacts_path)
         elif args.command == "package":
-            result = package_release(ROOT, args.dotnet, args.version, args.output or ROOT / "build/packages" / attempt,
+            result = package_release(ROOT, args.dotnet, args.version, args.output or Path(tempfile.gettempdir()) / ("sed-mots-package-" + attempt),
                                      args.build_receipt, args.graphics, args.full_workflows)
         elif args.command == "verify":
-            result = verify_package(args.package, args.output or Path.cwd() / ("sed-linux-verification-" + attempt),
+            result = verify_package(args.package, args.output or Path(tempfile.gettempdir()) / ("sed-mots-verification-" + attempt),
                                     args.graphics, args.full_workflows)
         else:
             result = install_desktop(args.package, args.applications_dir, args.bin_dir)

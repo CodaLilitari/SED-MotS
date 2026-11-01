@@ -1,0 +1,2 @@
+# Runtime provenance binds exact manifest bytes on Linux and Windows.
+/upstream.lock.json -text

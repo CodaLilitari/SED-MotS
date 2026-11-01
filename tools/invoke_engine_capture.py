@@ -402,45 +402,92 @@ def private_display_observer(pid):
 
 
 class PrivateDisplay:
-    """Start Xvfb on an unused display number with TCP disabled; stop it afterwards."""
+    """Let Xvfb allocate a display and announce readiness; always reap our server."""
     def __init__(self, width=1280, height=1024):
         self.width, self.height = width, height
         self.process = None
         self.display = None
+        self._diagnostics = bytearray()
+        self._diagnostic_thread = None
+
+    def _drain_diagnostics(self):
+        # Keep draining after the cap so a noisy server cannot block on stderr.
+        with self.process.stderr as stream:
+            for block in iter(lambda: stream.read(4096), b""):
+                self._diagnostics.extend(block[:max(0, 4096 - len(self._diagnostics))])
 
     def __enter__(self):
+        import select
         import shutil
         xvfb = shutil.which("Xvfb")
         require(xvfb is not None, "Linux capture needs Xvfb (package xvfb) for a private display.")
-        for number in range(91, 200):
-            if not Path(f"/tmp/.X11-unix/X{number}").exists() and not Path(f"/tmp/.X{number}-lock").exists():
-                break
-        else:
-            raise CaptureError("No free private display number.")
-        self.process = subprocess.Popen([xvfb, f":{number}", "-nolisten", "tcp", "-screen", "0",
-                                         f"{self.width}x{self.height}x24"], stdin=subprocess.DEVNULL,
-                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-        socket = Path(f"/tmp/.X11-unix/X{number}")
-        deadline = time.monotonic() + 10
-        while not socket.exists():
-            require(self.process.poll() is None, "Xvfb exited before its display became ready.")
-            require(time.monotonic() < deadline, "Xvfb display did not become ready within 10 seconds.")
-            time.sleep(0.05)
-        self.display = f":{number}"
-        return self
+        read_fd, write_fd = os.pipe()
+        try:
+            # -displayfd chooses an unused display and writes its number once
+            # ready, but requires every enabled listener to bind. Use Linux's
+            # abstract local transport explicitly: WSLg may mount the regular
+            # /tmp/.X11-unix socket directory read-only. Never alter that mount
+            # or enable TCP to work around it.
+            self.process = subprocess.Popen([xvfb, "-displayfd", str(write_fd), "-nolisten", "tcp", "-screen", "0",
+                                             f"{self.width}x{self.height}x24", "-nolisten", "unix", "-listen", "local"], stdin=subprocess.DEVNULL,
+                                            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                                            start_new_session=True, pass_fds=(write_fd,))
+            os.close(write_fd)
+            write_fd = None
+            self._diagnostic_thread = threading.Thread(target=self._drain_diagnostics, daemon=True)
+            self._diagnostic_thread.start()
+            deadline = time.monotonic() + 10
+            notification = bytearray()
+            while True:
+                require(self.process.poll() is None, "Xvfb exited before its readiness notification.")
+                remaining = deadline - time.monotonic()
+                require(remaining > 0, "Xvfb display did not become ready within 10 seconds.")
+                ready, _, _ = select.select([read_fd], [], [], min(remaining, 0.05))
+                if not ready:
+                    continue
+                block = os.read(read_fd, 64)
+                require(block, "Xvfb closed its readiness pipe without a display number.")
+                notification.extend(block)
+                require(len(notification) <= 6, "Malformed Xvfb readiness notification.")
+                if b"\n" in notification:
+                    require(re.fullmatch(rb"[0-9]{1,5}\n", notification) is not None
+                            and int(notification) <= 65535, "Malformed Xvfb readiness notification.")
+                    require(self.process.poll() is None, "Xvfb exited during its readiness notification.")
+                    self.display = f":{int(notification)}"
+                    return self
+        except BaseException as error:
+            # A context manager's __exit__ is not called when __enter__ fails.
+            self.__exit__()
+            if isinstance(error, CaptureError):
+                diagnostics = self._diagnostics.decode("utf-8", errors="replace").strip()
+                if diagnostics:
+                    raise CaptureError(f"{error} Xvfb stderr: {diagnostics}") from error
+            raise
+        finally:
+            os.close(read_fd)
+            if write_fd is not None:
+                os.close(write_fd)
 
     def receipt(self):
         return {"display": self.display, "server": "Xvfb", "tcp": False,
                 "screen": f"{self.width}x{self.height}x24", "visibleToUser": False}
 
     def __exit__(self, *exc):
-        if self.process is not None and self.process.poll() is None:
-            self.process.terminate()
-            try:
-                self.process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                self.process.kill()
-                self.process.wait(timeout=5)
+        if self.process is not None:
+            if self.process.poll() is None:
+                self.process.terminate()
+                try:
+                    self.process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    pass
+            # Also close descendants that inherited the diagnostic pipe, even
+            # if the direct server has already exited.
+            PosixProcessGroup(self.process).close()
+            self.process.wait(timeout=5)
+            if self._diagnostic_thread is not None and self._diagnostic_thread.ident is not None:
+                self._diagnostic_thread.join(timeout=5)
+            elif self.process.stderr is not None:
+                self.process.stderr.close()
         return False
 
 

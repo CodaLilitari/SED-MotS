@@ -878,3 +878,68 @@ Retail proofs with the fixed tool, retail `JK.EXE` 1.01 (`4509cd69…51d9`), Win
 Release evidence (recorded after packaging; this documentation-only addendum does not change the packaged source). `tools/package-linux.sh --graphics` built `0.4.0-mots.17-claude.red39` from clean commit `fe04ee315c23d6ee8d6d240b179c62f2305de723`: its build evidence repeated 1,943 Core, 318 MCP, 127 Python (two skips), 24 Linux-tooling, 75 `tools/blender` (10 Blender-only skips) and 49 `tools/retail-capture` tests, and its verification passed with graphics (1,099 manifested files, default preview worker). `tools/verify-linux.sh --graphics --full-workflows` then passed: the MCP workflow (71 tool calls) and the editing workbench (132 calls, 1,099 checks). SHA-256: archive `39092e6241b13c8a21557188753e24734c942b04bb90ab99bd28997195777eaa`, source `1dd34eef55708d3ee37d79c7606ddb59c385f34a1bebbf86700100f8031b4d79`, history bundle `caa9a8e6e9205094a76a36232b869291e64dd975c557e5de9c2cc4e7d8691b55`.
 
 The packaged `sed-agent` rendered study sheets (outside the repository) for the 22-package Massassi set, JHS and every level of Massassi Level Pack 2: 28 sheets, each led by the two overviews. Rebel Agent ships only an installer, which was not run, so it has no sheet. DBZ Tournament's sheet is fullbright and shows its five mip-fallback MATs textured. The external level-study renderer's cameras now stay inside sectors and out of unlit ones; that change is recorded beside the renderer, outside this repository. Two findings stay open. In this cloud a placeholder 9-byte `JKMRES.GOO` passed as a resource archive makes `sed-agent snapshot` and `overview` exit 134 with an unhandled `InvalidDataException`. The `red38` package does the same, so this predates the work above: `Program.cs` maps `IOException`, not `InvalidDataException`, to a JSON error. Without retail MotS resources, the two MotS levels (Naboo, Mos Espa) render from their own GOO only, with no master palette and with missing retail 3DOs and MATs.
+
+## 2026-11-01 — Consolidation, current compatibility checks and native-core direction
+
+The isolated `codex/linux-consolidated-20261101` worktree preserves both published
+Red histories and already includes Lily's Linux/native and reviewed-packaging
+ancestry. Red was not contacted. Lilitari and an independent source-level review
+support direct stateless use of the upstream C++ core; broad Qt/document-authority
+migration remains gated. See the [decision](audit/CPP_ADOPTION_DECISION_20261101.md)
+and [current comparison](audit/EDITOR_COMPARISON_20261101.md).
+
+Working-source changes protect final-only malformed frame parameters from unsafe
+appends, make Windows compilation use verified committed source snapshots, require
+the new package profile instead of allowing a schema downgrade, move build outputs
+outside checkouts, bound child processes, and require actual notice coverage.
+Xvfb readiness now uses its explicit readiness protocol and Linux abstract local
+transport, avoiding WSLg's read-only filesystem socket directory. Failed starts
+reap the owned server. The full Linux development pipeline passed before the new
+native inspection client/worker slice; this is not a clean release claim.
+
+Nine original JKLs passed unchanged-text and forced-regeneration checks, and two
+real native JED projects retained all 56 exposed sector records and both light
+collections. The building's separate white/RGB light fields survive conversion;
+historical light documentation was corrected. Exact cases and limits are in the
+[regression record](audit/LEGACY_CONSOLIDATION_20261101.md).
+
+The October31 nine-byte `JKMRES.GOO` crash note above is historical. A fresh replay
+against the current-source CLI returned exit2 and structured `invalid_request`
+JSON for both snapshot and overview, with empty stderr and no image. This required
+no further source fix during the replay. External receipt `bad-archive-cli-01`
+binds the actual binary and synthetic archive. This does not supply missing MotS
+retail resources or qualify a new packaged graphics/gameplay run.
+
+Native worker/client qualification, clean Linux/Windows distributions, final
+parity branches and publication remain in progress. Prior release receipts and
+the separate seven-process PLAY queue retain their original evidence states.
+
+The optional native component now has a deterministic packaging tool with
+22 passing original regression cases. It binds the wrapper source, its original
+platform build witness, the pinned upstream source archive, runtime files and
+license provenance separately. Source cleanliness is an explicit coordinator
+attestation; it is not inferred from a caller-supplied commit string. See
+[the packaging contract](../tools/NATIVE_COMPONENT_PACKAGING.md).
+
+The Windows geometry failure was investigated with first-divergence traces,
+exact-rational oracles and identical-bit replay. The observed first difference
+is a one-ULP frame-normalization input; the predicate agrees when given identical
+operands. This is a bounded diagnosis, not a geometry fix or general numerical
+parity claim. See [the complete result](audit/CPP_WINDOWS_ORDERING_20261101.md).
+
+Fresh Windows and Linux preflight runs both created and independently validated
+actual Vulkan scene images. These use development binaries and establish the
+available graphics prerequisites; the final package must repeat its own graphics
+and workflow acceptance. No game, retail renderer or multiplayer was exercised.
+
+The notice collector now selects a complete restored cache candidate instead
+of trusting the first directory's existence. It distinguishes NuGet's signed
+content identity from the archive SHA512 sidecar, requires matching package
+metadata and file coverage, and classifies license filenames before flattening
+their paths. Independent review found and closed both a pinned NOTICE-only
+fallback and a nested NOTICE filename false positive. All 23 original offline
+regression cases passed. The actual collection then completed for 39 resolved
+NuGet packages plus Phosphor and the .NET distribution; the inventory retains
+exact versions, source provenance and file hashes. This is notice collection,
+not a claim that every listed dependency is deployed or that license text has
+received legal review.
