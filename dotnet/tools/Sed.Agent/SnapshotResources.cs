@@ -1,9 +1,13 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using Sed.Formats.Automation;
 using Sed.Formats.Material;
 using Sed.Formats.Resources;
 using Sed.Formats.ThreeDo;
 using Sed.Rendering;
+
+// Core tests drive this adapter and the runner's pre-render asset checks without a GPU.
+[assembly: InternalsVisibleTo("Sed.Core.Tests")]
 
 namespace Sed.Agent;
 
@@ -15,7 +19,13 @@ internal sealed class SnapshotResources : IDisposable
     private readonly Dictionary<string, IndexedTexture?> _textures = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ColormapData?> _colormaps = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> _diagnostics = new();
+    private readonly List<string> _notices = new();
     public IReadOnlyList<string> Diagnostics => Capture.Diagnostics.Concat(_diagnostics).ToArray();
+    /// <summary>
+    /// Asset notes that do not make a render uncertifiable, such as a MAT shown through the
+    /// retail mip fallback (complete mip 0, truncated later mip). Strict mode ignores these.
+    /// </summary>
+    public IReadOnlyList<string> Notices => _notices.ToArray();
     public IReadOnlyList<ResourceEntryReceipt> UsedResources => Capture.UsedResources;
     public IReadOnlyList<ResourceArchiveReceipt> Archives => Capture.Archives;
     public SnapshotResources(IReadOnlyList<SnapshotArchive> requests) => Capture = new(requests);
@@ -28,10 +38,13 @@ internal sealed class SnapshotResources : IDisposable
         {
             if (Capture.Read(name, "mat") is not { } bytes) return _textures[name] = null;
             var mat = MatFile.Read(bytes.Span);
+            // Cached per name, so the note is recorded once however often the MAT is looked up.
+            if (mat.MipFallbackNote is { } note) _notices.Add($"MAT '{name}': {note}");
             return _textures[name] = mat.IsColor ? new IndexedTexture(1, 1, [(byte)mat.ColorIndex], IsSolid: true)
-                : new(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey);
+                : new(mat.Width, mat.Height, mat.Indices, HasColorKey: mat.HasColorKey, Rgba: mat.IsTrueColor ? mat.Rgba : null);
         }
-        catch (Exception error) when (error is IOException or FormatException or ArgumentException or OverflowException)
+        // InvalidDataException is not an IOException: an unsupported or damaged MAT is a diagnostic, not a crash.
+        catch (Exception error) when (error is IOException or InvalidDataException or FormatException or ArgumentException or OverflowException)
         { _diagnostics.Add($"MAT '{name}': {error.Message}"); return _textures[name] = null; }
     }
 
@@ -45,7 +58,7 @@ internal sealed class SnapshotResources : IDisposable
             if (bytes.Length < 64 + 768 + 16384) _diagnostics.Add($"CMP '{name}' omits its light ramp; using an identity ramp.");
             return _colormaps[name] = new ColormapData(cmp.PaletteRgb, cmp.LightTable);
         }
-        catch (Exception error) when (error is IOException or ArgumentException)
+        catch (Exception error) when (error is IOException or InvalidDataException or ArgumentException)
         { _diagnostics.Add($"CMP '{name}': {error.Message}"); return _colormaps[name] = null; }
     }
 
