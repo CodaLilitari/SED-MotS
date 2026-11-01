@@ -1,12 +1,12 @@
 #version 450
 
-layout(set = 0, binding = 0) uniform sampler2D matTex;    // R8 palette index
+layout(set = 0, binding = 0) uniform sampler2D matTex;    // R8 palette index, or RGBA8 true colour (lightingMode bit 4)
 layout(set = 0, binding = 1) uniform sampler2D palette;   // 256x1 RGBA
 layout(set = 0, binding = 2) uniform sampler2D lightRamp; // 256x64 R8
 
 layout(push_constant) uniform Push {
     mat4 mvp;
-    vec4 camPos;
+    vec4 camPos;       // w = 0: perspective eye position; w = 1: orthographic, xyz = unit direction toward the camera
     vec4 sky;
     vec4 camAngles;
     vec4 horizScreen;
@@ -24,6 +24,7 @@ layout(location = 1) in vec2 vUv;
 layout(location = 2) in vec3 vWorld;
 layout(location = 3) in float vMono;
 layout(location = 4) in vec3 vSolidColor;
+layout(location = 5) in float vFacing;
 layout(location = 0) out vec4 outColor;
 
 const float PI = 3.14159265359;
@@ -31,6 +32,9 @@ const float PI = 3.14159265359;
 void main()
 {
     if (pc.mode == 1u) { outColor = vec4(vColor, 1.0); return; }   // flat: markers/selection
+    // Adjoined world surface (bit 5): like the engine, draw it only from in front of
+    // its plane, so it cannot z-fight with its coplanar mirror. A zero normal stays visible.
+    if ((pc.lightingMode & 32u) != 0u && vFacing < 0.0) discard;
     // Solid palette colors are resolved per vertex, then interpolated like rdCache output.
     if ((pc.lightingMode & 2u) != 0u) { outColor = vec4(vSolidColor, pc.alpha); return; }
 
@@ -39,9 +43,17 @@ void main()
     vec3 rgbLight = clamp(vColor, 0.0, 1.0);
 
     if (pc.skyMode == 1u) {              // ceiling sky: project view ray onto ceiling plane
-        vec3 dir = normalize(vWorld - pc.camPos.xyz);
-        float t = dir.z != 0.0 ? (pc.sky.x - pc.camPos.z) / dir.z : 0.0;
-        vec3 hit = pc.camPos.xyz + dir * max(t, 0.0);
+        vec3 hit;
+        if (pc.camPos.w > 0.5) {
+            // Orthographic: the ray through this fragment runs along the view direction.
+            vec3 dir = -pc.camPos.xyz;
+            float t = dir.z != 0.0 ? (pc.sky.x - vWorld.z) / dir.z : 0.0;
+            hit = vWorld + dir * t;
+        } else {
+            vec3 dir = normalize(vWorld - pc.camPos.xyz);
+            float t = dir.z != 0.0 ? (pc.sky.x - pc.camPos.z) / dir.z : 0.0;
+            hit = pc.camPos.xyz + dir * max(t, 0.0);
+        }
         uv = vec2((hit.x + pc.sky.y) * 16.0, (hit.y + pc.sky.z) * 16.0) * pc.invTexSize;
         light = 1.0;
         rgbLight = vec3(1.0);
@@ -69,6 +81,23 @@ void main()
 
     bool rgbMode = (pc.lightingMode & 1u) != 0u;
     uint lightMode = (pc.lightingMode >> 8u) & 255u;
+    if ((pc.lightingMode & 16u) != 0u) {
+        // 16/32-bit MAT: RGBA8 true colour. The accelerated engine modulates it by
+        // vertex light; no palette or CMP ramp applies. Masked or translucent draws
+        // drop transparent texels, as the indexed path drops index zero.
+        vec4 texel = texture(matTex, uv);
+        if ((pc.alpha < 0.999 || (pc.lightingMode & 8u) != 0u) && texel.a < 0.5) discard;
+        vec3 trueRgb = texel.rgb;
+        if (lightMode == 0u || pc.skyMode != 0u || pc.brightness >= 1.0) {
+            // Fullbright and sky keep the source texel.
+        } else if (rgbMode && lightMode == 3u) {
+            trueRgb *= mix(rgbLight, vec3(1.0), pc.brightness);
+        } else {
+            trueRgb *= mix(light, 1.0, pc.brightness);
+        }
+        outColor = vec4(trueRgb, pc.alpha);
+        return;
+    }
     int idx = int(texture(matTex, uv).r * 255.0 + 0.5);
     if ((pc.alpha < 0.999 || (pc.lightingMode & 8u) != 0u) && idx == 0) discard;
 
