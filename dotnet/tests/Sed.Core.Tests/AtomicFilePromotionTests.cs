@@ -9,6 +9,45 @@ public sealed class AtomicFilePromotionTests : IDisposable
     public AtomicFilePromotionTests() => Directory.CreateDirectory(_directory);
 
     [Fact]
+    public void DistinctSiblingPublishesCompleteFileAndRemovesOnlyStage()
+    {
+        string staged = Path.Combine(_directory, "stage.tmp"), destination = Path.Combine(_directory, "output.bin");
+        byte[] bytes = Enumerable.Range(0, 4096).Select(index => (byte)(index % 251)).ToArray();
+        File.WriteAllBytes(staged, bytes);
+
+        AtomicFilePromotion.MoveNew(staged, destination);
+
+        Assert.Equal(bytes, File.ReadAllBytes(destination));
+        Assert.False(File.Exists(staged));
+    }
+
+    [Fact]
+    public void SamePathOrDifferentParentIsRefusedWithoutChangingStage()
+    {
+        string staged = Path.Combine(_directory, "stage.tmp");
+        string other = Directory.CreateDirectory(Path.Combine(_directory, "other")).FullName;
+        File.WriteAllText(staged, "complete staged output");
+
+        Assert.Throws<IOException>(() => AtomicFilePromotion.MoveNew(staged, staged));
+        Assert.Throws<IOException>(() => AtomicFilePromotion.MoveNew(staged, Path.Combine(other, "output.bin")));
+
+        Assert.Equal("complete staged output", File.ReadAllText(staged));
+        Assert.Empty(Directory.GetFileSystemEntries(other));
+    }
+
+    [AtomicCaseAliasFact]
+    public void CaseOnlyStageAliasCannotBecomeANewOutput()
+    {
+        string staged = Path.Combine(_directory, "stage.tmp"), alias = Path.Combine(_directory, "STAGE.TMP");
+        File.WriteAllText(staged, "existing staged output");
+
+        Assert.Throws<IOException>(() => AtomicFilePromotion.MoveNew(staged, alias));
+
+        Assert.Equal("existing staged output", File.ReadAllText(staged));
+        Assert.Equal("stage.tmp", Path.GetFileName(Assert.Single(Directory.GetFiles(_directory))));
+    }
+
+    [Fact]
     public async Task CompetingCreatorsPublishOnlyOneCompleteDistinctOutput()
     {
         // A check followed by rename can let several creators report success,
@@ -67,7 +106,7 @@ public sealed class AtomicFilePromotionTests : IDisposable
     [Fact]
     public void DanglingDestinationLinkIsNotReplacedOrFollowed()
     {
-        if (!OperatingSystem.IsLinux()) return;
+        if (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS()) return;
         string staged = Path.Combine(_directory, "stage.tmp"), destination = Path.Combine(_directory, "output");
         string missing = Path.Combine(_directory, "missing");
         File.WriteAllText(staged, "new output");
@@ -81,4 +120,13 @@ public sealed class AtomicFilePromotionTests : IDisposable
     }
 
     public void Dispose() => Directory.Delete(_directory, recursive: true);
+}
+
+public sealed class AtomicCaseAliasFactAttribute : FactAttribute
+{
+    public AtomicCaseAliasFactAttribute()
+    {
+        if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
+            Skip = "Case-only stage alias refusal is the Windows/macOS publication policy.";
+    }
 }

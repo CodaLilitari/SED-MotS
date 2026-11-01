@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SED-MotS verified MoltenVK artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "version", "upstreamCommit", "artifact", "library", "notices"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "upstreamCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "artifact": {"$ref": "#/$defs/artifact"},
+    "library": {"$ref": "#/$defs/library"},
+    "notices": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/notice"}}
+  },
+  "$defs": {
+    "path": {"type": "string", "minLength": 1, "description": "Canonical relative path under the manifest directory; no absolute, dot, empty, backslash or colon components. The consumer enforces link-free regular files and collision-free paths."},
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "size": {"type": "integer", "minimum": 1, "maximum": 134217728},
+    "url": {"type": "string", "pattern": "^https://", "description": "Credential-free pinned public source URL."},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "url", "bytes", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "url": {"$ref": "#/$defs/url"}, "bytes": {"$ref": "#/$defs/size"}, "sha256": {"$ref": "#/$defs/hash"}}
+    },
+    "library": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "bytes", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "bytes": {"$ref": "#/$defs/size"}, "sha256": {"$ref": "#/$defs/hash"}}
+    },
+    "notice": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "destination", "url", "bytes", "sha256", "component", "upstreamCommit"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "destination": {"type": "string", "pattern": "^licenses/moltenvk/", "description": "Canonical relative package destination; checked for traversal and collisions by the consumer."},
+        "url": {"$ref": "#/$defs/url"}, "bytes": {"$ref": "#/$defs/size"}, "sha256": {"$ref": "#/$defs/hash"},
+        "component": {"type": "string", "minLength": 1},
+        "upstreamCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    }
+  }
+}

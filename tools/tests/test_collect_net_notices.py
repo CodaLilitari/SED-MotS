@@ -1,4 +1,4 @@
-"""Offline cache-selection regressions for the Windows notice collector.
+"""Offline cache-selection regressions for the shared notice collector.
 
 The PowerShell harness creates original tiny packages in TEMP, never restores
 dependencies, and replaces both HTTP entry points with local fixture functions.
@@ -15,7 +15,7 @@ import unittest
 
 COLLECTOR = Path(__file__).resolve().parents[1] / "Collect-NetNotices.ps1"
 HARNESS = Path(__file__).with_name("collect_net_notices_fixtures.ps1")
-PWSH = shutil.which("pwsh") if os.name == "nt" else None
+PWSH = shutil.which("pwsh")
 DEADLINE_SECONDS = 180
 EXPECTED_CASES = {
     "ordinary-partial-primary-fallback", "runtime-partial-primary-fallback",
@@ -29,6 +29,9 @@ EXPECTED_CASES = {
     "missing-runtime-payload-refused", "nuspec-only-no-license-refused",
     "pinned-notice-only-refused", "pinned-license-accepted",
     "nested-notice-only-refused", "nested-license-accepted",
+    "external-output-source-preserved", "external-output-incomplete-refused",
+    "external-output-source-tree-refused", "external-output-git-tree-refused",
+    "external-output-existing-refused", "external-output-junction-refused",
 }
 
 
@@ -36,7 +39,6 @@ class FixtureInfrastructureError(RuntimeError):
     """A fixture setup/timeout failure, distinct from a regression assertion."""
 
 
-@unittest.skipUnless(os.name == "nt", "Windows notice-collector regression harness")
 @unittest.skipUnless(PWSH, "PowerShell 7 (pwsh) is required")
 class CollectNetNoticesTests(unittest.TestCase):
     def test_complete_cache_selection_and_notice_coverage(self):

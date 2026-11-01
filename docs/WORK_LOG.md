@@ -973,3 +973,34 @@ review accepted the change. The Windows incremental rebuild passed without
 warnings or errors, followed by 2,013 passing Core tests and three Linux-only
 skips (2,016 total). Final clean package and Linux acceptance remain pending;
 these results do not replace either release gate.
+
+### 2026-11-01: Mac release continuation and scope boundary
+
+Andrei added Mac support and then explicitly assigned the C++ catch-up experiment
+to Muse Code. The active consolidation goal now ends with the current editor's
+Mac/Linux/Windows delivery and verified persistent binary downloads. Further
+C++ adoption and Muse's workspace are excluded. Red remains outside the review
+loop. See the [Mac qualification record](audit/MACOS_RELEASE_20261101.md).
+
+The interrupted Mac packaging/CI assignments had produced no packaging files.
+The existing file-safety and loader changes were preserved and built locally;
+the Windows Core suite passed 2,038 with three platform skips. A new maintained
+dependency acquisition helper now verifies the exact MoltenVK archive, extracts
+only the two selected regular members and includes the pinned notices from its
+five runtime dependencies. Its actual output passed independent hash readback;
+this is passive dependency acquisition, not native Mac execution.
+
+The notice collector gained a new external-output option so packaging can leave
+the committed source snapshot unchanged. All 29 original offline cache/notice
+fixtures passed, including six newly added destination/preservation cases.
+Bundle construction, native qualification, final release branches and actual
+download publication remain open.
+
+Both Mac runtime identifiers were added to the MCP project through a real
+restore. The regenerated lock preserves every existing managed/Linux/Windows
+entry. The MCP build passed with zero warnings/errors; an initial exFAT-temp
+test run failed six existing junction-fixture setups. Live volume inspection and
+an unchanged-binary rerun on external NTFS storage isolated the fixture-storage
+problem: all 320 MCP tests passed with three Mac-only skips. Both receipts remain
+available. Windows reparse-point fixtures need an NTFS temporary directory;
+external bulk archive storage can remain on exFAT.

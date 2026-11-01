@@ -19,9 +19,9 @@ public readonly record struct GpuInfo(
 }
 
 /// <summary>
-/// Owns the Vulkan instance and enumerates physical devices. On macOS the
-/// instance is created with the portability-enumeration flag/extension so the
-/// MoltenVK ICD (a non-conformant "portability" driver) is reported.
+/// Owns the Vulkan instance and enumerates physical devices. On macOS an
+/// advertised portability-enumeration extension enables portability drivers;
+/// a directly loaded driver need not expose that loader extension.
 /// </summary>
 public sealed unsafe class VulkanContext : IDisposable
 {
@@ -47,7 +47,17 @@ public sealed unsafe class VulkanContext : IDisposable
         var nativeContext = new DefaultNativeContext(loaderPath);
         var vk = new Vk(nativeContext);
 
-        bool portability = OperatingSystem.IsMacOS();
+        InstanceExtensionSelection extensions;
+        try
+        {
+            bool isMacOS = OperatingSystem.IsMacOS();
+            extensions = SelectInstanceExtensions(isMacOS, isMacOS ? EnumerateInstanceExtensions(vk) : []);
+        }
+        catch
+        {
+            vk.Dispose();
+            throw;
+        }
 
         var appInfo = new ApplicationInfo
         {
@@ -59,21 +69,15 @@ public sealed unsafe class VulkanContext : IDisposable
             ApiVersion = Vk.Version12,
         };
 
-        var extensions = new List<string>();
-        if (portability)
-            extensions.Add(PortabilityEnumerationExtension);
-
-        var ppExtensions = (byte**)SilkMarshal.StringArrayToPtr(extensions);
+        var ppExtensions = (byte**)SilkMarshal.StringArrayToPtr(extensions.Names);
 
         var createInfo = new InstanceCreateInfo
         {
             SType = StructureType.InstanceCreateInfo,
             PApplicationInfo = &appInfo,
-            EnabledExtensionCount = (uint)extensions.Count,
+            EnabledExtensionCount = (uint)extensions.Names.Length,
             PpEnabledExtensionNames = ppExtensions,
-            Flags = portability
-                ? InstanceCreateFlags.EnumeratePortabilityBitKhr
-                : InstanceCreateFlags.None,
+            Flags = extensions.Flags,
         };
 
         try
@@ -83,12 +87,58 @@ public sealed unsafe class VulkanContext : IDisposable
                 throw new VulkanException($"vkCreateInstance failed: {result}");
             return new VulkanContext(vk, instance);
         }
+        catch
+        {
+            vk.Dispose();
+            throw;
+        }
         finally
         {
             SilkMarshal.Free((nint)appInfo.PApplicationName);
             SilkMarshal.Free((nint)appInfo.PEngineName);
             SilkMarshal.Free((nint)ppExtensions);
         }
+    }
+
+    internal static InstanceExtensionSelection SelectInstanceExtensions(bool isMacOS, IEnumerable<string> advertisedExtensions) =>
+        isMacOS && advertisedExtensions.Contains(PortabilityEnumerationExtension, StringComparer.Ordinal)
+            ? new([PortabilityEnumerationExtension], InstanceCreateFlags.EnumeratePortabilityBitKhr)
+            : new([], InstanceCreateFlags.None);
+
+    private static IReadOnlyList<string> EnumerateInstanceExtensions(Vk vk)
+    {
+        // The advertised list can grow between the count and data calls. Retry
+        // incomplete enumerations, but do not loop indefinitely on a broken driver.
+        for (int attempt = 0; attempt < 4; attempt++)
+        {
+            uint count = 0;
+            var result = vk.EnumerateInstanceExtensionProperties((byte*)null, ref count, null);
+            if (result != Result.Success)
+                throw new VulkanException($"vkEnumerateInstanceExtensionProperties failed: {result}");
+            if (count == 0)
+                return Array.Empty<string>();
+
+            var properties = new ExtensionProperties[count];
+            fixed (ExtensionProperties* pProperties = properties)
+                result = vk.EnumerateInstanceExtensionProperties((byte*)null, ref count, pProperties);
+            if (result == Result.Incomplete)
+                continue;
+            if (result != Result.Success)
+                throw new VulkanException($"vkEnumerateInstanceExtensionProperties failed: {result}");
+
+            var names = new List<string>((int)count);
+            for (int i = 0; i < count; i++)
+            {
+                fixed (byte* pName = properties[i].ExtensionName)
+                {
+                    var name = SilkMarshal.PtrToString((nint)pName);
+                    if (name is not null)
+                        names.Add(name);
+                }
+            }
+            return names;
+        }
+        throw new VulkanException("vkEnumerateInstanceExtensionProperties remained incomplete after four attempts");
     }
 
     /// <summary>Enumerates all physical devices reported by the instance.</summary>
@@ -123,5 +173,7 @@ public sealed unsafe class VulkanContext : IDisposable
         Vk.Dispose();
     }
 }
+
+internal readonly record struct InstanceExtensionSelection(string[] Names, InstanceCreateFlags Flags);
 
 public sealed class VulkanException(string message) : Exception(message);

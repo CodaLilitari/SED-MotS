@@ -3,7 +3,10 @@ param(
     [Parameter(Mandatory)][string]$DotNet,
     # Match the .NET artifacts layout used by Build-Net and Package-Windows.
     # Omit only when collecting an older restore using in-project obj folders.
-    [string]$ArtifactsPath
+    [string]$ArtifactsPath,
+    # A new external directory keeps a committed package source snapshot intact.
+    # Omission preserves the existing licenses/net collection behavior.
+    [string]$OutputDirectory
 )
 $ErrorActionPreference = 'Stop'
 function Get-NuGetVersionIdentity([string]$Value) {
@@ -143,7 +146,35 @@ foreach ($project in $projects.GetEnumerator()) {
     }
 }
 $noticeRoot = Join-Path $repo 'licenses/net'
-$null = New-Item -ItemType Directory -Path $noticeRoot -Force
+if ($OutputDirectory) {
+    if (![IO.Path]::IsPathFullyQualified($OutputDirectory) -or
+        @($OutputDirectory.Split(@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)) |
+            Where-Object { $_ -in @('.', '..') }).Count) {
+        throw 'Explicit notice output must be an absolute path without dot components.'
+    }
+    $noticeRoot = [IO.Path]::GetFullPath($OutputDirectory)
+    # Conservatively refuse case aliases of a source snapshot on Mac as well.
+    # This only restricts output placement; it does not broaden any read root.
+    $comparison = if ($IsWindows -or $IsMacOS) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
+    $sourceRoot = [IO.Path]::GetFullPath($repo).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
+    if ($noticeRoot.Equals($sourceRoot, $comparison) -or
+        $noticeRoot.StartsWith($sourceRoot + [IO.Path]::DirectorySeparatorChar, $comparison)) {
+        throw 'Explicit notice output must be outside the source tree, including archived snapshots.'
+    }
+    for ($ancestor = $noticeRoot; $ancestor; $ancestor = Split-Path -Parent $ancestor) {
+        $item = Get-Item -LiteralPath $ancestor -Force -ErrorAction SilentlyContinue
+        if ($item -and ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            throw 'Explicit notice output cannot pass through links or reparse points.'
+        }
+        if (Test-Path -LiteralPath (Join-Path $ancestor '.git')) {
+            throw 'Explicit notice output must be outside every Git worktree.'
+        }
+    }
+    if (Test-Path -LiteralPath $noticeRoot) { throw 'Choose a new notice output directory; existing output is preserved.' }
+    $null = New-Item -ItemType Directory -Path $noticeRoot
+} else {
+    $null = New-Item -ItemType Directory -Path $noticeRoot -Force
+}
 $records = [Collections.Generic.List[object]]::new()
 $headers = @{ 'User-Agent' = 'SED-MotS-license-inventory'; 'Accept' = 'application/vnd.github+json' }
 $repoCache = @{}

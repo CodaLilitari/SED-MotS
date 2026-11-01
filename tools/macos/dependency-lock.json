@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "version": "1.4.2",
+  "upstreamCommit": "db66022459ffb663aa2b50f6b018bc2e124f5edf",
+  "artifact": {
+    "path": "MoltenVK-macos.tar",
+    "url": "https://github.com/KhronosGroup/MoltenVK/releases/download/v1.4.2/MoltenVK-macos.tar",
+    "bytes": 59563008,
+    "sha256": "f95765a6229cb7b915990a2890ce12ebe36a730b021545d3d52ae69ce4c4024e"
+  },
+  "library": {
+    "path": "libMoltenVK.dylib",
+    "member": "MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib",
+    "bytes": 10925552,
+    "sha256": "aef00b13bcc808adf15b85bef9ae67393d92be7ed5dfe41cad16fa809e4a4c5f"
+  },
+  "notices": [
+    {
+      "component": "MoltenVK",
+      "upstreamCommit": "db66022459ffb663aa2b50f6b018bc2e124f5edf",
+      "path": "notices/MoltenVK/LICENSE",
+      "member": "MoltenVK/LICENSE",
+      "destination": "licenses/moltenvk/MoltenVK/LICENSE",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/MoltenVK/db66022459ffb663aa2b50f6b018bc2e124f5edf/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "component": "cereal",
+      "upstreamCommit": "a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+      "url": "https://raw.githubusercontent.com/USCiLab/cereal/a56bad8bbb770ee266e930c95d37fff2a5be7fea/LICENSE",
+      "path": "notices/cereal/LICENSE",
+      "bytes": 1542,
+      "sha256": "58604a126af6a671ea390ee3d5b3e42228aa59b2858fb7af1d5b20b31739ccbb",
+      "destination": "licenses/moltenvk/cereal/LICENSE"
+    },
+    {
+      "component": "cereal",
+      "upstreamCommit": "a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+      "url": "https://raw.githubusercontent.com/USCiLab/cereal/a56bad8bbb770ee266e930c95d37fff2a5be7fea/include/cereal/external/LICENSE",
+      "path": "notices/cereal/include/cereal/external/LICENSE",
+      "bytes": 921,
+      "sha256": "642e7003561473f4f1f3dd09e053ee2a6ecfb0563e961a3392e914295f9d350c",
+      "destination": "licenses/moltenvk/cereal/include/cereal/external/LICENSE"
+    },
+    {
+      "component": "cereal",
+      "upstreamCommit": "a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+      "url": "https://raw.githubusercontent.com/USCiLab/cereal/a56bad8bbb770ee266e930c95d37fff2a5be7fea/include/cereal/external/rapidjson/LICENSE",
+      "path": "notices/cereal/include/cereal/external/rapidjson/LICENSE",
+      "bytes": 678,
+      "sha256": "dc2ef044e52a4c0ea784f9b54229775ce5275505cc09f21283dfa301e9c962fa",
+      "destination": "licenses/moltenvk/cereal/include/cereal/external/rapidjson/LICENSE"
+    },
+    {
+      "component": "cereal",
+      "upstreamCommit": "a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+      "url": "https://raw.githubusercontent.com/USCiLab/cereal/a56bad8bbb770ee266e930c95d37fff2a5be7fea/include/cereal/external/rapidjson/msinttypes/LICENSE",
+      "path": "notices/cereal/include/cereal/external/rapidjson/msinttypes/LICENSE",
+      "bytes": 1569,
+      "sha256": "bf3c9bf6a176c890c7387c71f9ae5bcaf9d33324b9d4a5f8524a6f8bf3063097",
+      "destination": "licenses/moltenvk/cereal/include/cereal/external/rapidjson/msinttypes/LICENSE"
+    },
+    {
+      "component": "cereal",
+      "upstreamCommit": "a56bad8bbb770ee266e930c95d37fff2a5be7fea",
+      "url": "https://raw.githubusercontent.com/USCiLab/cereal/a56bad8bbb770ee266e930c95d37fff2a5be7fea/include/cereal/external/rapidxml/license.txt",
+      "path": "notices/cereal/include/cereal/external/rapidxml/license.txt",
+      "bytes": 2804,
+      "sha256": "794bf3b2ecf5cf0c740ac6c524d66ce6284c4b1de1f983d21a242b8abbeb9720",
+      "destination": "licenses/moltenvk/cereal/include/cereal/external/rapidxml/license.txt"
+    },
+    {
+      "component": "SPIRV-Cross",
+      "upstreamCommit": "6c09849fe88c48eaed08413aa022aaa136a3a057",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/SPIRV-Cross/6c09849fe88c48eaed08413aa022aaa136a3a057/LICENSE",
+      "path": "notices/SPIRV-Cross/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "destination": "licenses/moltenvk/SPIRV-Cross/LICENSE"
+    },
+    {
+      "component": "SPIRV-Cross",
+      "upstreamCommit": "6c09849fe88c48eaed08413aa022aaa136a3a057",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/SPIRV-Cross/6c09849fe88c48eaed08413aa022aaa136a3a057/LICENSES/LicenseRef-KhronosFreeUse.txt",
+      "path": "notices/SPIRV-Cross/LICENSES/LicenseRef-KhronosFreeUse.txt",
+      "bytes": 1305,
+      "sha256": "fbeaca472f4f70e276dd1106ca5097435967a22ad6c1d8200aef7ad9f70aaf3f",
+      "destination": "licenses/moltenvk/SPIRV-Cross/LICENSES/LicenseRef-KhronosFreeUse.txt"
+    },
+    {
+      "component": "SPIRV-Headers",
+      "upstreamCommit": "29981f65241605e08b0ede4cfeb999fe3b723c6a",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/SPIRV-Headers/29981f65241605e08b0ede4cfeb999fe3b723c6a/LICENSE",
+      "path": "notices/SPIRV-Headers/LICENSE",
+      "bytes": 23503,
+      "sha256": "ea43b1de38a6f90c488800d66dec1ed671e68cda530266bc96951fb5b6307613",
+      "destination": "licenses/moltenvk/SPIRV-Headers/LICENSE"
+    },
+    {
+      "component": "SPIRV-Tools",
+      "upstreamCommit": "0d6fd73ca73830ccab5fa1f00ed5ed40124e2c55",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/SPIRV-Tools/0d6fd73ca73830ccab5fa1f00ed5ed40124e2c55/LICENSE",
+      "path": "notices/SPIRV-Tools/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "destination": "licenses/moltenvk/SPIRV-Tools/LICENSE"
+    },
+    {
+      "component": "Vulkan-Headers",
+      "upstreamCommit": "e3b1eec08173d6b825cd3ac88c885a63b621504a",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/e3b1eec08173d6b825cd3ac88c885a63b621504a/LICENSE.md",
+      "path": "notices/Vulkan-Headers/LICENSE.md",
+      "bytes": 495,
+      "sha256": "95ad366d23fadf701d355bc45fb8b82ae2d700239471d35d41286ac3b08ff903",
+      "destination": "licenses/moltenvk/Vulkan-Headers/LICENSE.md"
+    }
+  ]
+}

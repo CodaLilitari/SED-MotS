@@ -160,8 +160,19 @@ public sealed class McpFilePolicy
 
     private void RejectReceiptAccess(string full)
     {
-        if (Within(full, Path.Combine(WorkspaceRoot, ".sed-mcp")))
-            throw Denied("The workspace .sed-mcp directory is reserved for adapter state.");
+        // Mac volumes may alias case variants. Reserve the component even in
+        // broader authorized read roots, which can expose a differently cased
+        // workspace prefix. Keep ordinary root containment ordinal: weakening
+        // it would admit distinct sibling roots on case-sensitive volumes.
+        bool mac = OperatingSystem.IsMacOS();
+        bool reserved = mac
+            ? full.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
+                .Any(part => part.Equals(".sed-mcp", StringComparison.OrdinalIgnoreCase))
+            : Within(full, Path.Combine(WorkspaceRoot, ".sed-mcp"));
+        if (reserved)
+            throw Denied(mac
+                ? "The .sed-mcp path component is reserved for adapter state on macOS."
+                : "The workspace .sed-mcp directory is reserved for adapter state.");
     }
 
     private static string ConfiguredRoot(string path)

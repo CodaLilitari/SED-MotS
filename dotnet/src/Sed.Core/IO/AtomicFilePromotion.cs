@@ -10,9 +10,33 @@ public static class AtomicFilePromotion
     {
         string staged = Path.GetFullPath(stagedPath), destination = Path.GetFullPath(destinationPath);
         var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-        if (string.Equals(staged, destination, comparison) ||
+        // Darwin permits a case-only rename of the same object even with
+        // RENAME_EXCL. Such an alias is not a distinct new output. This is a
+        // conservative Mac refusal even on a case-sensitive volume; parent
+        // directory comparison remains ordinal there.
+        var sameFileComparison = OperatingSystem.IsMacOS() ? StringComparison.OrdinalIgnoreCase : comparison;
+        if (string.Equals(staged, destination, sameFileComparison) ||
             !string.Equals(Path.GetDirectoryName(staged), Path.GetDirectoryName(destination), comparison))
             throw new IOException("Atomic output creation requires distinct staged and destination files in the same directory.");
+
+        if (OperatingSystem.IsMacOS())
+        {
+            // The filesystem must support exclusive rename. Do not fall back
+            // to ordinary rename or a copy if the primitive is unavailable.
+            // https://github.com/apple-oss-distributions/xnu/blob/main/bsd/man/man2/rename.2
+            try
+            {
+                if (RenameExclusive(staged, destination, Exclusive) == 0) return;
+            }
+            catch (Exception error) when (error is DllNotFoundException or EntryPointNotFoundException)
+            {
+                throw new IOException("Atomic output creation requires macOS renamex_np support; no fallback was attempted.", error);
+            }
+
+            int macError = Marshal.GetLastPInvokeError();
+            throw new IOException($"Could not atomically create '{destination}' without replacement; no fallback was attempted.",
+                new Win32Exception(macError));
+        }
 
         if (!OperatingSystem.IsLinux())
         {
@@ -41,6 +65,11 @@ public static class AtomicFilePromotion
 
     private const int CurrentDirectory = -100; // AT_FDCWD
     private const uint NoReplace = 1; // RENAME_NOREPLACE
+    private const uint Exclusive = 4; // Darwin RENAME_EXCL
+
+    [DllImport("/usr/lib/libSystem.B.dylib", EntryPoint = "renamex_np", SetLastError = true, ExactSpelling = true)]
+    private static extern int RenameExclusive([MarshalAs(UnmanagedType.LPUTF8Str)] string oldPath,
+        [MarshalAs(UnmanagedType.LPUTF8Str)] string newPath, uint flags);
 
     [DllImport("libc", EntryPoint = "renameat2", SetLastError = true, ExactSpelling = true)]
     private static extern int RenameNoReplace(int oldDirectory,

@@ -97,7 +97,13 @@ $cases = @(
     @{name='pinned-notice-only-refused'; runtime=$false; change='pinned-notice'; fallback=$false; success=$false; error='No package license text collected'},
     @{name='pinned-license-accepted'; runtime=$false; change='pinned-license'; fallback=$false; success=$true},
     @{name='nested-notice-only-refused'; runtime=$false; change='nested-notice'; fallback=$false; success=$false; error='No bundled license or pinned GitHub source'},
-    @{name='nested-license-accepted'; runtime=$false; change='nested-license'; fallback=$false; success=$true}
+    @{name='nested-license-accepted'; runtime=$false; change='nested-license'; fallback=$false; success=$true},
+    @{name='external-output-source-preserved'; runtime=$true; change='none'; output='external'; fallback=$false; success=$true},
+    @{name='external-output-incomplete-refused'; runtime=$true; change='marker-missing'; output='external'; fallback=$false; success=$false; error='Missing completion input: .nupkg.metadata'},
+    @{name='external-output-source-tree-refused'; runtime=$false; change='none'; output='source'; fallback=$false; success=$false; error='outside the source tree'},
+    @{name='external-output-git-tree-refused'; runtime=$false; change='none'; output='git'; fallback=$false; success=$false; error='outside every Git worktree'},
+    @{name='external-output-existing-refused'; runtime=$false; change='none'; output='existing'; fallback=$false; success=$false; error='new notice output directory'},
+    @{name='external-output-junction-refused'; runtime=$false; change='none'; output='junction'; fallback=$false; success=$false; error='links or reparse points'}
 )
 $records = [Collections.Generic.List[object]]::new()
 foreach ($case in $cases) {
@@ -153,13 +159,35 @@ foreach ($case in $cases) {
     else { $libs["$id/$version"] = @{type='package'; path=$relative; sha512=$contentHash; files=$package.files} }
     $assets = @{libraries=$libs; packageFolders=$folders; project=@{frameworks=@{net10=@{downloadDependencies=$downloads}}}} | ConvertTo-Json -Depth 8
     foreach ($project in @('Sed.App', 'Sed.Agent', 'Sed.Mcp')) { Put (Join-Path $artifacts "obj/$project/project.assets.json") $assets }
+    $noticeOutput = Join-Path $fixtureRepo 'licenses/net'
+    $extraArguments = @{}
+    if ($case.output) {
+        Put (Join-Path $noticeOutput 'retained.txt') 'Existing source notice - preserve exactly'
+        $noticeOutput = Join-Path $caseRoot 'external-notices'
+        switch ($case.output) {
+            'source' { $noticeOutput = Join-Path $fixtureRepo 'other-notices' }
+            'git' {
+                $noticeOutput = Join-Path $caseRoot 'other-repo/notices'
+                Put (Join-Path $caseRoot 'other-repo/.git') 'gitdir: original-fixture'
+            }
+            'existing' { Put (Join-Path $noticeOutput 'keep.txt') 'Existing external notice - preserve exactly' }
+            'junction' {
+                $actual = Join-Path $caseRoot 'actual-notices'
+                $null = New-Item -ItemType Directory -Path $actual
+                $linkType = if ($IsWindows) { 'Junction' } else { 'SymbolicLink' }
+                $null = New-Item -ItemType $linkType -Path (Join-Path $caseRoot 'linked-parent') -Target $actual
+                $noticeOutput = Join-Path $caseRoot 'linked-parent/new-notices'
+            }
+        }
+        $extraArguments.OutputDirectory = $noticeOutput
+    }
     $errorText = $null
-    try { & (Join-Path $fixtureRepo 'tools/Collect-NetNotices.ps1') -DotNet (Join-Path $caseRoot 'sdk/dotnet.exe') -ArtifactsPath $artifacts | Out-Null }
+    try { & (Join-Path $fixtureRepo 'tools/Collect-NetNotices.ps1') -DotNet (Join-Path $caseRoot 'sdk/dotnet.exe') -ArtifactsPath $artifacts @extraArguments | Out-Null }
     catch { $errorText = $_.Exception.Message }
     $passed = (($null -eq $errorText) -eq $case.success)
     if (!$case.success -and $passed) { $passed = $errorText.Contains($case.error) }
     if ($passed -and $case.success) {
-        $inventory = Get-Content -LiteralPath (Join-Path $fixtureRepo 'licenses/net/inventory.json') -Raw | ConvertFrom-Json
+        $inventory = Get-Content -LiteralPath (Join-Path $noticeOutput 'inventory.json') -Raw | ConvertFrom-Json
         $entry = @($inventory.packages)[0]
         $passed = ($entry.package -ceq "$id/$version" -and @($entry.files).Count -ge 1 -and @($entry.sourceProjects).Count -eq 3 -and
             $entry.contentSha512 -ceq $contentHash -and $entry.archiveSha512 -cne $contentHash -and
@@ -171,6 +199,17 @@ foreach ($case in $cases) {
                 $licenseRecord[0].source -ceq "nuget:$id/$version/notices/LICENSE.txt" -and
                 $licenseRecord[0].file -ceq "$id-$version/notices_LICENSE.txt"
         }
+    }
+    if ($case.output) {
+        $sourceNotices = Join-Path $fixtureRepo 'licenses/net'
+        $passed = $passed -and @((Get-ChildItem -LiteralPath $sourceNotices -Recurse -File)).Count -eq 1 -and
+            [IO.File]::ReadAllText((Join-Path $sourceNotices 'retained.txt')) -ceq 'Existing source notice - preserve exactly'
+        if (!$case.success) { $passed = $passed -and !(Test-Path -LiteralPath (Join-Path $noticeOutput 'inventory.json')) }
+        if ($case.output -eq 'existing') {
+            $passed = $passed -and @((Get-ChildItem -LiteralPath $noticeOutput)).Count -eq 1 -and
+                [IO.File]::ReadAllText((Join-Path $noticeOutput 'keep.txt')) -ceq 'Existing external notice - preserve exactly'
+        }
+        if ($case.output -eq 'junction') { $passed = $passed -and @((Get-ChildItem -LiteralPath $actual)).Count -eq 0 }
     }
     $records.Add([ordered]@{case=$case.name; passed=$passed; expectedSuccess=$case.success; error=$errorText})
     Write-Output "$($case.name): $passed$(if ($errorText) { ' (' + $errorText + ')' })"

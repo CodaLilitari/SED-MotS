@@ -109,6 +109,99 @@ public sealed class McpFilePolicyTests : IDisposable
         Assert.Equal("receipt", File.ReadAllText(state));
     }
 
+    [McpMacTheory]
+    [InlineData(".sed-mcp")]
+    [InlineData(".SED-MCP")]
+    [InlineData(".Sed-Mcp")]
+    public void MacReservedStateAliasesAreRefusedBeforeOrdinaryFileAccess(string spelling)
+    {
+        string state = _files.Write("workspace/.sed-mcp/receipts/private.jkl", "private receipt");
+        string alias = Path.Combine(_files.Workspace, spelling, "receipts", "private.jkl");
+        string output = Path.Combine(_files.Workspace, spelling, "new.jkl");
+        var policy = Policy();
+
+        AssertReserved(() => policy.ReadLevel(alias));
+        AssertReserved(() => policy.ReadResource(alias));
+        AssertReserved(() => policy.ResolveIntentInput(alias));
+        AssertReserved(() => policy.WriteOutput(output, ".jkl"));
+        AssertReserved(() => policy.ResolveOutput(alias, ".jkl", allowExisting: true));
+
+        Assert.Equal("private receipt", File.ReadAllText(state));
+        Assert.False(File.Exists(output));
+        Assert.False(File.Exists(_files.PathIn("workspace/.sed-mcp/new.jkl")));
+    }
+
+    [McpMacFact]
+    public void MacParentResourceRootDoesNotExposeCaseAliasedWorkspaceState()
+    {
+        string state = _files.Write("workspace/.sed-mcp/receipts/private.jkl", "private receipt");
+        string parent = Path.GetDirectoryName(_files.Workspace)!;
+        string alias = Path.Combine(parent, "WORKSPACE", ".SED-MCP", "receipts", "private.jkl");
+        var policy = Policy(parent);
+
+        // The broad explicit read root admits the prefix. State rejection must
+        // still work even when the workspace spelling does not match ordinally.
+        AssertReserved(() => policy.ReadLevel(alias));
+        AssertReserved(() => policy.ReadResource(alias));
+        AssertReserved(() => policy.ResolveIntentInput(alias));
+
+        Assert.Equal("private receipt", File.ReadAllText(state));
+    }
+
+    [Fact]
+    public void ReservedComponentInResourceRootHasThePlatformPolicy()
+    {
+        string state = _files.Write("resources/nested/.SED-MCP/receipts/private.jkl", "resource file");
+        var policy = Policy(_files.Resources);
+
+        if (OperatingSystem.IsMacOS())
+        {
+            AssertReserved(() => policy.ReadLevel(state));
+            AssertReserved(() => policy.ReadResource(state));
+        }
+        else
+        {
+            // The conservative component reservation is Mac-specific. Other
+            // platforms still reserve only this workspace's own state tree.
+            Assert.Equal(state, policy.ReadLevel(state));
+            Assert.Equal(state, policy.ReadResource(state));
+        }
+        Assert.Equal("resource file", File.ReadAllText(state));
+    }
+
+    [Fact]
+    public void SimilarButDistinctStateComponentRemainsUsable()
+    {
+        string level = _files.Write("workspace/.sed-mcp-other/room.jkl", "ordinary level");
+        var policy = Policy();
+
+        Assert.Equal(level, policy.ReadLevel(level));
+        Assert.Equal(level, policy.ReadResource(level));
+        Assert.Equal(_files.PathIn("workspace/.sed-mcp-other/new.jkl"),
+            policy.WriteOutput(".sed-mcp-other/new.jkl", ".jkl"));
+    }
+
+    [McpMacFact]
+    public void MacCaseVariantWorkspacePrefixDoesNotGrantScope()
+    {
+        string sibling = _files.Write("WORKSPACE/outside.jkl", "sibling or case alias");
+        var policy = Policy();
+
+        var read = Assert.Throws<AgentRequestException>(() => policy.ReadLevel(sibling));
+        Assert.Contains("outside the explicitly configured", read.Message);
+        var write = Assert.Throws<AgentRequestException>(() => policy.WriteOutput(
+            Path.Combine(Path.GetDirectoryName(sibling)!, "new.jkl"), ".jkl"));
+        Assert.Contains("inside the configured workspace", write.Message);
+        Assert.Equal("sibling or case alias", File.ReadAllText(sibling));
+        Assert.False(File.Exists(Path.Combine(Path.GetDirectoryName(sibling)!, "new.jkl")));
+    }
+
+    private static void AssertReserved(Action action)
+    {
+        var error = Assert.Throws<AgentRequestException>(action);
+        Assert.Contains("reserved for adapter state", error.Message);
+    }
+
     [Fact]
     public void ActualWindowsShortNameCannotBypassReservedAdapterState()
     {
@@ -216,6 +309,22 @@ public sealed class McpFilePolicyTests : IDisposable
         new(new JklDocument(LevelFactory.CreateUntexturedRoom(ProjectType.MysteriesOfTheSith)), new string('a', 64), new string('b', 64), dependencies);
 
     public void Dispose() => _files.Dispose();
+}
+
+public sealed class McpMacFactAttribute : FactAttribute
+{
+    public McpMacFactAttribute()
+    {
+        if (!OperatingSystem.IsMacOS()) Skip = "Requires the native macOS file policy.";
+    }
+}
+
+public sealed class McpMacTheoryAttribute : TheoryAttribute
+{
+    public McpMacTheoryAttribute()
+    {
+        if (!OperatingSystem.IsMacOS()) Skip = "Requires the native macOS file policy.";
+    }
 }
 
 // Every fixture path is confined to its own generated temporary directory.

@@ -1,14 +1,15 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly: InternalsVisibleTo("Sed.Core.Tests")]
 
 namespace Sed.Rendering.Vulkan;
 
 /// <summary>
 /// Resolves the native Vulkan loader and (on macOS) the MoltenVK ICD at runtime.
-///
-/// On Apple Silicon there is no system Vulkan. We rely on the Homebrew
-/// <c>vulkan-loader</c> (libvulkan.dylib) dispatching to the <c>molten-vk</c>
-/// ICD, which translates Vulkan to Metal. Neither is symlinked into a default
-/// search path, so we discover them here and surface clear errors when missing.
+/// Mac distributions carry MoltenVK beside the apphost. Development installs can
+/// use the current process architecture's Homebrew loader and MoltenVK ICD instead.
+/// Explicit Vulkan driver overrides always retain generic loader dispatch.
 /// </summary>
 public static class NativeVulkanLocator
 {
@@ -18,45 +19,16 @@ public static class NativeVulkanLocator
         if (!OperatingSystem.IsMacOS())
             return; // Linux/Windows use the system loader on the default path.
 
-        EnsureIcdFilenames();
-        EnsureLoaderOnPath();
+        var configuration = ResolveMacConfiguration();
+        // Direct MoltenVK does not consult ICD manifests. Setting one here would
+        // also make the next resolution mistake our own setting for an override.
+        if (!configuration.DirectMoltenVk && configuration.IcdPath is not null)
+            Environment.SetEnvironmentVariable("VK_ICD_FILENAMES", configuration.IcdPath);
+        // VulkanContext loads the selected absolute path; changing DYLD_LIBRARY_PATH
+        // after process startup does not make that library discoverable to dlopen.
     }
 
-    private static void EnsureIcdFilenames()
-    {
-        // The loader reads VK_DRIVER_FILES / VK_ICD_FILENAMES at vkCreateInstance time.
-        if (HasEnv("VK_DRIVER_FILES") || HasEnv("VK_ICD_FILENAMES"))
-            return;
-
-        var icd = FindFirstExisting(
-            BrewCellarGlob("molten-vk", "etc/vulkan/icd.d/MoltenVK_icd.json"),
-            new[]
-            {
-                "/opt/homebrew/share/vulkan/icd.d/MoltenVK_icd.json",
-                "/usr/local/share/vulkan/icd.d/MoltenVK_icd.json",
-            });
-
-        if (icd is not null)
-            Environment.SetEnvironmentVariable("VK_ICD_FILENAMES", icd);
-    }
-
-    private static void EnsureLoaderOnPath()
-    {
-        var loaderDir = Path.GetDirectoryName(ResolveLoaderPath());
-        if (loaderDir is null)
-            return;
-
-        // Prepend the loader directory to DYLD_LIBRARY_PATH so Silk.NET's
-        // dlopen("libvulkan.dylib") succeeds without an absolute path.
-        const string key = "DYLD_LIBRARY_PATH";
-        var existing = Environment.GetEnvironmentVariable(key);
-        if (string.IsNullOrEmpty(existing))
-            Environment.SetEnvironmentVariable(key, loaderDir);
-        else if (!existing.Split(':').Contains(loaderDir))
-            Environment.SetEnvironmentVariable(key, $"{loaderDir}:{existing}");
-    }
-
-    /// <summary>Uses the native loader name for each platform; macOS also searches Homebrew.</summary>
+    /// <summary>Uses the native loader name for each platform; macOS also searches its bundle and Homebrew.</summary>
     public static string ResolveLoaderPath()
     {
         if (OperatingSystem.IsWindows())
@@ -65,38 +37,58 @@ public static class NativeVulkanLocator
             return File.Exists(systemLoader) ? systemLoader : "vulkan-1.dll";
         }
         if (OperatingSystem.IsLinux()) return "libvulkan.so.1";
-        var loader = FindFirstExisting(
-            BrewCellarGlob("vulkan-loader", "lib/libvulkan.dylib"),
-            new[]
-            {
-                "/opt/homebrew/lib/libvulkan.dylib",
-                "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.dylib",
-                "/usr/local/lib/libvulkan.dylib",
-            });
-        return loader ?? "vulkan";
+        return OperatingSystem.IsMacOS() ? ResolveMacConfiguration().LoaderPath : "vulkan";
     }
 
-    private static bool HasEnv(string name) =>
-        !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(name));
+    private static MacVulkanResolution ResolveMacConfiguration() => ResolveMacConfiguration(
+        AppContext.BaseDirectory, RuntimeInformation.ProcessArchitecture,
+        Environment.GetEnvironmentVariable("VK_DRIVER_FILES"), Environment.GetEnvironmentVariable("VK_ICD_FILENAMES"),
+        File.Exists, path => Directory.Exists(path) ? Directory.EnumerateDirectories(path) : []);
 
-    private static string? FindFirstExisting(IEnumerable<string> globResults, IEnumerable<string> fixedPaths)
+    /// <summary>Chooses paths without loading libraries or changing process environment.</summary>
+    internal static MacVulkanResolution ResolveMacConfiguration(string baseDirectory, Architecture processArchitecture,
+        string? driverFiles, string? icdFilenames, Func<string, bool> fileExists,
+        Func<string, IEnumerable<string>> enumerateDirectories)
     {
-        foreach (var p in globResults)
-            if (File.Exists(p)) return p;
-        foreach (var p in fixedPaths)
-            if (File.Exists(p)) return p;
-        return null;
-    }
-
-    /// <summary>Expands /opt/homebrew/Cellar/&lt;formula&gt;/*/&lt;relative&gt; across installed versions.</summary>
-    private static IEnumerable<string> BrewCellarGlob(string formula, string relative)
-    {
-        foreach (var prefix in new[] { "/opt/homebrew/Cellar", "/usr/local/Cellar" })
+        const string genericLoader = "libvulkan.1.dylib";
+        string? prefix = processArchitecture switch
         {
-            var formulaDir = Path.Combine(prefix, formula);
-            if (!Directory.Exists(formulaDir)) continue;
-            foreach (var versionDir in Directory.EnumerateDirectories(formulaDir))
-                yield return Path.Combine(versionDir, relative);
+            Architecture.Arm64 => "/opt/homebrew",
+            Architecture.X64 => "/usr/local",
+            _ => null,
+        };
+        if (prefix is null)
+            return new(genericLoader, null, false);
+
+        bool hasOverride = !string.IsNullOrEmpty(driverFiles) || !string.IsNullOrEmpty(icdFilenames);
+        string bundled = Path.Combine(baseDirectory, "libMoltenVK.dylib");
+        if (!hasOverride && fileExists(bundled))
+            return new(bundled, null, true);
+
+        string loaderRelative = Path.Combine("lib", "libvulkan.dylib");
+        string? loader = BrewCandidates(prefix, "vulkan-loader", loaderRelative,
+            Path.Combine(prefix, "lib", "libvulkan.dylib"), enumerateDirectories).FirstOrDefault(fileExists);
+        string? icd = null;
+        if (!hasOverride)
+        {
+            string icdRelative = Path.Combine("etc", "vulkan", "icd.d", "MoltenVK_icd.json");
+            icd = BrewCandidates(prefix, "molten-vk", icdRelative,
+                Path.Combine(prefix, "share", "vulkan", "icd.d", "MoltenVK_icd.json"), enumerateDirectories).FirstOrDefault(fileExists);
         }
+        return new(loader ?? genericLoader, icd, false);
+    }
+
+    private static IEnumerable<string> BrewCandidates(string prefix, string formula, string relative,
+        string linkedPath, Func<string, IEnumerable<string>> enumerateDirectories)
+    {
+        yield return Path.Combine(prefix, "opt", formula, relative);
+        yield return linkedPath;
+        // opt selects Homebrew's active version. If it is absent, keep Cellar
+        // fallback deterministic instead of depending on directory enumeration order.
+        foreach (var versionDir in enumerateDirectories(Path.Combine(prefix, "Cellar", formula))
+            .OrderByDescending(path => path, StringComparer.Ordinal))
+            yield return Path.Combine(versionDir, relative);
     }
 }
+
+internal readonly record struct MacVulkanResolution(string LoaderPath, string? IcdPath, bool DirectMoltenVk);

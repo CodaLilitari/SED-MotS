@@ -4,6 +4,22 @@ Updated: 2026-11-01 (consolidation in progress). This is the short recovery entr
 
 ## Current consolidation
 
+Andrei's current scope includes native Mac Apple Silicon and Intel packages,
+then final Linux/Windows parity and persistent binary downloads linked from the
+platform branches. C++ rewrite catch-up is assigned to Muse Code and is outside
+this goal. Preserve the existing read-only native inspection work without
+expanding it or changing Muse's experimental workspace.
+
+The [Mac release record](audit/MACOS_RELEASE_20261101.md) tracks the current
+implementation and evidence. Mac file-safety and loader changes are present;
+their Windows Core regression build passed without warnings/errors, followed by
+2,038 passing tests and three platform skips. The MCP build passed, its regenerated
+lock preserves existing dependencies while adding both Mac targets, and its NTFS
+rerun passed 320 tests with three Mac-only skips. Native Mac execution and complete
+bundle/CI packaging are still pending. These working-source checks do not update
+the source identity of the earlier clean Windows candidate or qualify Mac GUI
+behavior. No new consolidated binary download is yet claimed.
+
 Work is on `codex/linux-consolidated-20261101` in an isolated consolidation
 checkout. Merge `ea0b351ce8a1cab46da5e9e44a068ee17fdaf920`
 preserves GitLab Red tip `0a99e4ac09cba7aab0bccfc88a28a2d0eca80d8d` and GitHub
