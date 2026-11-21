@@ -672,6 +672,31 @@ void runThingPlacementBehaviorTests()
             "Thing brush preview and commit use the same complete fixed sample vector at Count "
             + countLabel;
         check(everySampleMatches, sampleVectorLabel.c_str());
+        if ( brushCount == 1 && committed && finalized )
+        {
+            const QByteArray stroke = countWindow.lastBrushStrokeForTest();
+            const Thing original = placedLevel.things.front();
+            const auto saved = assets::saveToSedBytes(placedLevel);
+            const auto depth = countWindow.undoDepthForTest();
+            check(!stroke.isEmpty() && !countWindow.replayBrushStrokeForTest(stroke).isEmpty()
+                    && countWindow.undoDepthForTest() == depth
+                    && assets::saveToSedBytes(placedLevel) == saved,
+                "occupied stroke replay leaves document and history unchanged");
+            check(countWindow.undoForTest(), "undo the source brush stroke");
+            countWindow.setThingPlacementTemplateForTest("+placement_probe", 0.0);
+            const QString replayError = countWindow.replayBrushStrokeForTest(stroke);
+            const auto& replayLevel = countWindow.documentStateForTest().level;
+            check(replayError.isEmpty()
+                    && countWindow.undoDepthForTest() == depth && replayLevel.things.size() == 1,
+                "unoccupied saved stroke replays as one transaction");
+            if ( replayLevel.things.size() == 1 )
+            {
+                const Thing& replayed = replayLevel.things.front();
+                check(replayed.x == original.x && replayed.y == original.y && replayed.z == original.z
+                        && replayed.pch == original.pch && replayed.yaw == original.yaw && replayed.rol == original.rol,
+                    "saved brush replay preserves the actual final position and rotation");
+            }
+        }
     }
 
     for (const auto& cameraCase : std::array<std::tuple<float, float, bool, double, double, double>, 4>{
